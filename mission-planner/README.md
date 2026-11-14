@@ -43,7 +43,40 @@ Full specification: [Mission planner UI](ui.md).
 - Requires: transfer, orbit insertion (or aerocapture), separation, atmospheric landing with heat shield.
 - Budget, research limits, and slider ranges per propulsion type: authored with the mission data; values are balancing placeholders.
 
-## Open before integration
+**User direction (2026-11-14, before building):**
 
-1. **Task data format:** what a task, offer, and contract contain, shared with the procurement module.
-2. **Map scale:** the Moon at 384,000 km and Jupiter at 5.2 AU cannot share one zoom level usefully. Proposal: a Sun-centered system view plus a nested view per planet system, switched by clicking a planet.
+- **Map scale:** a Sun-centred system view plus nested views for Earth, Mars, and Jupiter, opened by clicking the planet.
+- **Side panel UI:** Preact; the map is plain canvas.
+- **Procurement data format:** defined by the planner and documented in [procurement-interface.md](procurement-interface.md); the procurement module adopts or changes it later.
+
+## Running the app
+
+The implementation lives in [`app/`](app/).
+
+```bash
+cd mission-planner/app
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. `npm run build` type-checks and builds to `app/dist/`.
+
+Code layout:
+
+| Folder | Contents |
+| --- | --- |
+| `app/src/model/` | Shared types, units and formatting, rocket lookup helpers |
+| `app/src/data/` | Hand-crafted content: bodies, propulsion types, part rules, missions |
+| `app/src/physics/` | Ephemeris, Lambert transfers, maneuver costs, staging, live evaluation, playthrough |
+| `app/src/state/` | Stores (game, UI, agency calendar) and all actions, incl. dev controls |
+| `app/src/map/` | Canvas solar-system map |
+| `app/src/ui/` | Preact UI: top bar, side panel tabs, Δv bar, popups, heat map, playthrough |
+
+Implementation notes (choices made while building, within the baseline):
+
+- After a branch runs out of delta-v, later maneuvers are still computed "on paper" (states, costs, red trajectory) so the planner can keep planning; the first failing maneuver is marked.
+- A maneuver fails the branch only for flight errors (delta-v, TWR, missing equipment, invalid timing, ion power). Destination problems (instrument power, data rate, radiation, Venus heat) block the related data goal but not the flight.
+- A default transfer picks the earliest window within 5 % of the cheapest delta-v in the searched range.
+- Transfers to a moon or from a moon to its planet use Hohmann timing; their travel-time slider has no effect.
+- Radiation is counted at the destination only, not while flying through the Jupiter system.
+- The game saves to the browser's local storage; Dev → Reset game starts over.
