@@ -12,6 +12,7 @@
 | [Personnel](design/personnel.md) | Competing staffing models and cross-role training |
 | [Mission flow](design/mission-flow.md) | Preparation, commitment, simulation, and outcome |
 | [Prototype plan](prototype.md) | Proposed smallest useful experiment |
+| [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
 
 ## Persistent project memory
 
