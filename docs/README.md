@@ -32,6 +32,9 @@
 | [Procurement research and design alternatives](../procurement/research-design-alternatives.md) | Detailed mechanics, design principles, competing approaches and a shared scenario |
 | [Procurement UI flows and reference analysis](../procurement/ui-flow-research.md) | Sourced interface patterns, screen priorities, concrete flows and layout alternatives |
 | [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
+| [Science module](../science/README.md) | Science role: research field graph and project drafting (standalone visual prototype) |
+| [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
+| [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
 
 ## Persistent project memory
 
@@ -57,6 +60,7 @@
 | [UI flow request](notes/2026-11-14-procurement-ui-flow-request.md) | User request to research what interfaces show and when |
 | [Full HD mockup request](notes/2026-11-14-full-hd-mockup.md) | User request for a standalone desktop design |
 | [Player stations note](notes/2026-11-14-player-stations.md) | User decision for four separate stations and seats |
+| [Science module note](notes/2026-11-14-science-module.md) | Verbatim science station input |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |

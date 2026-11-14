@@ -28,6 +28,8 @@ Which items are procured? What can money change? How do delivery and reliability
 
 Is public relations the selected communications role? Who are its stakeholders, how is reception modeled, and what does it change? How much control do players have over the response? Blocks communications mechanics and its link to procurement.
 
+Partly answered 2026-11-14 (I-043): four stakeholders with one trust level each; trust gives passive modifiers (e.g. industry trust affects procurement). Exact numbers are proposals in the [communications module](../communications/README.md).
+
 ## Q-007 — Scheduling
 
 How are time, dependencies, priorities, and launch windows represented? What can be rescheduled and at what cost? Blocks timeline rules.
@@ -63,6 +65,8 @@ What meaningful work can each role do at the same time? How can roles affect one
 ## Q-015 — Communications events and consequences
 
 How are authored messages, dialogue options, reception, and consequences selected and presented? How can player-caused events and political or personal situations affect other roles while remaining fair and understandable?
+
+Partly answered 2026-11-14 (I-042, I-043): events come from a scripted timeline, state triggers, random picks from an authored pool, and other players; options show hints, not numbers; unanswered events expire with a default outcome; a shared news feed shows internal events. See [event system](design/events.md).
 
 ## Q-016 — Real time, difficulty, and switching
 
@@ -126,6 +130,25 @@ What does a simplified 2D simulation model, what parameters and launch windows d
 
 How do visual-novel interactions and unhandled events turn into consequences or positive opportunities? How do galas or relationship projects run, use staff or funding, unlock options, and trigger further events? Which effects are visible to other roles?
 
+Partly answered 2026-11-14 (I-073): 2–3 concurrent projects costing money, calendar time, and trust with other stakeholders; negotiations deliver parts (as offers to procurement), research, money, or services. No comms staff.
+
+
 ## Q-031 — Tasks, conversation, and information visibility
 
 Which persistent shared goals should be Tasks, and which requests or negotiations should happen through direct conversation? D-008 accepts planner displays of Budget, delivery status and goal risk. What additional procurement options and assessment details should other roles see? How can the interface help players reference facts while preserving meaningful conversation? See D-007 and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
+
+## Q-032 — Graph scale and orientation
+
+How large is the research graph (the v2 mockup uses about 130 nodes), how much is known at the start, and how does the player orient in it? Relabeling is dropped; each node carries a factual description. How do search, filters, zoom and a frontier list support orientation, and are descriptions ever revealed gradually? See I-066 and I-068.
+
+## Q-033 — Combining nodes into projects
+
+How many nodes can be combined (the mockup uses two or three)? Are recipes fixed and authored, discovered by trial, or hinted by the graph? What do failed or unknown combinations cost? How does this stay inside the hand-crafted baseline (D-005, Q-026) and keep science from becoming an idle game? See I-069.
+
+## Q-034 — Shared event system details
+
+How are internal events routed to stations, and who decides on them when they touch two stations? How are event odds weighted by trust and other state, and how is randomness kept fair (no runtime generation, D-005)? What does the shared news feed show? How exactly do in-flight events nudge results? Blocks the event implementation for every station. See [event system](design/events.md).
+
+## Q-035 — Hierarchical cluster naming and details tabs
+
+How many nodes does the graph need, and how are clusters named at each zoom level (fixed hierarchy, or labels derived from the visible nodes)? What do the details-pane tabs (datasets, observation methods, related papers or analyses) contain, are they hand-authored per field (D-005), and how do they connect to the deferred data analysis (I-070)? The mockup shows one description per field and three fixed zoom levels. See I-075 and I-076.
