@@ -1,15 +1,27 @@
 // Shared UI helpers: UI-local state, id generation, formatting, icons.
-import type { ComponentChildren } from 'preact';
+import type { ComponentChildren, RefObject } from 'preact';
+import { useEffect } from 'preact/hooks';
 import type { BodyId, Evaluation, FlightState, ManeuverResult, PartState, Vec2 } from '../model/types';
 import { createStore, useStore } from '../state/createStore';
-import { uiStore } from '../state/store';
+import { gameStore, uiStore } from '../state/store';
 import { bodyById } from '../data/bodies';
+import { findPart } from '../model/rocketUtils';
 import { formatDay } from '../model/units';
 
-export const BRANCH_COLORS = ['#5fb3ff', '#c78bff', '#ffa657', '#4cc38a'];
+export const BRANCH_COLORS = ['#3fc7ff', '#b98cff', '#ffaa5c', '#3fe0a0'];
 export function branchColor(index: number): string {
   return BRANCH_COLORS[((index % BRANCH_COLORS.length) + BRANCH_COLORS.length) % BRANCH_COLORS.length];
 }
+
+// ------------------------------------------------------------ layout constants (keep in sync with styles.css)
+
+export const HEADER_H = 76;
+export const EDGE = 16;
+export const PANEL_W = 340;
+export const CARDS_H = 150;
+export const PLAYBACK_W = 360;
+
+export interface Insets { top: number; right: number; bottom: number; left: number }
 
 // ------------------------------------------------------------ UI-local store
 
@@ -19,12 +31,38 @@ interface LocalUi {
   highlightNonce: number;
   /** Screen point of the last maneuverEdit popup (to return to it from the heat map). */
   lastEditScreen: Vec2 | null;
+  /** Right floating panel visible. */
+  panelOpen: boolean;
+  /** Dev slide-over drawer visible. */
+  devOpen: boolean;
+  /** Accordion state of the Rocket panel. */
+  openStageId: string | null;
+  openPartId: string | null;
+  openSpacecraftId: string | null;
+  /** Px of the viewport covered by floating UI (map fits into the rest). */
+  insets: Insets;
 }
 
-export const localUi = createStore<LocalUi>({ highlightPartId: null, highlightNonce: 0, lastEditScreen: null });
+export const localUi = createStore<LocalUi>({
+  highlightPartId: null, highlightNonce: 0, lastEditScreen: null,
+  panelOpen: true, devOpen: false, openStageId: null, openPartId: null, openSpacecraftId: null,
+  insets: { top: HEADER_H, right: 0, bottom: CARDS_H + EDGE, left: 0 },
+});
 
 export function useLocalUi<S>(selector: (s: LocalUi) => S): S {
   return useStore(localUi, selector);
+}
+
+/** Open the right panel on a tab; clicking the tab that is already open collapses the panel. */
+export function toggleTab(tab: 'rocket' | 'tasks' | 'versions') {
+  const open = localUi.get().panelOpen;
+  const cur = uiStore.get().sideTab;
+  if (open && cur === tab) {
+    localUi.update((s) => { s.panelOpen = false; });
+    return;
+  }
+  uiStore.update((u) => { u.sideTab = tab; });
+  localUi.update((s) => { s.panelOpen = true; });
 }
 
 let highlightTimer: ReturnType<typeof setTimeout> | undefined;
@@ -32,9 +70,13 @@ export function highlightPart(partId: string) {
   uiStore.update((u) => {
     u.sideTab = 'rocket';
   });
+  const loc = findPart(gameStore.get().rocket, partId);
   localUi.update((s) => {
+    s.panelOpen = true;
     s.highlightPartId = partId;
     s.highlightNonce++;
+    s.openPartId = partId;
+    if (loc?.stage) s.openStageId = loc.stage.id;
   });
   clearTimeout(highlightTimer);
   highlightTimer = setTimeout(() => {
@@ -42,6 +84,23 @@ export function highlightPart(partId: string) {
       s.highlightPartId = null;
     });
   }, 2600);
+}
+
+/** Close a popover on a pointer-down outside `ref` or on Escape. */
+export function useOutsideClose(ref: RefObject<HTMLElement>, open: boolean, close: () => void) {
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) close();
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('pointerdown', onDown, true);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
 }
 
 // ------------------------------------------------------------ ids
@@ -60,7 +119,11 @@ export function setMapContainer(el: HTMLElement | null) {
 }
 export function mapCentre(): Vec2 {
   if (!mapContainer) return { x: 300, y: 200 };
-  return { x: mapContainer.clientWidth / 2, y: mapContainer.clientHeight / 2 - 60 };
+  const i = localUi.get().insets;
+  return {
+    x: (i.left + mapContainer.clientWidth - i.right) / 2,
+    y: (i.top + mapContainer.clientHeight - i.bottom) / 2 - 60,
+  };
 }
 
 export function openManeuverEdit(maneuverId: string, branchId?: string, screen?: Vec2) {
@@ -170,6 +233,53 @@ export const CloseIcon = () => (
 export const CheckIcon = () => (
   <Svg><path d="M3 8.5l3.2 3.2L13 4.8" /></Svg>
 );
+
+export const GearIcon = () => (
+  <Svg size={16}><circle cx="8" cy="8" r="2.2" /><path d="M8 1.6v1.8M8 12.6v1.8M1.6 8h1.8M12.6 8h1.8M3.5 3.5l1.3 1.3M11.2 11.2l1.3 1.3M3.5 12.5l1.3-1.3M11.2 4.8l1.3-1.3" /><circle cx="8" cy="8" r="4.6" /></Svg>
+);
+export const PlusIcon = () => (
+  <Svg size={14}><path d="M8 3v10M3 8h10" /></Svg>
+);
+export const ChevronIcon = ({ open }: { open?: boolean }) => (
+  <span class={`chev${open ? ' open' : ''}`}><Svg size={12}><path d="M6 3.5l4.5 4.5L6 12.5" /></Svg></span>
+);
+export const TrashIcon = () => (
+  <Svg size={13}><path d="M2.8 4.2h10.4M6.2 4.2V2.6h3.6v1.6M4.2 4.2l.7 9.2h6.2l.7-9.2M6.8 6.8v4.4M9.2 6.8v4.4" /></Svg>
+);
+export const RestoreIcon = () => (
+  <Svg size={13}><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8" /><path d="M2.6 2.4v2.8h2.8" /></Svg>
+);
+export const ArrowUpIcon = () => <Svg size={12}><path d="M8 13V3M4 7l4-4 4 4" /></Svg>;
+export const ArrowDownIcon = () => <Svg size={12}><path d="M8 3v10M4 9l4 4 4-4" /></Svg>;
+export const HeatIcon = () => (
+  <Svg size={13}><rect x="2" y="2" width="5" height="5" rx="1" /><rect x="9" y="2" width="5" height="5" rx="1" /><rect x="2" y="9" width="5" height="5" rx="1" /><rect x="9" y="9" width="5" height="5" rx="1" /></Svg>
+);
+
+/** Small icon per maneuver type (menu and edit popup). */
+export function ManeuverIcon({ type }: { type: string }) {
+  switch (type) {
+    case 'launch':
+      return <Svg size={16}><path d="M8 1.8c2 1.6 3 3.8 3 6.4v2.6H5V8.2c0-2.6 1-4.8 3-6.4z" /><path d="M5 9.6l-2 2.6h2M11 9.6l2 2.6h-2M7 13.2l1 1.4 1-1.4" /></Svg>;
+    case 'transfer':
+      return <Svg size={16}><circle cx="3.5" cy="12" r="1.5" /><circle cx="12.5" cy="4" r="1.5" /><path d="M4.6 10.8C6 6.6 8.4 4.6 11 4.1" stroke-dasharray="2 1.6" /></Svg>;
+    case 'flyby':
+      return <Svg size={16}><circle cx="9.5" cy="8" r="2.4" /><path d="M1.8 13.5c4-.4 6.6-2 6.4-4.4M8.2 9.1C7.9 6.7 9.6 4 14 2.6" /></Svg>;
+    case 'changeOrbit':
+      return <Svg size={16}><circle cx="8" cy="8" r="1.6" /><circle cx="8" cy="8" r="4" /><circle cx="8" cy="8" r="6.4" stroke-dasharray="2 1.6" /></Svg>;
+    case 'insertion':
+      return <Svg size={16}><circle cx="8" cy="8" r="2" /><path d="M8 2.2A5.8 5.8 0 1 1 2.4 9.5" /><path d="M1.4 6.6l1 2.9 2.8-1.1" /></Svg>;
+    case 'land':
+      return <Svg size={16}><path d="M8 2v8M5 7l3 3 3-3M2.5 13.5h11" /></Svg>;
+    case 'ascent':
+      return <Svg size={16}><path d="M8 11V3M5 6l3-3 3 3M2.5 13.5h11" /></Svg>;
+    case 'separate':
+      return <Svg size={16}><path d="M8 14V8.5M8 8.5L3.5 3M8 8.5L12.5 3M2.6 5.2L3.5 3l2.2.4M13.4 5.2L12.5 3l-2.2.4" /></Svg>;
+    case 'entry':
+      return <Svg size={16}><path d="M3 3l6.5 6.5" /><path d="M10.6 7.4a3 3 0 1 1-3.2 3.2" /><path d="M5 9.5L3.5 12.5 6.5 11" /></Svg>;
+    default:
+      return <Svg size={16}><circle cx="8" cy="8" r="5" /></Svg>;
+  }
+}
 
 export function SeverityIcon({ severity }: { severity: 'error' | 'warning' | 'info' }) {
   return (

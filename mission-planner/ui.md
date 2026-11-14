@@ -4,9 +4,29 @@ Labels: **user direction** = stated by the user (source: [UI and testing notes](
 
 ## Layout
 
-**User direction:** the solar system map is always visible. The rocket configurator, procurement tasks, and versions sit in a docked side panel.
+**User direction:** the solar system map is always visible. The rocket configurator, procurement tasks, and versions sit in a side panel.
 
-**Proposal:**
+**User direction (2026-11-14, after the first build, [notes](notes/2026-11-14-ui-feedback.md)):** the style follows a reference image (removed for publication; redistribution rights were not documented): dark glowing space visual, glass cards floating over it, pill navigation. The UI must be much simpler: few controls visible at once. The agency calendar is not pausable in the main UI.
+
+**Proposal — layout after the redesign:**
+
+```
+ MISSION PLANNER    ( Rocket )( Procurement )( Versions )    [date •][budget][launch][⚙]
+┌──────────────────────────────────────────────────────────────┬──────────────────┐
+│                                                              │ glass side panel │
+│        full-bleed solar system map (glow, orbits,            │ (active pill;    │
+│        trajectories, maneuver dots, clickable end states)    │  collapsible)    │
+│                                                              │                  │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐           │                  │
+│ │ Δv budget    │ │ Goals        │ │ Issues       │           │                  │
+│ └──────────────┘ └──────────────┘ └──────────────┘           └──────────────────┘
+```
+
+- Details appear on demand: rocket parts are compact rows that expand one at a time to show their sliders; procurement rows expand for contract details; the version comparison is behind a toggle.
+- The calendar date runs on its own (pulsing dot); pause and speed live only in the Dev drawer (gear icon).
+- The launch chip opens a popover with the launch-date control, the mission's launch deadline, and "Launch now".
+
+**Earlier proposal (first build), kept for history:**
 
 ```
 ┌──────────────────────────────────────────┬─────────────────────┐

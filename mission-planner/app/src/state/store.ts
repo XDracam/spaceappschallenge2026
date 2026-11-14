@@ -13,7 +13,7 @@ import { createStore, useStore } from './createStore';
 
 // ================================================================== stores
 
-const SAVE_KEY = 'mission-planner.save.v1';
+const SAVE_KEY = 'mission-planner.save.v2';
 
 function newGame(mission: MissionDef): GameState {
   return {
@@ -55,7 +55,8 @@ export interface ClockState {
 
 export const clockStore = createStore<ClockState>({
   day: saved?.day ?? 0,
-  running: false,
+  // The agency calendar runs with play time; pausing is a dev control only.
+  running: true,
   daysPerSecond: DEFAULT_DAYS_PER_SECOND,
 });
 
@@ -451,7 +452,7 @@ export const actions = {
 
   setLaunchDay(day: number) {
     gameStore.update((g) => {
-      g.plan.launchDay = Math.round(Math.min(g.mission.launchDeadlineDay, Math.max(Math.ceil(today()), day)));
+      g.plan.launchDay = Math.round(Math.min(g.mission.completionDeadlineDay, Math.max(Math.ceil(today()), day)));
     });
   },
 
@@ -534,7 +535,7 @@ export const actions = {
     if (gameStore.get().phase !== 'planning') return;
     const day = Math.ceil(clockStore.get().day);
     gameStore.update((g) => {
-      g.plan.launchDay = Math.min(day, g.mission.launchDeadlineDay);
+      g.plan.launchDay = Math.min(day, g.mission.completionDeadlineDay);
     });
     clockActions.advance(gameStore.get().plan.launchDay - clockStore.get().day);
   },
@@ -570,7 +571,7 @@ export const actions = {
 
   resetGame() {
     gameStore.set(newGame(MARS_ORBITER_LANDER));
-    clockStore.set({ day: 0, running: false, daysPerSecond: DEFAULT_DAYS_PER_SECOND });
+    clockStore.set({ day: 0, running: true, daysPerSecond: DEFAULT_DAYS_PER_SECOND });
     uiStore.update((u) => {
       u.viewCenter = 'sun';
       u.selectedBranchId = 'branch-root';

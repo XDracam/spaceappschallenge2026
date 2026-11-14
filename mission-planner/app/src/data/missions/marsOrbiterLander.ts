@@ -31,9 +31,11 @@ export const MARS_ORBITER_LANDER: MissionDef = {
   name: 'Mars orbiter + lander',
   briefing:
     'Put an orbiter around Mars to map it from orbit, and land a lander that runs surface science. ' +
-    'Two Earth–Mars launch windows fall before the launch deadline.',
+    'All goals must be achieved by the mission deadline.',
   startDateISO: '2030-01-01',
-  launchDeadlineDay: 1100,
+  // 1 Jul 2033. The first Mars window (late 2030) arrives with plenty of margin;
+  // the second (late 2032) only makes it with a faster-than-cheapest transfer.
+  completionDeadlineDay: 1277,
   budgetM: 900,
   goals: [
     { id: 'goal-orbit', name: 'Reach Mars orbit', kind: 'orbit', body: 'mars' },

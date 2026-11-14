@@ -21,8 +21,7 @@ export const SPEED_PRESETS = [
 export function DevTab() {
   const phase = useGame((g) => g.phase);
   return (
-    <div class="tab-pad dev-tab">
-      <div class="dev-banner">Dev controls — stand-in for procurement, science, comms</div>
+    <div class="dev-tab">
       <fieldset disabled={phase !== 'planning'} class="plain">
         <CalendarSection />
         <ProcurementSection />

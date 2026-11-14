@@ -62,6 +62,8 @@ The game has two separate kinds of time.
 - Every part must be delivered before the launch date. Launch windows are fixed by planet positions, so a late delivery can force a costlier transfer or a later window.
 - When the agency calendar reaches the launch date, play ends and the final playthrough starts. It uses the contracted parts' actual stats.
 
+**Mission deadline — user direction (2026-11-14):** each mission has one completion deadline (not a launch deadline). Goals achieved after it do not count; the live test flags them. Launching later therefore needs faster, costlier transfers, which gives the delta-v-versus-travel-time trade-off its purpose.
+
 ## Final playthrough outcome
 
 **User direction:**

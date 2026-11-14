@@ -203,7 +203,8 @@ export interface MissionDef {
   name: string;
   briefing: string;
   startDateISO: string;          // calendar day 0
-  launchDeadlineDay: number;     // latest allowed launch day
+  /** Mission completion deadline: goals achieved after this day do not count. */
+  completionDeadlineDay: number;
   budgetM: number;
   goals: Goal[];
   /** Research limits: key `${kind}.${variant}.${statKey}` -> max value currently researched. */

@@ -10,7 +10,8 @@ import { findBranch, findManeuver } from '../model/rocketUtils';
 import { formatDay, formatDuration, formatDv } from '../model/units';
 import { Slider } from './Slider';
 import {
-  CloseIcon, SeverityIcon, bodyName, branchColor, clamp, closePopup, describeState, findResult, fmtNum, localUi, newId,
+  CloseIcon, HeatIcon, ManeuverIcon, TrashIcon, bodyName, branchColor, clamp, closePopup, describeState, findResult, fmtNum,
+  localUi, newId,
 } from './common';
 import { Heatmap } from './Heatmap';
 
@@ -60,12 +61,16 @@ function Floating({ screen, children, cls }: { screen: Vec2; children: Component
 function PopupHead({ title, sub, color }: { title: string; sub?: string; color?: string }) {
   return (
     <div class="popup-head">
-      {color && <span class="dot" style={{ background: color }} />}
       <div class="popup-title">
-        <b>{title}</b>
-        {sub && <div class="muted small">{sub}</div>}
+        <div class="popup-big">{title}</div>
+        {sub && (
+          <div class="popup-sub">
+            {color && <span class="dot" style={{ background: color }} />}
+            {sub}
+          </div>
+        )}
       </div>
-      <button class="btn icon-btn ghost" title="Close (Esc)" onClick={closePopup}><CloseIcon /></button>
+      <button class="round-btn small" title="Close (Esc)" onClick={closePopup}><CloseIcon /></button>
     </div>
   );
 }
@@ -94,16 +99,19 @@ function ManeuverMenu({ branchId, screen }: { branchId: string; screen: Vec2 }) 
 
   return (
     <Floating screen={screen} cls="menu-popup">
-      <PopupHead title={`Add maneuver · ${branch?.name ?? branchId}`} sub={describeState(state, game.mission.startDateISO)}
+      <PopupHead title="Add maneuver" sub={`${branch?.name ?? branchId} · ${describeState(state, game.mission.startDateISO)}`}
         color={branchColor(bi)} />
-      {state?.kind === 'lost' && <p class="err-text small">{state.reason}</p>}
-      {options.length === 0 && state?.kind !== 'lost' && <p class="empty">No maneuvers available from here.</p>}
+      {state?.kind === 'lost' && <div class="err-line">{state.reason}</div>}
+      {options.length === 0 && state?.kind !== 'lost' && <div class="empty">No maneuvers available from here.</div>}
       <ul class="option-list">
         {options.map((o, i) => (
           <li key={`${o.type}-${o.target ?? ''}-${i}`}>
             <button class="option" disabled={!o.enabled} title={o.reason} onClick={() => pick(i)}>
-              <span>{o.label}</span>
-              {!o.enabled && o.reason && <span class="muted small">{o.reason}</span>}
+              <span class="opt-icon"><ManeuverIcon type={o.type} /></span>
+              <span class="opt-text">
+                <span>{o.label}</span>
+                {!o.enabled && o.reason && <span class="muted tiny opt-reason">{o.reason}</span>}
+              </span>
             </button>
           </li>
         ))}
@@ -164,29 +172,37 @@ function ManeuverEdit({ maneuverId, screen }: { maneuverId: string; screen: Vec2
   const upd = (patch: Partial<Maneuver>) => actions.updateManeuver(m.id, patch);
   const title = result?.label ?? defaultLabel(m);
 
+  const left = result ? result.dvAvailableBeforeMs - result.dvRequiredMs : undefined;
+  const paidBy = result?.burns.map((b) => `${stageName(rocket, b.stageId)} ${formatDv(b.dvMs)}`).join(' · ') ?? '';
+  const dur = result ? result.endDay - result.startDay : 0;
+
   return (
     <Floating screen={screen} cls="edit-popup">
       <PopupHead title={title} sub={branch.name} color={branchColor(bi)} />
-      <div class="edit-summary">
-        <div class="kv"><span>Δv required</span><b class={`num${result && !result.ok ? ' err-text' : ''}`}>{result ? formatDv(result.dvRequiredMs) : '—'}</b></div>
-        {result && (
-          <div class="kv"><span>Δv left before</span><span class="num">{formatDv(result.dvAvailableBeforeMs)}</span></div>
-        )}
-        {result && (
-          <div class="kv"><span>Dates</span>
-            <span class="num">{formatDay(result.startDay, startISO)} → {formatDay(result.endDay, startISO)}
-              {result.endDay - result.startDay >= 1 && <span class="muted"> ({formatDuration(result.endDay - result.startDay)})</span>}
-            </span>
-          </div>
-        )}
-        {result?.twr !== undefined && (
-          <div class="kv"><span>TWR</span><span class={`num${result.twr < 1 ? ' err-text' : ''}`}>{result.twr.toFixed(2)}</span></div>
-        )}
-        {result && result.burns.length > 0 && (
-          <div class="kv"><span>Paid by</span>
-            <span class="num small">{result.burns.map((b) => `${stageName(rocket, b.stageId)} ${formatDv(b.dvMs)}`).join(' · ')}</span>
-          </div>
-        )}
+      <div class="stat-grid">
+        <div>
+          <span class="label">Δv required</span>
+          <b class={`num${result && !result.ok ? ' err-text' : ''}`}>{result ? formatDv(result.dvRequiredMs) : '—'}</b>
+        </div>
+        <div title={result ? `Before the maneuver: ${formatDv(result.dvAvailableBeforeMs)}` : undefined}>
+          <span class="label">Δv left</span>
+          <b class={`num${left !== undefined && left < 0 ? ' err-text' : ''}`}>{left !== undefined ? (left < 0 ? `−${formatDv(-left)}` : formatDv(left)) : '—'}</b>
+        </div>
+        <div title={result && dur >= 1 ? `Duration ${formatDuration(dur)}` : undefined}>
+          <span class="label">Start → end</span>
+          <b class="num date-val">
+            {result ? (dur >= 1
+              ? <>{formatDay(result.startDay, startISO)}<span class="muted"> →</span><br />{formatDay(result.endDay, startISO)}</>
+              : formatDay(result.startDay, startISO)) : '—'}
+          </b>
+        </div>
+        <div title={paidBy || undefined}>
+          <span class="label">Paid by</span>
+          <b class="paid-val">{result && result.burns.length > 0 ? result.burns.map((b) => stageName(rocket, b.stageId)).join(', ') : '—'}</b>
+          {result?.twr !== undefined && (
+            <span class={`tiny num${result.twr < 1 ? ' err-text' : ' muted'}`}>TWR {result.twr.toFixed(2)}</span>
+          )}
+        </div>
       </div>
 
       <div class="edit-controls">
@@ -194,21 +210,29 @@ function ManeuverEdit({ maneuverId, screen }: { maneuverId: string; screen: Vec2
       </div>
 
       {result && result.issues.length > 0 && (
-        <ul class="issue-list compact">
+        <ul class="err-lines">
           {result.issues.map((i, k) => (
-            <li key={k} class={`issue ${i.severity}`}><SeverityIcon severity={i.severity} /><span>{i.message}</span></li>
+            <li key={k} class={`sev-line ${i.severity}`} title={i.message}>{i.message}</li>
           ))}
         </ul>
       )}
 
       <div class="popup-foot">
+        {m.type === 'transfer' && (
+          <button class="pill small" disabled={result?.stateBefore.kind !== 'orbit'}
+            title={result?.stateBefore.kind !== 'orbit' ? 'Needs a computed departure orbit' : 'Departure date × travel time'}
+            onClick={() => uiStore.update((u) => { u.popup = { kind: 'heatmap', maneuverId: m.id }; })}>
+            <HeatIcon /> Δv heat map
+          </button>
+        )}
+        <div class="spacer" />
         {isLaunch ? (
-          <span class="muted small">The launch can’t be deleted.</span>
+          <span class="muted tiny">The launch can’t be deleted.</span>
         ) : (
-          <>
-            <span class="muted small">Deleting also removes all later maneuvers in this branch.</span>
-            <button class="btn small danger" onClick={() => actions.removeManeuver(m.id)}>Delete</button>
-          </>
+          <button class="round-btn small danger" title="Delete maneuver (also removes all later maneuvers in this branch)"
+            onClick={() => actions.removeManeuver(m.id)}>
+            <TrashIcon />
+          </button>
         )}
       </div>
     </Floating>
@@ -253,7 +277,7 @@ function ManeuverControls({ m, branch, index, result, upd }: {
           <label class="check" title={atm ? 'Needs a heat shield' : 'Needs an atmosphere'}>
             <input type="checkbox" checked={m.aerocapture} disabled={!atm && !m.aerocapture}
               onChange={(e) => upd({ aerocapture: (e.currentTarget as HTMLInputElement).checked })} />
-            Aerocapture {atm ? '(needs a heat shield)' : '(no atmosphere here)'}
+            Aerocapture{!atm && <span class="muted tiny"> · no atmosphere</span>}
           </label>
         </>
       );
@@ -266,7 +290,7 @@ function ManeuverControls({ m, branch, index, result, upd }: {
       return <SeparateControls m={m} branch={branch} index={index} upd={upd} />;
     case 'land':
     case 'entry':
-      return <p class="muted small">No parameters.</p>;
+      return null;
   }
 }
 
@@ -280,7 +304,6 @@ function TransferControls({ m, before, upd }: { m: TransferManeuver; before?: Fl
   const [t0, t1] = ranges.travel;
   return (
     <>
-      <div class="kv"><span>Target</span><b>{bodyName(m.target)}</b></div>
       <div class="stat">
         <div class="stat-head"><span class="stat-label">Departure</span>
           <span class="stat-value num">{formatDay(m.departDay, startISO)} <span class="muted">(+{formatDuration(m.departDay - earliest)})</span></span>
@@ -295,11 +318,6 @@ function TransferControls({ m, before, upd }: { m: TransferManeuver; before?: Fl
         <Slider min={t0} max={Math.max(t0 + 1, t1)} step={1} scale="linear" value={m.travelDays}
           onChange={(v) => upd({ travelDays: Math.round(v) })} />
       </div>
-      <button class="btn small primary" disabled={before?.kind !== 'orbit'}
-        title={before?.kind !== 'orbit' ? 'Needs a computed departure orbit' : 'Departure date × travel time'}
-        onClick={() => uiStore.update((u) => { u.popup = { kind: 'heatmap', maneuverId: m.id }; })}>
-        Δv heat map
-      </button>
     </>
   );
 }
@@ -345,7 +363,7 @@ function SeparateControls({ m, branch, index, upd }: { m: SeparateManeuver; bran
   };
   return (
     <>
-      <div class="muted small">Spacecraft leaving on a new branch:</div>
+      <div class="label" title="Spacecraft leaving on a new branch">Separating</div>
       {onBoard.map((id) => {
         const sc = rocket.spacecraft.find((s) => s.id === id);
         return (

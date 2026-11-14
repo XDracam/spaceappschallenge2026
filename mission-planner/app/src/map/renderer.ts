@@ -9,10 +9,30 @@ import { clockStore, gameStore, getEvaluation, uiStore, type UiState } from '../
 import { formatDay, formatDv } from '../model/units';
 import { type Projection, fitScale, radiusPx, toScreen } from './projection';
 import {
-  BODY_PX, COLORS, DRAG_THRESHOLD_PX, FONT, FONT_BOLD, FONT_TITLE, MAX_ZOOM, MIN_ZOOM, RING_HIT_BAND_PX, branchColor,
+  ANIM_FPS, BODY_PX, COLORS, DRAG_THRESHOLD_PX, FONT, FONT_BOLD, FONT_HINT, FONT_HUD, FONT_LABEL, FONT_TITLE, LABEL_SPACING,
+  MAX_ZOOM, MIN_ZOOM, RIM_COLOR, RING_HIT_BAND_PX, branchColor,
 } from './style';
+import {
+  type Star, drawBody, drawGlow, drawStreak, drawSunDisc, nebulaLayer, starLayer, withAlpha,
+} from './sprites';
 
 // ------------------------------------------------------------------ types
+
+/** CSS px of the map covered by floating UI on each side. */
+export interface MapInsets {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+/** The free (uncovered) rectangle of the canvas, CSS px. */
+interface FreeRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
 type TipLine = { text: string; color?: string; bold?: boolean };
 
@@ -81,17 +101,35 @@ function mulberry32(seed: number) {
   };
 }
 
-const STARS = (() => {
+const STAR_TINTS = ['#ffffff', '#ffffff', '#cfe6ff', '#a9d8ff', '#ffe9c7'];
+
+const STARS: Star[] = (() => {
   const rnd = mulberry32(20261114);
-  return Array.from({ length: 260 }, () => ({
-    fx: rnd(), fy: rnd(), size: rnd() < 0.85 ? 0.6 : 1.1, alpha: 0.15 + rnd() * 0.45,
+  return Array.from({ length: 320 }, () => {
+    const big = rnd() > 0.88;
+    return {
+      fx: rnd(), fy: rnd(), size: big ? 1.3 + rnd() * 0.5 : 0.6 + rnd() * 0.5,
+      alpha: big ? 0.35 + rnd() * 0.35 : 0.1 + rnd() * 0.35,
+      tint: STAR_TINTS[Math.floor(rnd() * STAR_TINTS.length)],
+    };
+  });
+})();
+
+/** A few bright stars drawn per frame with a soft glow, cross flare and twinkle. */
+const BRIGHT_STARS = (() => {
+  const rnd = mulberry32(4242);
+  return Array.from({ length: 9 }, () => ({
+    fx: rnd(), fy: rnd(), size: 0.9 + rnd() * 0.9, phase: rnd() * Math.PI * 2, speed: 0.5 + rnd() * 0.9,
+    tint: rnd() > 0.4 ? '#bfe6ff' : '#ffffff',
   }));
 })();
 
 const BELT = (() => {
   const rnd = mulberry32(7);
   const au = 149_597_870.7;
-  return Array.from({ length: 420 }, () => ({ angle: rnd() * Math.PI * 2, rKm: (2.15 + rnd() * 1.15) * au, alpha: 0.08 + rnd() * 0.18 }));
+  return Array.from({ length: 520 }, () => ({
+    angle: rnd() * Math.PI * 2, rKm: (2.15 + rnd() * 1.15) * au, alpha: 0.06 + rnd() * 0.16, size: rnd() > 0.85 ? 1.4 : 1,
+  }));
 })();
 
 function finite(v: Vec2): boolean {
@@ -102,10 +140,9 @@ function clamp(v: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, v));
 }
 
-function withAlpha(hex: string, alpha: number): string {
-  const h = hex.replace('#', '');
-  const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+/** Canvas letterSpacing (Chromium/Firefox); ignored where unsupported. */
+function setSpacing(ctx: CanvasRenderingContext2D, v: string) {
+  (ctx as unknown as { letterSpacing?: string }).letterSpacing = v;
 }
 
 function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -187,6 +224,12 @@ export class MapRenderer {
   private ourHoverManeuver: string | null = null;
   private raf = 0;
   private cleanups: (() => void)[] = [];
+  private insets: MapInsets = { top: 0, right: 0, bottom: 0, left: 0 };
+  /** Set during draw when something on screen animates (end-state pulse). */
+  private animating = false;
+  private animTimer = 0;
+  /** Animation clock (s), sampled at draw time. */
+  private time = 0;
 
   constructor(private canvas: HTMLCanvasElement, private container: HTMLElement) {
     const ctx = canvas.getContext('2d');
@@ -214,12 +257,49 @@ export class MapRenderer {
     on('dblclick', (e) => { e.preventDefault(); this.resetView(); });
     on('contextmenu', (e) => e.preventDefault());
 
+    // Web fonts (Inter / Exo 2) may arrive after the first draw.
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+    if (fonts) {
+      fonts.ready.then(req).catch(() => { /* ignore */ });
+      fonts.addEventListener('loadingdone', req);
+      this.cleanups.push(() => fonts.removeEventListener('loadingdone', req));
+    }
+    // Resume the animation when the tab becomes visible again.
+    const onVis = () => { if (document.visibilityState === 'visible') this.request(); };
+    document.addEventListener('visibilitychange', onVis);
+    this.cleanups.push(() => document.removeEventListener('visibilitychange', onVis));
+
     this.request();
+  }
+
+  /** Area covered by floating UI; the default view fits the rest. */
+  setInsets(insets: MapInsets) {
+    const n = (v: number) => (Number.isFinite(v) ? Math.max(0, v) : 0);
+    const next = { top: n(insets.top), right: n(insets.right), bottom: n(insets.bottom), left: n(insets.left) };
+    const cur = this.insets;
+    if (next.top === cur.top && next.right === cur.right && next.bottom === cur.bottom && next.left === cur.left) return;
+    this.insets = next;
+    // Zoom and pan are relative to the free rectangle, so the view re-fits.
+    this.request();
+  }
+
+  /** Free rectangle (CSS px). Falls back to the whole canvas if the insets leave too little. */
+  private free(): FreeRect {
+    const { top, right, bottom, left } = this.insets;
+    let x = left;
+    let w = this.w - left - right;
+    let y = top;
+    let h = this.h - top - bottom;
+    if (w < 200) { x = 0; w = this.w; }
+    if (h < 160) { y = 0; h = this.h; }
+    return { x, y, w, h };
   }
 
   destroy() {
     cancelAnimationFrame(this.raf);
     this.raf = 0;
+    clearTimeout(this.animTimer);
+    this.animTimer = 0;
     this.cleanups.forEach((c) => c());
     this.cleanups = [];
     if (this.ourHoverManeuver && uiStore.get().hoverManeuverId === this.ourHoverManeuver) {
@@ -311,8 +391,9 @@ export class MapRenderer {
     const factor = Math.exp(-e.deltaY * unit * 0.0015);
     const z2 = clamp(this.zoom * factor, MIN_ZOOM, MAX_ZOOM);
     const ratio = z2 / this.zoom;
-    const cx = this.w / 2;
-    const cy = this.h / 2;
+    const fr = this.free();
+    const cx = fr.x + fr.w / 2;
+    const cy = fr.y + fr.h / 2;
     // Keep the point under the cursor fixed.
     this.panX = p.x - cx - ratio * (p.x - cx - this.panX);
     this.panY = p.y - cy - ratio * (p.y - cy - this.panY);
@@ -420,12 +501,15 @@ export class MapRenderer {
       this.selectedBody = null;
     }
 
-    const fitPx = Math.max(40, Math.min(this.w, this.h) * 0.43);
+    const fr = this.free();
+    const fitPx = Math.max(40, Math.min(fr.w, fr.h) * 0.43);
     const proj: Projection = {
-      ox: this.w / 2 + this.panX,
-      oy: this.h / 2 + this.panY,
+      ox: fr.x + fr.w / 2 + this.panX,
+      oy: fr.y + fr.h / 2 + this.panY,
       scale: fitScale(center, fitPx) * this.zoom,
     };
+    this.time = performance.now() / 1000;
+    this.animating = false;
     const day = ui.playthrough?.day ?? ui.mapDay ?? clock.day;
     const F: Frame = {
       ctx, game, ui, evaluation, day, center, proj,
@@ -460,6 +544,16 @@ export class MapRenderer {
       else this.hover = next;
     }
     this.drawTooltip(F);
+    this.scheduleAnimation();
+  }
+
+  /** Pulse / twinkle: redraw at most ANIM_FPS while something animates and the tab is visible. */
+  private scheduleAnimation() {
+    if (!this.animating || this.animTimer || document.visibilityState !== 'visible') return;
+    this.animTimer = window.setTimeout(() => {
+      this.animTimer = 0;
+      this.request();
+    }, 1000 / ANIM_FPS);
   }
 
   // ---------------------------------------------------------- anchors
@@ -503,6 +597,7 @@ export class MapRenderer {
     F.drawnProxies.add(a.key);
     const ctx = F.ctx;
     ctx.save();
+    drawGlow(ctx, BODIES[a.body].color, a.x, a.y, a.r * 3.2, 0.35);
     ctx.fillStyle = BODIES[a.body].color;
     ctx.beginPath();
     ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
@@ -524,17 +619,48 @@ export class MapRenderer {
   // ------------------------------------------------------- background
 
   private drawBackground(F: Frame) {
-    const { ctx } = F;
-    ctx.fillStyle = COLORS.bg;
-    ctx.fillRect(0, 0, this.w, this.h);
-    ctx.fillStyle = '#ffffff';
-    for (const s of STARS) {
-      const x = (((s.fx * this.w + this.panX * 0.04) % this.w) + this.w) % this.w;
-      const y = (((s.fy * this.h + this.panY * 0.04) % this.h) + this.h) % this.h;
-      ctx.globalAlpha = s.alpha;
-      ctx.fillRect(x, y, s.size, s.size);
+    const { ctx, proj } = F;
+    const { w, h } = this;
+    // Base colour + nebula haze (cached, fixed to the screen).
+    ctx.drawImage(nebulaLayer(w, h, this.dpr), 0, 0, w, h);
+
+    // Deep-blue glow behind the view centre.
+    const m = Math.min(w, h);
+    drawGlow(ctx, COLORS.centerGlow, proj.ox, proj.oy, m * 0.85, 0.55);
+
+    // Dim star field, tiled with a slight parallax.
+    const stars = starLayer(w, h, this.dpr, STARS);
+    const ox = (((this.panX * 0.04) % w) + w) % w;
+    const oy = (((this.panY * 0.04) % h) + h) % h;
+    for (const dx of [ox - w, ox]) {
+      for (const dy of [oy - h, oy]) {
+        if (dx + w <= 0 || dy + h <= 0 || dx >= w || dy >= h) continue;
+        ctx.drawImage(stars, dx, dy, w, h);
+      }
+    }
+
+    // A few bright stars with a soft glow and a very subtle twinkle.
+    for (const s of BRIGHT_STARS) {
+      const x = (((s.fx * w + this.panX * 0.06) % w) + w) % w;
+      const y = (((s.fy * h + this.panY * 0.06) % h) + h) % h;
+      const tw = 0.82 + 0.18 * Math.sin(this.time * s.speed + s.phase);
+      drawGlow(ctx, s.tint, x, y, 7 * s.size, 0.45 * tw);
+      drawStreak(ctx, s.tint, x, y, 9 * s.size, 0.9, 0.35 * tw);
+      ctx.globalAlpha = 0.9 * tw;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(x, y, s.size * 0.75, 0, Math.PI * 2);
+      ctx.fill();
     }
     ctx.globalAlpha = 1;
+  }
+
+  /** Screen angle (radians, y down) from a point toward the Sun. */
+  private lightAngle(F: Frame, x: number, y: number): number {
+    if (F.center === 'sun') return Math.atan2(F.proj.oy - y, F.proj.ox - x);
+    const v = bodyPosition(F.center, F.day);
+    if (!finite(v) || (v.x === 0 && v.y === 0)) return Math.PI;
+    return Math.atan2(v.y, -v.x);
   }
 
   private viewBodies(center: BodyId) {
@@ -545,11 +671,11 @@ export class MapRenderer {
     const { ctx, proj, center } = F;
     if (center === 'sun') {
       // Asteroid belt speckle.
-      ctx.fillStyle = COLORS.muted;
+      ctx.fillStyle = COLORS.belt;
       for (const p of BELT) {
         const s = toScreen(proj, { x: Math.cos(p.angle) * p.rKm, y: Math.sin(p.angle) * p.rKm });
         ctx.globalAlpha = p.alpha;
-        ctx.fillRect(s.x, s.y, 1, 1);
+        ctx.fillRect(s.x, s.y, p.size, p.size);
       }
       ctx.globalAlpha = 1;
     }
@@ -558,10 +684,10 @@ export class MapRenderer {
       const r = radiusPx(proj, b.orbitRadiusKm);
       const small = BODY_PX[b.id] <= 3;
       const hot = hoverBody === b.id || this.selectedBody === b.id;
-      ctx.strokeStyle = hot ? COLORS.orbitHover : COLORS.orbit;
-      ctx.lineWidth = hot ? 1.5 : 1;
-      ctx.globalAlpha = small && !hot ? 0.7 : 1;
-      ctx.setLineDash(small ? [2, 4] : []);
+      ctx.strokeStyle = hot ? COLORS.orbitHover : center === 'sun' ? COLORS.orbit : COLORS.orbitMoon;
+      ctx.lineWidth = hot ? 1.3 : 1;
+      ctx.globalAlpha = small && !hot ? 0.8 : 1;
+      ctx.setLineDash(small ? [1.5, 4] : []);
       ctx.beginPath();
       ctx.arc(proj.ox, proj.oy, r, 0, Math.PI * 2);
       ctx.stroke();
@@ -579,18 +705,21 @@ export class MapRenderer {
     const cb = BODIES[center];
     ctx.save();
     if (center === 'sun') {
-      ctx.shadowColor = cb.color;
-      ctx.shadowBlur = 24;
+      // Large soft bloom + faint horizontal flare, then the white-hot disc.
+      const bloom = Math.max(70, c.r * 9);
+      drawGlow(ctx, '#ff9a2e', c.x, c.y, bloom, 0.32);
+      drawGlow(ctx, '#ffd27a', c.x, c.y, bloom * 0.45, 0.55);
+      drawGlow(ctx, '#fff4d6', c.x, c.y, c.r * 3, 0.8);
+      drawStreak(ctx, '#ffe2a8', c.x, c.y, bloom * 1.1, Math.max(1.5, c.r * 0.22), 0.45);
+      drawSunDisc(ctx, this.dpr, c.x, c.y, c.r);
+    } else {
+      const rim = RIM_COLOR[center] ?? cb.color;
+      drawGlow(ctx, rim, c.x, c.y, Math.max(c.r * 2.3, c.r + 60), 0.28);
+      drawBody(ctx, this.dpr, center, c.x, c.y, c.r, this.lightAngle(F, c.x, c.y), true);
     }
-    const grad = ctx.createRadialGradient(c.x - c.r * 0.35, c.y - c.r * 0.35, c.r * 0.1, c.x, c.y, c.r);
-    grad.addColorStop(0, withAlpha(cb.color, 1));
-    grad.addColorStop(1, center === 'sun' ? withAlpha(cb.color, 0.9) : withAlpha(cb.color, 0.55));
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
-    if (center === 'sun') this.label(F, cb.name, c.x + c.r + 5, c.y + 4, false);
+    // Below the flare streak.
+    if (center === 'sun') this.label(F, cb.name, c.x + c.r * 0.7 + 4, c.y + c.r + 13, false);
     this.hits.push({
       key: `body:${center}`, priority: 0, action: { kind: 'body', body: center },
       contains: (x, y) => Math.hypot(x - c.x, y - c.y) <= Math.max(c.r, 9),
@@ -602,23 +731,21 @@ export class MapRenderer {
       if (!a) continue;
       const hot = hoverBody === b.id || this.selectedBody === b.id;
       ctx.save();
-      if (hot) {
-        ctx.shadowColor = b.color;
-        ctx.shadowBlur = 12;
-      }
-      ctx.fillStyle = b.color;
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-      ctx.fill();
+      drawGlow(ctx, b.color, a.x, a.y, a.r * (hot ? 5 : 3.6), hot ? 0.6 : 0.38);
+      drawBody(ctx, this.dpr, b.id, a.x, a.y, a.r, this.lightAngle(F, a.x, a.y), false);
       ctx.restore();
       if (this.selectedBody === b.id) {
-        ctx.strokeStyle = COLORS.text;
+        ctx.save();
+        ctx.strokeStyle = withAlpha(COLORS.accent, 0.8);
+        ctx.shadowColor = COLORS.accent;
+        ctx.shadowBlur = 8;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(a.x, a.y, a.r + 3, 0, Math.PI * 2);
+        ctx.arc(a.x, a.y, a.r + 4, 0, Math.PI * 2);
         ctx.stroke();
+        ctx.restore();
       }
-      this.label(F, b.name, a.x + a.r + 5, a.y + 4, hot);
+      this.label(F, b.name, a.x + a.r + 6, a.y + 4, hot);
       const nested = center === 'sun' && SYSTEM_VIEW_BODIES.includes(b.id);
       const tip: TipLine[] = [{ text: b.name, bold: true }];
       if (nested) tip.push({ text: `Click to open the ${b.name} system`, color: COLORS.muted });
@@ -632,9 +759,16 @@ export class MapRenderer {
 
   private label(F: Frame, text: string, x: number, y: number, hot: boolean) {
     const { ctx } = F;
-    ctx.font = FONT;
+    ctx.save();
+    ctx.font = FONT_LABEL;
+    setSpacing(ctx, LABEL_SPACING);
     ctx.fillStyle = hot ? COLORS.text : COLORS.muted;
-    ctx.fillText(text, x, y);
+    if (hot) {
+      ctx.shadowColor = withAlpha(COLORS.accent, 0.6);
+      ctx.shadowBlur = 6;
+    }
+    ctx.fillText(text.toUpperCase(), x, y);
+    ctx.restore();
   }
 
   // ----------------------------------------------------- trajectories
@@ -678,17 +812,24 @@ export class MapRenderer {
         if (!t || t.centerBody !== center || t.points.length < 2) return;
         const failed = mi >= failIdx;
         const isFocus = m.maneuverId === focus;
+        const color = failed ? COLORS.fail : branchColor(i);
         ctx.save();
-        ctx.globalAlpha = selected || isFocus ? 1 : 0.5;
-        ctx.strokeStyle = failed ? COLORS.fail : branchColor(i);
-        ctx.lineWidth = isFocus ? 2.6 : selected ? 1.8 : 1.4;
+        ctx.globalAlpha = isFocus ? 1 : selected ? 0.95 : 0.45;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = isFocus ? 2.8 : selected ? 2 : 1.3;
         ctx.setLineDash(failed ? [6, 5] : []);
-        if (isFocus) {
-          ctx.shadowColor = failed ? COLORS.fail : branchColor(i);
-          ctx.shadowBlur = 8;
-        }
+        ctx.shadowColor = color;
+        ctx.shadowBlur = isFocus ? 14 : selected ? 10 : 6;
         this.tracePolyline(F, t.points);
         ctx.stroke();
+        if (selected || isFocus) {
+          // Bright thin core on top of the glow.
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = isFocus ? 0.85 : 0.55;
+          ctx.strokeStyle = failed ? '#ffd0d4' : '#e6f8ff';
+          ctx.lineWidth = isFocus ? 1 : 0.7;
+          ctx.stroke();
+        }
         ctx.restore();
       });
     }
@@ -716,8 +857,10 @@ export class MapRenderer {
       if (!a || a.isCenter || a.proxy) continue;
       if (now && Math.hypot(now.x - a.x, now.y - a.y) < 6) continue;
       ctx.save();
-      ctx.strokeStyle = BODIES[g.body].color;
-      ctx.globalAlpha = 0.75;
+      const color = BODIES[g.body].color;
+      drawGlow(ctx, color, a.x, a.y, a.r * 3, 0.25);
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.8;
       ctx.lineWidth = 1.2;
       ctx.setLineDash([2, 3]);
       ctx.beginPath();
@@ -725,9 +868,10 @@ export class MapRenderer {
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.globalAlpha = 0.9;
-      ctx.font = FONT;
+      ctx.font = FONT_LABEL;
+      setSpacing(ctx, '0.8px');
       ctx.fillStyle = COLORS.muted;
-      ctx.fillText(`${BODIES[g.body].name} at ${g.text} · ${formatDay(g.day, F.startISO)}`, a.x + a.r + 6, a.y - 6);
+      ctx.fillText(`${BODIES[g.body].name} at ${g.text} · ${formatDay(g.day, F.startISO)}`.toUpperCase(), a.x + a.r + 6, a.y - 6);
       ctx.restore();
     }
   }
@@ -770,11 +914,9 @@ export class MapRenderer {
     if (!a.isCenter && !a.proxy && now && Math.hypot(now.x - a.x, now.y - a.y) > 6) {
       // Faint ghost of the body at the state's day.
       ctx.save();
-      ctx.globalAlpha = 0.35;
-      ctx.fillStyle = BODIES[b].color;
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalAlpha = 0.4;
+      drawGlow(ctx, BODIES[b].color, a.x, a.y, a.r * 3, 0.5);
+      drawBody(ctx, this.dpr, b, a.x, a.y, a.r, this.lightAngle(F, a.x, a.y), false);
       ctx.restore();
     }
     const hitKey = end ? `end:${end.branchId}` : '';
@@ -785,26 +927,40 @@ export class MapRenderer {
       { text: 'Click to add the next maneuver', color: COLORS.muted },
     ] : undefined;
 
+    // Clickable end states pulse slowly (subtle).
+    let pulse = 0;
+    if (end) {
+      this.animating = true;
+      pulse = 0.5 + 0.5 * Math.sin(this.time * 2.4);
+    }
+
     ctx.save();
-    ctx.globalAlpha = hot ? 1 : alpha;
+    ctx.globalAlpha = hot ? 1 : end ? alpha * (0.8 + 0.2 * pulse) : alpha;
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    if (hot) {
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 10;
-    }
+    ctx.shadowColor = color;
+    ctx.shadowBlur = hot ? 16 : end ? 6 + 6 * pulse : 4;
 
     if (s.kind === 'orbit') {
       let r = a.r + orbitRingOffset(b, s.altitudeKm);
       if (a.isCenter) r = Math.max(r, radiusPx(proj, BODIES[b].radiusKm + s.altitudeKm));
       r += 4 * this.stackCount(F, `ring:${a.key}:${Math.round(r)}`);
-      ctx.lineWidth = end ? (hot ? 2.6 : 1.8) : 1;
+      ctx.lineWidth = end ? (hot ? 2.4 : 1.6) : 1;
       ctx.setLineDash(end ? [5, 3] : []);
       ctx.beginPath();
       ctx.arc(a.x, a.y, r, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
       if (end) {
+        // Soft echo ring breathing outward with the pulse.
+        ctx.save();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = (hot ? 0.35 : 0.22) * (1 - pulse * 0.6);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, r + 3 + 2 * pulse, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
         // "+" badge on the ring to hint that it is clickable.
         const bx = a.x + r * Math.SQRT1_2;
         const by = a.y - r * Math.SQRT1_2;
@@ -881,22 +1037,28 @@ export class MapRenderer {
     ctx.restore();
   }
 
+  /** "+" badge as a small glass circle. */
   private plusBadge(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
     ctx.save();
-    ctx.shadowBlur = 0;
+    ctx.globalAlpha = Math.max(ctx.globalAlpha, 0.85);
     ctx.setLineDash([]);
-    ctx.fillStyle = COLORS.bg;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.3;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = COLORS.glass;
     ctx.beginPath();
-    ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+    ctx.arc(x, y, 6.5, 0, Math.PI * 2);
     ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = withAlpha(color, 0.7);
+    ctx.lineWidth = 1;
     ctx.stroke();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.moveTo(x - 2.8, y);
-    ctx.lineTo(x + 2.8, y);
-    ctx.moveTo(x, y - 2.8);
-    ctx.lineTo(x, y + 2.8);
+    ctx.moveTo(x - 3, y);
+    ctx.lineTo(x + 3, y);
+    ctx.moveTo(x, y - 3);
+    ctx.lineTo(x, y + 3);
     ctx.stroke();
     ctx.restore();
   }
@@ -962,45 +1124,62 @@ export class MapRenderer {
     const selected = ui.selectedManeuverId === m.maneuverId;
     const color = p.failed ? COLORS.fail : branchColor(p.branchIndex);
     const sev = worstSeverity(m);
-    const size = selected || hot ? 6.5 : 5;
+    const big = selected || hot;
+    const dot = big ? 4 : 3.2;
 
+    // Point of interest: bright dot with a glow and faint concentric rings.
     ctx.save();
-    ctx.globalAlpha = p.dim && !hot && !selected ? 0.6 : 1;
-    if (hot) {
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 10;
-    }
-    ctx.fillStyle = color;
-    ctx.strokeStyle = selected ? '#ffffff' : COLORS.bg;
-    ctx.lineWidth = selected ? 2 : 1.5;
+    ctx.globalAlpha = p.dim && !big ? 0.6 : 1;
+    drawGlow(ctx, color, p.x, p.y, hot ? 22 : big ? 18 : 13, hot ? 0.75 : 0.5);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha *= big ? 0.75 : 0.45;
     ctx.beginPath();
-    ctx.moveTo(p.x, p.y - size);
-    ctx.lineTo(p.x + size, p.y);
-    ctx.lineTo(p.x, p.y + size);
-    ctx.lineTo(p.x - size, p.y);
-    ctx.closePath();
+    ctx.arc(p.x, p.y, big ? 7.5 : 6.5, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.globalAlpha *= 0.45;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, big ? 11 : 9.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalAlpha = p.dim && !big ? 0.6 : 1;
+    if (selected) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 7.5, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.shadowColor = color;
+    ctx.shadowBlur = hot ? 12 : 6;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, dot, 0, Math.PI * 2);
     ctx.fill();
-    if (selected) ctx.stroke();
     ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, dot * 0.42, 0, Math.PI * 2);
+    ctx.fill();
 
     if (sev) {
-      // Warning badge: small triangle with "!" at the marker's top-right.
-      const bx = p.x + 7;
-      const by = p.y - 7;
-      ctx.fillStyle = sev === 'error' ? COLORS.fail : COLORS.warn;
+      // Severity badge: small round "!" at the marker's top-right.
+      const bx = p.x + 7.5;
+      const by = p.y - 7.5;
+      const bc = sev === 'error' ? COLORS.fail : COLORS.warn;
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = bc;
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = bc;
+      ctx.beginPath();
+      ctx.arc(bx, by, 4.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
       ctx.strokeStyle = COLORS.bg;
       ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(bx, by - 5);
-      ctx.lineTo(bx + 5, by + 4);
-      ctx.lineTo(bx - 5, by + 4);
-      ctx.closePath();
-      ctx.fill();
       ctx.stroke();
       ctx.fillStyle = COLORS.bg;
-      ctx.fillRect(bx - 0.6, by - 2, 1.2, 3.2);
-      ctx.fillRect(bx - 0.6, by + 2, 1.2, 1.2);
+      ctx.fillRect(bx - 0.65, by - 2.6, 1.3, 3.2);
+      ctx.fillRect(bx - 0.65, by + 1.3, 1.3, 1.3);
     }
     ctx.restore();
 
@@ -1046,21 +1225,24 @@ export class MapRenderer {
       }
       const color = branchColor(i);
       ctx.save();
+      drawGlow(ctx, color, p.x, p.y, 26, 0.7);
+      drawStreak(ctx, color, p.x, p.y, 16, 1.2, 0.6);
       ctx.shadowColor = color;
       ctx.shadowBlur = 14;
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
       ctx.fill();
-      ctx.font = FONT;
+      ctx.font = FONT_LABEL;
+      setSpacing(ctx, LABEL_SPACING);
       ctx.fillStyle = COLORS.text;
       const name = game.plan.branches.find((b) => b.id === br.branchId)?.name ?? '';
-      ctx.fillText(name, p.x + 8, p.y - 7);
+      ctx.fillText(name.toUpperCase(), p.x + 9, p.y - 8);
       ctx.restore();
     });
   }
@@ -1069,47 +1251,80 @@ export class MapRenderer {
 
   private drawHud(F: Frame) {
     const { ctx, center, ui } = F;
-    let x = 12;
-    const y = 12;
+    const fr = this.free();
+    const left = fr.x + 16;
+    let x = left;
+    const y = fr.y + 16;
+    const rowH = 28;
     ctx.save();
     ctx.textBaseline = 'middle';
     if (center !== 'sun') {
+      // Glass pill back button.
       const text = '◀ Solar system';
-      ctx.font = FONT;
-      const w = ctx.measureText(text).width + 18;
-      const h = 24;
+      ctx.font = FONT_BOLD;
+      const w = ctx.measureText(text).width + 26;
+      const h = rowH;
       const hot = this.hover?.key === 'back';
-      roundRectPath(ctx, x, y, w, h, 6);
-      ctx.fillStyle = hot ? '#1c2740' : COLORS.panel;
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, h / 2);
+      ctx.shadowColor = hot ? withAlpha(COLORS.accent, 0.45) : 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = hot ? 14 : 10;
+      ctx.fillStyle = hot ? COLORS.glassHot : COLORS.glass;
       ctx.fill();
-      ctx.strokeStyle = hot ? COLORS.orbitHover : COLORS.panelBorder;
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = hot ? COLORS.glassBorderHot : COLORS.glassBorder;
       ctx.lineWidth = 1;
       ctx.stroke();
-      ctx.fillStyle = COLORS.text;
-      ctx.fillText(text, x + 9, y + h / 2 + 0.5);
+      ctx.restore();
+      ctx.fillStyle = hot ? '#ffffff' : COLORS.text;
+      ctx.fillText(text, x + 13, y + h / 2 + 0.5);
       const bx = x;
       this.hits.push({
         key: 'back', priority: 10, action: { kind: 'back' },
         contains: (px, py) => px >= bx && px <= bx + w && py >= y && py <= y + h,
       });
-      x += w + 12;
+      x += w + 14;
     }
     ctx.font = FONT_TITLE;
+    setSpacing(ctx, '0.5px');
     ctx.fillStyle = COLORS.text;
+    ctx.shadowColor = withAlpha(COLORS.accent, 0.35);
+    ctx.shadowBlur = 12;
     const title = center === 'sun' ? 'Solar system' : `${BODIES[center].name} system`;
-    ctx.fillText(title, x, y + 12.5);
-    ctx.font = FONT;
-    ctx.fillStyle = COLORS.muted;
-    const mode = ui.playthrough ? 'Playthrough' : ui.mapDay !== null ? 'Positions' : 'Today';
-    ctx.fillText(`${mode} · ${formatDay(F.day, F.startISO)}`, 12, y + 40);
+    ctx.fillText(title, x, y + rowH / 2 + 1);
+    ctx.shadowBlur = 0;
 
-    // Hint line, bottom-left.
-    ctx.textBaseline = 'alphabetic';
+    ctx.font = FONT_HUD;
+    setSpacing(ctx, LABEL_SPACING);
+    const mode = ui.playthrough ? 'Playthrough' : ui.mapDay !== null ? 'Positions' : 'Today';
+    const dateY = y + rowH + 16;
+    // Small cyan status dot before the date line.
+    ctx.fillStyle = ui.playthrough ? COLORS.accent : withAlpha(COLORS.accent, 0.7);
+    ctx.beginPath();
+    ctx.arc(left + 3, dateY, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = COLORS.muted;
+    ctx.fillText(`${mode} · ${formatDay(F.day, F.startISO)}`.toUpperCase(), left + 12, dateY);
+
+    // Hint, wrapped to the free area.
     const hint = center === 'sun'
       ? 'Scroll to zoom · drag to pan · double-click to reset · click Earth, Mars or Jupiter for its moons'
       : 'Scroll to zoom · drag to pan · double-click to reset';
-    ctx.globalAlpha = 0.75;
-    ctx.fillText(hint, 12, this.h - 10);
+    ctx.font = FONT_HINT;
+    setSpacing(ctx, '0.3px');
+    ctx.globalAlpha = 0.6;
+    const maxW = Math.max(160, fr.w - 32);
+    const lines: string[] = [];
+    let cur = '';
+    for (const part of hint.split(' · ')) {
+      const next = cur ? `${cur} · ${part}` : part;
+      if (cur && ctx.measureText(next).width > maxW) {
+        lines.push(cur);
+        cur = part;
+      } else cur = next;
+    }
+    if (cur) lines.push(cur);
+    lines.forEach((l, i) => ctx.fillText(l, left, dateY + 18 + i * 14));
     ctx.restore();
   }
 
@@ -1118,25 +1333,38 @@ export class MapRenderer {
     if (!tip || !this.mouse || this.drag?.moved) return;
     const { ctx } = F;
     ctx.save();
-    const lineH = 16;
+    const lineH = 17;
     let w = 0;
     for (const l of tip) {
       ctx.font = l.bold ? FONT_BOLD : FONT;
       w = Math.max(w, ctx.measureText(l.text).width);
     }
-    const pad = 8;
+    const pad = 10;
     const bw = w + pad * 2;
     const bh = tip.length * lineH + pad * 2 - 4;
+    // Keep inside the free area where possible, else inside the canvas.
+    const fr = this.free();
+    const m = 6;
+    const minX = bw <= fr.w - 2 * m ? fr.x + m : m;
+    const maxX = bw <= fr.w - 2 * m ? fr.x + fr.w - m : this.w - m;
+    const minY = bh <= fr.h - 2 * m ? fr.y + m : m;
+    const maxY = bh <= fr.h - 2 * m ? fr.y + fr.h - m : this.h - m;
     let x = this.mouse.x + 14;
     let y = this.mouse.y + 16;
-    if (x + bw > this.w - 4) x = this.mouse.x - bw - 10;
-    if (y + bh > this.h - 4) y = this.mouse.y - bh - 10;
-    x = Math.max(4, x);
-    y = Math.max(4, y);
-    roundRectPath(ctx, x, y, bw, bh, 6);
-    ctx.fillStyle = COLORS.panel;
+    if (x + bw > maxX) x = this.mouse.x - bw - 10;
+    if (y + bh > maxY) y = this.mouse.y - bh - 10;
+    x = clamp(x, minX, Math.max(minX, maxX - bw));
+    y = clamp(y, minY, Math.max(minY, maxY - bh));
+    roundRectPath(ctx, x, y, bw, bh, 10);
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = COLORS.glass;
     ctx.fill();
-    ctx.strokeStyle = COLORS.panelBorder;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = COLORS.glassBorder;
     ctx.lineWidth = 1;
     ctx.stroke();
     ctx.textBaseline = 'top';

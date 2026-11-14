@@ -509,6 +509,7 @@ export function evaluateFull(game: GameState): { evaluation: Evaluation; interna
 
   // ---- goals
   const picks = new Map<string, GoalPick>();
+  const lateGoals: string[] = [];
   const goals: GoalResult[] = mission.goals.map((goal) => {
     const gBody = BODIES[goal.body];
     const stay = goal.stayDays ?? 365;
@@ -516,7 +517,12 @@ export function evaluateFull(game: GameState): { evaluation: Evaluation; interna
     let failReason: string | undefined;
     let reachedBlocked = false;
     let reachedNoInstrument = false;
+    let reachedLate = false;
     const consider = (bi: BranchInternal, step: Step, chance: number, extra: Factor[]) => {
+      if (step.result.endDay > mission.completionDeadlineDay) {
+        reachedLate = true;
+        return;
+      }
       if (!pick || chance > pick.chance + 1e-12) {
         pick = { goalId: goal.id, branchId: bi.branchId, maneuverId: step.result.maneuverId, day: step.result.endDay, extra, chance };
       }
@@ -590,6 +596,10 @@ export function evaluateFull(game: GameState): { evaluation: Evaluation; interna
       return { goalId: goal.id, achievable: true, successChance: chance, branchId: pick.branchId };
     }
     let reason = failReason;
+    if (!reason && reachedLate) {
+      reason = `Reached after the mission deadline (${formatDay(mission.completionDeadlineDay, mission.startDateISO)})`;
+      lateGoals.push(goal.name);
+    }
     if (!reason && reachedBlocked) reason = 'The plan fails before this goal is reached';
     if (!reason && reachedNoInstrument && goal.instrument) {
       reason = `No spacecraft there carries a ${INSTRUMENTS[goal.instrument].name.toLowerCase()} with performance ≥ ${goal.minPerformance ?? 0}`;
@@ -665,8 +675,12 @@ export function evaluateFull(game: GameState): { evaluation: Evaluation; interna
   if (totalCostM > mission.budgetM) {
     gIssue('warning', 'budget', `Estimated cost ${formatMoney(totalCostM)} exceeds the budget of ${formatMoney(mission.budgetM)}`);
   }
-  if (plan.launchDay > mission.launchDeadlineDay) {
-    gIssue('error', 'deadline', `Launch date ${formatDay(plan.launchDay, mission.startDateISO)} is after the deadline ${formatDay(mission.launchDeadlineDay, mission.startDateISO)}`);
+  const deadline = formatDay(mission.completionDeadlineDay, mission.startDateISO);
+  if (plan.launchDay > mission.completionDeadlineDay) {
+    gIssue('error', 'deadline', `Launch date ${formatDay(plan.launchDay, mission.startDateISO)} is after the mission deadline ${deadline}`);
+  }
+  if (lateGoals.length) {
+    gIssue('error', 'deadline', `Too late for the mission deadline ${deadline}: ${lateGoals.join(', ')}`);
   }
 
   // ---- assemble

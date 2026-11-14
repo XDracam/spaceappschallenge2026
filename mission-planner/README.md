@@ -38,7 +38,8 @@ Full specification: [Mission planner UI](ui.md).
 
 **Proposal — Mars orbiter + lander mission content:**
 
-- Start: Earth, agency calendar at the start date; launch must happen before a fixed deadline that includes two Mars windows (about 26 months apart).
+- Start: Earth, agency calendar at the start date (1 Jan 2030).
+- **Mission deadline (user direction, 2026-11-14):** one completion deadline per mission instead of a launch deadline; goals achieved after it do not count. Mars: 1 Jul 2033 (proposal) — the first window arrives with margin, the second only with a faster transfer.
 - Goals: reach Mars orbit (orbiter); deliver orbital instrument data; land on Mars (lander); deliver surface instrument data.
 - Requires: transfer, orbit insertion (or aerocapture), separation, atmospheric landing with heat shield.
 - Budget, research limits, and slider ranges per propulsion type: authored with the mission data; values are balancing placeholders.

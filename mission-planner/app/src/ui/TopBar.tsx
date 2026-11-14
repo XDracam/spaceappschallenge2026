@@ -1,95 +1,159 @@
+import { useRef, useState } from 'preact/hooks';
 import {
-  actions, budgetSpentM, clockActions, clockStore, useClock, useEvaluation, useGame,
+  actions, budgetSpentM, useClock, useEvaluation, useGame, useUi,
 } from '../state/store';
-import { DAYS_PER_MONTH, formatDay, formatDuration, formatMoney } from '../model/units';
-import { PauseIcon, PlayIcon, WarnIcon } from './common';
-import { SPEED_PRESETS } from './DevTab';
+import { formatDay, formatDuration, formatMoney } from '../model/units';
+import { GearIcon, localUi, toggleTab, useLocalUi, useOutsideClose } from './common';
+import { Slider } from './Slider';
 
-function speedLabel(dps: number): string {
-  const monthsPerMin = (dps * 60) / DAYS_PER_MONTH;
-  const whole = Math.abs(monthsPerMin - Math.round(monthsPerMin)) < 0.01;
-  return `1 min = ${whole || monthsPerMin >= 10 ? Math.round(monthsPerMin) : monthsPerMin.toFixed(1)} mo`;
+const NAV: { id: 'rocket' | 'tasks' | 'versions'; label: string }[] = [
+  { id: 'rocket', label: 'Rocket' },
+  { id: 'tasks', label: 'Procurement' },
+  { id: 'versions', label: 'Versions' },
+];
+
+/** Floating header: wordmark, pill navigation, status chips. */
+export function TopBar() {
+  const mission = useGame((g) => g.mission);
+  const devOpen = useLocalUi((s) => s.devOpen);
+  return (
+    <header class="topbar">
+      <div class="brand" title={mission.briefing}>
+        <div class="wordmark">MISSION PLANNER</div>
+        <div class="brand-sub">{mission.name}</div>
+      </div>
+      <NavPills />
+      <div class="tb-right">
+        <CalendarChip />
+        <BudgetChip />
+        <LaunchChip />
+        <button class={`round-btn${devOpen ? ' active' : ''}`} title="Dev controls (stand-in for procurement, science, comms)"
+          onClick={() => localUi.update((s) => { s.devOpen = !s.devOpen; })}>
+          <GearIcon />
+        </button>
+      </div>
+    </header>
+  );
 }
 
-export function TopBar() {
+function NavPills() {
+  const tab = useUi((u) => u.sideTab);
+  const open = useLocalUi((s) => s.panelOpen);
+  const taskCount = useGame((g) => g.tasks.filter((t) => t.status === 'open' || t.status === 'changed').length);
+  return (
+    <nav class="nav-pills">
+      {NAV.map((n) => {
+        const active = open && tab === n.id;
+        return (
+          <button key={n.id} class={`nav-pill${active ? ' active' : ''}`}
+            title={active ? 'Close panel' : `Open ${n.label}`} onClick={() => toggleTab(n.id)}>
+            {n.label}
+            {n.id === 'tasks' && taskCount > 0 && <span class="nav-count">{taskCount}</span>}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+function CalendarChip() {
+  const startISO = useGame((g) => g.mission.startDateISO);
+  const day = useClock((c) => Math.floor(c.day));
+  const running = useClock((c) => c.running);
+  const planning = useGame((g) => g.phase === 'planning');
+  const flowing = running && planning;
+  return (
+    <div class="chip-box" title={flowing ? 'Agency calendar: time flows on its own' : 'Agency calendar paused'}>
+      <span class={`pulse${flowing ? '' : ' still'}`} />
+      <div class="chip-stack">
+        <span class="chip-label">Agency date</span>
+        <span class="chip-value num">{formatDay(day, startISO)}</span>
+      </div>
+    </div>
+  );
+}
+
+function BudgetChip() {
+  const budget = useGame((g) => g.mission.budgetM);
+  const spent = useGame(budgetSpentM);
+  const ev = useEvaluation();
+  const over = ev.totalCostM > budget;
+  return (
+    <div class="chip-box budget-chip"
+      title={`Committed ${formatMoney(spent)} (contracts minus refunds) · estimated total ${formatMoney(ev.totalCostM)} · budget ${formatMoney(budget)}`}>
+      <div class="chip-stack">
+        <span class="chip-label">Budget</span>
+        <span class="chip-value num">
+          <span class={over ? 'err-text' : ''}>{formatMoney(spent)}</span>
+          <span class="muted"> / {formatMoney(budget)}</span>
+        </span>
+        <div class={`hairline${over ? ' over' : ''}`}>
+          <div class="hl-est" style={{ width: `${Math.min(100, (ev.totalCostM / budget) * 100)}%` }} />
+          <div class="hl-fill" style={{ width: `${Math.min(100, (spent / budget) * 100)}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LaunchChip() {
   const mission = useGame((g) => g.mission);
   const phase = useGame((g) => g.phase);
   const launchDay = useGame((g) => g.plan.launchDay);
-  const spent = useGame(budgetSpentM);
   const lateCount = useGame((g) => g.contracts.filter((c) => c.status === 'running' && c.deliveryDay > g.plan.launchDay).length);
-  const ev = useEvaluation();
-  const day = useClock((c) => Math.floor(c.day));
-  const running = useClock((c) => c.running);
-  const dps = useClock((c) => c.daysPerSecond);
-  const planning = phase === 'planning';
   const today = useClock((c) => Math.ceil(c.day));
-  const sliderMin = Math.min(today, mission.launchDeadlineDay);
-  const overBudget = ev.totalCostM > mission.budgetM;
-
-  const cycleSpeed = () => {
-    const i = SPEED_PRESETS.findIndex((s) => Math.abs(s.dps - dps) < 1e-9);
-    clockActions.setSpeed(SPEED_PRESETS[(i + 1) % SPEED_PRESETS.length].dps);
-  };
+  const now = useClock((c) => Math.floor(c.day));
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useOutsideClose(ref, open, () => setOpen(false));
+  const planning = phase === 'planning';
+  const startISO = mission.startDateISO;
+  const deadline = mission.completionDeadlineDay;
+  const sliderMin = Math.min(today, deadline);
+  const late = lateCount > 0;
 
   return (
-    <header class="topbar">
-      <div class="tb-mission" title={mission.briefing}>
-        <div class="tb-label">Mission</div>
-        <div class="tb-title">{mission.name}</div>
-      </div>
-
-      <div class="tb-group">
-        <div class="tb-label">Agency calendar</div>
-        <div class="inline">
-          <button class="btn icon-btn" disabled={!planning} title={running ? 'Pause calendar' : 'Run calendar'}
-            onClick={() => clockActions.setRunning(!running)}>
-            {running ? <PauseIcon /> : <PlayIcon />}
-          </button>
-          <span class="tb-date num">{formatDay(day, mission.startDateISO)}</span>
-          <button class="btn small ghost" title="Change calendar speed" disabled={!planning} onClick={cycleSpeed}>{speedLabel(dps)}</button>
+    <div class="launch-wrap" ref={ref}>
+      <button class={`chip-box chip-btn-box${late ? ' late' : ''}${open ? ' active' : ''}`}
+        title={late ? `${lateCount} contract(s) deliver after the launch date` : 'Launch date'}
+        onClick={() => setOpen(!open)}>
+        <div class="chip-stack">
+          <span class="chip-label">Launch{late ? ` · ${lateCount} late` : ''}</span>
+          <span class="chip-value num">
+            {formatDay(launchDay, startISO)}
+            <span class="muted"> · in {formatDuration(Math.max(0, launchDay - now))}</span>
+          </span>
         </div>
-      </div>
-
-      <div class="tb-group tb-launch">
-        <div class="tb-label">
-          Launch date
-          {lateCount > 0 && (
-            <span class="err-text" title={`${lateCount} contract(s) deliver after the launch date`}> <WarnIcon /> {lateCount} late</span>
-          )}
-        </div>
-        <div class="inline">
-          <input type="range" class="plain-range" min={sliderMin} max={mission.launchDeadlineDay} step={1}
-            value={launchDay} disabled={!planning}
-            onInput={(e) => actions.setLaunchDay(Number((e.currentTarget as HTMLInputElement).value))} />
-          <button class="btn icon-btn" disabled={!planning || launchDay <= today} title="One day earlier" onClick={() => actions.setLaunchDay(launchDay - 1)}>−</button>
-          <button class="btn icon-btn" disabled={!planning || launchDay >= mission.launchDeadlineDay} title="One day later" onClick={() => actions.setLaunchDay(launchDay + 1)}>+</button>
-          <span class={`tb-date num${lateCount > 0 ? ' err-text' : ''}`}>{formatDay(launchDay, mission.startDateISO)}</span>
-          <span class="muted small num nowrap">in {formatDuration(launchDay - clockStore.get().day)}</span>
-          <button class="btn small warn" disabled={!planning}
+      </button>
+      {open && (
+        <div class="popover glass strong launch-pop">
+          <div class="pop-row">
+            <span class="label">Launch date</span>
+            <span class={`big-num num${late ? ' err-text' : ''}`}>{formatDay(launchDay, startISO)}</span>
+          </div>
+          <div class="launch-slider">
+            <button class="round-btn small" disabled={!planning || launchDay <= today} title="One day earlier"
+              onClick={() => actions.setLaunchDay(launchDay - 1)}>−</button>
+            <Slider min={sliderMin} max={Math.max(sliderMin + 1, deadline)} step={1} scale="linear"
+              value={launchDay} disabled={!planning} onChange={(v) => actions.setLaunchDay(v)} />
+            <button class="round-btn small" disabled={!planning || launchDay >= deadline} title="One day later"
+              onClick={() => actions.setLaunchDay(launchDay + 1)}>+</button>
+          </div>
+          {late && <div class="err-line">{lateCount} contract{lateCount > 1 ? 's deliver' : ' delivers'} after this date</div>}
+          <div class="deadline">
+            <span>Mission deadline <b class="num">{formatDay(deadline, startISO)}</b></span>
+            <span class="muted tiny">Goals reached after this date don't count. Launching later needs faster transfers.</span>
+          </div>
+          <button class="pill primary launch-now" disabled={!planning}
             onClick={() => {
               if (!confirm('Launch now? The final playthrough starts and planning ends.')) return;
+              setOpen(false);
               actions.launchNow();
             }}>
             Launch now
           </button>
         </div>
-        <div class="muted tiny">Deadline {formatDay(mission.launchDeadlineDay, mission.startDateISO)}</div>
-      </div>
-
-      <div class="tb-group tb-budget">
-        <div class="tb-label">Budget</div>
-        <div class="num">
-          <span title="Committed: contract prices minus refunds">{formatMoney(spent)}</span>
-          <span class="muted"> committed · </span>
-          <span class={overBudget ? 'err-text' : ''} title="Estimated total cost of the design">{formatMoney(ev.totalCostM)}</span>
-          <span class="muted"> est. / </span>
-          <b>{formatMoney(mission.budgetM)}</b>
-        </div>
-        <div class="budget-bar" title="Committed and estimated cost against the mission budget">
-          <div class="bb-est" style={{ width: `${Math.min(100, (ev.totalCostM / mission.budgetM) * 100)}%` }} />
-          <div class="bb-spent" style={{ width: `${Math.min(100, (spent / mission.budgetM) * 100)}%` }} />
-        </div>
-      </div>
-    </header>
+      )}
+    </div>
   );
 }
