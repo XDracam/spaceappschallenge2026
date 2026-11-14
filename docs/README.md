@@ -15,9 +15,18 @@
 | [Mission flow](design/mission-flow.md) | Preparation, commitment, simulation, and outcome |
 | [Prototype plan](prototype.md) | Proposed smallest useful experiment |
 | [Procurement prototype](../procurement/README.md) | Standalone procurement concept and proposed experiment |
+| [Procurement catalogue gameplay](../procurement/gameplay.md) | Current acquisition, Budget management and full-screen direction |
+| [Procurement desktop mockup](../procurement/mockups/README.md) | Full HD catalogue design and local browser entry point |
+| [Procurement improvement review](../procurement/prototype-review.md) | Research choices, supported scenarios and implementation limits |
+| [Procurement interface walkthrough](playtests/2026-11-14-procurement-interface-walkthrough.md) | Observed browser sequences, distinct from multiplayer validation |
 | [Procurement interfaces](../procurement/interfaces.md) | Selected terminology and proposed ownership and typed messages |
 | [Procurement gameplay scenarios](../procurement/scenarios.md) | Concrete situations for design walkthroughs |
+| [Procurement workflows](../procurement/workflows.md) | Accessible gameplay situations, choices, and conversations |
+| [Procurement state walkthroughs](../procurement/state-walkthroughs.md) | Earlier record checks retained for implementation reference |
 | [Procurement-facing role actions](../procurement/role-actions.md) | Proposed player actions and their effects on procurement interfaces |
+| [Procurement game references](../procurement/game-references.md) | Sourced comparisons and proposed inspiration for acquisition, Budget and crew coordination |
+| [Procurement research and design alternatives](../procurement/research-design-alternatives.md) | Detailed mechanics, design principles, competing approaches and a shared scenario |
+| [Procurement UI flows and reference analysis](../procurement/ui-flow-research.md) | Sourced interface patterns, screen priorities, concrete flows and layout alternatives |
 | [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
 
 ## Persistent project memory
@@ -36,6 +45,13 @@
 | [Role action request](notes/2026-11-14-role-actions.md) | User scope for actions impacting procurement |
 | [Tasks and conversation clarification](notes/2026-11-14-tasks-and-conversation.md) | User direction on spoken coordination and shared Tasks |
 | [Procurement alignment response](notes/2026-11-14-procurement-alignment.md) | User resolution of the incoming concept findings |
+| [Procurement stack and gameplay request](notes/2026-11-14-procurement-stack-and-gameplay.md) | Technology selection and source for the proposed player experience |
+| [Workflow validation request](notes/2026-11-14-procurement-workflows.md) | Source for the workflow walkthroughs |
+| [Accessible gameplay clarification](notes/2026-11-14-accessible-gameplay.md) | User requirement for fun scenarios playable without training |
+| [Catalogue gameplay clarification](notes/2026-11-14-catalogue-gameplay.md) | User correction of the narrow Offer-comparison mockups |
+| [Research clarification](notes/2026-11-14-procurement-research-clarification.md) | User request for deeper research, principles, concepts and design alternatives |
+| [UI flow request](notes/2026-11-14-procurement-ui-flow-request.md) | User request to research what interfaces show and when |
+| [Full HD mockup request](notes/2026-11-14-full-hd-mockup.md) | User request for a standalone desktop design |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |

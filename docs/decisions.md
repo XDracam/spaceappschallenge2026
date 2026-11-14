@@ -84,6 +84,28 @@ User clarification on November 14, 2026, following the integration review.
 
 See the [user response](notes/2026-11-14-procurement-alignment.md) and the [review resolution](reviews/2026-11-14-mission-planner-integration.md#resolution-after-user-review).
 
+## D-009 — Standalone procurement technology
+
+Accepted user direction on November 14, 2026. Use the documented web, TypeScript and HTML canvas stack for the procurement prototype. Keep it in the separate `procurement/` directory, without a shared base yet. Integration comes later.
+
+The reference is the [mission-planner build choice](../mission-planner/README.md#build). The [source note](notes/2026-11-14-procurement-stack-and-gameplay.md) records this selection. Gameplay layout and interaction details remain proposals.
+
+## D-010 — Accessible mission-planning gameplay
+
+User direction on November 14, 2026. This is a game highlighting the complexities of planning a space mission. Its scenarios should communicate that complexity, remain fun, and be playable without prior training.
+
+Procurement designs and walkthroughs must serve that player experience. The [revised gameplay walkthroughs](../procurement/workflows.md) explore understandable dilemmas and spoken coordination. Their specific mechanics and pacing remain proposals awaiting experience with players.
+
+See the [source clarification](notes/2026-11-14-accessible-gameplay.md).
+
+## D-011 — Catalogue procurement across competing needs
+
+User clarification on November 14, 2026. Procurement gameplay centers on acquiring things other roles need from a catalogue and managing the available Budget across needs arising throughout preparation. Research requisites and personnel are explicit examples. Purchasing decisions implicitly distribute the Budget. Other stations, including comms, can change overall funding.
+
+The role fulfills needs and contributes to shared Tasks. The previous isolated Offer-comparison mockups were too narrow. The interface should use the space of a Full HD or larger game screen. Specific layout and interaction designs remain proposals.
+
+See the [verbatim clarification](notes/2026-11-14-catalogue-gameplay.md) and the current [catalogue gameplay direction](../procurement/gameplay.md).
+
 ## Future decision template
 
 ```markdown

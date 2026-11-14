@@ -48,7 +48,7 @@ After a result, can a new session reuse an earlier design? Is comparison across 
 
 ## Q-012 — Platform and technology
 
-What form should the first playable prototype take: paper, local digital, or networked digital? If digital, which platform and technology serve it? Blocks software scaffolding. Select after the relevant player flow is concrete.
+The mission-planner module selects web, TypeScript and HTML canvas. D-009 adopts that documented stack for the separate procurement prototype. Shared networking, common architecture, and any other module-specific choices remain open.
 
 ## Q-013 — Publication and license
 

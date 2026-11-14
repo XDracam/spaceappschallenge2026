@@ -4,11 +4,29 @@
 
 The proposed entity vocabulary and message payloads are recorded in the [interface draft](interfaces.md).
 
-Concrete [gameplay scenarios](scenarios.md) provide examples for walking through the proposed model.
+Concrete [gameplay scenarios](scenarios.md) provide examples for walking through the proposed model. [Gameplay walkthroughs](workflows.md) explore understandable dilemmas, discoveries, and player conversation. Earlier [state walkthroughs](state-walkthroughs.md) remain as implementation reference.
 
 The proposed [role actions](role-actions.md) map player choices to procurement-facing changes.
 
 The proposed [Task and conversation boundary](tasks-and-conversation.md) distinguishes persistent goals from the coordination players do by talking.
+
+## Desktop design mockup
+
+Open the [Full HD catalogue mockup](mockups/catalogue-full-hd.html) in a browser at 1920 × 1080 or larger. The [mockup notes](mockups/README.md) describe interactions and illustrative fixture rules.
+
+The [research improvement review](prototype-review.md) records the current changes and their limits.
+
+## Technology
+
+User-selected web, TypeScript and HTML canvas baseline. Keep implementation in this separate `procurement/` directory, with eventual integration. See [D-009](../docs/decisions.md#d-009--standalone-procurement-technology).
+
+## Current player experience direction
+
+The player procures Resources from a catalogue to meet needs arising across the team, including research requisites, personnel and mission hardware. They decide how to use the available Budget across those needs. Comms and other outside outcomes can change overall funding.
+
+The current [catalogue gameplay direction](gameplay.md) records D-011, a continuous example session, proposed full-screen layout and validation scenarios. The user rejected the cramped, isolated Offer-comparison mockups. D-010 requires fun, accessible play without prior training.
+
+Catalogue exploration, discovery, purchasing, delivery tracking and spoken coordination should create the experience. Contracts remain inventory. The separate prototype can use authored stand-in inputs for the other stations while this loop is explored.
 
 ## The pitch
 
@@ -24,19 +42,21 @@ The emphasis is on decisions and communication: buying the cheapest item is not 
 - **Existing project direction:** initial multiplayer focus; meaningful concurrent work for every role; hand-crafted missions, lists, events and similar content, with no runtime dynamic generation. See [D-004 and D-005](../docs/decisions.md).
 - **Prototype proposal:** one procurement player, a small authored scenario, and simulated inputs representing other roles. These inputs are stand-ins, not proof that multiplayer communication works.
 - **Out of the first experiment:** real multiplayer networking, the other roles' interfaces, realistic orbital simulation, campaign progression, and a complete personnel system. These are scope proposals, not project-wide exclusions.
-- **Still open:** prototype format and technology, actual player count, timing, how Calls work, personnel, and how the future shared system integrates. No implementation is implied by this sketch.
+- **Still open:** actual player count, exact Call rules, personnel, and how the future shared system integrates. No implementation is implied by this sketch.
 
 ## Proposed loop
 
-1. **Understand needs.** Review several requests with a purpose, constraints, need-by date and priority. Ask what can change if no offer fits. A request is a proposed local stand-in for the wider game's shared tasks.
-2. **Explore options.** Compare authored catalogue offers for capability, price, delivery, reliability and cancellation terms. Where no offer fits, explore an authored Call and compare its offers; whether and when they become available remains a design question.
+1. **Understand needs.** Track shared needs arising across the team and discuss their purpose, timing and priority. Procurement consumes the relevant persistent Tasks and project needs from the other systems.
+2. **Explore options.** Browse and search authored equipment, personnel, parts and services. Discover Resources that could address current or emerging needs and compare their Offers for capability, price, delivery and reliability. Where no offer fits, explore an authored Call and compare its offers; whether and when they become available remains a design question.
 3. **Commit.** Choose an offer, check the impact on the remaining budget and schedule, and create a contract linked to the request. A commitment should expose what it promises and what it costs to change.
 4. **Manage change.** A request or an outside condition changes. Inspect affected commitments, then keep, replace or cancel them, and communicate the consequences. Other requests and available work remain accessible while a delivery or Call is pending.
 5. **Review.** At the end of the exercise, show what each request received, late or unmet needs, spending, risk exposure and contract history. This is a procurement debrief, not a claim that mission success is already defined.
 
-A real-time clock is worth exploring, but its speed, pausing and the way an authored event is triggered are open. A scripted exercise can stand in for real time until that question is answered.
+Use the documented agency-calendar baseline of one real minute per calendar month for preparation. Local development controls can advance time when exercising a scenario. Pause behavior and authored event triggers remain to be specified.
 
-## Illustrative scenario
+## Earlier narrow illustrative scenario
+
+Retained as an example of a single situation within the broader D-011 gameplay. It is insufficient as the full station prototype.
 
 The following fictional numbers are only a conversation starter; they are not balanced or researched mission specifications. Currency is in arbitrary budget units, and all dates are preparation days.
 
@@ -61,7 +81,7 @@ These describe what the proposed experiment would need, not accepted product req
 - Make changing a request or contract reveal the consequences and which needs are affected; allow the player to communicate a proposed tradeoff to the requester.
 - Keep another actionable need or useful contract review available during a pending delivery or offer, to explore D-004 rather than promise it is solved.
 - Use authored content for the scenario and offers. Do not infer that selection, authored state changes, or player-created requests are forbidden; their boundary remains open under Q-026.
-- End with a readable summary of choices and consequences. Do not conflate this with the game's still-undecided final mission simulation.
+- End with a readable summary of choices and consequences. The mission-planner specification records a final fast-forward mission playthrough after preparation.
 
 ## What to observe
 
@@ -75,8 +95,8 @@ Capture actual observations using the [playtest template](../docs/playtests/TEMP
 
 ## Questions before building
 
-1. What format and technology should this standalone prototype use, and who will play it? ([Q-012](../docs/questions.md#q-012--platform-and-technology))
-2. Should the first exercise be real time, paused, or facilitated; how are stand-in inputs presented? ([Q-016](../docs/questions.md#q-016--real-time-difficulty-and-switching))
+1. Who will play the first standalone exercise and operate the stand-in controls? ([Q-012](../docs/questions.md#q-012--platform-and-technology))
+2. How are stand-in inputs presented, and what pause or time-advance controls does the standalone exercise need? ([Q-016](../docs/questions.md#q-016--real-time-difficulty-and-switching))
 3. What decisions make Calls distinct from catalogue purchases without generated content? ([Q-026](../docs/questions.md#q-026--authored-content-boundary), [Q-028](../docs/questions.md#q-028--catalogue-calls-and-contracts))
 4. How do contracts, payments, cancellation, discarded items, and need-by dates actually work? ([Q-023](../docs/questions.md#q-023--contract-inventory-and-discarded-things), [Q-024](../docs/questions.md#q-024--need-dates-and-assembly))
 5. How much personnel procurement belongs in this first slice, before a shared personnel model exists? ([Q-019](../docs/questions.md#q-019--personnel-model), [Q-020](../docs/questions.md#q-020--personnel-management-across-roles))

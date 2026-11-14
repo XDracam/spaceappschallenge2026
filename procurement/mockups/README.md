@@ -1,0 +1,36 @@
+# Procurement desktop mockup
+
+Open [catalogue-full-hd.html](catalogue-full-hd.html) in a desktop browser. The station targets a 1920 × 1080 content area and expands on larger displays. Smaller windows can scroll the full-size design. Use the Full screen button or the browser's full-screen command.
+
+The catalogue includes authored equipment, personnel, mission hardware and services. Shared needs stay visible alongside a selectable resource inspector and the current Budget.
+
+## Interactions
+
+- Browse categories, search by name or qualification, sort by price or availability, and select catalogue resources.
+- Click a shared need to highlight fitting Resources and inspect ready, promised, missing and affected supply. Matches only is an explicit optional filter.
+- Choose a compatible need or keep supply unallocated, then confirm procurement. The Contract, Allocation and Budget update together.
+- Add up to three candidates to an optional side-by-side comparison, retaining the original browse context.
+- Inspect Contracts, split quantities across Tasks, cancel active commitments, and release or reassign promised and delivered Allocations.
+- Open or withdraw Calls. The mockup's calendar control reveals predefined supplier responses and delivers due Contracts.
+- Persistent Changes retain funding, Task, supplier, research and delivery outcomes. Purchase and cancellation confirmation rechecks changed facts.
+- The labeled fixture controls apply authored funding, engine-criteria, delay, research, bulk-need and withdrawal inputs, or advance one month. They remain usable while a confirmation is open. Refreshing restores the initial scene.
+
+## Design status
+
+This is a standalone interactive HTML design artifact. Prices, personnel examples, timing, reliability, procurement terms and detailed interactions are illustrative proposals. The scene uses payment on delivery and a 50% cancellation cost for active Contracts. Named personnel can be acquired once at a time in this mockup. Those fixture rules do not settle the wider personnel and economic models.
+
+All resource and Call-response content is authored in the adjacent JavaScript file. The HTML loads it directly without a build step. The artwork is embedded SVG. The page requests Google Fonts and has local font fallbacks.
+
+The prototype's selected technology baseline remains documented in D-009. The current gameplay scope is [catalogue acquisition and Budget management](../gameplay.md). The source request is preserved in the [Full HD handoff note](../../docs/notes/2026-11-14-full-hd-mockup.md).
+
+## Observed UI checks
+
+Inspected the station in a browser with a 1920 × 1080 viewport. Browsed personnel, purchased the laboratory bench and a materials researcher, and observed available Budget change from 120 to 98 to 80 credits. A simulated comms funding outcome raised it to 110. Advancing two months delivered both Contracts and exposed the predefined Call response. The browser reported no console errors during this walkthrough.
+
+This was an interface walkthrough. Gameplay enjoyment and economic balance await player experience. The reference screenshot is saved as `catalogue-full-hd.jpg` beside the HTML file.
+
+## Research improvement pass
+
+The current [prototype review](../prototype-review.md) records which research proposals were adapted, deferred or omitted. The [manual interface walkthrough](../../docs/playtests/2026-11-14-procurement-interface-walkthrough.md) records checked scenarios and limits. The previous observations above describe the earlier interface. No multiplayer validation has taken place.
+
+The updated screenshot is `catalogue-improved.jpg`. The earlier screenshot is retained as `catalogue-full-hd.jpg`.
