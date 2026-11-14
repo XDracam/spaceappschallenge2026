@@ -1,0 +1,13 @@
+# Local credentials and machine-specific files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Add stack-specific generated files when a stack is chosen.
