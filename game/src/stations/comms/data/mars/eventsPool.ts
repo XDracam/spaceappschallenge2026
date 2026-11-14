@@ -1,10 +1,10 @@
 // Random pool: the engine draws about one per game month (POOL_INTERVAL_DAYS),
 // by `weight`, scaled by trust via tags (stakeholder id + 'bad'/'opportunity').
 // `eligible` gates an event to a trust range. Each fires at most once.
-import type { EventDef } from '../model/types';
+import type { EventDef } from '../../model/types';
 import {
   budget, constraint, delay, offer, option, pace, price, service, trust, trustAbove, trustBelow,
-} from './helpers';
+} from '../helpers';
 
 export const POOL_EVENTS: EventDef[] = [
   // ------------------------------------------------------------ government

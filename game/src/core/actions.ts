@@ -45,9 +45,19 @@ export function defineActions<T extends Record<string, Reducer>>(ns: string, def
     const type = `${ns}/${name}`;
     // Re-registration replaces the reducer (dev hot reload re-runs station logic modules).
     registry.set(type, fn);
-    out[name] = (...args: unknown[]) => dispatchHook(type, args);
+    out[name] = (...args: unknown[]) => {
+      for (const cb of dispatchObservers) cb(type, args);
+      dispatchHook(type, args);
+    };
   }
   return out as never;
+}
+
+/** Observers of locally dispatched actions (playtest telemetry, core/playtestHook.ts). */
+const dispatchObservers = new Set<(type: string, args: unknown[]) => void>();
+export function observeDispatch(cb: (type: string, args: unknown[]) => void): () => void {
+  dispatchObservers.add(cb);
+  return () => dispatchObservers.delete(cb);
 }
 
 /** Set by core/store.ts: sends the action through the sync layer. */

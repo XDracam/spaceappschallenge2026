@@ -1,11 +1,8 @@
 // Proactive projects (2–3 slots). They cost money from the shared budget,
 // calendar time, and sometimes trust (startTrust, applied at start). Bigger
 // deals need trust (`requires`). Negotiated parts arrive as offers to procurement.
-import type { ProjectDef } from '../model/types';
-import { budget, limit, odds, offer, price, service, setFlag, trust } from './helpers';
-
-/** Flag set when the partner ground-station deal completes (used by in-flight events). */
-export const FLAG_GROUND_STATION = 'comms.groundStation';
+import type { ProjectDef } from '../../model/types';
+import { FLAG_GROUND_STATION, budget, limit, odds, offer, price, service, setFlag, trust } from '../helpers';
 
 export const PROJECTS: ProjectDef[] = [
   // ------------------------------------------------------------- galas

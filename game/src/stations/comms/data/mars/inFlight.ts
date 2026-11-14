@@ -1,8 +1,7 @@
 // In-flight events: resolved automatically from the state at launch (trust and
 // flags). Few and mild: goalChanceDelta stays within ±0.05.
-import type { InFlightEventDef } from '../model/types';
-import { FLAG_GROUND_STATION } from './projects';
-import { allOf, anyOf, hasFlag, lacksFlag, trustAbove } from './helpers';
+import type { InFlightEventDef } from '../../model/types';
+import { FLAG_GROUND_STATION, allOf, anyOf, hasFlag, lacksFlag, trustAbove } from '../helpers';
 
 export const IN_FLIGHT: InFlightEventDef[] = [
   {

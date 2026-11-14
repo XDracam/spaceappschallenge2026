@@ -4,7 +4,7 @@
 import { defineActions, onTick } from '../../core/actions';
 import type { GameState } from '../../core/state';
 import {
-  answerEvent, deliverEvent, getEventDef, isLaunched, passiveModifiers, resolveLaunch, startProjectIn, stepTo,
+  answerEvent, contentOf, deliverEvent, getEventDef, isLaunched, passiveModifiers, resolveLaunch, startProjectIn, stepTo,
   type PassiveModifiers,
 } from './state/world';
 
@@ -22,7 +22,7 @@ export const commsActions = defineActions('comms', {
   /** Dev / testing: deliver a specific event now, regardless of its conditions. */
   devFireEvent(s, ctx, eventId: string) {
     if (isLaunched(s)) return;
-    const def = getEventDef(eventId);
+    const def = getEventDef(eventId, contentOf(s));
     if (def) deliverEvent(s, def, ctx);
   },
 });

@@ -4,6 +4,7 @@ import { createStore, useStore } from '../core/createStore';
 import { coreActions } from '../core/coreActions';
 import type { StationId } from '../core/model';
 import { STATIONS } from '../core/model';
+import { DEFAULT_MISSION_ID, missionById } from '../core/mission';
 import { clearSaved, loadSaved } from '../core/persist';
 import { createGame } from '../core/state';
 import { getState, setLocalStation, startClient, startHost, startSolo, syncStore } from '../core/store';
@@ -106,16 +107,17 @@ function beginHosting(): void {
   });
 }
 
-export function hostNewGame(): void {
+/** Host a new game of the chosen mission (core/mission.ts MISSIONS; default: the first). */
+export function hostNewGame(missionId: string = DEFAULT_MISSION_ID): void {
   backToStart();
   clearSaved();
-  startSolo(createGame(randomSeed()));
+  startSolo(createGame(randomSeed(), missionId));
   beginHosting();
 }
 
-export function hasSavedGame(): { day: number; phase: string } | null {
+export function hasSavedGame(): { day: number; phase: string; missionName: string } | null {
   const s = loadSaved();
-  return s ? { day: s.clock.day, phase: s.meta.phase } : null;
+  return s ? { day: s.clock.day, phase: s.meta.phase, missionName: missionById(s.meta.missionId).name } : null;
 }
 
 export function resumeHostedGame(): void {

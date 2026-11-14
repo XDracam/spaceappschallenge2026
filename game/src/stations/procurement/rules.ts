@@ -33,11 +33,11 @@ export function industryPct(s: PView): number {
 
 // ------------------------------------------------------------------ calendar
 
-const START_MS = Date.parse(`${MISSION.startDateISO}T00:00:00Z`);
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+/** Calendar date of a game day (day 0 = the active mission's start, read at call time). */
 export function dayToDate(day: number): Date {
-  return new Date(START_MS + Math.floor(day) * 86_400_000);
+  return new Date(Date.parse(`${MISSION.startDateISO}T00:00:00Z`) + Math.floor(day) * 86_400_000);
 }
 export function fmtDate(day: number): string {
   const d = dayToDate(day);

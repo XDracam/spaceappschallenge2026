@@ -16,6 +16,7 @@ import {
   type BurnResult, type StackRt,
 } from './stack';
 import { maneuverLabel } from './labels';
+import { altitudeMissText, altitudeOk, goalOrbitText, hasAltitudeWindow } from './goals';
 import { norm } from './vec';
 
 // The live simulation test: flies the current rocket through the current plan.
@@ -520,6 +521,8 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
     let reachedBlocked = false;
     let reachedNoInstrument = false;
     let reachedLate = false;
+    /** Altitude of an orbit at the goal body that missed the goal's altitude window. */
+    let wrongAltitudeKm: number | undefined;
     const consider = (bi: BranchInternal, step: Step, chance: number, extra: Factor[]) => {
       if (step.result.endDay > mission.completionDeadlineDay) {
         reachedLate = true;
@@ -544,6 +547,10 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
           case 'surfaceData': match = s.kind === 'surface' && s.body === goal.body; break;
         }
         if (!match) continue;
+        if (s.kind === 'orbit' && !altitudeOk(goal, s.altitudeKm)) {
+          wrongAltitudeKm ??= s.altitudeKm;
+          continue;
+        }
         if (step.blocked) { reachedBlocked = true; continue; }
         const base = product(bi.factors.slice(0, step.factorCount));
         const scs = step.scIds.map((id) => scById.get(id)).filter((x): x is Spacecraft => !!x);
@@ -603,14 +610,16 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
       lateGoals.push(goal.name);
     }
     if (!reason && reachedBlocked) reason = 'The plan fails before this goal is reached';
+    if (!reason && wrongAltitudeKm !== undefined && hasAltitudeWindow(goal)) reason = altitudeMissText(goal, wrongAltitudeKm);
     if (!reason && reachedNoInstrument && goal.instrument) {
       reason = `No spacecraft there carries a ${INSTRUMENTS[goal.instrument].name.toLowerCase()} with performance ≥ ${goal.minPerformance ?? 0}`;
     }
     if (!reason) {
+      const orbitText = hasAltitudeWindow(goal) ? goalOrbitText(goal) : `${gBody.name} orbit`;
       reason = {
-        orbit: `The plan does not reach ${gBody.name} orbit`,
+        orbit: `The plan does not reach ${orbitText}`,
         land: `The plan does not land on ${gBody.name}`,
-        orbitData: `The plan does not reach ${gBody.name} orbit with the instrument`,
+        orbitData: `The plan does not reach ${orbitText} with the instrument`,
         surfaceData: `The plan does not land the instrument on ${gBody.name}`,
         return: `The plan does not return to Earth from ${gBody.name}`,
       }[goal.kind];

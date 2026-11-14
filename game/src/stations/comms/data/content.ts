@@ -1,29 +1,63 @@
-// Hand-authored comms content (D-005): Mars orbiter + lander mission.
+// Hand-authored comms content (D-005), one set per mission. The comms rules
+// (state/world.ts) and UI pick the set of the game's mission (s.meta.missionId).
 //
-// Structure (one file per kind, all under src/data/):
-// - characters.ts       recurring cast, one face per stakeholder (+ a university dean)
-// - eventsTimeline.ts   source 'timeline': fixed calendar days (`at`), day 15 to 1100
-// - eventsTriggered.ts  source 'player': other stations' shared flags (s.events.flags);
-//                       source 'trigger': trust / budget thresholds. Each fires once.
-// - eventsPool.ts       source 'pool': random draws by `weight`, gated by `eligible`;
-//                       tags = stakeholder ids + 'bad' | 'opportunity' (+ topic tags
-//                       'press', 'protest', 'funding', 'audit', 'politics' that
-//                       eventOdds effects target)
-// - projects.ts         proactive projects: galas, campaigns, lobbying, negotiations
-// - inFlight.ts         auto-resolved at launch from trust/flags; mild (±0.05)
-// - helpers.ts          effect/condition builders; option() derives the ↑/↓ hints
-//                       from the option's trust effects (|net| >= 10 → ±2).
+// Structure (one folder per mission under data/, same files in each):
+// - characters.ts        shared cast; each mission picks who appears (MARS_CAST, WEATHER_CAST)
+// - <mission>/eventsTimeline.ts   source 'timeline': fixed calendar days (`at`)
+// - <mission>/eventsTriggered.ts  source 'player': other stations' shared flags (s.events.flags);
+//                                 source 'trigger': trust / budget / day thresholds. Each fires once.
+// - <mission>/eventsPool.ts       source 'pool': random draws by `weight`, gated by `eligible`;
+//                                 tags = stakeholder ids + 'bad' | 'opportunity' (+ topic tags
+//                                 'press', 'protest', 'funding', 'audit', 'politics' that
+//                                 eventOdds effects target)
+// - <mission>/projects.ts         proactive projects: galas, campaigns, lobbying, negotiations
+// - <mission>/inFlight.ts         auto-resolved at launch from trust/flags; mild (±0.05)
+// - helpers.ts           effect/condition builders and content flags; option() derives
+//                        the ↑/↓ hints from the option's trust effects (|net| >= 10 → ±2).
 //
+// Missions: 'mars-orbiter-lander' (data/mars/, long, budget 900 M) and 'weather-geo'
+// (data/weather/, short: launch ≈ day 150, budget ≈ 350 M, smaller amounts).
 // Flags raised by this content: 'press.rtgStory' (plutonium story ran unanswered),
-// 'comms.groundStation' (partner dish deal done). Texts: messages ≤ 3 sentences,
-// options ≤ 12 words (teammate impact named in brackets), outcomes 1–2 sentences.
-import type { EventDef } from '../model/types';
-import { POOL_EVENTS } from './eventsPool';
-import { TIMELINE_EVENTS } from './eventsTimeline';
-import { PLAYER_EVENTS, TRIGGER_EVENTS } from './eventsTriggered';
+// 'comms.groundStation' (partner ground-station deal done). Texts: messages ≤ 3
+// sentences, options ≤ 12 words (teammate impact named in brackets), outcomes 1–2 sentences.
+import type { Character, EventDef, InFlightEventDef, ProjectDef } from '../model/types';
+import { MARS_CAST, WEATHER_CAST } from './characters';
+import * as mars from './mars/index';
+import * as weather from './weather/index';
 
 export { CHARACTERS } from './characters';
-export { PROJECTS } from './projects';
-export { IN_FLIGHT } from './inFlight';
 
-export const EVENTS: EventDef[] = [...TIMELINE_EVENTS, ...PLAYER_EVENTS, ...TRIGGER_EVENTS, ...POOL_EVENTS];
+/** One mission's comms content. */
+export interface Content {
+  missionId: string;
+  characters: Character[];
+  events: EventDef[];
+  projects: ProjectDef[];
+  inFlight: InFlightEventDef[];
+}
+
+export const MARS_CONTENT: Content = {
+  missionId: 'mars-orbiter-lander',
+  characters: MARS_CAST,
+  events: [...mars.TIMELINE_EVENTS, ...mars.PLAYER_EVENTS, ...mars.TRIGGER_EVENTS, ...mars.POOL_EVENTS],
+  projects: mars.PROJECTS,
+  inFlight: mars.IN_FLIGHT,
+};
+
+export const WEATHER_CONTENT: Content = {
+  missionId: 'weather-geo',
+  characters: WEATHER_CAST,
+  events: [...weather.TIMELINE_EVENTS, ...weather.PLAYER_EVENTS, ...weather.TRIGGER_EVENTS, ...weather.POOL_EVENTS],
+  projects: weather.PROJECTS,
+  inFlight: weather.IN_FLIGHT,
+};
+
+export const CONTENT_BY_MISSION: Record<string, Content> = {
+  [MARS_CONTENT.missionId]: MARS_CONTENT,
+  [WEATHER_CONTENT.missionId]: WEATHER_CONTENT,
+};
+
+/** Comms content of a mission. Unknown ids fall back to Mars, like core/mission.ts missionById(). */
+export function contentFor(missionId: string | undefined): Content {
+  return (missionId && CONTENT_BY_MISSION[missionId]) || MARS_CONTENT;
+}

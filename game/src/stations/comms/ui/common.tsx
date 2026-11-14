@@ -3,7 +3,8 @@
 import { affectedStations, effectStations } from '../../../shared/events/types';
 import type { StakeholderHint } from '../../../shared/events/types';
 import type { Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId } from '../model/types';
-import { CHARACTERS, EVENTS, PROJECTS } from '../data/content';
+import { getState } from '../../../core/store';
+import { contentOf } from '../state/world';
 import { formatMoney, signed } from './format';
 
 export const STAKEHOLDER_ORDER: StakeholderId[] = ['government', 'industry', 'public', 'partners'];
@@ -19,10 +20,11 @@ export const STATION_LABEL: Record<StationId, string> = {
   planner: 'planner', procurement: 'procurement', science: 'science', comms: 'comms',
 };
 
+/** Lookups in the comms content of the game's mission (s.meta.missionId). */
 export const characterById = (id: string | undefined): Character | undefined =>
-  id ? CHARACTERS.find((c) => c.id === id) : undefined;
-export const eventById = (id: string): EventDef | undefined => EVENTS.find((e) => e.id === id);
-export const projectById = (id: string): ProjectDef | undefined => PROJECTS.find((p) => p.id === id);
+  id ? contentOf(getState()).characters.find((c) => c.id === id) : undefined;
+export const eventById = (id: string): EventDef | undefined => contentOf(getState()).events.find((e) => e.id === id);
+export const projectById = (id: string): ProjectDef | undefined => contentOf(getState()).projects.find((p) => p.id === id);
 
 /** Character of an event instance (may be missing while content is a stub). */
 export function eventCharacter(def: EventDef | undefined): Character | undefined {

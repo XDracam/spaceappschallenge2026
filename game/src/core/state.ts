@@ -2,7 +2,7 @@
 // station replicates it by applying the same actions in the same order.
 import type { Budget, Clock, EventsState, Market, Meta, ResearchState } from './model';
 import { STATIONS } from './model';
-import { MISSION } from './mission';
+import { DEFAULT_MISSION_ID, MISSION, setActiveMission } from './mission';
 import { initialPlannerSlice, type PlannerSlice } from '../stations/planner/slice';
 import { initialCommsSlice, type CommsSlice } from '../stations/comms/slice';
 import { initialScienceSlice, type ScienceSlice } from '../stations/science/slice';
@@ -28,11 +28,14 @@ export interface GameState {
 export const DAYS_PER_MONTH = 30.44;
 export const DEFAULT_DAYS_PER_SECOND = DAYS_PER_MONTH / 60;
 
-export function createGame(seed: number): GameState {
+export function createGame(seed: number, missionId: string = DEFAULT_MISSION_ID): GameState {
+  // Slices below read the active MISSION, so switch it first.
+  setActiveMission(missionId);
   return {
     version: STATE_VERSION,
     meta: {
       phase: 'lobby',
+      missionId: MISSION.id,
       seed: seed >>> 0,
       rngCounter: 0,
       nextId: 1,

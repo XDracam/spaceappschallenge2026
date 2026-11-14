@@ -1,8 +1,10 @@
-import type { FlightState } from '../model/types';
+import type { Evaluation, FlightState, PlannerGame } from '../model/types';
 import { actions, getPlanner, getEvaluation, useEvaluation, usePlanner, useUi } from '../state/store';
-import { availableManeuvers, branchEndState, createManeuver } from '../physics';
+import {
+  altitudeOk, availableManeuvers, branchEndState, createManeuver, goalOrbitChangeLabel, hasAltitudeWindow,
+} from '../physics';
 import { formatDay } from '../model/units';
-import { newId, openTab, partReadiness, plural, useLocalUi } from './common';
+import { bodyName, newId, openTab, partReadiness, plural, useLocalUi } from './common';
 
 // One-line hint at the top-left of the free map area: what to do next, driven by plan state.
 
@@ -15,6 +17,42 @@ function addLaunch() {
   const opt = availableManeuvers(game, root, state).find((o) => o.enabled);
   if (!opt) return;
   actions.addManeuver(root.id, createManeuver(game, root, state, opt, newId));
+}
+
+/**
+ * Route hint from the active mission's goals: the first goal the plan does not reach yet,
+ * if the next step toward it is a transfer, an orbit entry or a goal orbit change.
+ * Other cases (landing, separation …) fall through to the problem / ordering hints.
+ */
+function routeHint(game: PlannerGame, ev: Evaluation): string | null {
+  const results = ev.branches.flatMap((b) => b.maneuvers);
+  const states = results.map((r) => r.stateAfter);
+  const all = game.plan.branches.flatMap((b) => b.maneuvers);
+  const launch = all[0]?.type === 'launch' ? all[0] : undefined;
+  const home = launch?.body ?? 'earth';
+  for (const goal of game.mission.goals) {
+    const name = bodyName(goal.body);
+    const reached = states.some((s) => {
+      if (s.kind === 'lost' || s.body !== goal.body) return false;
+      if (s.kind === 'orbit') return altitudeOk(goal, s.altitudeKm);
+      return s.kind === 'surface';
+    });
+    if (reached) continue;
+    const orbit = states.find((s): s is Extract<FlightState, { kind: 'orbit' }> => s.kind === 'orbit' && s.body === goal.body);
+    if (orbit) {
+      if (!hasAltitudeWindow(goal)) return null;
+      return `Next: click “+ Next step” at ${name} → ${goalOrbitChangeLabel(goal, orbit.altitudeKm)}`;
+    }
+    if (states.some((s) => s.kind === 'approach' && s.body === goal.body)) {
+      return `Next: click “+ Next step” at ${name} → Enter orbit`;
+    }
+    const heading = all.some((m) => m.type === 'transfer' && m.target === goal.body);
+    if (goal.body !== home && !heading && all.length === 1 && launch) {
+      return `Next: click “+ Next step” at ${bodyName(home)} → Transfer to ${name}`;
+    }
+    return null;
+  }
+  return null;
 }
 
 type Step =
@@ -36,13 +74,8 @@ export function NextStep() {
     if (all.length === 0) {
       return { kind: 'button', text: 'Start: Launch from Earth', onClick: addLaunch, glow: true, title: 'Add the launch to the plan' };
     }
-    if (all.length === 1 && all[0].type === 'launch') {
-      return { kind: 'text', text: 'Next: click “+ Next step” at Earth → Transfer to Mars' };
-    }
-    const toMars = all.some((m) => m.type === 'transfer' && m.target === 'mars');
-    const atMars = ev.branches.some((b) => b.maneuvers.some((r) =>
-      (r.stateAfter.kind === 'orbit' || r.stateAfter.kind === 'surface') && r.stateAfter.body === 'mars'));
-    if (toMars && !atMars) return { kind: 'text', text: 'Next: click “+ Next step” at Mars → Enter orbit' };
+    const route = routeHint(game, ev);
+    if (route) return { kind: 'text', text: route };
     const errors = ev.issues.filter((i) => i.severity === 'error').length;
     if (errors > 0) return { kind: 'text', text: `Next: fix ${plural(errors, 'problem')} — see Issues`, tone: 'warn' };
     const r = partReadiness(game, ev);

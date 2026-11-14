@@ -21,6 +21,8 @@ export interface Seat {
 
 export interface Meta {
   phase: Phase;
+  /** Which hand-authored mission this game plays (core/mission.ts MISSIONS). */
+  missionId: string;
   /** Root seed for all randomness (set when the game is created). */
   seed: number;
   /** Advances on every rng() draw inside reducers, so replays are deterministic. */

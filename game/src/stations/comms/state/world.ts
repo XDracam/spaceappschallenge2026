@@ -9,11 +9,12 @@ import type { ActionCtx } from '../../../core/actions';
 import { pushNews, setFlag } from '../../../core/coreActions';
 import type { Offer, PartKind } from '../../../core/model';
 import { budgetAvailableM, DAYS_PER_MONTH, type GameState } from '../../../core/state';
+import { MISSION } from '../../../core/mission';
 import type {
-  Character, Effect, EventDef, EventInstance, InFlightEventDef, ProjectDef, StakeholderId, StationId,
+  Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId,
 } from '../model/types';
 import type { CommsSlice } from '../slice';
-import { CHARACTERS, EVENTS, IN_FLIGHT, PROJECTS } from '../data/content';
+import { contentFor, type Content } from '../data/content';
 import { BASE_PROJECT_SLOTS, MAX_PROJECT_SLOTS, POOL_INTERVAL_DAYS, TRUST_STRONG } from '../data/mission';
 import { describeEffect, STAKEHOLDER_LABEL } from './format';
 
@@ -32,29 +33,35 @@ const OFFER_CANCELLATION_PCT = 0.5;
 /** Randomness + ids for rules (the reducer ctx). */
 export type RulesCtx = Pick<ActionCtx, 'rng' | 'newId'>;
 
-export interface Content {
-  characters: Character[];
-  events: EventDef[];
-  projects: ProjectDef[];
-  inFlight: InFlightEventDef[];
+export type { Content };
+
+/**
+ * Comms content of the game's mission (s.meta.missionId). Rules take it from the
+ * state, so every browser picks the same set for the same state (deterministic).
+ */
+export function contentOf(s: GameState): Content {
+  return contentFor(s.meta.missionId);
 }
-export const CONTENT: Content = { characters: CHARACTERS, events: EVENTS, projects: PROJECTS, inFlight: IN_FLIGHT };
+/** Comms content of the active mission (core/mission.ts MISSION, live), for lookups without a state at hand. */
+export function currentContent(): Content {
+  return contentFor(MISSION.id);
+}
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 // ------------------------------------------------------------------ lookups
 
-export function getEventDef(id: string, content: Content = CONTENT): EventDef | undefined {
+export function getEventDef(id: string, content: Content = currentContent()): EventDef | undefined {
   return content.events.find((e) => e.id === id);
 }
-export function getProjectDef(id: string, content: Content = CONTENT): ProjectDef | undefined {
+export function getProjectDef(id: string, content: Content = currentContent()): ProjectDef | undefined {
   return content.projects.find((p) => p.id === id);
 }
-export function getCharacter(id: string, content: Content = CONTENT): Character | undefined {
+export function getCharacter(id: string, content: Content = currentContent()): Character | undefined {
   return content.characters.find((c) => c.id === id);
 }
 /** Stakeholder an event belongs to (via its character). */
-export function eventStakeholder(def: EventDef, content: Content = CONTENT): StakeholderId | undefined {
+export function eventStakeholder(def: EventDef, content: Content = currentContent()): StakeholderId | undefined {
   return getCharacter(def.characterId, content)?.stakeholder;
 }
 
@@ -135,7 +142,7 @@ export function isLaunched(s: GameState): boolean {
 export type ProjectBlock = 'unknown' | 'launched' | 'running' | 'noSlot' | 'trust' | 'budget';
 
 /** Whether a project can start now, and why not. */
-export function canStartProject(s: GameState, defId: string, content: Content = CONTENT): { ok: boolean; reason?: ProjectBlock } {
+export function canStartProject(s: GameState, defId: string, content: Content = contentOf(s)): { ok: boolean; reason?: ProjectBlock } {
   const def = getProjectDef(defId, content);
   const c = s.comms;
   if (!def) return { ok: false, reason: 'unknown' };
@@ -314,7 +321,7 @@ export function deliverEvent(s: GameState, def: EventDef, rules: RulesCtx): Even
 }
 
 /** Whether an open event can be answered with this option right now (budget for its cost). */
-export function canAnswer(s: GameState, instanceId: string, optionId: string, content: Content = CONTENT): boolean {
+export function canAnswer(s: GameState, instanceId: string, optionId: string, content: Content = contentOf(s)): boolean {
   if (isLaunched(s)) return false;
   const inst = s.comms.inbox.find((i) => i.instanceId === instanceId);
   if (!inst || inst.status !== 'open') return false;
@@ -325,7 +332,7 @@ export function canAnswer(s: GameState, instanceId: string, optionId: string, co
 
 /** Answer an open event. Returns the outcome text, or null if not possible. */
 export function answerEvent(
-  s: GameState, rules: RulesCtx, instanceId: string, optionId: string, content: Content = CONTENT,
+  s: GameState, rules: RulesCtx, instanceId: string, optionId: string, content: Content = contentOf(s),
 ): string | null {
   if (!canAnswer(s, instanceId, optionId, content)) return null;
   const inst = s.comms.inbox.find((i) => i.instanceId === instanceId)!;
@@ -368,7 +375,7 @@ function expire(s: GameState, rules: RulesCtx, inst: EventInstance, content: Con
 // ---------------------------------------------------------------- projects
 
 /** Start a project if allowed (cost spent from the shared budget). Returns true when started. */
-export function startProjectIn(s: GameState, rules: RulesCtx, defId: string, content: Content = CONTENT): boolean {
+export function startProjectIn(s: GameState, rules: RulesCtx, defId: string, content: Content = contentOf(s)): boolean {
   if (!canStartProject(s, defId, content).ok) return false;
   const def = getProjectDef(defId, content)!;
   const day = s.clock.day;
@@ -403,7 +410,7 @@ function finishProject(s: GameState, rules: RulesCtx, defId: string, content: Co
  * shared clock is already at `day`): due and pool events arrive, open events past
  * their deadline expire, projects finish, timed comms modifiers run out.
  */
-export function stepTo(s: GameState, rules: RulesCtx, day: number, content: Content = CONTENT): void {
+export function stepTo(s: GameState, rules: RulesCtx, day: number, content: Content = contentOf(s)): void {
   const c = s.comms;
 
   // 1. Timeline / trigger / player events.
@@ -439,7 +446,7 @@ export function stepTo(s: GameState, rules: RulesCtx, day: number, content: Cont
 }
 
 /** Resolve the in-flight events once, from the state at launch. */
-export function resolveLaunch(s: GameState, content: Content = CONTENT): void {
+export function resolveLaunch(s: GameState, content: Content = contentOf(s)): void {
   if (s.comms.launched) return;
   s.comms.launched = true;
   s.comms.inFlight = resolveInFlight(content.inFlight, buildWorld(s));
@@ -459,7 +466,7 @@ export interface InFlightResult {
  * results resolved at launch; before that (or if comms never ticked at launch),
  * resolves them from the current state. Pure: does not modify `s`.
  */
-export function commsInFlightResults(s: GameState, content: Content = CONTENT): InFlightResult[] {
+export function commsInFlightResults(s: GameState, content: Content = contentOf(s)): InFlightResult[] {
   const resolved = s.comms.launched ? s.comms.inFlight : resolveInFlight(content.inFlight, buildWorld(s));
   return resolved.flatMap((r) => {
     const def = content.inFlight.find((d) => d.id === r.eventId);

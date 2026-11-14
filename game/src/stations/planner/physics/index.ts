@@ -8,6 +8,7 @@
 //   stack.ts       staging and the rocket equation
 //   evaluate.ts    live simulation test (maneuvers, goals, hazards, parts, budget)
 //   options.ts     maneuver menu and default maneuvers
+//   goals.ts       goal orbit altitude windows (e.g. geostationary)
 //   playthrough.ts final playthrough and spacecraft positions
 
 import type { Evaluation, FlightState } from '../model/types';
@@ -21,6 +22,7 @@ export { playthrough, spacecraftPositionAt } from './playthrough';
 // Extra helpers (not part of the original contract, safe to use).
 export { siblingsOf, transferRelation, sunDistanceKm, earthDistanceKm } from './ephemeris';
 export { hohmannTravelDays } from './transfers';
+export { altitudeGoalsAt, altitudeOk, goalOrbitChangeLabel, goalOrbitText, hasAltitudeWindow } from './goals';
 
 /** Flight state at the end of a branch (where the next maneuver would start). */
 export function branchEndState(evaluation: Evaluation, branchId: string): FlightState | undefined {

@@ -11,6 +11,7 @@ import type { ClientTransport, HostToClient, HostTransport } from './protocol';
 import type { StationId } from './model';
 import { createGame, type GameState } from './state';
 import { createStore, useStore } from './createStore';
+import { setActiveMission } from './mission';
 
 export type Role = 'solo' | 'host' | 'client';
 
@@ -86,6 +87,7 @@ export function onHostState(cb: (s: GameState) => void): () => void {
 
 /** Single browser, no network (also the host before anyone joins). */
 export function startSolo(state: GameState): void {
+  setActiveMission(state.meta.missionId);
   confirmed = state;
   seq = 0;
   pending = [];
@@ -128,6 +130,7 @@ export function startClient(transport: ClientTransport): void {
     if (msg.t === 'welcome') {
       syncStore.update((s) => { s.peerId = msg.peerId; });
     } else if (msg.t === 'snapshot') {
+      setActiveMission(msg.state.meta.missionId);
       confirmed = msg.state;
       seq = msg.seq;
       // Pending actions the host never saw are dropped on resync.

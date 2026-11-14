@@ -184,6 +184,8 @@ export interface ManeuverOption {
   secondary?: boolean;
   /** For 'separate': the spacecraft this option releases onto a new branch. */
   spacecraftId?: string;
+  /** For 'changeOrbit': target altitude (e.g. a goal orbit); unset = a default step. */
+  altitudeKm?: number;
 }
 
 // --------------------------------------------------------- flight states
@@ -207,6 +209,12 @@ export interface Goal {
   instrument?: InstrumentVariant;   // for data goals
   minPerformance?: number;          // for data goals
   stayDays?: number;                // time at the body that counts for hazards (default 365)
+  /** orbit / orbitData goals: required circular orbit altitude (km). Unset = any orbit at the body. */
+  altitudeKm?: number;
+  /** Allowed deviation from altitudeKm (km, default 1000). */
+  altitudeToleranceKm?: number;
+  /** Name of that orbit for menus and hints, e.g. "geostationary orbit". */
+  orbitName?: string;
 }
 
 export interface MissionDef {
