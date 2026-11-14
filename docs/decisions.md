@@ -135,13 +135,29 @@ Merge provenance — the incoming branch used D-006 for this decision. D-006 alr
 - Consequences: retain D-013's planner-derived procurement style; apply web-oriented recommendations in the context of desktop game stations. Review canvas interactions separately. Player coordination and enjoyment still require actual multiplayer observation.
 - Related: I-059, D-004, D-007, D-010–D-013.
 
-## D-015 — Dollars and standard icons in procurement
+## D-015 — Integration architecture
+
+- Date: 2026-11-14
+- Status: accepted user direction ([integration questions](notes/2026-11-14-integration-questions.md))
+- Decision:
+  - Connection (resolves the connection part of Q-012): peer-to-peer. One player's browser hosts the authoritative game state; the other stations connect via WebRTC. Signaling by copy-paste connection codes, no third-party matchmaking.
+  - Code: one web app with four station views sharing one game-state module and types. Station folders keep their specs and notes.
+  - Hosting: online for judges, as a static site on GitHub Pages.
+  - Fewer than four players: anyone may hop to an unclaimed station. This relaxes D-012's no-switching rule only for stations nobody has claimed.
+  - Shared model uses procurement's D-006 terms (Task, Resource, Call, Offer, Contract, Allocation, Budget). The planner's "Order part" creates a shared Task whose criteria are the slider minimums; the planner keeps its own UI wording.
+  - The assistant builds Science and Procurement out to the planner/comms level as part of integration; teammates review.
+- Consequences and limitations: WebRTC over the internet needs a STUN server and can fail on strict networks without a TURN relay; copy-paste signaling is clunky but self-contained. If the host closes the tab, the game ends unless state is saved and handed over. Deploying to GitHub Pages needs the repository owner's agreement.
+- Related: D-006, D-008, D-012, Q-012, [event system](design/events.md).
+
+## D-016 — Dollars and standard icons in procurement
 
 - Date: 2026-11-14
 - Status: accepted user direction
 - Direction: use dollar amounts throughout the procurement prototype, a standard icon pack, and explicit names for missing items.
 - Implementation: dollar notation such as $22 and $4.50, Lucide Static 0.468.0, and shortage labels drawn from authored Task descriptions.
 - Source and observed checks: [user corrections and walkthrough](playtests/2026-11-14-procurement-gameplay-iteration.md#standard-icon-pack-dollars-and-named-shortages).
+
+Identifier alignment — incoming integration architecture keeps D-015. The procurement display decision is retained as D-016 after parallel commits used the same number.
 
 ## Future decision template
 

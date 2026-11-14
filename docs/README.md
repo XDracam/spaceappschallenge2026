@@ -60,6 +60,7 @@
 | [UI flow request](notes/2026-11-14-procurement-ui-flow-request.md) | User request to research what interfaces show and when |
 | [Full HD mockup request](notes/2026-11-14-full-hd-mockup.md) | User request for a standalone desktop design |
 | [Player stations note](notes/2026-11-14-player-stations.md) | User decision for four separate stations and seats |
+| [Integration questions](notes/2026-11-14-integration-questions.md) | User answers on connection, code layout, hosting, fewer players and terminology (D-015) |
 | [Science module note](notes/2026-11-14-science-module.md) | Verbatim science station input |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
