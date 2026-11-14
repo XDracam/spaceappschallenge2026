@@ -54,6 +54,8 @@ After a result, can a new session reuse an earlier design? Is comparison across 
 
 The mission-planner module selects web, TypeScript and HTML canvas, with Preact for panels. D-009 adopts the documented web/TypeScript/canvas baseline for the separate procurement prototype. D-012 fixes four separate stations as a design choice. How they connect, shared networking, hosting and common architecture remain open.
 
+Answered 2026-11-14 by D-015: host-browser peer-to-peer (WebRTC, copy-paste signaling), one app with four station views, GitHub Pages hosting. Open: STUN/TURN choice and host hand-over.
+
 ## Q-013 — Publication and license
 
 What license should the project use, and what submission obligations apply? Blocks license selection and submission claims, not local concept work.
