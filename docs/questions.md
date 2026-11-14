@@ -1,10 +1,12 @@
 # Open questions
 
-All questions below are open as of November 14, 2026. No numerical values or answers have been selected. The order below identifies dependencies, not an approved roadmap.
+All questions below are open as of November 14, 2026, unless marked closed. No numerical values or answers have been selected except where a decision is linked. The order below identifies dependencies, not an approved roadmap.
 
 ## Q-001 — Players and role ownership
 
-Multiplayer is the initial focus; fewer-player gameplay comes later. How many players and roles? Can players share roles or switch at any time? What happens to unattended roles? Role structures remain open.
+**Status: closed 2026-11-14 by [D-012](decisions.md#d-012--four-players-on-four-separate-stations).** Four players by default, each on their own station from a separate seat; no switching or sharing of stations during game time. Since every station is occupied, unattended roles do not arise at the default count. Fewer-player play stays deferred (I-014). The exact role split per station follows [roles](design/roles.md).
+
+Original question: Multiplayer is the initial focus; fewer-player gameplay comes later. How many players and roles? Can players share roles or switch at any time? What happens to unattended roles? Role structures remain open.
 
 ## Q-002 — Shared or competing outcomes
 
@@ -48,7 +50,7 @@ After a result, can a new session reuse an earlier design? Is comparison across 
 
 ## Q-012 — Platform and technology
 
-The mission-planner module selects web, TypeScript and HTML canvas. D-009 adopts that documented stack for the separate procurement prototype. Shared networking, common architecture, and any other module-specific choices remain open.
+The mission-planner module selects web, TypeScript and HTML canvas, with Preact for panels. D-009 adopts the documented web/TypeScript/canvas baseline for the separate procurement prototype. D-012 fixes four separate stations as a design choice. How they connect, shared networking, hosting and common architecture remain open.
 
 ## Q-013 — Publication and license
 
@@ -64,7 +66,9 @@ How are authored messages, dialogue options, reception, and consequences selecte
 
 ## Q-016 — Real time, difficulty, and switching
 
-How does real time advance? What do difficulty sliders change? Can anyone switch to any role at any time, including a role already occupied? How does the system keep unattended roles and in-progress work moving?
+**Status: partly closed by D-012.** Switching and sharing stations during game time are out, and unattended roles do not arise at the default four players. Still open: how real time advances and what difficulty sliders change.
+
+Original question: How does real time advance? What do difficulty sliders change? Can anyone switch to any role at any time, including a role already occupied? How does the system keep unattended roles and in-progress work moving?
 
 ## Q-017 — Science minigames
 

@@ -2,9 +2,9 @@
 
 Prototype workspace for the [2026 NASA Space Apps challenge](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/).
 
-**Stage:** concept and prototype design. No playable implementation or technology stack has been selected.
+**Stage:** prototype. The [mission-planner app](mission-planner/README.md#running-the-app) and separate [procurement interaction prototype](procurement/mockups/README.md) are available. Shared integration remains open.
 
-A multiplayer-focused brainstorming project about making mission planning and communication fun. Players could work in real time across science, procurement, planning, and external relations. A key design goal is to give every role meaningful activity at the same time, without leaving someone waiting on another role. The mechanics and overall structure remain open.
+A multiplayer-focused brainstorming project about making mission planning and communication fun. By default, four players each operate their own station from a separate seat (see [D-012](docs/decisions.md#d-012--four-players-on-four-separate-stations)). Players could work in real time across science, procurement, planning, and external relations. A key design goal is to give every role meaningful activity at the same time, without leaving someone waiting on another role. The mechanics and overall structure remain open.
 
 ## Start here
 

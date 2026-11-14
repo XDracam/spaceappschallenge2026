@@ -52,9 +52,11 @@
 | [Research clarification](notes/2026-11-14-procurement-research-clarification.md) | User request for deeper research, principles, concepts and design alternatives |
 | [UI flow request](notes/2026-11-14-procurement-ui-flow-request.md) | User request to research what interfaces show and when |
 | [Full HD mockup request](notes/2026-11-14-full-hd-mockup.md) | User request for a standalone desktop design |
+| [Player stations note](notes/2026-11-14-player-stations.md) | User decision for four separate stations and seats |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |
+| [Second planner pull review](reviews/2026-11-14-second-planner-pull.md) | Implementation lessons, integration gaps and merge provenance |
 
 ## How to keep ideas usable
 
@@ -68,4 +70,4 @@ Use the next unused ID; do not renumber historical records. One idea may evolve 
 
 ## Authority
 
-The user has explicitly described the concept notes as brainstorming, while emphasizing the key requirement to keep every role active concurrently. Multiplayer is the initial focus. The user also set a baseline of no runtime dynamic generation with hand-crafted content; its exact boundary is open. Other mechanics remain open ideas. The challenge page establishes external challenge guidance. A playtest can provide evidence about a mechanic without selecting it.
+The user has explicitly described the concept notes as brainstorming, while emphasizing the key requirement to keep every role active concurrently. Multiplayer is the initial focus, with four players on four separate stations by default (D-012). The user also set a baseline of no runtime dynamic generation with hand-crafted content; its exact boundary is open. Other mechanics remain open ideas. The challenge page establishes external challenge guidance. A playtest can provide evidence about a mechanic without selecting it.

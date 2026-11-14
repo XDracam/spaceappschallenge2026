@@ -1,6 +1,6 @@
 # Roles and interactions
 
-These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md), [follow-up](../notes/2026-11-14-brainstorm.md), and [personnel and roles notes](../notes/2026-11-14-personnel-tasks-roles.md), not a selected player count or permission model. Focus is multiplayer first, and switching roles is an idea. See [Q-001](../questions.md#q-001--players-and-role-ownership). The key requirement is meaningful concurrent activity for every role (D-004).
+These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md), [follow-up](../notes/2026-11-14-brainstorm.md), and [personnel and roles notes](../notes/2026-11-14-personnel-tasks-roles.md), not a fixed role split. Player setup is decided in [D-012](../decisions.md#d-012--four-players-on-four-separate-stations): four players by default, one station each from a separate seat, with no switching or sharing during game time. Which responsibilities each station covers is still being worked out here. The key requirement is meaningful concurrent activity for every role (D-004).
 
 A [procurement-facing action map](../../procurement/role-actions.md) records the current proposed actions and their effects.
 

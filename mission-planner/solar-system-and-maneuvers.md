@@ -62,6 +62,8 @@ The game has two separate kinds of time.
 - Every part must be delivered before the launch date. Launch windows are fixed by planet positions, so a late delivery can force a costlier transfer or a later window.
 - When the agency calendar reaches the launch date, play ends and the final playthrough starts. It uses the contracted parts' actual stats.
 
+**Mission deadline — user direction (2026-11-14):** each mission has one completion deadline (not a launch deadline). Goals achieved after it do not count; the live test flags them. Launching later therefore needs faster, costlier transfers, which gives the delta-v-versus-travel-time trade-off its purpose.
+
 ## Final playthrough outcome
 
 **User direction:**
@@ -81,6 +83,8 @@ The game has two separate kinds of time.
 **User direction:** the player steers the spacecraft by setting waypoints on orbits. Example: launch into Earth orbit → click the orbit to plan a transfer → at the target, click to plan orbit insertion → click that orbit to plan a landing. The game calculates the delta-v cost of each maneuver.
 
 **User direction:** clicking an orbit opens a menu of maneuver types; each type has a few sliders.
+
+**User direction (2026-11-14):** the plan starts empty with the rocket on the launch pad at Earth; the planner's first step is "Launch" (with the orbit altitude). While planning, the map shows planet positions on the planned launch day by default, so Earth and the launch orbit line up.
 
 ## Maneuver types
 

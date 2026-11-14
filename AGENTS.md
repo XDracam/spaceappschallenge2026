@@ -22,7 +22,7 @@
 
 ## Implementation
 
-- Mission planning and the separate procurement prototype select web, TypeScript and HTML canvas. See D-009 for procurement. Player count, shared network architecture and license remain open. Establish relevant unresolved choices before scaffolding their dependencies.
+- Mission planning and the separate procurement prototype select web, TypeScript and HTML canvas. The planner uses Preact for panels. See D-009 for procurement. D-012 sets four separate player stations with no switching or sharing during game time. How stations connect and the project license remain open. Establish relevant unresolved choices before scaffolding their dependencies.
 - Keep implementation proportional to the prototype question in `docs/prototype.md`.
 - Preserve existing work. Do not commit or push unless requested.
 - Check the actual changes and relevant behavior before handoff; report what was verified and any remaining limitations. Do not add or run tests unless the user asks.

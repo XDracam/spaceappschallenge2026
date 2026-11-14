@@ -6,9 +6,31 @@ Cross-module clarification in [D-008](../docs/decisions.md#d-008--procurement-al
 
 ## Layout
 
-**User direction:** the solar system map is always visible. The rocket configurator, shared Tasks, and versions sit in a docked side panel.
+**User direction:** the solar system map is always visible. The current station has Rocket and Versions panels, with procurement status shown on part rows. Shared Tasks retain their role-neutral meaning under D-008.
 
-**Proposal:**
+**User direction (2026-11-14, after the first build, [notes](notes/2026-11-14-ui-feedback.md)):** the style follows a reference image (removed for publication; redistribution rights were not documented): dark glowing space visual, glass cards floating over it, pill navigation. The UI must be much simpler: few controls visible at once. The agency calendar is not pausable in the main UI.
+
+**Proposal — layout after the redesign:**
+
+```
+ MISSION PLANNER    ( Rocket )( Procurement )( Versions )    [date •][budget][launch][⚙]
+┌──────────────────────────────────────────────────────────────┬──────────────────┐
+│                                                              │ glass side panel │
+│        full-bleed solar system map (glow, orbits,            │ (active pill;    │
+│        trajectories, maneuver dots, clickable end states)    │  collapsible)    │
+│                                                              │                  │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐           │                  │
+│ │ Δv budget    │ │ Goals        │ │ Issues       │           │                  │
+│ └──────────────┘ └──────────────┘ └──────────────┘           └──────────────────┘
+```
+
+- **User direction (2026-11-14):** no Procurement panel on the planner station — that is the procurement player's station (D-012). Navigation is Rocket · Versions; each part row in the Rocket panel shows its order status and arrival date versus the launch date.
+- Details appear on demand: rocket parts are compact rows that expand one at a time to show their sliders; procurement rows expand for contract details; the version comparison is behind a toggle.
+- The calendar date runs on its own (pulsing dot); pause and speed live only in the Dev drawer (gear icon).
+- While planning, the map shows positions on the planned launch day ("Launch day" in the map title line); editing a transfer shows its departure day; the playthrough shows its own date.
+- The launch chip opens a popover with the launch-date control, the mission's launch deadline, and "Launch now".
+
+**Earlier proposal (first build), kept for history:**
 
 ```
 ┌──────────────────────────────────────────┬─────────────────────┐

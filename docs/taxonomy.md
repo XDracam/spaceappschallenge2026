@@ -25,7 +25,7 @@ For example, the procurement player accepts an Offer. Procurement checks the Bud
 
 These categories describe purpose and relationships. An identifiable Resource definition belongs among the Entities and is also Authored content. A named astronaut can be a world actor and a procured Resource, depending on the personnel model selected. These connections should be explicit in designs.
 
-A Role expresses player responsibility. A System applies rules and manages state. Procurement is currently the name of both a Role and a System. Role switching and shared ownership remain open.
+A Role expresses player responsibility. A System applies rules and manages state. Procurement is currently the name of both a Role and a System. D-012 rules out station switching and sharing during game time for the default four-player setup. Detailed action authority remains open.
 
 An event definition describes a possible situation and its outcomes. An event occurrence records a particular situation happening during play. A system message carries state or an event to another system. For example, an authored funding-dispute situation can lead to a particular funding cut, communicated through `FundingChanged`.
 
@@ -36,7 +36,7 @@ Who plays, takes responsibility, or acts in the world?
 | Concept | Meaning | Example |
 | --- | --- | --- |
 | Player | A human participating in a session. | You or a teammate. |
-| Role | A responsibility a player takes on. | Procurement, planning, science, communications. Switching remains an idea. |
+| Role | A responsibility a player takes on. | Procurement, planning, science, communications. D-012 sets four separate stations and rules out switching during game time. |
 | World actor | A person or organization inside the fiction. | Supplier, politician, sponsor, astronaut, researcher. Personnel representation remains open. |
 
 ## Systems

@@ -105,6 +105,18 @@ User clarification on November 14, 2026. Procurement gameplay centers on acquiri
 The role fulfills needs and contributes to shared Tasks. The previous isolated Offer-comparison mockups were too narrow. The interface should use the space of a Full HD or larger game screen. Specific layout and interaction designs remain proposals.
 
 See the [verbatim clarification](notes/2026-11-14-catalogue-gameplay.md) and the current [catalogue gameplay direction](../procurement/gameplay.md).
+## D-012 — Four players on four separate stations
+
+- Date: 2026-11-14
+- Status: accepted user direction
+- Decision: the game is multiplayer for four people by default. Each player operates their own station from a separate seat. During game time players do not switch or share stations.
+- Source / approval: [player stations note](notes/2026-11-14-player-stations.md).
+- Rationale and evidence: user decision. Empty Epsilon is an acceptable reference for this **design** choice: one player per station, each with their own seat.
+- Alternatives considered: switching roles at any time (I-013, now superseded for game time) and shared roles (Q-001).
+- Consequences and limitations: every station is always occupied, so the unattended-role question no longer applies at the default player count. This is not a technical architecture choice. How stations connect, the platform, and the network stay open in Q-012. Play with fewer players is deferred (I-014); four is the default for now. Which responsibility each station covers follows the role brainstorm in [roles](design/roles.md) and is not fixed by this decision.
+- Related ideas, questions, and docs: I-013, I-014, I-056, Q-001 (closed), Q-012 (open), Q-016 (partly closed), [roles](design/roles.md).
+Merge provenance — the incoming branch used D-006 for this decision. D-006 already identified procurement terminology here. The station decision is retained as D-012, and its incoming idea I-034 is retained as I-056. Original user wording is preserved in the source note.
+
 
 ## Future decision template
 

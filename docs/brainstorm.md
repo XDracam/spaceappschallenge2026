@@ -8,10 +8,11 @@ Mission planning involves a lot of communication; the central design aim is to m
 
 ## People and play — I-013, I-014
 
-- Focus on multiplayer first; decide later how fewer people play.
-- Consider real-time play and difficulty sliders.
-- Let players switch between roles at any time; Empty Epsilon was given as an inspiration for switching.
-- Open: whether multiple players can share a role, what happens to unattended roles, and how time and switching interact (Q-001, Q-016).
+- **Decided (D-012):** four players by default, each on their own station from a separate seat, with no switching or sharing of stations during game time. Empty Epsilon is a reference for this design choice only, not for technical architecture.
+- Focus on multiplayer first; decide later how fewer people play. Four is the default for now.
+- Consider real-time play and difficulty sliders (Q-016).
+- Superseded: the earlier idea of switching between roles at any time (I-013) no longer applies during game time.
+- Open: how the stations connect (Q-012).
 
 ## Personnel across roles — I-022
 

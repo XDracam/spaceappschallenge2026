@@ -16,8 +16,8 @@ All entries created November 14, 2026. User ideas come from the [kickoff](notes/
 | I-010 | Communications can go badly: politicians demand extras, routes change, funding stops during a mission, or additional payloads and objectives appear. | User brainstorm | Brainstorm | Examples and impact chains in [brainstorm](brainstorm.md) |
 | I-011 | Split external communications into political, industry, public relations, or other areas. | User brainstorm | Brainstorm | Role split and ownership are open, Q-006 |
 | I-012 | Communications receives messages and chooses dialogue responses; reactions have visible results affecting other roles, including player-caused events and an example [redacted for publication]. | User brainstorm | Brainstorm | Event and response design, Q-015 |
-| I-013 | Real-time play, difficulty sliders, and switching roles at any time, inspired by Empty Epsilon. | User brainstorm | Brainstorm | Timing, difficulty, and switching, Q-016 |
-| I-014 | Focus on multiplayer first; explore fewer-player gameplay later. | User brainstorm | Working focus | Q-001; no specific player count selected |
+| I-013 | Real-time play, difficulty sliders, and switching roles at any time, inspired by Empty Epsilon. | User brainstorm | Brainstorm; switching superseded by D-012 | Switching during game time rejected by D-012; real time and difficulty remain open in Q-016 |
+| I-014 | Focus on multiplayer first; explore fewer-player gameplay later. | User brainstorm | Working focus; default of four set by D-012 | Fewer-player play deferred; four is the default |
 | I-015 | Procure astronauts like parts: expensive and hard to replace. | User brainstorm | Brainstorm | Q-005; exact crew model open |
 | I-016 | Science affects mission planning and uses minigames to work out details. | User brainstorm | Brainstorm | Q-017 |
 | I-017 | Give every role meaningful activity simultaneously; avoid hard waits on another role. | User brainstorm | Key design requirement, D-004 | Q-014; concrete implementation open |
@@ -38,6 +38,7 @@ All entries created November 14, 2026. User ideas come from the [kickoff](notes/
 | I-031 | Planning converts initial and event-driven mission constraints into editable tasks for a part or person with bounds, rather than shopping for each task. | User personnel notes | Brainstorm | [Shared tasks](design/shared-tasks.md); Q-025 |
 | I-032 | Communications uses visual-novel-style outside events; unhandled issues create positive or negative consequences for constraints, contracts, risk, research, and funding. | User personnel notes | Brainstorm | Q-015 and Q-030 |
 | I-033 | Communications proactively runs galas or relationship-building activities, perhaps like research projects, to unlock options, funding, or further events. | User personnel notes | Brainstorm | Q-030 |
+| I-056 | Four players by default, each on their own station from a separate seat; no switching or sharing of stations during game time. Empty Epsilon is a design reference only. | User decision, [player stations note](notes/2026-11-14-player-stations.md) | Accepted, D-012 | How stations connect stays open in Q-012; fewer players deferred |
 
 | I-034 | Explore a standalone procurement prototype in `procurement/`, with integration later and no shared base yet. | [User request](notes/2026-11-14-procurement-prototype.md) | User direction; mechanics open | [Procurement sketch](../procurement/README.md) |
 | I-035 | Explore procurement as managing a portfolio of contracts against changing requests, with a debrief and authored stand-ins for other roles. | Assistant proposal | Proposal; untested | [Procurement sketch](../procurement/README.md); Q-023–Q-028 |
@@ -76,6 +77,8 @@ All entries created November 14, 2026. User ideas come from the [kickoff](notes/
 | I-054 | Adapt the reference research into the existing rough prototype using optional match filtering and comparison, accurate ready/promised quantities, persistent changes and current-fact confirmation. | Assistant implementation choices under the user improvement request | Prototype proposals with manual interface observations. Enjoyment and multiplayer unvalidated. | [Review](../procurement/prototype-review.md), [walkthrough](playtests/2026-11-14-procurement-interface-walkthrough.md) |
 
 | I-055 | Explore a vibrant illustrated space-agency strategy-game aesthetic: a shared mission as the visual anchor, role-specific workspaces, bold color, tactile components and readable consequences. | Assistant visual proposal, November 14, 2026; user rejected the initial nasacore mockup direction. | Proposal for discussion; no visual direction selected. | [Visual exploration](notes/2026-11-14-visual-aesthetic.md) |
+
+| I-057 | Apply lessons from the implemented planner: focused separate stations, meaningful mission-deadline consequences, contextual explanations and removing equivalent controls. Treat planner part records as integration examples while preserving broader procurement Tasks, quantity Allocations and shared Budget semantics. | Assistant source review of incoming commits through 1051783 | Lessons and integration proposals; planner runtime not independently validated in this pass | [Second pull review](reviews/2026-11-14-second-planner-pull.md) |
 
 ## New entry template
 
