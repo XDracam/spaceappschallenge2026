@@ -18,6 +18,7 @@
 | [Procurement interfaces](../procurement/interfaces.md) | Selected terminology and proposed ownership and typed messages |
 | [Procurement gameplay scenarios](../procurement/scenarios.md) | Concrete situations for design walkthroughs |
 | [Procurement-facing role actions](../procurement/role-actions.md) | Proposed player actions and their effects on procurement interfaces |
+| [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
 
 ## Persistent project memory
 
@@ -36,6 +37,7 @@
 | [Tasks and conversation clarification](notes/2026-11-14-tasks-and-conversation.md) | User direction on spoken coordination and shared Tasks |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
+| [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |
 
 ## How to keep ideas usable
 
