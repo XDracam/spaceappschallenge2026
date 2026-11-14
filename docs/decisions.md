@@ -45,6 +45,17 @@ This log records explicit project direction. Proposed mechanics remain in [ideas
 - Open boundary: whether and how authored content can be selected, varied, combined, or revealed at runtime, and how player-created tasks relate to this baseline. Do not assume that all randomness or changing state is prohibited. See Q-026.
 - Related: I-023, [shared tasks](design/shared-tasks.md), Q-026.
 
+## D-006 — Four players on four separate stations
+
+- Date: 2026-11-14
+- Status: accepted user direction
+- Decision: the game is multiplayer for four people by default. Each player operates their own station from a separate seat. During game time players do not switch or share stations.
+- Source / approval: [player stations note](notes/2026-11-14-player-stations.md).
+- Rationale and evidence: user decision. Empty Epsilon is an acceptable reference for this **design** choice: one player per station, each with their own seat.
+- Alternatives considered: switching roles at any time (I-013, now superseded for game time) and shared roles (Q-001).
+- Consequences and limitations: every station is always occupied, so the unattended-role question no longer applies at the default player count. This is not a technical architecture choice. How stations connect, the platform, and the network stay open in Q-012. Play with fewer players is deferred (I-014); four is the default for now. Which responsibility each station covers follows the role brainstorm in [roles](design/roles.md) and is not fixed by this decision.
+- Related ideas, questions, and docs: I-013, I-014, I-034, Q-001 (closed), Q-012 (open), Q-016 (partly closed), [roles](design/roles.md).
+
 ## Future decision template
 
 ```markdown

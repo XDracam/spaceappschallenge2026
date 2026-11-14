@@ -4,7 +4,7 @@
 
 ## Core design focus
 
-Make the extensive communication and coordination involved in mission planning fun. Focus first on multiplayer; work out fewer-player gameplay later. The user highlighted one key design requirement: **every role should have meaningful activity at the same time, without a hard dependency that leaves someone waiting**. See [D-004](decisions.md#d-004--keep-every-role-engaged-concurrently).
+Make the extensive communication and coordination involved in mission planning fun. Focus first on multiplayer; work out fewer-player gameplay later. By default, four players each operate their own station from a separate seat, with no station switching or sharing during game time ([D-006](decisions.md#d-006--four-players-on-four-separate-stations)); how the stations connect is open. The user highlighted one key design requirement: **every role should have meaningful activity at the same time, without a hard dependency that leaves someone waiting**. See [D-004](decisions.md#d-004--keep-every-role-engaged-concurrently).
 
 ## Shared problems and personnel
 
@@ -22,7 +22,7 @@ No runtime dynamic generation; missions, part lists, possible events, and simila
 - **Science:** choose sensors and scientific details, influence mission planning, and perhaps use minigames or staff research projects with uncertain outcomes and cross-role unlocks.
 - **Mission planning:** explore a simplified 2D mission and payload configuration, parameters, and launch windows; convert constraints into editable tasks rather than shopping for individual tasks. Planning simulations are distinct from the earlier final-mission idea; their relationship remains open.
 - **External communications:** respond to events in a visual-novel style and proactively build relationships; consequences and opportunities could affect all roles. Political, industry, and public relations might be separate roles.
-- **Play structure:** real-time play, difficulty sliders, and switching between roles at any time are ideas, with Empty Epsilon mentioned as an inspiration for switching.
+- **Play structure:** four separate stations, in the spirit of Empty Epsilon as a design reference (D-006). Real-time play and difficulty sliders are ideas. Switching roles during game time was an idea and is now ruled out.
 - **Mission premise:** begin with a broad destination goal, such as an icy moon or the Moon, then work out the details.
 
 The earlier idea of preparing a mission, simulating it once, and winning or failing remains part of the brainstorm. How it fits with real-time events during a mission is open. Everyone being able to fail remains an idea; no scoring model is selected.
@@ -33,4 +33,4 @@ One idea is a space agency roguelite [redacted for publication] with increasingl
 
 ## Still open
 
-Role assignments, player count, mission phases, timing, event and dialogue rules, success conditions, progression, platform, and technology stack. See [questions](questions.md) and the organized [brainstorm](brainstorm.md). The [challenge brief](challenge.md) provides external context; optional challenge suggestions are not automatically project requirements.
+Role assignments per station, how stations connect, mission phases, timing, event and dialogue rules, success conditions, progression, platform, and technology stack. See [questions](questions.md) and the organized [brainstorm](brainstorm.md). The [challenge brief](challenge.md) provides external context; optional challenge suggestions are not automatically project requirements.

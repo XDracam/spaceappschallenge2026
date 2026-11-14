@@ -22,7 +22,7 @@
 
 ## Implementation
 
-- No stack, engine, platform, player count, network architecture, or license is selected yet. Establish the relevant choice before scaffolding its dependencies.
+- Player setup is decided (D-006): four players by default, each on a separate station and seat, no switching or sharing during game time. Empty Epsilon is a design reference only. No stack, engine, platform, network architecture (how stations connect, Q-012), or license is selected yet. Establish the relevant choice before scaffolding its dependencies.
 - Keep implementation proportional to the prototype question in `docs/prototype.md`.
 - Preserve existing work. Do not commit or push unless requested.
 - Check the actual changes and relevant behavior before handoff; report what was verified and any remaining limitations. Do not add or run tests unless the user asks.

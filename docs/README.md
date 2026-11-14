@@ -21,7 +21,7 @@
 | [Ideas](ideas.md) | All substantive ideas, including tentative and deferred ones |
 | [Decisions](decisions.md) | Accepted choices, sources, and rationale |
 | [Questions](questions.md) | Missing choices and what they block |
-| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), and [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md) | Verbatim user input from November 14, 2026 |
+| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md), and [player stations note](notes/2026-11-14-player-stations.md) | Verbatim user input from November 14, 2026 |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 
@@ -37,4 +37,4 @@ Use the next unused ID; do not renumber historical records. One idea may evolve 
 
 ## Authority
 
-The user has explicitly described the concept notes as brainstorming, while emphasizing the key requirement to keep every role active concurrently. Multiplayer is the initial focus. The user also set a baseline of no runtime dynamic generation with hand-crafted content; its exact boundary is open. Other mechanics remain open ideas. The challenge page establishes external challenge guidance. A playtest can provide evidence about a mechanic without selecting it.
+The user has explicitly described the concept notes as brainstorming, while emphasizing the key requirement to keep every role active concurrently. Multiplayer is the initial focus, with four players on four separate stations by default (D-006). The user also set a baseline of no runtime dynamic generation with hand-crafted content; its exact boundary is open. Other mechanics remain open ideas. The challenge page establishes external challenge guidance. A playtest can provide evidence about a mechanic without selecting it.
