@@ -50,3 +50,17 @@ Source: user message in the project conversation. The original wording is preser
 - "Modul 1&2" was read as boards 1 and 2 of the mockup (field map with combination bench, draft a project). "DA" was read as data analysis, which stays out.
 - The new `science/` folder uses the mission planner's stack (Preact, TypeScript, Vite). This is a stack choice for the science module only; no network architecture is chosen (Q-012).
 - No integration: the prototype shares no state or code with the mission planner.
+
+## Follow-up — November 14, 2026 (fifth message)
+
+Source: user message in the project conversation. The original wording is preserved below.
+
+> Note some more ideas, but do not code them:
+> 1) A lot more nodes, with flexible cluster naming as we zoom in and zoom out
+> 2) Level Design: Split into Datasets, Oberservation Methods, related Papers / Analyses with Tab-Like switching;
+
+### Interpretation boundaries
+
+- Recorded only. Nothing was built.
+- Point 1 was read as a larger graph whose cluster names change with the zoom level.
+- Point 2 ("Level Design") was read as the structure of the details pane, with three tab-like views per field. This reading is uncertain: it could also mean levels or screens of the game. Confirm before design work.

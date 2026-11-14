@@ -145,3 +145,7 @@ How many nodes can be combined (the mockup uses two or three)? Are recipes fixed
 ## Q-033 — Shared event system details
 
 How are internal events routed to stations, and who decides on them when they touch two stations? How are event odds weighted by trust and other state, and how is randomness kept fair (no runtime generation, D-005)? What does the shared news feed show? How exactly do in-flight events nudge results? Blocks the event implementation for every station. See [event system](design/events.md).
+
+## Q-034 — Hierarchical cluster naming and details tabs
+
+How many nodes does the graph need, and how are clusters named at each zoom level (fixed hierarchy, or labels derived from the visible nodes)? What do the details-pane tabs (datasets, observation methods, related papers or analyses) contain, are they hand-authored per field (D-005), and how do they connect to the deferred data analysis (I-040)? The mockup shows one description per field and three fixed zoom levels. See I-045 and I-046.
