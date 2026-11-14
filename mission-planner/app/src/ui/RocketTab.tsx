@@ -533,8 +533,7 @@ function StageRow({ stage, ctx, index, count, rocketStage, liftRatio }: {
           </div>
           <div class="sub-rows">
             <PartRow part={stage.engine} ctx={ctx} stageId={stage.id} />
-            {stage.tanks.map((t) => <PartRow key={t.id} part={t} ctx={ctx} stageId={stage.id} removable={stage.tanks.length > 1} />)}
-            <button class="pill ghost small add-tank" onClick={() => actions.addTank(stage.id)}><PlusIcon /> Tank</button>
+            {stage.tanks.map((t) => <PartRow key={t.id} part={t} ctx={ctx} stageId={stage.id} removable={false} />)}
           </div>
         </div>
       )}

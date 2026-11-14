@@ -12,7 +12,9 @@ Labels: **user direction** = stated by the user (sources in [notes](notes/2026-1
 - The payload is procured like other parts.
 - The **planner alone** owns the payload design: equipment, instruments, and payload stages. Science contributes goals and research, not edits to the design.
 
-**Proposal:** one shared stage model for rocket and payload. A stage = one engine type (one or more units) + one or more tanks. The payload adds equipment components on top of its stages.
+**Proposal:** one shared stage model for rocket and payload. A stage = one engine type (one or more units) + one tank. The payload adds equipment components on top of its stages.
+
+**User direction (2026-11-14):** one tank per stage; there is no "add tank". More fuel means a bigger tank (its slider). Two tanks behaved exactly like one bigger tank, so the option only added clutter.
 
 ```
 Payload spacecraft

@@ -286,13 +286,6 @@ export const actions = {
     });
   },
 
-  addTank(stageId: string) {
-    gameStore.update((g) => {
-      const s = findStage(g.rocket, stageId);
-      if (s) s.stage.tanks.push(makePart(nid(g, 'part'), 'tank', s.stage.propulsion));
-    });
-  },
-
   addSpacecraft(payloadType: PayloadType) {
     gameStore.update((g) => {
       const sc = makeSpacecraft(idGen(g), PAYLOAD_TYPE_LABEL[payloadType], payloadType);

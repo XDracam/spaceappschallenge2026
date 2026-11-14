@@ -90,7 +90,7 @@ export interface Stage {
   propulsion: PropulsionId;
   engine: Part;          // kind 'engine', variant = propulsion
   engineCount: number;   // identical engine units
-  tanks: Part[];         // kind 'tank', variant = propulsion
+  tanks: Part[];         // exactly one tank (kind 'tank', variant = propulsion); size it with its slider
 }
 
 export type PayloadType = 'orbiter' | 'lander' | 'rover' | 'sampleReturn' | 'crew';
