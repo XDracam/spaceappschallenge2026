@@ -14,6 +14,8 @@
 | [Prototype plan](prototype.md) | Proposed smallest useful experiment |
 | [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
 | [Science module](../science/README.md) | Science role: research field graph and project drafting (standalone visual prototype) |
+| [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
+| [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
 
 ## Persistent project memory
 

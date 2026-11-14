@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Comms Station Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #05080f; --glass: rgba(14,22,38,.62); --glass-strong: rgba(14,22,38,.82);
+  --border: rgba(110,190,255,.16); --text: #e8f1ff; --muted: #8796b0;
+  --accent: #3fc7ff; --glow: 0 0 18px rgba(63,199,255,.45);
+  --ok: #3fe0a0; --warn: #ffc857; --err: #ff5f6d; --violet: #b98cff;
+  --gov: #3fc7ff; --ind: #ffaa5c; --pub: #ff7eb6; --intl: #3fe0a0;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 13px/1.45 Inter, system-ui, sans-serif; overflow: hidden; }
+.screen { position: relative; width: 100vw; height: 100vh; min-width: 1100px; overflow: hidden;
+  background: radial-gradient(ellipse at 55% 45%, #0e1d38 0%, #070c18 55%, #05080f 100%); }
+.screen::before { content: ""; position: absolute; inset: 0; opacity: .5;
+  background-image: radial-gradient(1px 1px at 12% 22%, #fff8, transparent), radial-gradient(1px 1px at 72% 12%, #fff6, transparent),
+  radial-gradient(1px 1px at 33% 78%, #fff5, transparent), radial-gradient(1.5px 1.5px at 88% 64%, #fff9, transparent),
+  radial-gradient(1px 1px at 52% 40%, #fff4, transparent), radial-gradient(1px 1px at 18% 58%, #fff5, transparent); }
+.glass { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05); }
+.label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.display { font-family: 'Exo 2', sans-serif; font-weight: 700; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border);
+  background: rgba(20,32,54,.7); color: var(--text); font: 600 12px 'Exo 2', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+.pill.active { border-color: var(--accent); box-shadow: var(--glow); }
+.pill.primary { border-color: var(--accent); box-shadow: var(--glow); background: rgba(16,60,96,.7); }
+
+/* header */
+.header { position: absolute; top: 14px; left: 20px; right: 20px; height: 52px; display: flex; align-items: center; gap: 18px; z-index: 5; }
+.wordmark { font: 700 18px 'Exo 2'; letter-spacing: .32em; }
+.wordmark small { display: block; font: 400 11px Inter; letter-spacing: 0; color: var(--muted); margin-top: 2px; }
+.nav { margin: 0 auto; display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: rgba(14,22,38,.5); border: 1px solid var(--border); }
+.nav .pill { border: none; background: none; }
+.nav .pill.active { background: rgba(16,40,70,.8); border: 1px solid var(--accent); }
+.chips { display: flex; gap: 8px; }
+.chip { padding: 6px 12px; border-radius: 12px; }
+.chip .v { font: 600 13px 'Exo 2'; }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); margin-right: 6px; }
+
+/* trust meters */
+.meter { display: flex; flex-direction: column; gap: 6px; }
+.meter .row { display: flex; justify-content: space-between; align-items: baseline; }
+.meter .val { font: 700 18px 'Exo 2'; }
+.bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); position: relative; overflow: hidden; }
+.bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
+.ticks { position: relative; height: 0; }
+.tick { position: absolute; top: -8px; width: 1px; height: 8px; background: rgba(255,255,255,.25); }
+
+/* avatars */
+.ava { width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  font: 700 14px 'Exo 2'; color: #05080f; }
+.ava.lg { width: 96px; height: 96px; font-size: 32px; }
+.gov { background: var(--gov); } .ind { background: var(--ind); } .pub { background: var(--pub); } .intl { background: var(--intl); }
+
+.hint { display: inline-flex; gap: 4px; margin-left: 8px; }
+.hint span { font: 600 11px Inter; padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid var(--border); }
+.up { color: var(--ok); } .down { color: var(--err); }
+.tag-int { font: 600 10px Inter; letter-spacing: .08em; text-transform: uppercase; color: var(--warn); border: 1px solid rgba(255,200,87,.4); border-radius: 999px; padding: 1px 7px; margin-left: 8px; }
+
+.news { position: absolute; left: 20px; right: 20px; bottom: 16px; height: 46px; display: flex; align-items: center; gap: 22px; padding: 0 18px; border-radius: 14px; z-index: 4; overflow: hidden; }
+.news .item { white-space: nowrap; color: var(--muted); }
+.news .item b { color: var(--text); font-weight: 500; }
+.news .stn { font: 600 10px Inter; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: 6px; }
+
+/* switcher */
+.switch { position: fixed; bottom: 86px; right: 32px; flex-direction: column; z-index: 50; display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(0,0,0,.6); border: 1px solid var(--border); }
+.switch button { cursor: pointer; }
+
+/* ---------- layout A: inbox-centred ---------- */
+#A .trustbar { position: absolute; top: 80px; left: 20px; right: 20px; height: 78px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 14px 22px; }
+#A .inbox { position: absolute; top: 172px; left: 20px; width: 300px; bottom: 74px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+#A .msg { display: flex; gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid transparent; }
+#A .msg.sel { border-color: var(--accent); background: rgba(16,40,70,.55); box-shadow: var(--glow); }
+#A .msg .t { font-weight: 600; } #A .msg .s { color: var(--muted); font-size: 12px; }
+#A .due { margin-left: auto; font: 600 11px 'Exo 2'; color: var(--muted); white-space: nowrap; }
+#A .due.soon { color: var(--warn); }
+#A .talk { position: absolute; top: 172px; left: 334px; right: 354px; bottom: 74px; padding: 26px 30px; display: flex; flex-direction: column; }
+#A .who { display: flex; gap: 18px; align-items: center; }
+#A .quote { margin-top: 22px; font-size: 16px; line-height: 1.6; max-width: 620px; }
+#A .opts { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+#A .opt { padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: rgba(20,32,54,.55); display: flex; align-items: center; }
+#A .opt:first-child { border-color: var(--accent); box-shadow: var(--glow); }
+#A .projects { position: absolute; top: 172px; right: 20px; width: 320px; bottom: 74px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.proj { padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(20,32,54,.5); }
+.proj .bar { margin-top: 8px; }
+.slot-empty { border: 1px dashed rgba(110,190,255,.3); border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); }
+
+/* ---------- layout B: stakeholder map ---------- */
+#B .hub { position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%); width: 150px; height: 150px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--accent); box-shadow: var(--glow), inset 0 0 40px rgba(63,199,255,.15); background: rgba(10,24,44,.7); }
+#B .ring { position: absolute; left: 50%; top: 52%; width: 520px; height: 520px; transform: translate(-50%,-50%); border-radius: 50%; border: 1px dashed rgba(110,190,255,.18); }
+#B .card { position: absolute; width: 300px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+#B .card .top { display: flex; gap: 12px; align-items: center; }
+#B .card .badge { margin-left: auto; min-width: 24px; height: 24px; border-radius: 12px; background: var(--err); color: #fff; display: flex; align-items: center; justify-content: center; font: 700 12px 'Exo 2'; }
+#B .card .ev { padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid var(--border); font-size: 12px; }
+#B .card.sel { border-color: var(--accent); box-shadow: var(--glow); }
+#B .c1 { left: calc(50% - 470px); top: 140px; } #B .c2 { right: calc(50% - 470px); top: 140px; }
+#B .c3 { left: calc(50% - 470px); bottom: 84px; } #B .c4 { right: calc(50% - 470px); bottom: 84px; }
+#B .line { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, rgba(63,199,255,.4), transparent); transform-origin: left center; }
+#B .slots { position: absolute; top: 76px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+#B .slots .proj { width: 170px; padding: 8px 12px; }
+</style>
+</head>
+<body>
+
+<!-- ================= LAYOUT A ================= -->
+<div class="screen" id="A">
+  <div class="header">
+    <div class="wordmark">COMMUNICATIONS<small>Mars orbiter + lander</small></div>
+    <div class="nav"><span class="pill active">Inbox</span><span class="pill">Projects</span><span class="pill">Relations</span></div>
+    <div class="chips">
+      <div class="chip glass"><div class="label">Today</div><div class="v"><span class="dot"></span>14 Mar 2030</div></div>
+      <div class="chip glass"><div class="label">Budget</div><div class="v">212 M of 900 M</div></div>
+      <div class="chip glass"><div class="label">Launch</div><div class="v">19 Aug 2030 · in 5:12</div></div>
+    </div>
+  </div>
+
+  <div class="trustbar glass">
+    <div class="meter"><div class="row"><span class="label">Government</span><span class="val" style="color:var(--gov)">68</span></div><div class="bar"><i style="width:68%;background:var(--gov)"></i></div></div>
+    <div class="meter"><div class="row"><span class="label">Industry</span><span class="val" style="color:var(--ind)">44</span></div><div class="bar"><i style="width:44%;background:var(--ind)"></i></div></div>
+    <div class="meter"><div class="row"><span class="label">Public / media</span><span class="val" style="color:var(--pub)">27</span></div><div class="bar"><i style="width:27%;background:var(--err)"></i></div></div>
+    <div class="meter"><div class="row"><span class="label">Partners</span><span class="val" style="color:var(--intl)">73</span></div><div class="bar"><i style="width:73%;background:var(--intl)"></i></div></div>
+  </div>
+
+  <div class="inbox glass">
+    <div class="label" style="margin-bottom:4px">Inbox · 4</div>
+    <div class="msg sel"><div class="ava pub">LO</div><div><div class="t">Lina Okafor</div><div class="s">"Plutonium on your lander?"</div></div><div class="due soon">12 d</div></div>
+    <div class="msg"><div class="ava gov">AD</div><div><div class="t">Senator Duarte</div><div class="s">Budget review next month</div></div><div class="due">1 mo</div></div>
+    <div class="msg"><div class="ava ind">MF</div><div><div class="t">Marco Feld</div><div class="s">Booster delivery slipping</div></div><div class="due">3 wk</div></div>
+    <div class="msg"><div class="ava intl">KM</div><div><div class="t">Dr. Moreau</div><div class="s">Offer: shared ground station</div></div><div class="due">2 mo</div></div>
+  </div>
+
+  <div class="talk glass">
+    <div class="who"><div class="ava lg pub">LO</div><div><div class="display" style="font-size:22px">Lina Okafor</div><div style="color:var(--muted)">Science journalist · Public / media</div><div style="margin-top:6px"><span class="label">Answer within</span> <b style="color:var(--warn)">12 days</b></div></div></div>
+    <div class="quote">"Sources tell me your lander carries a plutonium battery. My readers deserve to know how safe that is. Will you comment before I publish on Friday?"</div>
+    <div class="opts">
+      <div class="opt">Explain the safety record openly<span class="hint"><span class="up">Public ↑</span></span></div>
+      <div class="opt">Invite her to the lab for a tour<span class="hint"><span class="up">Public ↑↑</span></span><span class="tag-int">Affects science</span><span style="margin-left:auto;color:var(--muted)">costs 2 M</span></div>
+      <div class="opt">No comment<span class="hint"><span class="down">Public ↓</span><span class="up">Government ↑</span></span></div>
+    </div>
+  </div>
+
+  <div class="projects glass">
+    <div class="label">Projects · 2 of 3</div>
+    <div class="proj"><div style="display:flex;justify-content:space-between"><b>Science gala</b><span style="color:var(--muted)">3 wk left</span></div><div style="color:var(--muted);font-size:12px">Public ↑ · costs 8 M</div><div class="bar"><i style="width:62%;background:var(--accent)"></i></div></div>
+    <div class="proj"><div style="display:flex;justify-content:space-between"><b>Negotiate RTG</b><span style="color:var(--muted)">2 mo left</span></div><div style="color:var(--muted);font-size:12px">with partner agency · Government ↓</div><div class="bar"><i style="width:24%;background:var(--intl)"></i></div></div>
+    <div class="slot-empty">+ Start a project</div>
+  </div>
+
+  <div class="news glass">
+    <span class="label">News</span>
+    <span class="item"><span class="stn">Procurement</span><b>Booster contract signed</b> · Kestrel Aerospace</span>
+    <span class="item"><span class="stn">Comms</span><b>Budget −40 M</b> after audit</span>
+    <span class="item"><span class="stn">Science</span><b>Optics research done</b> · camera limit 7</span>
+  </div>
+</div>
+
+<!-- ================= LAYOUT B ================= -->
+<div class="screen" id="B" style="display:none">
+  <div class="header">
+    <div class="wordmark">COMMUNICATIONS<small>Mars orbiter + lander</small></div>
+    <div class="nav"><span class="pill active">Relations</span><span class="pill">Projects</span></div>
+    <div class="chips">
+      <div class="chip glass"><div class="label">Today</div><div class="v"><span class="dot"></span>14 Mar 2030</div></div>
+      <div class="chip glass"><div class="label">Budget</div><div class="v">212 M of 900 M</div></div>
+      <div class="chip glass"><div class="label">Launch</div><div class="v">19 Aug 2030 · in 5:12</div></div>
+    </div>
+  </div>
+
+  <div class="slots">
+    <div class="proj glass"><b>Science gala</b><div class="bar"><i style="width:62%;background:var(--accent)"></i></div></div>
+    <div class="proj glass"><b>Negotiate RTG</b><div class="bar"><i style="width:24%;background:var(--intl)"></i></div></div>
+    <div class="proj glass" style="border-style:dashed;color:var(--muted)">+ Start project</div>
+  </div>
+
+  <div class="ring"></div>
+  <div class="hub"><div class="label">Agency</div><div class="display" style="font-size:20px">4 waiting</div><div style="color:var(--muted);font-size:12px">next due in 12 d</div></div>
+
+  <div class="card glass c1">
+    <div class="top"><div class="ava gov">AD</div><div><b>Senator Duarte</b><div style="color:var(--muted);font-size:12px">Government</div></div><div class="badge">1</div></div>
+    <div class="meter"><div class="row"><span class="label">Trust</span><span class="val" style="color:var(--gov)">68</span></div><div class="bar"><i style="width:68%;background:var(--gov)"></i></div></div>
+    <div class="ev">Budget review next month · 1 mo</div>
+  </div>
+  <div class="card glass c2">
+    <div class="top"><div class="ava ind">MF</div><div><b>Marco Feld</b><div style="color:var(--muted);font-size:12px">Industry</div></div><div class="badge">1</div></div>
+    <div class="meter"><div class="row"><span class="label">Trust</span><span class="val" style="color:var(--ind)">44</span></div><div class="bar"><i style="width:44%;background:var(--ind)"></i></div></div>
+    <div class="ev">Booster delivery slipping · 3 wk</div>
+  </div>
+  <div class="card glass c3 sel">
+    <div class="top"><div class="ava pub">LO</div><div><b>Lina Okafor</b><div style="color:var(--muted);font-size:12px">Public / media</div></div><div class="badge">1</div></div>
+    <div class="meter"><div class="row"><span class="label">Trust</span><span class="val" style="color:var(--err)">27</span></div><div class="bar"><i style="width:27%;background:var(--err)"></i></div></div>
+    <div class="ev" style="border-color:var(--warn)">"Plutonium on your lander?" · <b style="color:var(--warn)">12 d</b> · click to answer</div>
+  </div>
+  <div class="card glass c4">
+    <div class="top"><div class="ava intl">KM</div><div><b>Dr. Moreau</b><div style="color:var(--muted);font-size:12px">Partners</div></div><div class="badge">1</div></div>
+    <div class="meter"><div class="row"><span class="label">Trust</span><span class="val" style="color:var(--intl)">73</span></div><div class="bar"><i style="width:73%;background:var(--intl)"></i></div></div>
+    <div class="ev">Offer: shared ground station · 2 mo</div>
+  </div>
+
+  <div class="news glass">
+    <span class="label">News</span>
+    <span class="item"><span class="stn">Procurement</span><b>Booster contract signed</b> · Kestrel Aerospace</span>
+    <span class="item"><span class="stn">Comms</span><b>Budget −40 M</b> after audit</span>
+    <span class="item"><span class="stn">Science</span><b>Optics research done</b> · camera limit 7</span>
+  </div>
+</div>
+
+<div class="switch">
+  <button class="pill active" id="bA" onclick="show('A')">A · Inbox-centred</button>
+  <button class="pill" id="bB" onclick="show('B')">B · Stakeholder map</button>
+</div>
+<script>
+function show(k){ document.getElementById('A').style.display = k==='A'?'':'none'; document.getElementById('B').style.display = k==='B'?'':'none';
+  document.getElementById('bA').classList.toggle('active', k==='A'); document.getElementById('bB').classList.toggle('active', k==='B'); }
+if (location.hash === '#B') show('B');
+</script>
+</body>
+</html>

@@ -30,6 +30,8 @@ These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md)
 
 **Unresolved:** who the stakeholders are, how reception is evaluated, and how this responsibility stays meaningful through preparation. See Q-006.
 
+**Update 2026-11-14:** stakeholders, trust, events, and projects are now specified in the [communications module](../../communications/README.md) (I-043); events are shared across stations ([event system](events.md), I-042).
+
 Spacecraft telemetry and data transmission are distinct from this proposed role. Whether to model those constraints is Q-009.
 
 ## Science — I-003
