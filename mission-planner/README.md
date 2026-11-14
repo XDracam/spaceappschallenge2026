@@ -19,3 +19,9 @@ Full specification: [Solar system and maneuvers](solar-system-and-maneuvers.md).
 **User direction:** expendable stacked stages plus a multi-component payload spacecraft that can have its own stages. Sliders set exact part stats for a rocket version, tested in simulation. Slider values become minimums on procurement tasks. Planning beyond current research is allowed, including better-than-state-of-the-art instruments; such parts become one "get that part" task solvable through research, expensive purchase, or diplomacy. The planner alone owns the payload design. Ion propulsion is in scope, simplified.
 
 Full specification: [Rocket configurator](rocket-configurator.md).
+
+## UI
+
+**User direction:** the map is always visible with a docked side panel for rocket, tasks, and versions. The test runs live on every edit; results show on the map (red trajectory, warning icons) and on the delta-v bar with goal success chances. Parts are sent to procurement one at a time.
+
+Full specification: [Mission planner UI](ui.md).

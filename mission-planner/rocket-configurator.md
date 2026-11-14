@@ -67,10 +67,12 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 
 **User direction:** sliders set the exact stats of each part for a rocket version. That version can be tested in simulation.
 
+**User direction:** the test runs live on every slider move or maneuver edit, and parts are sent to procurement one at a time (see [UI](ui.md)).
+
 **Proposal:**
 
-- Designs are saved as numbered versions (Rocket A v1, v2, …). Changing a slider creates a new working version; tested versions stay in a list for comparison.
-- A test flies the version through the current maneuver plan and reports per maneuver: delta-v available versus required, TWR, power and data, and where the plan fails (for example "out of fuel during Mars insertion").
+- The design being edited is the working version and is always tested live. The planner saves snapshots as numbered versions (Rocket A v1, v2, …) to compare alternatives; sending a part to procurement also saves one.
+- The test flies the working version through the current maneuver plan and reports per maneuver: delta-v available versus required, TWR, power and data, hazards, and where the plan fails (for example "out of fuel during Mars insertion").
 - Versions need no other role, which keeps the planner busy concurrently (D-004).
 
 ## Research limits
@@ -89,8 +91,37 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 
 **Proposal:**
 
-- When procurement contracts a real part, its actual stats replace the slider values in a new version, which the planner re-tests.
-- Mass is derived, not a slider, so it has no minimum. A contracted part can meet every minimum and still be heavier; re-testing shows whether the plan still works.
+- When procurement contracts a real part, its actual stats replace the slider values in the design, and the live test reflects them.
+- Mass is derived, not a slider, so it has no minimum. A contracted part can meet every minimum and still be heavier; the live test shows whether the plan still works.
+
+## Part lifecycle
+
+**User direction:**
+
+- A contract can be cancelled, but cancelling does not refund the full cost.
+- When a contract has run through, the agency has the part and can use it at no further cost.
+- A contracted or delivered part cannot be changed. If the planner needs something different, that requires an entirely new contract.
+- Only procurement can cancel a contract. (Assistant reading: the game has no planner-side cancel request; the planner asks procurement by talking to them.)
+- One level is one mission. Parts and contracts exist only within that level; nothing carries over to another mission. Within the level, a delivered part stays available to the design until launch.
+
+**Proposal — states of a part in the design:**
+
+| State | Meaning | Planner can edit sliders? | Cost |
+| --- | --- | --- | --- |
+| Draft | in the design, not sent | yes, freely | none |
+| Task sent | procurement is looking for offers | yes; the task's minimums update | none |
+| Contracted | contract signed; part on its way, arriving on the delivery date | no, stats fixed to the contracted part | price committed at signing |
+| Delivered | contract has run through; the agency has the part | no | none further |
+
+Changing a contracted or delivered part:
+
+1. The planner unlocks the part in the design; this creates a new draft for a replacement part, keeping the old part in the Tasks tab.
+2. The replacement goes through the normal flow: task sent, then a new contract.
+3. The old contract keeps running unless procurement cancels it. A delivered part stays in the agency's inventory.
+
+Cancellation refund: the refund is a share of the price that shrinks as the delivery date approaches, from 50% right after signing to 0% on delivery. Values are placeholders for balancing.
+
+This refines the procurement idea "we never own things, only contracts" ([roles](../docs/design/roles.md#resource-management-and-procurement--i-001)): a contract that has run through means the agency has the part.
 
 ## Beyond-research parts
 
@@ -102,7 +133,7 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 
 This matches the shared-task idea that a task can have several solutions ([shared tasks](../docs/design/shared-tasks.md)).
 
-## Open questions
+## Open questions — beyond-research parts
 
 1. Who picks the solution path for a beyond-research task, and can several paths run in parallel (for example research started while comms negotiates)?
 2. What does each path cost the team in time, money, and risk, and how does the planner see that before submitting?

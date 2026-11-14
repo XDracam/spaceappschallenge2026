@@ -140,4 +140,4 @@ Aerocapture and atmospheric entry need a heat shield (see [rocket configurator](
 
 ## Open questions
 
-1. How do goal results carry into the wider game (campaign or roguelite progress, project question Q-018)?
+1. One level is one mission (user direction); parts do not carry over. Does anything else carry over between levels, such as goal results, research, or reputation (project question Q-018)?
