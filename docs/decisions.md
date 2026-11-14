@@ -118,6 +118,23 @@ See the [verbatim clarification](notes/2026-11-14-catalogue-gameplay.md) and the
 Merge provenance — the incoming branch used D-006 for this decision. D-006 already identified procurement terminology here. The station decision is retained as D-012, and its incoming idea I-034 is retained as I-056. Original user wording is preserved in the source note.
 
 
+## D-013 — Align procurement with the planner visual language
+
+- Date: 2026-11-14
+- Status: accepted user direction
+- Direction: apply the mission planner UI design language to the procurement prototype.
+- Implementation: local visual tokens and styling in the existing standalone mockup, including dark glass, cyan glow, rounded panels, pills and planner typography. Detailed layout choices remain prototype adaptations.
+- Source and observations: [user request and interface checks](notes/2026-11-14-procurement-planner-style.md), I-058.
+
+## D-014 — UI design and review skills
+
+- Date: 2026-11-14
+- Status: accepted user direction.
+- Decision: integrate Impeccable for game UI design and refinement and Vercel Web Design Guidelines for implementation review, as applicable to the work.
+- Source: [integration request](notes/2026-11-14-ui-skills-integration.md), following the [research](ui-agent-skills-research.md).
+- Consequences: retain D-013's planner-derived procurement style; apply web-oriented recommendations in the context of desktop game stations. Review canvas interactions separately. Player coordination and enjoyment still require actual multiplayer observation.
+- Related: I-059, D-004, D-007, D-010–D-013.
+
 ## Future decision template
 
 ```markdown

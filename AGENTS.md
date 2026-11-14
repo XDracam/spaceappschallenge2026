@@ -26,3 +26,9 @@
 - Keep implementation proportional to the prototype question in `docs/prototype.md`.
 - Preserve existing work. Do not commit or push unless requested.
 - Check the actual changes and relevant behavior before handoff; report what was verified and any remaining limitations. Do not add or run tests unless the user asks.
+
+## UI design workflow
+
+- For game UI design and refinement, use the installed `impeccable` skill when applicable. Preserve the existing planner visual language for procurement under D-013. Ground work in the project documents, the actual station and the requested player flow.
+- For UI implementation review, use `web-design-guidelines` when applicable. Apply its web rules to the game context rather than assuming every navigation or mobile convention fits a Full HD station. Inspect canvas interactions separately; a DOM review cannot establish canvas accessibility.
+- Keep direct player conversation and meaningful concurrent activity central. Do not treat an agent critique as evidence of multiplayer enjoyment or the absence of waiting. See [UI agent skills research](docs/ui-agent-skills-research.md) and D-014.

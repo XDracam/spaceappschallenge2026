@@ -34,3 +34,23 @@ This was an interface walkthrough. Gameplay enjoyment and economic balance await
 The current [prototype review](../prototype-review.md) records which research proposals were adapted, deferred or omitted. The [manual interface walkthrough](../../docs/playtests/2026-11-14-procurement-interface-walkthrough.md) records checked scenarios and limits. The previous observations above describe the earlier interface. No multiplayer validation has taken place.
 
 The updated screenshot is `catalogue-improved.jpg`. The earlier screenshot is retained as `catalogue-full-hd.jpg`.
+
+## Planner styling pass
+
+The current mockup uses the planner's dark glass, cyan glow, pill controls and Exo 2/Inter typography through `planner-theme.css`. The latest screenshot is `catalogue-planner-style.jpg`. The [source note and observed checks](../../docs/notes/2026-11-14-procurement-planner-style.md) record the adaptation and Full HD browser verification.
+
+## UI audit refinement
+
+The latest screenshot is `catalogue-audited.jpg`. The [skill-guided audit and walkthrough](../../docs/playtests/2026-11-14-procurement-ui-audit.md) records readable need dates, clearer purchase blockers, empty-search recovery, keyboard focus and quantity validation changes, with observed checks at Full HD and 2560 × 1440.
+
+## Gameplay structure iteration
+
+The [gameplay walkthrough](../../docs/playtests/2026-11-14-procurement-gameplay-iteration.md) records the current experiment. The fixed mission summary stays available while the Task queue scrolls. The right panel follows the active Task, Resource, Contract, Call or plan, with decision actions kept in reach.
+
+Use Add to plan on a Resource to explore a package across needs, then review proposed Contracts individually from Plan. Draft totals expose the combined Budget consequence. Card-level Compare controls select candidates directly. Contract comparisons show accepted delivery terms alongside the alternative Offer. Incoming information and unresolved supply issues have separate attention signals.
+
+Latest previews are `catalogue-station.jpg` and `acquisition-plan.jpg`. The plan and attention choices are prototype proposals. Player pacing and multiplayer enjoyment still need observation.
+
+## Focused-label cleanup
+
+The latest catalogue preview is `catalogue-focused.jpg`. The [follow-up walkthrough](../../docs/playtests/2026-11-14-procurement-gameplay-iteration.md#follow-up-cleanup-sweep) records contribution-specific matches, comparison-selection icons, Offer review wording, delivery context and consolidated plan/supply information.

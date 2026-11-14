@@ -14,10 +14,14 @@
 | [Personnel](design/personnel.md) | Competing staffing models and cross-role training |
 | [Mission flow](design/mission-flow.md) | Preparation, commitment, simulation, and outcome |
 | [Prototype plan](prototype.md) | Proposed smallest useful experiment |
+| [Agent UI design skills](ui-agent-skills-research.md) | Source-reviewed skill comparison and proposed workflow for the game UI |
 | [Procurement prototype](../procurement/README.md) | Standalone procurement concept and proposed experiment |
 | [Procurement catalogue gameplay](../procurement/gameplay.md) | Current acquisition, Budget management and full-screen direction |
 | [Procurement desktop mockup](../procurement/mockups/README.md) | Full HD catalogue design and local browser entry point |
 | [Procurement improvement review](../procurement/prototype-review.md) | Research choices, supported scenarios and implementation limits |
+| [Procurement UI audit](playtests/2026-11-14-procurement-ui-audit.md) | Skill-guided findings, implemented refinements and observed keyboard/purchase checks |
+| [Procurement gameplay iteration](playtests/2026-11-14-procurement-gameplay-iteration.md) | Contextual station actions, optional multi-need draft and observed consequence walkthroughs |
+| [Procurement gameplay UX audit](reviews/2026-11-14-procurement-gameplay-ux.md) | High-level station requirements: awareness, scrolling, active context, competing plans, interruptions and concurrent gameplay; researched proposals |
 | [Procurement interface walkthrough](playtests/2026-11-14-procurement-interface-walkthrough.md) | Observed browser sequences, distinct from multiplayer validation |
 | [Procurement interfaces](../procurement/interfaces.md) | Selected terminology and proposed ownership and typed messages |
 | [Procurement gameplay scenarios](../procurement/scenarios.md) | Concrete situations for design walkthroughs |
