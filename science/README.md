@@ -35,6 +35,6 @@ npm run typecheck
 
 ## Status
 
-Written without running a package install, so there is no `package-lock.json` yet and `npm run dev` has not been run on this code. The field data and layout were checked with a script; the types were checked against stub typings. Run `npm install` once and commit the lock file.
+Installed, built (`npm run build`, real typecheck) and smoke-tested in headless Chrome on November 14, 2026: render, frontier jump, search, bench, combine, draft screen, no console errors. Layout is tuned for about 1440 x 900; below that the page scrolls. Not playtested.
 
 Open: Q-031 (graph scale and orientation), Q-032 (combining rules), Q-019 (personnel), Q-012 (how stations connect).

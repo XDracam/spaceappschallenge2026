@@ -24,15 +24,22 @@ function makeNodes(): GraphNode[] {
 
 function makeEdges(): Edge[] {
   const edges: Edge[] = [];
+  const seen = new Set<string>();
+  const add = (a: string, b: string, kind: Edge[2]) => {
+    const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+    if (seen.has(key)) return; // a cross link can repeat a link inside a discipline
+    seen.add(key);
+    edges.push([a, b, kind]);
+  };
   (Object.keys(DISCIPLINES) as Discipline[]).forEach((d) => {
     const { prefix, fields } = DISCIPLINES[d];
     for (let k = 2; k <= fields.length; k++) {
-      edges.push([prefix + (k - 1), prefix + k, 0]);
-      if (k % 3 === 0 && k > 3) edges.push([prefix + (k - 3), prefix + k, 0]);
+      add(prefix + (k - 1), prefix + k, 0);
+      if (k % 3 === 0 && k > 3) add(prefix + (k - 3), prefix + k, 0);
     }
   });
-  for (const [a, b] of CROSS_LINKS) edges.push([a, b, 1]);
-  for (const u of UNKNOWN_FIELDS) edges.push([u.id, u.anchor, 2]);
+  for (const [a, b] of CROSS_LINKS) add(a, b, 1);
+  for (const u of UNKNOWN_FIELDS) add(u.id, u.anchor, 2);
   return edges;
 }
 
