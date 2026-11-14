@@ -317,3 +317,22 @@
 @media (prefers-reduced-motion: reduce) {
   .st-procurement .pr-btn, .st-procurement .pr-card, .st-procurement .pr-nav button { transition: none; }
 }
+
+/* Order terms, supply and tender previews */
+.st-procurement .pr-actions { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.st-procurement .pr-field input { width: 100%; min-width: 0; background: rgba(5, 16, 29, .85); border: 1px solid var(--glass-border); border-radius: 4px; color: inherit; padding: 7px 9px; font: inherit; }
+.st-procurement .pr-schedules, .st-procurement .pr-call-windows { display: grid; gap: 5px; }
+.st-procurement .pr-schedule { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; width: 100%; text-align: left; padding: 8px 10px; color: inherit; background: rgba(8, 23, 39, .72); border: 1px solid var(--glass-border); border-radius: 4px; cursor: pointer; font: inherit; }
+.st-procurement .pr-schedule span { font-size: 11px; color: var(--muted); }
+.st-procurement .pr-schedule.selected { border-color: var(--accent, #55c6d8); background: rgba(27, 95, 112, .25); }
+.st-procurement .pr-schedule:disabled { opacity: .55; cursor: not-allowed; }
+.st-procurement .pr-call-windows .pr-schedule span { grid-column: 1 / -1; }
+.st-procurement .pr-call-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.st-procurement .pr-stock-rail { border-top: 1px solid var(--glass-border); padding: 10px 6px; flex: none; }
+.st-procurement .pr-stock-rail h3 { margin: 0 0 7px; font-size: 12px; }
+.st-procurement .pr-stock-row { display: flex; justify-content: space-between; gap: 5px; padding: 3px 0; font-size: 11px; }
+.st-procurement .pr-stock-row span { color: var(--muted); }
+
+.st-procurement .pr-history { margin-block: 10px; }
+.st-procurement .pr-history summary { color: var(--muted); cursor: pointer; font-size: 12px; }
+.st-procurement .pr-history summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

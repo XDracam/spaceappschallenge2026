@@ -9,7 +9,7 @@ import { partName, statDefs } from '../../planner/data/parts';
 import type { PartKind as PlannerPartKind } from '../../planner/model/types';
 import type { MethodId, ScopeId, ScienceSlice } from '../slice';
 import { INITIAL_SLOTS } from '../slice';
-import type { Discipline, Odds, Recipe } from './types';
+import type { Discipline, Odds, Recipe, TestPart } from './types';
 import { recipeByKey } from '../data/recipes';
 import { DISCIPLINES } from '../data/fields';
 
@@ -285,4 +285,15 @@ export function taskAnswered(r: ResearchState, task: Task): boolean {
 /** Open planner requests whose uncovered keys a set of keys touches. */
 export function requestsTouchedBy(s: GameState, keys: string[]): Task[] {
   return plannerRequests(s.market.tasks).filter((t) => t.beyondResearch.some((k) => keys.includes(k) && !keyCovered(s.research, t, k)));
+}
+
+/** Department stock remains backed by its contract and is reserved exclusively. */
+export function scienceSupplies(s: GameState, requirement?: TestPart, projectId?: string) {
+  return s.market.allocations.filter(a => a.department === 'science' && a.status !== 'released').flatMap(a => {
+    const contract = s.market.contracts.find(c => c.id === a.contractId && (c.status === 'active' || c.status === 'delivered'));
+    if (!contract) return [];
+    const r = contract.offerSnapshot.resource;
+    const compatible = !requirement || (r.partKind === requirement.partKind && r.variant === requirement.variant && Object.entries(requirement.minimums).every(([k, v]) => (r.stats[k] ?? -Infinity) >= v));
+    return [{ allocation: a, contract, compatible, available: !a.projectId || a.projectId === projectId }];
+  });
 }

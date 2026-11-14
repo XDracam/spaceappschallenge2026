@@ -4,6 +4,8 @@ Current direction, November 14, 2026, following the user's correction of the sec
 
 ## Player responsibility
 
+The November 14 follow-up selects amendments to Contracts and configurable Call response deadlines with visible consequences. Science resource needs are communicated by players and supplied directly for department use without Science-created procurement Tasks. Different delivery quantities and dates use separate orders. Production-slot reservations remain optional and bespoke supplier recovery events are deferred. The detailed order parameters are selected as a prototype target in [D-018](../docs/decisions.md#d-018--procurement-order-and-department-supply-prototype); the assurance control remains unselected. See [D-017](../docs/decisions.md#d-017--procurement-amendments-call-timing-and-direct-department-needs) and the [source feedback](../docs/notes/2026-11-14-procurement-order-decisions.md). Implementation progress and verification are recorded separately.
+
 The procurement player manages the available Budget across needs arising throughout the mission preparation. They find and acquire things other roles need, including research requisites, personnel and mission hardware. Choices about what to buy, when and for whom implicitly determine how funds are distributed. Other stations, including communications, can change overall funding.
 
 Tasks remain shared goals. Players discuss needs, priorities, alternatives and compromises directly. Procurement consumes the persistent shared needs supplied by the other systems. Requests for advice or help can remain spoken conversation under D-007 and D-008.

@@ -4,13 +4,17 @@ Specs and notes for the science role live in this folder. The code now lives in 
 
 Labels: **user direction** = stated by the user. **Proposal** = suggested by the assistant. Source: [science module note](../docs/notes/2026-11-14-science-module.md).
 
+**Approved target:** [D-018](../docs/decisions.md#d-018--procurement-order-and-department-supply-prototype) specifies exclusive reusable department equipment for projects. The implementation description below records the earlier integrated flow and must be checked against current code.
+
 ## What it is
+
+Procurement direction updated November 14, 2026 in [D-017](../docs/decisions.md#d-017--procurement-amendments-call-timing-and-direct-department-needs). Science communicates equipment and service needs through player conversation and uses departmental purchases without creating procurement Tasks. The integrated `game/src/stations/science/logic.ts` still creates a test-unit Task and checks its Allocation for the research bonus. That flow needs revision to meet this direction.
 
 **User direction:** the science player is a senior researcher who starts with a large knowledge base, shown as a research-field graph. Players explore it, read a factual description of each field, and draft projects by combining two or three fields (alchemy-style). Relabeling was dropped. Data analysis is deferred. Science must not feel like an idle game.
 
 **Proposal, placeholder content:** about 126 known fields in seven disciplines plus 8 unknown ones; 33 hand-authored recipes (D-005): 26 engineering recipes that raise the planner's research limits or unlock parts, and 7 pure-science recipes that raise flags and news. All costs, durations, odds and gains are balancing placeholders. Field descriptions are assistant-written and need a fact check.
 
-## How it works now (integrated)
+## Earlier integrated flow (pre-D-018)
 
 1. **Field map and bench** (local UI state): select fields, add two or three to the bench, Combine. A hit is a project idea (recipe) and goes into the shared idea notebook (`science.discovered`). Two established fields are textbook territory; anything else can be drafted as a cheap long shot.
 2. **Requests from Mission Planning** (left rail): the planner's shared Tasks (`authorRole 'planner'`, open, with `beyondResearch` keys). Each key shows the current limit vs. what the order needs, whether it is covered, and the ideas that can answer it: found ideas get a Draft button, unfound ones are counted. Opening a request marks those ideas' fields on the map, but the player still has to find the combination.

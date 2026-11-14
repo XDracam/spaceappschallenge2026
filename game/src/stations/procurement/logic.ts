@@ -13,17 +13,12 @@
 //    Offers built to the criterion's minimums; beyond research: 1.5–3× cost, less reliable.
 import { defineActions, onTick, type ActionCtx } from '../../core/actions';
 import { pushNews, setFlag } from '../../core/coreActions';
-import type { Call, Contract, Criterion, Offer, StationId, Task } from '../../core/model';
+import type { Call, Contract, Criterion, StationId, Task, OrderDraft, DeliveryOptionId, Destination } from '../../core/model';
 import type { GameState } from '../../core/state';
 import type { Part } from '../planner/model/types';
-import { beyondResearch, defaultStats, statDefs } from '../planner/data/parts';
-import { CALL_DURATION_DAYS, CALL_OFFER_VALID_DAYS, callTemplates } from './data/calls';
-import { SUPPLIER_BY_ID } from './data/suppliers';
-import { baseLeadMonths, clamp, estimateCostM, estimateMassT, kindReliability, round1, round3 } from './data/pricing';
-import {
-  DAYS_PER_MONTH, beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, leadTimeDays, findOffer, fmtDate, fmtM,
-  offersForCriterion, partLabel, priceMultiplier, refundM, sameKind, taskCode, unavailableReason, unitPriceM,
-} from './rules';
+import { beyondResearch } from '../planner/data/parts';
+import { CALL_DURATION_DAYS, CALL_OFFER_VALID_DAYS } from './data/calls';
+import { criterionCoverage, findOffer, fmtDate, fmtM, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, previewCall, freeContractQuantity, sameHardware, fitFailures, cancellationToken, deliveryOptions } from './rules';
 
 const money = (v: number) => Math.round(v * 1000) / 1000;
 
@@ -61,88 +56,33 @@ function deliver(s: GameState, ctx: ActionCtx, k: Contract): void {
   s.budget.committedM = money(s.budget.committedM - k.offerSnapshot.priceM);
   s.budget.spentM = money(s.budget.spentM + k.offerSnapshot.priceM);
   const uses: string[] = [];
+  const affects: StationId[] = ['procurement'];
   for (const a of s.market.allocations) {
     if (a.contractId !== k.id || a.status !== 'reserved') continue;
     a.status = 'available';
     a.revision++;
     const t = s.market.tasks.find((x) => x.id === a.taskId);
-    if (t) uses.push(`${taskCode(t)} ${t.title}`);
+    if (t) { uses.push(`${taskCode(t)} ${t.title}`); if (!affects.includes('planner')) affects.push('planner'); }
+    if (a.department) { uses.push(a.department); if (!affects.includes(a.department)) affects.push(a.department); }
   }
   const q = k.offerSnapshot.quantity;
-  news(s, ctx, `Delivered: ${q > 1 ? `${q}× ` : ''}${k.offerSnapshot.resource.name} from ${k.offerSnapshot.supplierName}${uses.length ? ` for ${uses.join(', ')}` : ''}.`);
+  news(s, ctx, `Delivered: ${q > 1 ? `${q}× ` : ''}${k.offerSnapshot.resource.name} from ${k.offerSnapshot.supplierName}${uses.length ? ` for ${uses.join(', ')}` : ''}.`, affects);
 }
-
-function roundSig(v: number, digits = 3): number {
-  if (v === 0) return 0;
-  const p = Math.pow(10, digits - Math.ceil(Math.log10(Math.abs(v))));
-  return Math.round(v * p) / p;
-}
-
-/** Stats of a tender build: the criterion's minimums scaled by the template. */
-function tenderStats(c: Criterion, factor: number): Record<string, number> {
-  const base = defaultStats(c.partKind, c.variant);
-  const out: Record<string, number> = {};
-  for (const def of statDefs(c.partKind, c.variant)) {
-    const min = c.minimums[def.key] ?? base[def.key] ?? def.min;
-    let v: number;
-    if (def.key === 'isp') v = Math.round(min + (factor - 1) * 40);
-    else if (def.key === 'performance') v = Math.round((min + (factor - 1) * 10) * 10) / 10;
-    else if (def.key === 'level') v = Math.ceil(min);
-    else v = roundSig(min * factor, 3);
-    out[def.key] = Math.min(def.max, Math.max(min, v));
-  }
-  return out;
-}
-
-const SHORT: Record<string, string> = {
-  brightline: 'Brightline', helix: 'Helix', swift: 'Swift', commons: 'Commons', tallis: 'Tallis', meridian: 'Meridian', nova: 'Nova',
-};
 
 /** A Call reaches its closing day: authored responses become Offers. */
 function closeWithOffers(s: GameState, ctx: ActionCtx, call: Call): void {
-  call.status = 'closed';
-  call.revision++;
-  const { task, crit } = findCriterion(s, call.taskId, call.criterionId);
-  if (!task || !crit || task.status !== 'open') {
-    news(s, ctx, 'A Call closed without responses: its Task is no longer open.', ['procurement']);
-    return;
+  call.status = 'closed'; call.revision++;
+  const { crit } = findCriterion(s, call.taskId, call.criterionId);
+  const requirement = call.requirement ?? crit;
+  if (!requirement) { news(s, ctx, 'Call closed without a valid requirement.', ['procurement']); return; }
+  // Preview uses the closing-day market. Offset the window so expected dates describe signing now.
+  const window = call.windowDays ?? 30;
+  for (const result of previewCall(s, requirement, requirement.quantity, window)) {
+    const offer = result.offer;
+    offer.id = ctx.newId('offer'); offer.callId = call.id; offer.expiresAt = call.closesAt + CALL_OFFER_VALID_DAYS;
+    s.market.offers.push(offer); call.offerIds.push(offer.id);
   }
-  const beyond = beyondKeys(crit.partKind, crit.variant, crit.minimums, s.research).length > 0;
-  const mult = priceMultiplier(s);
-  let cheapest = Infinity;
-  for (const tpl of callTemplates(crit.partKind, beyond)) {
-    const sup = SUPPLIER_BY_ID[tpl.supplierId];
-    const stats = tenderStats(crit, tpl.statFactor);
-    const unit = estimateCostM(crit.partKind, crit.variant, stats) * tpl.priceFactor * (0.92 + 0.16 * ctx.rng()) * mult;
-    const leadMonths = clamp(baseLeadMonths(crit.partKind, crit.variant, stats) + tpl.leadDeltaMonths + Math.round(ctx.rng() * 2 - 1), 2, 14);
-    const qty = Math.max(1, crit.quantity);
-    const offer: Offer = {
-      id: ctx.newId('offer'),
-      revision: 1,
-      supplierId: sup.id,
-      supplierName: sup.name,
-      resource: {
-        name: `${SHORT[sup.id] ?? sup.name} custom ${partLabel(crit.partKind, crit.variant).toLowerCase()}`,
-        partKind: crit.partKind,
-        variant: crit.variant,
-        stats,
-        massT: round3(estimateMassT(crit.partKind, crit.variant, stats) * (beyond ? 1.05 : 1)),
-      },
-      quantity: qty,
-      priceM: round1(Math.max(0.1, unit) * qty),
-      leadTimeDays: Math.round(leadMonths * DAYS_PER_MONTH),
-      reliability: round3(clamp(kindReliability(crit.partKind, crit.variant) + tpl.reliabilityDelta, 0.8, 0.995)),
-      cancellationPct: sup.cancellationPct,
-      expiresAt: call.closesAt + CALL_OFFER_VALID_DAYS,
-      callId: call.id,
-      source: 'call',
-      status: 'available',
-    };
-    s.market.offers.push(offer);
-    call.offerIds.push(offer.id);
-    cheapest = Math.min(cheapest, offer.priceM);
-  }
-  news(s, ctx, `Call answered for ${taskCode(task)} ${crit.label}: ${call.offerIds.length} Offers${beyond ? ' (beyond research — experimental builds)' : ''}, from ${fmtM(cheapest)}.`, ['procurement', 'planner']);
+  news(s, ctx, `Call answered for ${requirement.label}: ${call.offerIds.length} Offers.`, ['procurement']);
 }
 
 function partTask(s: GameState, ctx: ActionCtx, part: Part, quantity: number, owner: string): void {
@@ -164,57 +104,74 @@ function partTask(s: GameState, ctx: ActionCtx, part: Part, quantity: number, ow
   });
 }
 
+function reject(s: GameState, ctx: ActionCtx, reason: string): void {
+  news(s, ctx, `Action not completed: ${reason}. Review the refreshed terms.`, ['procurement']);
+}
+function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: string): void {
+  const q = quoteOrder(s, draft);
+  if (s.meta.phase !== 'planning' || !q.offer || q.unavailable || q.failures.length || q.token !== token) {
+    reject(s, ctx, q.unavailable || q.failures[0] || 'The quote changed'); return;
+  }
+  const offer = q.offer;
+  const id = ctx.newId('contract');
+  s.market.contracts.push({ id, revision: 1, offerSnapshot: {...structuredClone(offer), deliveryOptions:structuredClone(deliveryOptions(offer)), quantity:q.quantity, priceM:q.totalM, status:'accepted'}, signedAt:ctx.day, expectedAt:q.expectedAt, baselineExpectedAt:q.expectedAt, amendmentCutoff:ctx.day + Math.max(1, (q.expectedAt - ctx.day) * 0.75), delivery:draft.delivery, initialDelivery:draft.delivery, amendments:[], status:'active' });
+  s.budget.committedM = money(s.budget.committedM + q.totalM);
+  if (offer.source !== 'catalogue') {
+    const o = s.market.offers.find(x => x.id === offer.id)!;
+    o.remainingQuantity = (o.remainingQuantity ?? o.quantity) - q.quantity;
+    if (o.remainingQuantity === 0) o.status = 'accepted';
+    o.revision++;
+  }
+  if (draft.destination.kind !== 'shared') {
+    const d = draft.destination;
+    s.market.allocations.push({id:ctx.newId('alloc'), revision:1, contractId:id, taskId:d.kind === 'task' ? d.taskId : '', criterionId:d.kind === 'task' ? d.criterionId : '', ...(d.kind === 'department' ? {department:d.department} : {}), quantity:q.quantity, status:'reserved'});
+  }
+  const affects: StationId[] = ['procurement'];
+  if (draft.destination.kind === 'department') affects.push(draft.destination.department);
+  if (draft.destination.kind === 'task') affects.push('planner');
+  news(s, ctx, `Contract signed: ${q.quantity}× ${offer.resource.name} from ${offer.supplierName}, ${fmtM(q.totalM)}, arriving ${fmtDate(q.expectedAt)}.`, affects);
+  refreshLate(s, ctx);
+}
+
 export const procurementActions = defineActions('procurement', {
   /**
    * Sign an Offer → Contract (+ Allocation to the Task criterion if given).
    * quantity: catalogue Offers only (default: the criterion's uncovered quantity, else 1).
    */
   signOffer(s, ctx, offerId: string, taskId?: string, criterionId?: string, quantity?: number) {
-    if (s.meta.phase !== 'planning') return;
-    const offer = findOffer(s, offerId);
-    if (!offer || unavailableReason(s, offer)) return;
-    const { task, crit } = findCriterion(s, taskId, criterionId);
-    if (taskId && (!task || !crit || task.status !== 'open' || !sameKind(offer.resource, crit))) return;
-    const cov = task && crit ? criterionCoverage(s, task, crit) : undefined;
-    const qty = offer.source === 'catalogue'
-      ? Math.max(1, Math.round(quantity ?? (cov ? Math.max(1, cov.missing) : 1)))
-      : offer.quantity;
-    const unit = unitPriceM(s, offer);
-    const total = round1(unit * qty);
-    if (total > budgetAvailableM(s.budget) + 1e-9) return;
-
-    // contract.cheapest: the cheapest of several fitting, signable Offers for this criterion.
-    let cheapest = false;
-    if (task && crit) {
-      const fitting = offersForCriterion(s, task, crit).filter((a) => !a.unavailable && a.fits);
-      if (fitting.length >= 2 && fitting.some((a) => a.offer.id === offer.id)) {
-        cheapest = unit <= Math.min(...fitting.map((a) => a.unitPriceM)) + 1e-6;
-      }
+    const offer = findOffer(s, offerId); if (!offer) return;
+    const {task, crit} = findCriterion(s, taskId, criterionId);
+    const qty = quantity ?? (task && crit ? Math.max(1, criterionCoverage(s, task, crit).missing) : offer.source === 'catalogue' ? 1 : (offer.remainingQuantity ?? offer.quantity));
+    const draft: OrderDraft = {offerId, quantity:qty, delivery:'standard', destination: task && crit ? {kind:'task',taskId:task.id,criterionId:crit.id} : {kind:'shared'}};
+    commitOrder(s, ctx, draft, quoteOrder(s, draft).token);
+  },
+  signOrder(s, ctx, draft: OrderDraft, token: string) { commitOrder(s, ctx, draft, token); },
+  amendDelivery(s, ctx, contractId: string, delivery: DeliveryOptionId, token: string) {
+    const q = quoteAmendment(s, contractId, delivery);
+    if (!q.contract || q.unavailable || q.token !== token) { reject(s, ctx, q.unavailable || 'The amendment quote changed'); return; }
+    const k = q.contract; const from = k.expectedAt;
+    k.amendments ??= []; k.amendments.push({at:ctx.day, from, to:q.expectedAt, feeM:q.feeM, delivery, eventDelayDays:q.eventDelayDays});
+    k.expectedAt=q.expectedAt; k.delivery=delivery; k.revision++;
+    s.budget.spentM=money(s.budget.spentM + q.feeM);
+    const affects: StationId[] = ['procurement'];
+    for (const a of s.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released')) {
+      const station = a.department ?? (a.taskId ? 'planner' : undefined);
+      if (station && !affects.includes(station)) affects.push(station);
     }
-
-    const contractId = ctx.newId('contract');
-    const expectedAt = ctx.day + leadTimeDays(s, offer) + deliveryShiftDays(s);
-    s.market.contracts.push({
-      id: contractId,
-      revision: 1,
-      offerSnapshot: { ...structuredClone(offer), quantity: qty, priceM: total, status: 'accepted' },
-      signedAt: ctx.day,
-      expectedAt,
-      status: 'active',
-    });
-    s.budget.committedM = money(s.budget.committedM + total);
-    if (offer.source !== 'catalogue') {
-      const o = s.market.offers.find((x) => x.id === offer.id);
-      if (o) { o.status = 'accepted'; o.revision++; }
-    }
-    if (task && crit) {
-      s.market.allocations.push({
-        id: ctx.newId('alloc'), revision: 1, contractId, taskId: task.id, criterionId: crit.id, quantity: qty, status: 'reserved',
-      });
-    }
-    if (cheapest) setFlag(s, 'contract.cheapest', true);
-    news(s, ctx, `Contract signed: ${qty > 1 ? `${qty}× ` : ''}${offer.resource.name} from ${offer.supplierName}, ${fmtM(total)}, arriving ${fmtDate(expectedAt)}${task ? ` for ${taskCode(task)} ${task.title}` : ''}.`);
-    refreshLate(s, ctx);
+    news(s,ctx,`Delivery amended: ${k.offerSnapshot.resource.name}, ${fmtDate(from)} → ${fmtDate(q.expectedAt)}, fee ${fmtM(q.feeM)}.`,affects);
+    refreshLate(s,ctx);
+  },
+  openRequestCall(s, ctx, criterion: Criterion, quantity: number, destination: Destination, neededAt: number, window: 7 | 14 | 30, taskId?: string, criterionId?: string) {
+    if (s.meta.phase !== 'planning' || !Number.isInteger(quantity) || quantity < 1 || ![7,14,30].includes(window)) { reject(s,ctx,'Invalid Call'); return; }
+    if (taskId && !findCriterion(s,taskId,criterionId).crit) { reject(s,ctx,'Task criterion changed'); return; }
+    const task = s.market.tasks.find(t => t.id === taskId);
+    const call: Call = {id:ctx.newId('call'), revision:1, taskId:taskId ?? '', criterionId:criterionId ?? '', openedAt:ctx.day, closesAt:ctx.day+window, status:'open', offerIds:[], requirement:{...structuredClone(criterion),quantity}, destination:structuredClone(destination), neededAt, windowDays:window, taskRevision:task?.revision};
+    s.market.calls.push(call); news(s,ctx,`Call opened for ${criterion.label}: responses by ${fmtDate(call.closesAt)}.`,['procurement']);
+  },
+  allocateDepartment(s, ctx, contractId: string, department: StationId, quantity: number) {
+    const k = s.market.contracts.find(x => x.id === contractId);
+    if (!k || !Number.isInteger(quantity) || quantity < 1 || freeContractQuantity(s,contractId) < quantity) { reject(s,ctx,'Supply is no longer free'); return; }
+    s.market.allocations.push({id:ctx.newId('alloc'),revision:1,contractId,taskId:'',criterionId:'',department,quantity,status:k.status === 'delivered' ? 'available' : 'reserved'});
   },
 
   /** Invite tenders for a Task criterion; Offers arrive when the Call closes (~1 month). */
@@ -225,7 +182,7 @@ export const procurementActions = defineActions('procurement', {
     if (s.market.calls.some((k) => k.taskId === taskId && k.criterionId === crit.id && k.status === 'open')) return;
     const call: Call = {
       id: ctx.newId('call'), revision: 1, taskId, criterionId: crit.id,
-      openedAt: ctx.day, closesAt: ctx.day + CALL_DURATION_DAYS, status: 'open', offerIds: [],
+      openedAt: ctx.day, closesAt: ctx.day + CALL_DURATION_DAYS, status: 'open', offerIds: [], requirement:structuredClone(crit), destination:{kind:'task',taskId,criterionId:crit.id}, neededAt:task.neededAt, windowDays:30, taskRevision:task.revision,
     };
     s.market.calls.push(call);
     news(s, ctx, `Call opened for ${taskCode(task)} ${crit.label}: supplier responses by ${fmtDate(call.closesAt)}.`, ['procurement', 'planner']);
@@ -240,9 +197,9 @@ export const procurementActions = defineActions('procurement', {
   },
 
   /** Cancel an active Contract: refund by the time-remaining rule, release its allocations. */
-  cancelContract(s, ctx, contractId: string) {
+  cancelContract(s, ctx, contractId: string, token: string) {
     const k = s.market.contracts.find((x) => x.id === contractId);
-    if (!k || k.status !== 'active') return;
+    if (!k || k.status !== 'active' || token !== cancellationToken(s,contractId)) { reject(s,ctx,'Cancellation terms changed'); return; }
     const refund = refundM(k, ctx.day);
     const price = k.offerSnapshot.priceM;
     s.budget.committedM = money(s.budget.committedM - price);
@@ -250,11 +207,18 @@ export const procurementActions = defineActions('procurement', {
     k.status = 'cancelled';
     k.refundM = refund;
     k.revision++;
+    const affected: StationId[] = ['procurement'];
+    const projects: string[] = [];
     for (const a of s.market.allocations) {
-      if (a.contractId === k.id && a.status !== 'released') { a.status = 'released'; a.revision++; }
+      if (a.contractId === k.id && a.status !== 'released') {
+        const station = a.department ?? (a.taskId ? 'planner' : undefined);
+        if (station && !affected.includes(station)) affected.push(station);
+        if (a.projectId) projects.push(s.research.projects.find(p => p.id === a.projectId)?.title ?? a.projectId);
+        a.status = 'released'; a.revision++;
+      }
     }
     setFlag(s, 'contract.cancelled', true);
-    news(s, ctx, `Contract cancelled: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}). Refund ${fmtM(refund)}, fee ${fmtM(price - refund)}.`);
+    news(s, ctx, `Contract cancelled: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}). Refund ${fmtM(refund)}, fee ${fmtM(price - refund)}.${projects.length ? ` Equipment missing for ${projects.join(', ')}.` : ''}`, affected);
     refreshLate(s, ctx);
   },
 
@@ -264,6 +228,8 @@ export const procurementActions = defineActions('procurement', {
     if (!k || (k.status !== 'active' && k.status !== 'delivered')) return;
     const { task, crit } = findCriterion(s, taskId, criterionId);
     if (!task || !crit || task.status !== 'open' || !sameKind(k.offerSnapshot.resource, crit)) return;
+    if (fitFailures(k.offerSnapshot.resource,crit).length) { reject(s,ctx,'Supply does not meet the criterion'); return; }
+    if (s.market.allocations.some(a => a.taskId === taskId && a.criterionId === criterionId && a.status !== 'released' && s.market.contracts.some(other => other.id === a.contractId && !sameHardware(other.offerSnapshot.resource, k.offerSnapshot.resource)))) { reject(s,ctx,'Hardware differs from existing allocation'); return; }
     const used = s.market.allocations.filter((a) => a.contractId === k.id && a.status !== 'released').reduce((n, a) => n + a.quantity, 0);
     const free = k.offerSnapshot.quantity - used;
     const missing = criterionCoverage(s, task, crit).missing;
@@ -278,7 +244,7 @@ export const procurementActions = defineActions('procurement', {
   /** Release an allocation (the contracted supply stays in inventory). */
   release(s, _ctx, allocationId: string) {
     const a = s.market.allocations.find((x) => x.id === allocationId);
-    if (!a || a.status === 'released') return;
+    if (!a || a.status === 'released' || a.projectId) return;
     a.status = 'released';
     a.revision++;
   },

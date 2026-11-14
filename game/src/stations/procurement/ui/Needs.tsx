@@ -88,9 +88,20 @@ export function Needs() {
         })}
         {!rows.length ? (
           <div class="pr-empty">
-            <p>No open needs yet. The planner's “Order part” publishes Tasks here; science and comms can add needs too.</p>
+            <p>No open mission needs.</p>
           </div>
         ) : null}
+      </div>
+      <div class="pr-stock-rail"><h3>Department supply</h3>
+        {(['science', 'planner', 'comms', 'procurement'] as const).map(department => {
+          const allocs = v.market.allocations.filter(a => a.department === department && a.status !== 'released');
+          const ready = allocs.filter(a => a.status === 'available').reduce((n, a) => n + a.quantity, 0);
+          const incoming = allocs.filter(a => a.status === 'reserved').reduce((n, a) => n + a.quantity, 0);
+          const used = allocs.filter(a => a.projectId).reduce((n, a) => n + a.quantity, 0);
+          if (!ready && !incoming) return null;
+          return <div key={department} class="pr-stock-row"><strong>{department[0].toUpperCase() + department.slice(1)}</strong><span>{ready} ready · {incoming} incoming{used ? ` · ${used} in use` : ''}</span></div>;
+        })}
+        <p class="small muted">Shared supply: {v.market.contracts.filter(k => k.status === 'delivered').reduce((n, k) => n + Math.max(0, k.offerSnapshot.quantity - v.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released').reduce((sum, a) => sum + a.quantity, 0)), 0)} ready</p>
       </div>
       {import.meta.env.DEV ? (
         <div class="pr-dev">

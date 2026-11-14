@@ -2,7 +2,7 @@
 import { createContext } from 'preact';
 import { useContext, useMemo } from 'preact/hooks';
 import { createStore, useStore } from '../../../core/createStore';
-import type { NewsItem, PartKind } from '../../../core/model';
+import type { NewsItem, PartKind, DeliveryOptionId, OrderDraft, Criterion, Destination } from '../../../core/model';
 import { useGame } from '../../../core/store';
 import type { PView } from '../rules';
 
@@ -29,6 +29,8 @@ export interface Focus { taskId: string; criterionId: string }
 export type Dialog =
   | { type: 'sign'; offerId: string; taskId?: string; criterionId?: string; qty: number }
   | { type: 'cancel'; contractId: string }
+  | { type: 'order'; draft: OrderDraft; token: string }
+  | { type: 'amend'; contractId: string; delivery: DeliveryOptionId; token: string }
   | null;
 
 export interface UiState {
@@ -51,6 +53,11 @@ export interface UiState {
   contractId: string | null;
   callId: string | null;
   callTarget: string;
+  delivery: DeliveryOptionId;
+  neededAt: number | null;
+  callWindow: 7 | 14 | 30;
+  callResourceId: string | null;
+  callSnapshot: { criterion: Criterion; destination: Destination; neededAt?: number } | null;
   dialog: Dialog;
   newsOpen: boolean;
   status: string;
@@ -73,6 +80,11 @@ export const ui = createStore<UiState>({
   contractId: null,
   callId: null,
   callTarget: '',
+  delivery: 'standard',
+  neededAt: null,
+  callWindow: 14,
+  callResourceId: null,
+  callSnapshot: null,
   dialog: null,
   newsOpen: false,
   status: '',

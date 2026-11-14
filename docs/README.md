@@ -21,7 +21,13 @@
 | [Procurement improvement review](../procurement/prototype-review.md) | Research choices, supported scenarios and implementation limits |
 | [Procurement UI audit](playtests/2026-11-14-procurement-ui-audit.md) | Skill-guided findings, implemented refinements and observed keyboard/purchase checks |
 | [Procurement gameplay iteration](playtests/2026-11-14-procurement-gameplay-iteration.md) | Contextual station actions, optional multi-need draft and observed consequence walkthroughs |
+| [Order integration walkthrough](playtests/2026-11-15-order-integration-walkthrough.md) | Limited single-operator observations during implementation; fixes followed |
 | [Procurement gameplay UX audit](reviews/2026-11-14-procurement-gameplay-ux.md) | High-level station requirements: awareness, scrolling, active context, competing plans, interruptions and concurrent gameplay; researched proposals |
+| [Concept Maturity Levels paper review](reviews/2026-11-14-cml-paper.md) | Source findings and proposed gameplay applications for sourcing, development, reserves and concurrent mission design |
+| [Procurement order options](notes/2026-11-14-procurement-order-options.md) | User proposal for configurable orders and candidate gameplay additions with role boundaries |
+| [Procurement order decisions](notes/2026-11-14-procurement-order-decisions.md) | User selections, questioned assurance parameter and verified acquisition controls |
+| [Procurement order approval](notes/2026-11-14-procurement-order-approval.md) | User approval of the detailed prototype target |
+| [Procurement order concept](../procurement/order-concept.md) · [Visual walkthrough](../procurement/concepts/orders.html) | Approved prototype target: configurable orders, amendments, Call timing, usable department supply and independent orders |
 | [Procurement interface walkthrough](playtests/2026-11-14-procurement-interface-walkthrough.md) | Observed browser sequences, distinct from multiplayer validation |
 | [Procurement interfaces](../procurement/interfaces.md) | Selected terminology and proposed ownership and typed messages |
 | [Procurement gameplay scenarios](../procurement/scenarios.md) | Concrete situations for design walkthroughs |

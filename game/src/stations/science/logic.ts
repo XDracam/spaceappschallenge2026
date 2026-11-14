@@ -8,7 +8,7 @@
 // (planner limits / unlocks / flags), failure raises 'research.failed'.
 import { defineActions, onTick, type ActionCtx } from '../../core/actions';
 import { pushNews, setFlag } from '../../core/coreActions';
-import type { Effect, ResearchProject, Task } from '../../core/model';
+import type { Effect, ResearchProject } from '../../core/model';
 import type { GameState } from '../../core/state';
 import { budgetAvailableM } from '../../core/state';
 import type { MethodId, ScienceSlice, ScopeId } from './slice';
@@ -16,7 +16,7 @@ import { initialScienceSlice } from './slice';
 import { recipeByKey } from './data/recipes';
 import { FAILURE_LINES, LONG_SHOT_FINDINGS } from './data/flavour';
 import {
-  TEST_UNIT_BONUS, describeEffect, fieldLabel, formatMonth, keyCovered, keyInfo, planProject, requestsTouchedBy, running,
+  TEST_UNIT_BONUS, describeEffect, fieldLabel, formatMonth, keyCovered, keyInfo, planProject, requestsTouchedBy, running, scienceSupplies,
 } from './model/research';
 
 /** Fill science slice fields missing from older saves. */
@@ -39,34 +39,42 @@ function applyEffects(s: GameState, effects: Effect[]): void {
   }
 }
 
-/** Has the test unit for this task been delivered (or is it in hand)? */
-function testUnitDelivered(s: GameState, taskId: string | undefined, day: number): boolean {
-  if (!taskId) return false;
-  return s.market.allocations.some((a) => {
-    if (a.taskId !== taskId || a.status === 'released') return false;
-    const c = s.market.contracts.find((k) => k.id === a.contractId);
-    return !!c && c.status === 'delivered' && (c.deliveredAt ?? day) <= day;
-  });
+/** Reserve one compatible unit atomically in the action reducer. */
+function reserve(s: GameState, ctx: ActionCtx, projectId: string, allocationId: string): string | undefined {
+  const info = ensure(s).info[projectId];
+  const requirement = info?.equipmentRequirement;
+  if (!requirement) return;
+  const item = scienceSupplies(s, requirement, projectId).find(x => x.allocation.id === allocationId && x.compatible && x.available && x.allocation.quantity >= 1);
+  if (!item) return;
+  const a = item.allocation;
+  if (a.projectId === projectId) return a.id;
+  if (a.quantity > 1) {
+    a.quantity -= 1; a.revision++;
+    const unit = { ...a, id: ctx.newId('alloc'), revision: 1, quantity: 1, projectId };
+    s.market.allocations.push(unit);
+    return unit.id;
+  }
+  a.projectId = projectId; a.revision++;
+  return a.id;
+}
+
+function release(s: GameState, projectId: string): void {
+  for (const a of s.market.allocations) if (a.projectId === projectId) { delete a.projectId; a.revision++; }
 }
 
 function pick<T>(list: T[], ctx: ActionCtx): T {
   return list[Math.floor(ctx.rng() * list.length) % list.length];
 }
 
-function resolve(s: GameState, ctx: ActionCtx, p: ResearchProject): void {
+function resolve(s: GameState, ctx: ActionCtx, p: ResearchProject, finishedAt: number): void {
   const sl = ensure(s);
   const info = sl.info[p.id];
-  const bonus = testUnitDelivered(s, info?.testTaskId, ctx.day) ? TEST_UNIT_BONUS : 0;
+  const chosen = info?.equipmentAllocationId && scienceSupplies(s, info.equipmentRequirement, p.id).find(x => x.allocation.id === info.equipmentAllocationId && x.allocation.projectId === p.id && x.compatible);
+  const bonus = chosen && chosen.contract.status === 'delivered' && (chosen.contract.deliveredAt ?? ctx.day) <= finishedAt ? TEST_UNIT_BONUS : 0;
+  release(s, p.id);
   const chance = Math.min(0.97, p.successChance + bonus);
   const ok = ctx.rng() < chance;
-  if (info) info.endedAt = ctx.day;
-
-  // A test unit nobody contracted is no longer needed.
-  const test = info?.testTaskId ? s.market.tasks.find((t) => t.id === info.testTaskId) : undefined;
-  if (test && test.status === 'open' && !s.market.allocations.some((a) => a.taskId === test.id)) {
-    test.status = 'withdrawn';
-    test.updatedAt = ctx.day;
-  }
+  if (info) { info.endedAt = finishedAt; info.equipmentBonus = bonus; }
 
   if (!ok) {
     p.status = 'failed';
@@ -117,14 +125,20 @@ export const scienceActions = defineActions('science', {
 
   /**
    * Start a research project. projectId is made by the UI. Spends the cost at once.
-   * requestTestPart: with method 'new', post a Task to Procurement for the recipe's test unit.
+   * A selected department unit is checked and reserved in the same action.
    */
-  startProject(s, ctx, projectId: string, recipeKey: string, scope: ScopeId, method: MethodId, requestTestPart = false) {
+  startProject(s, ctx, projectId: string, recipeKey: string, scope: ScopeId, method: MethodId, equipmentAllocationId?: string) {
     const sl = ensure(s);
     if (s.research.projects.some((p) => p.id === projectId)) return;
     const plan = planProject(s, recipeKey, scope, method);
     if (plan.blocked) return;
     if (plan.costM > budgetAvailableM(s.budget) + 1e-9) return;
+
+    const requirement = method === 'new' ? plan.recipe?.testPart : undefined;
+    if (equipmentAllocationId && (!requirement || !scienceSupplies(s, requirement).some(x => x.allocation.id === equipmentAllocationId && x.available && x.compatible && x.allocation.quantity >= 1))) {
+      pushNews(s, { from: 'science', text: 'Project not started: the selected test unit is no longer available or compatible. Choose another unit or start without one.', affects: ['science'], internal: true }, ctx.newId);
+      return;
+    }
 
     s.budget.spentM = Math.round((s.budget.spentM + plan.costM) * 100) / 100;
     const answers = requestsTouchedBy(s, plan.keys);
@@ -141,39 +155,9 @@ export const scienceActions = defineActions('science', {
       effects: plan.effects,
     };
     s.research.projects.push(project);
-    sl.info[projectId] = { recipeKey: plan.recipeKey, scope, method };
+    sl.info[projectId] = { recipeKey: plan.recipeKey, scope, method, ...(requirement ? { equipmentRequirement: structuredClone(requirement) } : {}) };
+    if (equipmentAllocationId) sl.info[projectId].equipmentAllocationId = reserve(s, ctx, projectId, equipmentAllocationId);
     if (!sl.discovered.includes(plan.recipeKey) && plan.recipe) sl.discovered.push(plan.recipeKey);
-
-    const tp = plan.recipe?.testPart;
-    if (requestTestPart && method === 'new' && tp) {
-      const beyond: string[] = [];
-      const uk = `${tp.partKind}.${tp.variant}`;
-      if (!s.research.unlocked.includes(uk)) beyond.push(uk);
-      for (const [stat, v] of Object.entries(tp.minimums)) {
-        const lim = s.research.limits[`${uk}.${stat}`];
-        if (lim !== undefined && v > lim + 1e-9) beyond.push(`${uk}.${stat}`);
-      }
-      const task: Task = {
-        id: ctx.newId('task'),
-        revision: 1,
-        authorRole: 'science',
-        title: `${tp.label} for "${plan.title}"`,
-        criteria: [{ id: ctx.newId('crit'), label: tp.label, partKind: tp.partKind, variant: tp.variant, minimums: { ...tp.minimums }, quantity: 1 }],
-        neededAt: Math.round(ctx.day + plan.days * 0.6),
-        priority: 'normal',
-        status: 'open',
-        beyondResearch: beyond,
-        createdAt: ctx.day,
-        updatedAt: ctx.day,
-      };
-      s.market.tasks.push(task);
-      sl.info[projectId].testTaskId = task.id;
-      pushNews(s, {
-        from: 'science',
-        text: `Science asks Procurement for a ${tp.label.toLowerCase()} by ${formatMonth(task.neededAt)} (project "${plan.title}").`,
-        affects: ['procurement'], internal: true,
-      }, ctx.newId);
-    }
 
     for (const t of answers) {
       pushNews(s, {
@@ -182,6 +166,20 @@ export const scienceActions = defineActions('science', {
         affects: ['planner'], internal: true,
       }, ctx.newId);
     }
+  },
+
+  /** Change the unit assigned to a running project, only after validating the replacement. */
+  selectEquipment(s, ctx, projectId: string, allocationId: string | undefined) {
+    const p = s.research.projects.find(x => x.id === projectId && x.status === 'running');
+    const info = ensure(s).info[projectId];
+    if (!p || !info?.equipmentRequirement) return;
+    if (allocationId && !scienceSupplies(s, info.equipmentRequirement, projectId).some(x => x.allocation.id === allocationId && x.compatible && x.available && x.allocation.quantity >= 1)) {
+      pushNews(s, { from: 'science', text: 'Test unit was not assigned: it is no longer available or compatible. Choose another unit.', affects: ['science'], internal: true }, ctx.newId);
+      return;
+    }
+    if (allocationId === info.equipmentAllocationId) return;
+    release(s, projectId);
+    info.equipmentAllocationId = allocationId ? reserve(s, ctx, projectId, allocationId) : undefined;
   },
 
   /** Stop a running project. Half of the unspent share of its cost comes back. */
@@ -198,12 +196,9 @@ export const scienceActions = defineActions('science', {
     if (info) {
       info.cancelled = true;
       info.endedAt = ctx.day;
-      const test = info.testTaskId ? s.market.tasks.find((t) => t.id === info.testTaskId) : undefined;
-      if (test && test.status === 'open' && !s.market.allocations.some((a) => a.taskId === test.id)) {
-        test.status = 'withdrawn';
-        test.updatedAt = ctx.day;
-      }
+
     }
+    release(s, projectId);
     if (p.taskId) {
       pushNews(s, { from: 'science', text: `Science stopped "${p.title}". Your order needs another route.`, affects: ['planner'], internal: true }, ctx.newId);
     }
@@ -216,8 +211,12 @@ onTick('science', (s, ctx, fromDay, toDay) => {
   // Comms researchPace effects: +pct % runs faster (ends earlier), −pct % slower.
   const pct = Math.max(-90, s.research.modifiers.filter((m) => m.untilDay > fromDay).reduce((a, m) => a + m.effect.pct, 0));
   for (const p of running(s.research)) {
+    const previousEnd = p.endsAt;
     if (pct !== 0) p.endsAt -= dt * (pct / 100);
-    if (p.endsAt <= toDay) resolve(s, ctx, p);
+    if (p.endsAt <= toDay) {
+      const finishedAt = fromDay + Math.max(0, previousEnd - fromDay) / (1 + pct / 100);
+      resolve(s, ctx, p, finishedAt);
+    }
   }
   if (s.research.modifiers.length) s.research.modifiers = s.research.modifiers.filter((m) => m.untilDay > toDay);
 });

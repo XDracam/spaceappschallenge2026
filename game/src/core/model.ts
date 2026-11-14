@@ -85,6 +85,12 @@ export interface Resource {
 }
 
 export type OfferSource = 'catalogue' | 'call' | 'comms';
+export type DeliveryOptionId = 'priority' | 'standard' | 'flexible';
+export type Destination = { kind: 'shared' } | { kind: 'department'; department: StationId } | { kind: 'task'; taskId: string; criterionId: string };
+export interface OrderDraft { offerId: string; quantity: number; destination: Destination; delivery: DeliveryOptionId; neededAt?: number }
+export interface DeliveryOption { id: DeliveryOptionId; daysFactor: number; priceFactor: number }
+export interface Amendment { at: number; from: number; to: number; feeM: number; delivery: DeliveryOptionId; eventDelayDays?: number }
+
 
 export interface Offer {
   id: string;
@@ -104,6 +110,9 @@ export interface Offer {
   callId?: string;
   source: OfferSource;
   status: 'available' | 'accepted' | 'withdrawn';
+  remainingQuantity?: number;
+  wholeOfferOnly?: boolean;
+  deliveryOptions?: DeliveryOption[];
 }
 
 export interface Call {
@@ -115,6 +124,11 @@ export interface Call {
   closesAt: number;
   status: 'open' | 'closed' | 'withdrawn';
   offerIds: string[];
+  requirement?: Criterion;
+  destination?: Destination;
+  neededAt?: number;
+  windowDays?: 7 | 14 | 30;
+  taskRevision?: number;
 }
 
 export type ContractStatus = 'active' | 'delivered' | 'cancelled' | 'failed';
@@ -128,7 +142,13 @@ export interface Contract {
   deliveredAt?: number;
   status: ContractStatus;
   refundM?: number;
+  delivery?: DeliveryOptionId;
+  initialDelivery?: DeliveryOptionId;
+  baselineExpectedAt?: number;
+  amendmentCutoff?: number;
+  amendments?: Amendment[];
 }
+
 
 /** Contracted quantity reserved for a Task criterion. */
 export interface Allocation {
@@ -137,6 +157,8 @@ export interface Allocation {
   contractId: string;
   taskId: string;
   criterionId: string;
+  department?: StationId;
+  projectId?: string;
   quantity: number;
   status: 'reserved' | 'available' | 'released';
 }

@@ -25,10 +25,15 @@ interface SyncState {
 
 /** What the UI renders: confirmed state (+ pending actions on clients). */
 export const gameStore = createStore<GameState>(createGame(1));
+/** Host-confirmed state, without optimistic client actions. */
+export const confirmedGameStore = createStore<GameState>(gameStore.get());
 export const syncStore = createStore<SyncState>({ role: 'solo', peerId: 'host', station: null, connected: true });
 
 export function useGame<S>(selector: (s: GameState) => S): S {
   return useStore(gameStore, selector);
+}
+export function useConfirmedGame<S>(selector: (s: GameState) => S): S {
+  return useStore(confirmedGameStore, selector);
 }
 export function useSync<S>(selector: (s: SyncState) => S): S {
   return useStore(syncStore, selector);
@@ -67,6 +72,7 @@ function dispatch(type: string, args: unknown[]): void {
 
 function applyAsHost(action: Action, origin: string, id?: string): void {
   confirmed = applyAction(confirmed, action);
+  confirmedGameStore.set(confirmed);
   seq++;
   gameStore.set(confirmed);
   host?.broadcast({ t: 'applied', seq, action, origin, ...(id ? { id } : {}) });
@@ -87,6 +93,7 @@ export function onHostState(cb: (s: GameState) => void): () => void {
 /** Single browser, no network (also the host before anyone joins). */
 export function startSolo(state: GameState): void {
   confirmed = state;
+  confirmedGameStore.set(confirmed);
   seq = 0;
   pending = [];
   host = null;
@@ -129,6 +136,7 @@ export function startClient(transport: ClientTransport): void {
       syncStore.update((s) => { s.peerId = msg.peerId; });
     } else if (msg.t === 'snapshot') {
       confirmed = msg.state;
+      confirmedGameStore.set(confirmed);
       seq = msg.seq;
       // Pending actions the host never saw are dropped on resync.
       pending = [];
@@ -140,6 +148,7 @@ export function startClient(transport: ClientTransport): void {
       }
       seq = msg.seq;
       confirmed = applyAction(confirmed, msg.action);
+      confirmedGameStore.set(confirmed);
       if (msg.origin === syncStore.get().peerId && msg.id) pending = pending.filter((p) => p.id !== msg.id);
       rebuildView();
     }

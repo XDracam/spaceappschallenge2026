@@ -111,6 +111,34 @@ Identifier alignment on November 14, 2026 — parallel documentation used I-061 
 
 Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-047 are retained as I-065–I-077. The duplicate incoming station idea I-034 refers to existing I-056 and D-012. Incoming questions Q-031–Q-034 are retained as Q-032–Q-035. References in the incoming modules were aligned.
 
+| I-078 | Explore procurement's proactive investigation of supply options, development versus purchase, testing, fallbacks and whole-mission reserves within iterative cross-role mission design. Players arrange their own voice or in-person conversation. Department allocation remains a proposal. | User gameplay feedback and supplied CML paper; assistant synthesis, November 14, 2026 | Research and gameplay proposals, unselected and untested. External conversation arrangements are user direction. | [Paper review and source locations](reviews/2026-11-14-cml-paper.md); Q-005, Q-008, Q-014, Q-020, Q-023, Q-027–Q-028, Q-030–Q-031 |
+
+### I-079 — Configurable orders and procurement decisions over time
+
+- Captured: 2026-11-14
+- Source: [User request and proposed additions](notes/2026-11-14-procurement-order-options.md).
+- Status: tentative user idea for order parameters; assistant proposals for the detailed mechanics, unselected and untested.
+- Idea: configure delivery and assurance, amend active Contracts, reserve production slots, set Call response deadlines, acquire usable departmental resources, arrange partial deliveries and handle authored recovery choices.
+- Intended player experience: procurement weighs cost, timing, risk and flexibility across concurrent needs and discusses consequences with teammates.
+- Dependencies and unanswered questions: risk semantics, amendment limits, reservation terms, authored Call eligibility, department use and divided deliveries. Preserve comms' relationships and planning's mission decisions. Related Q-005, Q-007–Q-008, Q-014, Q-023–Q-028 and Q-031.
+- Evidence or experiment: inspected current procurement source. Existing signing supports quantity and optional Task allocation with fixed Offer terms. No new mechanics implemented or played.
+- Disposition: proposed first experiment combines configurable orders, amendments and department use. Additional mechanics remain candidates.
+- User review: [D-017](decisions.md#d-017--procurement-amendments-call-timing-and-direct-department-needs) accepts amendments, visible Call timing effects and direct department needs without Science-created procurement Tasks. Separate orders cover split quantities. Reservations remain optional, recovery events are deferred and assurance remains questioned. [Verbatim feedback and checked sources](notes/2026-11-14-procurement-order-decisions.md).
+
+### I-080 — Order and department-supply approval concept
+
+- Captured: 2026-11-14
+- Source: user request for a specific goal state and visual integration covering items 1, 2, 4 and 5, with item 6 enabled orthogonally.
+- Status: detailed assistant proposal for approval; D-017's accepted direction remains distinct from these proposed rules.
+- Idea: supplier-authored delivery options, explicit amendment fees and cutoffs, visible Call response-window tradeoffs, department destinations and exclusive reusable Science equipment, and ordinary independent orders with shared quantity accounting.
+- Intended player experience: discuss needs directly, compare concrete consequences, and respond to changing supply without adding another role's request-management workflow.
+- Dependencies and unanswered questions: approve the schedule options, fee rules, Call windows, Science reuse and homogeneous flight-lot reliability aggregation; numbers require balancing and multiplayer engagement requires observation.
+- Evidence or experiment: inspected current shared-state, procurement, Science and planner integration. Produced static visual studies; no gameplay implementation or playtest claimed.
+- Related decisions and design docs: [D-017](decisions.md#d-017--procurement-amendments-call-timing-and-direct-department-needs), [full concept](../procurement/order-concept.md), [visual walkthrough](../procurement/concepts/orders.html), I-079.
+- Disposition: awaiting user review. Production-slot reservations remain optional; additional supplier-recovery events remain deferred.
+
+**November 14 approval update:** [D-018](decisions.md#d-018--procurement-order-and-department-supply-prototype) selects I-080 as the prototype target. The earlier proposed and awaiting-review statements above are retained as historical status. Implementation and multiplayer observations must be recorded separately.
+
 ## New entry template
 
 ```markdown

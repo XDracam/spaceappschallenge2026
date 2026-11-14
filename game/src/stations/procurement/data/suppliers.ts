@@ -16,6 +16,7 @@ export interface Supplier {
   cancellationPct: number;
   /** Bids on Calls (tenders). */
   tenders: boolean;
+  responseDays?: 7 | 14 | 30;
 }
 
 export const SUPPLIERS: Supplier[] = [
@@ -57,3 +58,14 @@ export const SUPPLIERS: Supplier[] = [
 ];
 
 export const SUPPLIER_BY_ID: Record<string, Supplier> = Object.fromEntries(SUPPLIERS.map((s) => [s.id, s]));
+
+/** Authored scheduling profiles; unavailable options are omitted. */
+export const SCHEDULES: Record<string, { responseDays: 7 | 14 | 30; options: import('../../../core/model').DeliveryOption[] }> = {
+  brightline: { responseDays: 14, options: [{id:'standard',daysFactor:1,priceFactor:1},{id:'flexible',daysFactor:1.25,priceFactor:0.9}] },
+  helix: { responseDays: 30, options: [{id:'priority',daysFactor:0.8,priceFactor:1.2},{id:'standard',daysFactor:1,priceFactor:1}] },
+  swift: { responseDays: 7, options: [{id:'priority',daysFactor:0.7,priceFactor:1.2},{id:'standard',daysFactor:1,priceFactor:1}] },
+  commons: { responseDays: 14, options: [{id:'priority',daysFactor:0.8,priceFactor:1.25},{id:'standard',daysFactor:1,priceFactor:1},{id:'flexible',daysFactor:1.25,priceFactor:0.9}] },
+  tallis: { responseDays: 30, options: [{id:'standard',daysFactor:1,priceFactor:1},{id:'flexible',daysFactor:1.2,priceFactor:0.92}] },
+  meridian: { responseDays: 14, options: [{id:'standard',daysFactor:1,priceFactor:1},{id:'flexible',daysFactor:1.25,priceFactor:0.85}] },
+  nova: { responseDays: 7, options: [{id:'priority',daysFactor:0.8,priceFactor:1.2},{id:'standard',daysFactor:1,priceFactor:1}] },
+};

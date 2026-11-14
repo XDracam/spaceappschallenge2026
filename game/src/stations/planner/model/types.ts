@@ -83,6 +83,7 @@ export interface Part {
   taskId?: string;
   /** Derived: the shared Contract allocated to it. */
   contractId?: string;
+  supplyDetails?: { need: number; contributions: { supplier: string; quantity: number; status: string; day: number; compatible: boolean }[]; incompatible: boolean };
   /** Set once contracted: the real part's mass, replacing the derived mass. */
   actualMassT?: number;
   /** Set once contracted: the real part's reliability. */

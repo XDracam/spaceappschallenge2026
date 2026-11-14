@@ -8,13 +8,19 @@ export type ScopeId = 'safe' | 'balanced' | 'bold';
 export type MethodId = 'archive' | 'new' | 'model';
 
 /** Science-only details of a ResearchProject (keyed by project id). */
+import type { TestPart } from './model/types';
+
 export interface ProjectInfo {
   /** Sorted field ids joined by '+' (a recipe key, or a long shot). */
   recipeKey: string;
   scope: ScopeId;
   method: MethodId;
-  /** Shared Task science posted to Procurement for a test unit (method 'new'). */
+  /** Legacy field retained for save migration. */
   testTaskId?: string;
+  equipmentRequirement?: TestPart;
+  equipmentAllocationId?: string;
+  /** Bonus actually applied at resolution, recorded for the result. */
+  equipmentBonus?: number;
   /** Cancelled by science (the shared status is then 'failed'). */
   cancelled?: boolean;
   /** Finished day (success, failure or cancel). */

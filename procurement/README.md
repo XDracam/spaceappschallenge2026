@@ -10,7 +10,11 @@ The proposed [role actions](role-actions.md) map player choices to procurement-f
 
 The proposed [Task and conversation boundary](tasks-and-conversation.md) distinguishes persistent goals from the coordination players do by talking.
 
-## Implementation
+The [order and department-supply concept](order-concept.md), with its [visual walkthrough](concepts/orders.html), is the approved prototype target under [D-018](../docs/decisions.md#d-018--procurement-order-and-department-supply-prototype). Implementation and verification are tracked separately.
+
+## Earlier integrated implementation
+
+The following describes the pre-D-018 implementation; current implementation and verification are recorded separately.
 
 **Status (November 14, 2026):** the station runs as a view of the integrated game app (D-015), code in [`game/src/stations/procurement`](../game/src/stations/procurement). It ports the Full HD mockup's layout and interactions to the shared state at about 1440 × 900, styled with the planner's glass look (D-013).
 

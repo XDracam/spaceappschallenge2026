@@ -3,14 +3,15 @@ import { useGame } from '../../../core/store';
 import { DAYS_PER_MONTH } from '../../../core/state';
 import type { Science } from '../state/science';
 import { scienceActions } from '../logic';
-import { describeEffect, formatDate, formatMonth, running, sci, scopeDef, methodDef } from '../model/research';
+import { describeEffect, formatDate, formatMonth, running, sci, scopeDef, methodDef, scienceSupplies, TEST_UNIT_BONUS } from '../model/research';
 
 /**
  * Research calendar: running projects as bars on the agency calendar (today and the
  * planned launch marked), free teams, and finished results.
  */
 export function LabPanel({ s }: { s: Science }) {
-  const research = useGame((g) => g.research);
+  const game = useGame((g) => g);
+  const research = game.research;
   const day = useGame((g) => g.clock.day);
   const launchDay = useGame((g) => g.planner.plan.launchDay);
   const slots = useGame((g) => sci(g).slots);
@@ -46,6 +47,11 @@ export function LabPanel({ s }: { s: Science }) {
         </div>
       </div>
 
+      <details>
+        <summary>Supplies ({scienceSupplies(game).length})</summary>
+        <div class="small muted">{scienceSupplies(game).length === 0 ? 'No equipment.' : scienceSupplies(game).map(({ allocation, contract }) => <div key={allocation.id}>{contract.offerSnapshot.resource.name} · {allocation.quantity} · {contract.status === 'delivered' ? 'delivered' : `expected ${formatMonth(contract.expectedAt)}`} · {allocation.projectId ? 'reserved' : 'available'}</div>)}</div>
+      </details>
+
       {s.labTab === 'running' ? (
         <div class="cal">
           <div class="cal-axis">
@@ -60,6 +66,8 @@ export function LabPanel({ s }: { s: Science }) {
               const prog = Math.min(1, Math.max(0, (day - p.startedAt) / Math.max(1, p.endsAt - p.startedAt)));
               const late = p.endsAt > launchDay;
               const i = info[p.id];
+              const supplies = i?.equipmentRequirement ? scienceSupplies(game, i.equipmentRequirement, p.id) : [];
+              const selected = supplies.find(x => x.allocation.id === i?.equipmentAllocationId && x.compatible && x.allocation.projectId === p.id);
               return (
                 <div key={p.id} class="cal-row">
                   <div class="row baseline">
@@ -74,13 +82,21 @@ export function LabPanel({ s }: { s: Science }) {
                       <button class="btn small ghost" title="Stop this project (half the unspent cost comes back)" onClick={() => setConfirm(p.id)}>Stop</button>
                     )}
                   </div>
+                  {i?.equipmentRequirement && <div class="small">
+                    <label>Test unit: {i.equipmentRequirement.label} {' '}
+                      <select value={i.equipmentAllocationId ?? ''} onChange={e => scienceActions.selectEquipment(p.id, (e.currentTarget as HTMLSelectElement).value || undefined)}>
+                        <option value="">None</option>
+                        {supplies.map(({ allocation, contract, compatible, available }) => <option key={allocation.id} value={allocation.id} disabled={!compatible || !available}>{contract.offerSnapshot.resource.name} · {contract.status === 'delivered' ? 'delivered' : `expected ${formatMonth(contract.expectedAt)}`} · {compatible ? available ? 'available' : 'reserved' : 'incompatible'}</option>)}
+                      </select>
+                    </label>
+                  </div>}
                   <div class="cal-track">
                     <span class={'cal-bar' + (late ? ' late' : '')} style={{ left: x(p.startedAt), width: `calc(${x(p.endsAt)} - ${x(p.startedAt)})` }}>
                       <span class="cal-fill" style={{ width: `${(prog * 100).toFixed(1)}%` }} />
                     </span>
                   </div>
                   <div class="tiny muted ellipsis">
-                    result ~{formatMonth(p.endsAt)} · odds {Math.round(p.successChance * 100)}% · {p.costM} M
+                    result ~{formatMonth(p.endsAt)} · odds {Math.round(p.successChance * 100)}%{selected ? selected.contract.status === 'delivered' ? ` → ${Math.round(Math.min(0.97, p.successChance + TEST_UNIT_BONUS) * 100)}% with unit` : ` · ${Math.round(Math.min(0.97, p.successChance + TEST_UNIT_BONUS) * 100)}% if equipment arrives` : ''} · {p.costM} M
                     {i && <> · {scopeDef(i.scope).title.split(':')[0]}, {methodDef(i.method).title.toLowerCase()}</>}
                     {late && <span class="orange"> · after launch</span>}
                   </div>
@@ -108,6 +124,7 @@ export function LabPanel({ s }: { s: Science }) {
                     {st === 'succeeded'
                       ? gains.length ? gains.map((e) => describeEffect(e)).join('; ') : 'Published finding'
                       : st === 'cancelled' ? 'Stopped by the lab' : 'No result'}
+                    {i?.equipmentBonus !== undefined && ` · ${Math.round(Math.min(0.97, p.successChance + i.equipmentBonus) * 100)}% final odds`}
                   </div>
                 </div>
               </div>

@@ -621,6 +621,11 @@ function PartRow({ part, ctx, removable, stageId }: { part: Part; ctx: Ctx; remo
             <StatusPill status={status} />
             {time && <span class={`tiny${time.late ? ' err-text' : ' muted'}`}>{time.text}</span>}
           </div>
+          {part.supplyDetails && <div class="small muted pm-inset">
+            Supply: {part.supplyDetails.contributions.reduce((n, x) => n + x.quantity, 0)}/{part.supplyDetails.need} units
+            {part.supplyDetails.contributions.map((lot, index) => <div key={index}>{lot.quantity} × {lot.supplier} · {lot.status === 'delivered' ? 'delivered' : 'expected'} {formatDay(lot.day, ctx.startISO)}{!lot.compatible ? ' · incompatible' : ''}</div>)}
+            {part.supplyDetails.incompatible && <div class="err-text">Incompatible supply. Match the required hardware and unit mass.</div>}
+          </div>}
           {status === 'late' && <div class="pm-alert-line pm-inset">Move the launch later or order a replacement.</div>}
           {locked && (
             <div class="pm-beyond">

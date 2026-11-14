@@ -1,12 +1,11 @@
 // Right column: the active decision — a selected Resource with its Offers and the
 // fit check against a need, or the focused need with ranked suggestions.
-import type { Criterion, Offer, Task } from '../../../core/model';
+import type { Criterion, Offer, Task, Destination } from '../../../core/model';
 import { RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
 import { SUPPLIER_BY_ID } from '../data/suppliers';
-import { procurementActions } from '../logic';
 import {
   assessOffer, budgetAvailableM, criterionCoverage, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
-  offersForCriterion, openTasks, partLabel, rankAssessments, sameKind, statInfo, suggestion, taskCode,
+  offersForCriterion, openTasks, partLabel, rankAssessments, sameKind, statInfo, suggestion, taskCode, quoteOrder,
   type OfferAssessment, type PView,
 } from '../rules';
 import { statDefs } from '../../planner/data/parts';
@@ -91,9 +90,9 @@ function ResourceInspector() {
   const candidates = tasks.flatMap((t) => t.criteria.filter((c) => sameKind(r, c)).map((c) => ({ t, c })));
   // Allocation target: explicit choice, else the focused need, else the first uncovered fitting need.
   const { task: fTask, crit: fCrit } = focusedNeed(v, u.focus);
-  let target = u.target === 'none' ? null : parseTarget(u.target);
+  let target = u.target === 'none' || u.target.startsWith('department:') ? null : parseTarget(u.target);
   if (target && !candidates.some((x) => x.t.id === target!.taskId && x.c.id === target!.criterionId)) target = null;
-  if (!target && u.target !== 'none') {
+  if (!target && u.target !== 'none' && !u.target.startsWith('department:')) {
     const pick = (fTask && fCrit && sameKind(r, fCrit) ? { t: fTask, c: fCrit } : undefined)
       ?? candidates.find((x) => !fitFailures(r, x.c).length && criterionCoverage(v, x.t, x.c).missing > 0);
     if (pick) target = { taskId: pick.t.id, criterionId: pick.c.id };
@@ -106,7 +105,10 @@ function ResourceInspector() {
   const assessed = offersForResource(r.id).map((o) => assessOffer(v, o, task, crit, qty)).sort(rankAssessments);
   const selected = assessed.find((a) => a.offer.id === u.offerId) ?? assessed[0];
   const suggested = suggestion(assessed);
-  const block = blockReason(v, selected, task, crit);
+  const destination: Destination = target ? { kind: 'task', ...target } : u.target.startsWith('department:') ? { kind: 'department', department: u.target.slice(11) as 'science' | 'planner' | 'comms' | 'procurement' } : { kind: 'shared' };
+  const draft = { offerId: selected.offer.id, quantity: qty, destination, delivery: u.delivery, neededAt: u.neededAt ?? task?.neededAt };
+  const quote = quoteOrder(v, draft);
+  const block = quote.unavailable || (quote.totalM > budgetAvailableM(v.budget) ? 'Exceeds available budget.' : '');
   const available = budgetAvailableM(v.budget);
 
   return (
@@ -125,7 +127,7 @@ function ResourceInspector() {
             <ul>{sum.locked.map((k) => <li key={k}>{describeBeyond(k, r.stats, v.research)}</li>)}</ul>
             Domestic suppliers can sell it once science raises the limit. Until then, open a Call for the need: tender Offers cost 1.5–3× and are less reliable.
             {task && crit ? (
-              <div class="pr-row"><button type="button" class="pr-btn" disabled={!!cov?.openCall} onClick={() => { procurementActions.openCall(task.id, crit.id); setUi({ status: `Call opened for ${taskCode(task)}.` }); }}>
+              <div class="pr-row"><button type="button" class="pr-btn" disabled={!!cov?.openCall} onClick={() => setUi({ view: 'calls', callTarget: targetKey(task.id, crit.id), callResourceId: null, callSnapshot: null })}>
                 {cov?.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : `Open Call for ${taskCode(task)}`}
               </button></div>
             ) : null}
@@ -140,15 +142,19 @@ function ResourceInspector() {
         </div>
         {selected ? (
           <p class="pr-terms">
-            {SUPPLIER_BY_ID[selected.offer.supplierId]?.blurb} Cancellation: the supplier keeps {Math.round(selected.offer.cancellationPct * 100)} % at signing; the refundable share falls to 0 at delivery.
+            Cancellation starts at {Math.round(selected.offer.cancellationPct * 100)}% and rises to 100% by delivery.
           </p>
         ) : null}
       </div>
       <div class="pr-actions">
         <label class="pr-field">
           <span>For</span>
-          <select value={target ? targetKey(target.taskId, target.criterionId) : 'none'} onChange={(e) => setUi({ target: (e.target as HTMLSelectElement).value, qty: 0 })}>
-            <option value="none">Unallocated · keep as spare</option>
+          <select value={target ? targetKey(target.taskId, target.criterionId) : u.target.startsWith('department:') ? u.target : 'none'} onChange={(e) => setUi({ target: (e.target as HTMLSelectElement).value, qty: 0 })}>
+            <option value="none">Shared supply</option>
+            <option value="department:science">Department · Science</option>
+            <option value="department:planner">Department · Planner</option>
+            <option value="department:comms">Department · Comms</option>
+            <option value="department:procurement">Department · Procurement</option>
             {candidates.map(({ t, c }) => {
               const f = fitFailures(r, c);
               const cv = criterionCoverage(v, t, c);
@@ -160,20 +166,34 @@ function ResourceInspector() {
             })}
           </select>
         </label>
-        {crit && selected.failures.length ? <p class="pr-note bad">Does not meet {taskCode(task!)}: {selected.failures.join(' · ')}</p> : null}
-        {crit && !selected.failures.length && selected.late ? <p class="pr-note warn">Late: arrives {fmtDate(selected.expectedAt)}, needed {fmtDate(task!.neededAt)}</p> : null}
+        <label class="pr-field"><span>Needed by (day)</span>
+          <input type="number" min="0" value={u.neededAt ?? task?.neededAt ?? ''} onInput={(e) => { const value = (e.target as HTMLInputElement).value; setUi({ neededAt: value === '' ? null : Number(value) }); }} />
+        </label>
         <div class="pr-buy-row">
           <div class="pr-stepper" aria-label="Quantity">
             <button type="button" aria-label="Reduce quantity" disabled={qty <= 1} onClick={() => setUi({ qty: qty - 1 })}>−</button>
             <output>{qty}</output>
-            <button type="button" aria-label="Increase quantity" disabled={qty >= 12} onClick={() => setUi({ qty: qty + 1 })}>+</button>
-          </div>
-          <div class="pr-buy-price num">{fmtM(selected.totalPriceM)}</div>
+            <button type="button" aria-label="Increase quantity" disabled={qty >= 100} onClick={() => setUi({ qty: qty + 1 })}>+</button>
+          </div><span class="muted small">units</span>
         </div>
-        <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => openSign(selected, task, crit)}>
-          Sign contract · {fmtM(selected.totalPriceM)}
+        <div class="pr-schedules" aria-label="Delivery option">
+          {(['priority', 'standard', 'flexible'] as const).map((delivery) => {
+            const q = quoteOrder(v, { ...draft, delivery });
+            const standard = quoteOrder(v, { ...draft, delivery: 'standard' });
+            const diff = q.totalM - standard.totalM;
+            return <button type="button" key={delivery} class={`pr-schedule${u.delivery === delivery ? ' selected' : ''}`} aria-pressed={u.delivery === delivery} disabled={!!q.unavailable} onClick={() => setUi({ delivery })}>
+              <strong>{delivery[0].toUpperCase() + delivery.slice(1)}</strong><strong>{q.unavailable ? 'Unavailable' : fmtM(q.totalM)}</strong>
+              <span>{q.unavailable ? '' : `Arrives ${fmtDate(q.expectedAt)}`}</span><span>{q.unavailable ? '' : delivery === 'standard' ? '' : standard.unavailable ? 'No Standard quote' : `${diff >= 0 ? '+' : '−'}${fmtM(Math.abs(diff))}`}</span>
+              {!q.unavailable && draft.neededAt !== undefined ? <span class={q.late ? 'warn' : 'good'}>{Math.abs(q.expectedAt - draft.neededAt)} days {q.late ? 'late' : 'early'}</span> : null}
+            </button>;
+          })}
+        </div>
+        {quote.failures.length ? <p class="pr-note bad">{quote.failures.join(' · ')}</p> : null}
+        <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => setUi({ dialog: { type: 'order', draft, token: quote.token } })}>
+          Review order · {fmtM(quote.totalM)}
         </button>
-        <p class={`pr-note center ${block ? 'warn' : 'muted'}`}>{block || `${fmtM(available - selected.totalPriceM)} remains for other needs`}</p>
+        <p class={`pr-note center ${block ? 'warn' : 'muted'}`}>{block || `${fmtM(available - quote.totalM)} remains for other needs`}</p>
+        <button type="button" class="pr-text-btn" onClick={() => setUi({ view: 'calls', callResourceId: r.id, callSnapshot: null, callTarget: '' })}>Open Call</button>
         <div class="pr-row">
           <button type="button" class="pr-btn small" aria-pressed={u.compare.includes(r.id)} onClick={() => toggleCompare(r.id)}>{u.compare.includes(r.id) ? 'In comparison' : 'Add to compare'}</button>
           {task && crit ? <button type="button" class="pr-text-btn" onClick={() => setUi({ focus: { taskId: task.id, criterionId: crit.id }, inspect: 'need' })}>Need overview</button> : null}
@@ -244,7 +264,7 @@ function NeedInspector() {
             Review suggestion · {best.offer.resource.name} · {fmtM(best.totalPriceM)}
           </button>
         ) : null}
-        <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => { procurementActions.openCall(task.id, crit.id); setUi({ status: `Call opened for ${taskCode(task)} ${crit.label}.` }); }}>
+        <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => setUi({ view: 'calls', callTarget: targetKey(task.id, crit.id), callResourceId: null, callSnapshot: null })}>
           {cov.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
         </button>
         <p class="pr-note center muted">{fmtM(budgetAvailableM(v.budget))} available · suggestions rank fit, delivery, budget, then price.</p>

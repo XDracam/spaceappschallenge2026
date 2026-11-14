@@ -159,6 +159,29 @@ Merge provenance — the incoming branch used D-006 for this decision. D-006 alr
 
 Identifier alignment — incoming integration architecture keeps D-015. The procurement display decision is retained as D-016 after parallel commits used the same number.
 
+## D-017 — Procurement amendments, Call timing and direct department needs
+
+- Date: 2026-11-14
+- Status: accepted user direction for the listed scope, detailed mechanics remain open.
+- Source: [User feedback](notes/2026-11-14-procurement-order-decisions.md).
+- Accept contract amendments, including responding to inconvenient external delays or cancellations through feasible adjustments or replacement orders.
+- Parameterize Call response deadlines and make their consequences visible to players without specialist knowledge.
+- Science should not create procurement Tasks. Players communicate needs for resources outside the final launch, and procurement purchases those resources for department use. Final-launch part Tasks remain the existing planning route.
+- Use multiple orders with different parameters for different quantities and delivery times.
+- Keep production-slot reservations optional. Explore bespoke supplier recovery events later.
+- The proposed assurance control is questioned and unselected. Investigate concrete purchasable or contractual terms. No price, duration or probability curve is selected.
+- Implementation gap: the integrated Science test-unit request and bonus currently depend on a generated Task and need revision. Department resource use and reservation semantics remain open.
+- Related: I-079, D-007, D-011, Q-005, Q-023–Q-025, Q-027–Q-028, Q-031.
+
+## D-018 — Procurement order and department-supply prototype
+
+- Date: 2026-11-14
+- Status: accepted prototype target; implementation and playtesting require independent verification.
+- Decision: build the detailed [order and department-supply concept](../procurement/order-concept.md) and its [visual walkthrough](../procurement/concepts/orders.html): supplier delivery options, amendments, 7/14/30-day Calls, direct department supply and reusable exclusive Science test units, independent orders with finite quantities, and homogeneous flight supply aggregated with the stated weighted geometric mean. The concept's shared-state, migration, stale-action and accounting safeguards are part of the target.
+- Source: [user approval](notes/2026-11-14-procurement-order-approval.md). This refines D-017 for this prototype; it does not close the broader design questions.
+- Evidence and limits: the cited acquisition sources support delivery schedules, solicitation deadlines and modifications; numerical curves, research reuse and reliability aggregation are game choices. Fixtures require balancing. Approval is not evidence of implemented behavior or multiplayer enjoyment. Optional slot reservations and deferred supplier events remain outside this selection.
+- Related: I-079, I-080, D-004, D-005, D-017, Q-005, Q-008, Q-014, Q-023–Q-028, Q-031.
+
 ## Future decision template
 
 ```markdown

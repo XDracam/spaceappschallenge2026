@@ -21,6 +21,9 @@ export interface PartProcurement {
   task?: Task;
   /** Contract supplying the part (the pending one first). */
   contract?: Contract;
+  lots?: { quantity: number; contract: Contract; compatible: boolean }[];
+  need?: number;
+  incompatible?: boolean;
 }
 
 const LIVE: Contract['status'][] = ['active', 'delivered'];
@@ -29,30 +32,32 @@ const LIVE: Contract['status'][] = ['active', 'delivered'];
 export function partProcurement(s: GameState, partId: string): PartProcurement {
   const tasks = s.market.tasks.filter((t) => t.authorRole === 'planner' && t.partId === partId);
   if (!tasks.length) return { status: 'draft' };
-  const taskIds = new Set(tasks.map((t) => t.id));
-  const live: { taskId: string; quantity: number; contract: Contract }[] = [];
-  for (const a of s.market.allocations) {
-    if (!taskIds.has(a.taskId) || a.status === 'released') continue;
-    const contract = s.market.contracts.find((c) => c.id === a.contractId);
-    if (!contract || !LIVE.includes(contract.status)) continue;
-    live.push({ taskId: a.taskId, quantity: a.quantity, contract });
+  // Only the latest non-withdrawn task represents this part's current order.
+  const task = [...tasks].reverse().find(t => t.status !== 'withdrawn');
+  if (!task) return { status: 'draft' };
+  const criterion = task.criteria[0];
+  const need = criterion?.quantity ?? 1;
+  const lots = s.market.allocations.flatMap(a => {
+    if (a.taskId !== task.id || a.criterionId !== criterion?.id || a.status === 'released' || a.quantity <= 0) return [];
+    const contract = s.market.contracts.find(c => c.id === a.contractId && LIVE.includes(c.status));
+    return contract ? [{ quantity: a.quantity, contract, compatible: true }] : [];
+  });
+  const base = lots[0]?.contract.offerSnapshot.resource;
+  const sameStats = (a: Record<string, number>, b: Record<string, number>) => {
+    const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+    return [...keys].every(k => a[k] === b[k]);
+  };
+  for (const lot of lots) {
+    const r = lot.contract.offerSnapshot.resource;
+    lot.compatible = !!base && !!criterion && r.partKind === criterion.partKind && r.variant === criterion.variant && Object.entries(criterion.minimums).every(([key, value]) => (r.stats[key] ?? -Infinity) >= value) && r.partKind === base.partKind && r.variant === base.variant && r.massT === base.massT && sameStats(r.stats, base.stats);
   }
-  const openTask = [...tasks].reverse().find((t) => t.status === 'open');
-  if (live.length) {
-    const task = tasks.find((t) => t.id === live[0].taskId)!;
-    const need = task.criteria[0]?.quantity ?? 1;
-    const have = live.reduce((n, x) => n + Math.max(0, x.quantity || 0), 0);
-    // A partial allocation keeps the part "ordered" while the task is still open.
-    if (have >= need || !openTask) {
-      const pending = live.filter((x) => x.contract.status === 'active');
-      const launchDay = s.planner.plan.launchDay;
-      const late = pending.find((x) => x.contract.expectedAt > launchDay + 1e-9);
-      const status: PartState = pending.length === 0 ? 'delivered' : late ? 'late' : 'contracted';
-      return { status, task, contract: (late ?? pending[0] ?? live[0]).contract };
-    }
-  }
-  if (openTask) return { status: 'ordered', task: openTask, ...(live[0] ? { contract: live[0].contract } : {}) };
-  return { status: 'draft' };
+  const incompatible = lots.some(x => !x.compatible);
+  const have = lots.reduce((n, x) => n + x.quantity, 0);
+  if (!lots.length || have < need || incompatible) return { status: 'ordered', task, lots, need, incompatible };
+  const pending = lots.filter(x => x.contract.status === 'active');
+  const late = pending.find(x => x.contract.expectedAt > s.planner.plan.launchDay + 1e-9);
+  const status: PartState = !pending.length ? 'delivered' : late ? 'late' : 'contracted';
+  return { status, task, lots, need, incompatible, contract: (late ?? pending[0] ?? lots[0]).contract };
 }
 
 /** 'draft' | 'ordered' | 'contracted' | 'delivered' | 'late' for a design part. */
@@ -74,13 +79,17 @@ export function actualPart(s: GameState, part: Part, proc: PartProcurement = par
   delete p.actualMassT;
   delete p.reliability;
   if (proc.task) p.taskId = proc.task.id;
+  if (proc.lots) p.supplyDetails = { need: proc.need ?? 1, incompatible: !!proc.incompatible, contributions: proc.lots.map(x => ({ supplier: x.contract.offerSnapshot.supplierName, quantity: x.quantity, status: x.contract.status, day: x.contract.status === 'delivered' ? (x.contract.deliveredAt ?? x.contract.expectedAt) : x.contract.expectedAt, compatible: x.compatible })) };
   const c = proc.contract;
   if (c && (proc.status === 'contracted' || proc.status === 'delivered' || proc.status === 'late')) {
     const o = c.offerSnapshot;
     p.contractId = c.id;
     for (const [k, v] of Object.entries(o.resource?.stats ?? {})) if (Number.isFinite(v)) p.stats[k] = v;
     if (Number.isFinite(o.resource?.massT) && o.resource.massT > 0) p.actualMassT = o.resource.massT;
-    if (Number.isFinite(o.reliability) && o.reliability > 0) p.reliability = Math.min(1, o.reliability);
+    if (proc.lots?.length) {
+      const count = proc.lots.reduce((sum, lot) => sum + lot.quantity, 0);
+      p.reliability = proc.lots.some(lot => lot.contract.offerSnapshot.reliability <= 0) ? 0 : Math.exp(proc.lots.reduce((sum, lot) => sum + lot.quantity * Math.log(Math.min(1, lot.contract.offerSnapshot.reliability)), 0) / count);
+    }
   }
   return p;
 }

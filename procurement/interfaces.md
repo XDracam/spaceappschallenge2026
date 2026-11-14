@@ -32,6 +32,8 @@ An offer snapshot retains the accepted terms when catalogue terms change. `expec
 
 ## Inputs to procurement
 
+Direction update under [D-017](../docs/decisions.md#d-017--procurement-amendments-call-timing-and-direct-department-needs): Science resource purchases must be usable without Science-created procurement Tasks. The Task-based input and Allocation records below do not yet describe department/project use. The department and project interface target is specified in [D-018](../docs/decisions.md#d-018--procurement-order-and-department-supply-prototype) and the [order concept](order-concept.md); the older record descriptions below are retained as historical design material. Player conversation supplies requests, while resource availability and use require shared state.
+
 | Message | Producer | Required payload and effect |
 | --- | --- | --- |
 | `TaskChanged` | Planning, science, comms, or another task author through the shared task list | Full current `Task`. Reassess linked offers, contracts and allocations against its revision. Withdrawal releases reservations through an explicit procurement action. |

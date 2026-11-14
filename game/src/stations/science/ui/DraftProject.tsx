@@ -1,15 +1,15 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import type { FieldState } from '../model/types';
 import type { MethodId, ScopeId } from '../slice';
 import type { Science } from '../state/science';
 import { GRAPH } from '../model/graph';
 import { DISCIPLINES } from '../data/fields';
 import { recipeKey } from '../data/recipes';
-import { useGame } from '../../../core/store';
+import { useConfirmedGame, useGame } from '../../../core/store';
 import { budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import {
-  METHODS, SCOPES, TEST_UNIT_BONUS, describeEffect, formatDate, formatMonth, keyInfo, neededValue, planProject, requestsTouchedBy, sci,
+  METHODS, SCOPES, TEST_UNIT_BONUS, describeEffect, formatDate, formatMonth, keyInfo, neededValue, planProject, requestsTouchedBy, sci, scienceSupplies,
 } from '../model/research';
 import { ODDS_COLOR } from './Bench';
 
@@ -23,7 +23,11 @@ function newProjectId(): string {
 export function DraftProject({ s }: { s: Science }) {
   const [scope, setScope] = useState<ScopeId>('balanced');
   const [method, setMethod] = useState<MethodId>('new');
-  const [askTest, setAskTest] = useState(true);
+  const [supplyId, setSupplyId] = useState('');
+  const [draftProjectId] = useState(newProjectId);
+  const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const confirmedProject = useConfirmedGame(g => submittedId ? g.research.projects.find(p => p.id === submittedId) : undefined);
+  useEffect(() => { if (confirmedProject) s.projectStarted(confirmedProject.title); }, [confirmedProject]);
   const game = useGame((g) => g);
   const key = recipeKey(s.bench);
   const plan = planProject(game, key, scope, method);
@@ -36,11 +40,14 @@ export function DraftProject({ s }: { s: Science }) {
   const busy = game.research.projects.filter((p) => p.status === 'running').length;
   const answers = requestsTouchedBy(game, plan.keys);
   const tp = recipe?.testPart;
+  const supplies = tp && method === 'new' ? scienceSupplies(game, tp) : [];
+  const selectedSupply = supplies.find(x => x.allocation.id === supplyId && x.compatible && x.available);
 
+  const staleSupply = !!supplyId && method === 'new' && !!tp && !selectedSupply;
   const start = () => {
-    if (plan.blocked) return;
-    scienceActions.startProject(newProjectId(), key, scope, method, !!(tp && method === 'new' && askTest));
-    s.projectStarted(plan.title);
+    if (plan.blocked || staleSupply) return;
+    setSubmittedId(draftProjectId);
+    scienceActions.startProject(draftProjectId, key, scope, method, selectedSupply?.allocation.id);
   };
 
   return (
@@ -144,7 +151,7 @@ export function DraftProject({ s }: { s: Science }) {
               <span class="muted">Cost (paid now)</span>
               <span class={'num' + (plan.costM > available ? ' err-text' : '')}>{plan.costM} M</span>
               <span class="muted">Chance of success</span>
-              <span class="strong" style={{ color: ODDS_COLOR[plan.odds] }}>{plan.odds} · {Math.round(plan.successChance * 100)}%</span>
+              <span class="strong" style={{ color: ODDS_COLOR[plan.odds] }}>{plan.odds} · {Math.round(plan.successChance * 100)}%{selectedSupply?.contract.status === 'delivered' ? ` → ${Math.round(Math.min(0.97, plan.successChance + TEST_UNIT_BONUS) * 100)}% with unit` : selectedSupply ? ` · ${Math.round(Math.min(0.97, plan.successChance + TEST_UNIT_BONUS) * 100)}% if equipment arrives` : ''}</span>
             </div>
             <hr />
             <div class="stack-6">
@@ -180,13 +187,20 @@ export function DraftProject({ s }: { s: Science }) {
             )}
             <hr />
             <div class="stack-6">
-              <div class="eyebrow">Needs from other stations</div>
-              <div class="soft">→ {method === 'archive' ? 'Archive access only' : method === 'model' ? 'Compute time (none from other stations)' : recipe?.needs ?? 'Instrument or lab time'}</div>
               {tp && method === 'new' && (
-                <label class="check">
-                  <input type="checkbox" checked={askTest} onChange={(e) => setAskTest((e.target as HTMLInputElement).checked)} />
-                  <span>Ask Procurement for a {tp.label.toLowerCase()} (+{Math.round(TEST_UNIT_BONUS * 100)}% odds if delivered in time)</span>
-                </label>
+                <div class="stack-6">
+                  <label for="draft-equipment">{tp.label} (optional)</label>
+                  <select id="draft-equipment" value={supplyId} onChange={e => setSupplyId((e.currentTarget as HTMLSelectElement).value)}>
+                    <option value="">No test unit</option>
+                    {supplies.map(({ allocation, contract, compatible, available }) => (
+                      <option key={allocation.id} value={allocation.id} disabled={!compatible || !available}>
+                        {contract.offerSnapshot.resource.name} · {contract.status === 'delivered' ? 'delivered' : `expected ${formatMonth(contract.expectedAt)}`} · {compatible ? available ? `${allocation.quantity} available` : 'reserved' : 'incompatible'}
+                      </option>
+                    ))}
+                  </select>
+                  {staleSupply && <span role="status" class="err-text small">Unit unavailable. Choose another or continue without equipment.</span>}
+                  {!selectedSupply && <span class="small muted">+{Math.round(TEST_UNIT_BONUS * 100)} points with equipment · 97% cap</span>}
+                </div>
               )}
               {scope === 'bold' && <div class="soft amber">→ Comms: a bold claim draws scrutiny</div>}
             </div>
@@ -194,7 +208,7 @@ export function DraftProject({ s }: { s: Science }) {
           {plan.blocked && <div class="callout warn">{plan.blocked}</div>}
           <div class="row">
             <button class="btn ghost grow tall" onClick={s.closeDraft}>Back to map</button>
-            <button class="btn primary grow2 tall" disabled={!!plan.blocked} onClick={start}>Start project · {plan.costM} M</button>
+            <button class="btn primary grow2 tall" disabled={!!plan.blocked || staleSupply} onClick={start}>Start project · {plan.costM} M</button>
           </div>
         </aside>
       </div>
