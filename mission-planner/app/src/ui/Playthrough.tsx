@@ -1,9 +1,33 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { actions, budgetSpentM, uiStore, useEvaluation, useGame, useUi } from '../state/store';
 import { formatDay, formatDuration, formatMass, formatMoney } from '../model/units';
-import { CheckIcon, CloseIcon, PauseIcon, PlayIcon, branchColor } from './common';
+import type { Evaluation, GameState, PlaythroughResult } from '../model/types';
+import { allParts } from '../model/rocketUtils';
+import { CheckIcon, CloseIcon, PauseIcon, PlayIcon, branchColor, plural } from './common';
 
-const SPEEDS = [30, 60, 180];
+const SPEEDS = [
+  { dps: 30, label: '1×' },
+  { dps: 60, label: '2×' },
+  { dps: 180, label: '6×' },
+];
+
+/** Why a goal failed in the playthrough: its own failure event, the plan's reason, or the failure on its branch. */
+function failReasons(game: GameState, ev: Evaluation, result: PlaythroughResult): Map<string, string> {
+  const out = new Map<string, string>();
+  const failures = result.events.filter((e) => e.kind === 'failure');
+  const scrub = failures.find((e) => e.text.startsWith('Launch scrubbed'));
+  for (const o of result.goalOutcomes) {
+    if (o.success) continue;
+    const goal = game.mission.goals.find((g) => g.id === o.goalId);
+    if (!goal) continue;
+    const r = ev.goals.find((x) => x.goalId === o.goalId);
+    const own = failures.find((e) => e.text.includes(`"${goal.name}"`));
+    const onBranch = r?.branchId ? failures.find((e) => e.branchId === r.branchId) : undefined;
+    const reason = (scrub ? 'launch scrubbed' : undefined) ?? own?.text ?? (!r?.achievable ? r?.reason : undefined) ?? onBranch?.text ?? failures[0]?.text ?? 'Not reached';
+    out.set(o.goalId, reason);
+  }
+  return out;
+}
 
 export function PlaythroughOverlay() {
   const pt = useUi((u) => u.playthrough);
@@ -27,16 +51,19 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
   const startISO = useGame((g) => g.mission.startDateISO);
   const launchDay = useGame((g) => g.plan.launchDay);
   const branches = useGame((g) => g.plan.branches);
+  const game = useGame((g) => g);
+  const ev = useEvaluation();
   const logRef = useRef<HTMLUListElement>(null);
   const shown = pt.result.events.filter((e) => e.day <= pt.day + 1e-9);
+  const finished = phase === 'finished';
+  const goalFails = [...failReasons(game, ev, pt.result)];
 
   useEffect(() => {
     const el = logRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [shown.length]);
+  }, [shown.length, finished]);
 
   const set = (fn: (p: NonNullable<typeof pt>) => void) => uiStore.update((u) => { if (u.playthrough) fn(u.playthrough); });
-  const finished = phase === 'finished';
   const progress = pt.result.endDay > launchDay ? (pt.day - launchDay) / (pt.result.endDay - launchDay) : 1;
 
   return (
@@ -54,8 +81,9 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
               {pt.playing ? <PauseIcon /> : <PlayIcon />}
             </button>
             {SPEEDS.map((s) => (
-              <button class={`btn small${pt.daysPerSecond === s ? ' active' : ''}`} onClick={() => set((p) => { p.daysPerSecond = s; })}>
-                {s} d/s
+              <button key={s.dps} class={`btn small${pt.daysPerSecond === s.dps ? ' active' : ''}`} title={`${s.dps} days per second`}
+                onClick={() => set((p) => { p.daysPerSecond = s.dps; })}>
+                {s.label}
               </button>
             ))}
             <button class="btn small warn" onClick={() => actions.finishPlaythrough()}>Skip to end</button>
@@ -76,6 +104,11 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
             </li>
           );
         })}
+        {finished && goalFails.map(([goalId, reason]) => (
+          <li key={`fail-${goalId}`} class="ev ev-failure ev-summary">
+            <span class="ev-text">✗ {game.mission.goals.find((g) => g.id === goalId)?.name ?? goalId}: {reason}</span>
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -89,6 +122,9 @@ function ResultCard({ onHide }: { onHide: () => void }) {
   const ok = outcomes.filter((o) => o.success).length;
   const failures = pt.result.events.filter((e) => e.kind === 'failure').length;
   const start = game.mission.startDateISO;
+  const reasons = failReasons(game, ev, pt.result);
+  const scrubbed = pt.result.events.some((e) => e.kind === 'failure' && e.text.startsWith('Launch scrubbed'));
+  const notDelivered = allParts(game.rocket).filter((l) => l.part.state !== 'delivered').length;
   return (
     <div class="modal-backdrop result-backdrop">
       <div class="modal result-card">
@@ -101,16 +137,26 @@ function ResultCard({ onHide }: { onHide: () => void }) {
             <CloseIcon />
           </button>
         </div>
-        <div class={`result-score ${ok === outcomes.length ? 'ok-text' : ok === 0 ? 'err-text' : 'warn-text'}`}>
-          {ok} / {outcomes.length} goals achieved
-        </div>
+        {scrubbed ? (
+          <div class="result-score err-text scrubbed">
+            Launch scrubbed — {plural(Math.max(1, notDelivered), 'part was', 'parts were')} not delivered
+          </div>
+        ) : (
+          <div class={`result-score ${ok === outcomes.length ? 'ok-text' : ok === 0 ? 'err-text' : 'warn-text'}`}>
+            {ok} / {outcomes.length} goals achieved
+          </div>
+        )}
         <ul class="outcome-list">
           {outcomes.map((o) => {
             const g = game.mission.goals.find((x) => x.id === o.goalId);
+            const reason = reasons.get(o.goalId);
             return (
-              <li class={o.success ? 'ok' : 'err'}>
+              <li key={o.goalId} class={o.success ? 'ok' : 'err'}>
                 <span class="outcome-icon">{o.success ? <CheckIcon /> : <CloseIcon />}</span>
-                {g?.name ?? o.goalId}
+                <div class="outcome-text">
+                  <span>{g?.name ?? o.goalId}</span>
+                  {!o.success && reason && !scrubbed && <span class="outcome-reason">{reason}</span>}
+                </div>
               </li>
             );
           })}

@@ -29,11 +29,11 @@ function startText(r: ManeuverResult): string {
     case 'launch': return `Launch from ${bodyName(b)}`;
     case 'transfer': return `${r.label} departs`;
     case 'flyby': return `${r.label}: closest approach`;
-    case 'insertion': return `In orbit around ${bodyName(a)}${r.label.includes('aerocapture') ? ' (aerocapture)' : ''}`;
+    case 'insertion': return `In orbit around ${bodyName(a)}${r.label.includes('aerobraking') ? ' (aerobraking)' : ''}`;
     case 'land': return `Landed on ${bodyName(a)}`;
     case 'entry': return a.kind !== 'lost' && a.body === 'earth' ? 'Splashdown on Earth' : `Landed on ${bodyName(a)}`;
     case 'ascent': return `Lifted off from ${bodyName(b)}`;
-    case 'separate': return r.label.replace(/^Separate:/, 'Separated:');
+    case 'separate': return r.label.replace(/^Release /, 'Released ');
     case 'changeOrbit': return r.label;
   }
 }

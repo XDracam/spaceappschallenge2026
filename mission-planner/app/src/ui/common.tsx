@@ -1,11 +1,11 @@
 // Shared UI helpers: UI-local state, id generation, formatting, icons.
 import type { ComponentChildren, RefObject } from 'preact';
 import { useEffect } from 'preact/hooks';
-import type { BodyId, Evaluation, FlightState, ManeuverResult, PartState, Vec2 } from '../model/types';
+import type { BodyId, Branch, Evaluation, FlightState, GameState, ManeuverResult, PartState, Vec2 } from '../model/types';
 import { createStore, useStore } from '../state/createStore';
 import { gameStore, uiStore } from '../state/store';
 import { bodyById } from '../data/bodies';
-import { findPart } from '../model/rocketUtils';
+import { allParts, findPart } from '../model/rocketUtils';
 import { formatDay } from '../model/units';
 
 export const BRANCH_COLORS = ['#3fc7ff', '#b98cff', '#ffaa5c', '#3fe0a0'];
@@ -18,7 +18,7 @@ export function branchColor(index: number): string {
 export const HEADER_H = 76;
 export const EDGE = 16;
 export const PANEL_W = 340;
-export const CARDS_H = 150;
+export const CARDS_H = 164;
 export const PLAYBACK_W = 360;
 
 export interface Insets { top: number; right: number; bottom: number; left: number }
@@ -63,6 +63,28 @@ export function toggleTab(tab: 'rocket' | 'tasks' | 'versions') {
   }
   uiStore.update((u) => { u.sideTab = tab; });
   localUi.update((s) => { s.panelOpen = true; });
+}
+
+/** Open the right panel on a tab (never closes it; the panel's × does that). */
+export function openTab(tab: 'rocket' | 'tasks' | 'versions') {
+  uiStore.update((u) => { u.sideTab = tab; });
+  localUi.update((s) => { s.panelOpen = true; });
+}
+
+// The side panel and the Dev drawer share the right edge: opening one closes the other.
+{
+  let prevPanel = localUi.get().panelOpen;
+  let prevDev = localUi.get().devOpen;
+  localUi.subscribe(() => {
+    const s = localUi.get();
+    const devOpened = s.devOpen && !prevDev;
+    const panelOpened = s.panelOpen && !prevPanel;
+    prevPanel = s.panelOpen;
+    prevDev = s.devOpen;
+    if (!s.panelOpen || !s.devOpen) return;
+    if (devOpened && !panelOpened) localUi.update((d) => { d.panelOpen = false; });
+    else localUi.update((d) => { d.devOpen = false; });
+  });
 }
 
 let highlightTimer: ReturnType<typeof setTimeout> | undefined;
@@ -168,7 +190,7 @@ export function chanceClass(c: number): 'ok' | 'warn' | 'err' {
 }
 
 export const PART_STATE_LABEL: Record<PartState, string> = {
-  draft: 'Draft', sent: 'Task sent', contracted: 'Contracted', delivered: 'Delivered',
+  draft: 'Draft', sent: 'Ordered', contracted: 'Contracted', delivered: 'Delivered',
 };
 
 export function bodyName(id: BodyId): string {
@@ -195,6 +217,57 @@ export function findResult(ev: Evaluation, maneuverId: string): ManeuverResult |
 
 export function clamp(v: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, v));
+}
+
+/** Real (wall-clock) duration: "7:40", "1:02:05". */
+export function formatRealTime(seconds: number): string {
+  const s = Math.max(0, Math.ceil(seconds));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const ss = String(s % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
+}
+
+/** Whole millions: "195 M", "1.20 B". */
+export function fmtMoneyShort(m: number): string {
+  return Math.abs(m) >= 1000 ? `${(m / 1000).toFixed(2)} B` : `${Math.round(m)} M`;
+}
+
+/** "1 part" / "3 parts". */
+export function plural(n: number, word: string, many = `${word}s`): string {
+  return `${n} ${n === 1 ? word : many}`;
+}
+
+/** Launch readiness of the parts in the design. */
+export interface Readiness {
+  /** Parts still in draft (not ordered). */
+  draft: number;
+  /** Parts ordered (task sent or contracted) but not delivered. */
+  ordered: number;
+  /** Running contracts that deliver after the launch date (evaluation 'delivery' errors). */
+  late: number;
+  /** All parts that are not delivered. */
+  notDelivered: number;
+}
+
+export function partReadiness(game: GameState, ev: Evaluation): Readiness {
+  let draft = 0;
+  let ordered = 0;
+  for (const { part } of allParts(game.rocket)) {
+    if (part.state === 'draft') draft++;
+    else if (part.state !== 'delivered') ordered++;
+  }
+  const late = ev.issues.filter((i) => i.code === 'delivery' && i.severity === 'error').length;
+  return { draft, ordered, late, notDelivered: draft + ordered };
+}
+
+/** Name to show for a branch: the root ("Main") shows its spacecraft, e.g. "Orbiter + Lander". */
+export function branchDisplayName(game: GameState, branch: Branch): string {
+  if (branch.parent) return branch.name;
+  const names = branch.spacecraftIds
+    .map((id) => game.rocket.spacecraft.find((s) => s.id === id)?.name)
+    .filter((n): n is string => !!n);
+  return names.length ? names.join(' + ') : branch.name;
 }
 
 // ------------------------------------------------------------ icons

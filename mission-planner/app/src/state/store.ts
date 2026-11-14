@@ -354,7 +354,7 @@ export const actions = {
 
   // ========================================================== procurement
 
-  /** Send one part to procurement: its slider values become the task's minimums. Also saves a version. */
+  /** Send one part to procurement: its slider values become the task's minimums. */
   sendTask(partId: string) {
     gameStore.update((g) => {
       const loc = findPart(g.rocket, partId);
@@ -369,13 +369,13 @@ export const actions = {
         minimums: { ...p.stats },
         beyondResearch: beyondResearch(p, g.research, g.unlocked),
         status: 'open' as const,
+        neededByDay: g.plan.launchDay,
         createdDay: today(),
         updatedDay: today(),
       };
       g.tasks.push(task);
       p.state = 'sent';
       p.taskId = task.id;
-      g.versions.push(snapshot(g, `Sent ${p.name}`));
     });
   },
 
@@ -453,6 +453,7 @@ export const actions = {
   setLaunchDay(day: number) {
     gameStore.update((g) => {
       g.plan.launchDay = Math.round(Math.min(g.mission.completionDeadlineDay, Math.max(Math.ceil(today()), day)));
+      for (const t of g.tasks) if (t.status === 'open' || t.status === 'changed') t.neededByDay = g.plan.launchDay;
     });
   },
 

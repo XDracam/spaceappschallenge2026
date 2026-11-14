@@ -19,12 +19,12 @@ export function maneuverLabel(game: GameState, m: Maneuver, before: FlightState,
     case 'launch': return `Launch to ${Math.round(m.altitudeKm)} km`;
     case 'changeOrbit': return `Change orbit to ${Math.round(m.altitudeKm)} km`;
     case 'transfer': return `Transfer to ${nameOf(m.target)}${ion ? ' (ion)' : ''}`;
-    case 'flyby': return `${hereName} flyby to ${nameOf(m.target)}`;
-    case 'insertion': return `${hereName} orbit insertion${m.aerocapture ? ' (aerocapture)' : ''}`;
+    case 'flyby': return `Swing past ${hereName}`;
+    case 'insertion': return `Enter ${hereName} orbit${m.aerocapture ? ' (aerobraking)' : ''}`;
     case 'land': return `Land on ${hereName}`;
-    case 'ascent': return `Ascent from ${hereName} to ${Math.round(m.altitudeKm)} km`;
-    case 'separate': return `Separate: ${spacecraftNames(game, m.spacecraftIds) || 'nothing'}`;
-    case 'entry': return here === 'earth' ? 'Earth entry' : `Atmospheric entry at ${hereName}`;
+    case 'ascent': return `Lift off from ${hereName} to ${Math.round(m.altitudeKm)} km`;
+    case 'separate': return `Release ${spacecraftNames(game, m.spacecraftIds) || 'nothing'}`;
+    case 'entry': return here === 'earth' ? 'Splash down on Earth' : `Land directly on ${hereName}`;
   }
 }
 

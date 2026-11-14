@@ -8,7 +8,7 @@ import {
   partReliability, powerOutputKW, radiationTolerance, stagePowerNeedKW, statDefs, venusSurfaceHours,
 } from '../data/parts';
 import { allParts } from '../model/rocketUtils';
-import { DAY_S, G0, formatDay, formatDv, formatMass, formatMoney } from '../model/units';
+import { DAY_S, G0, formatDay, formatMass, formatMoney } from '../model/units';
 import { earthDistanceKm, sunDistanceKm, transferRelation } from './ephemeris';
 import { escapeDvKms, hohmann, ionTrajectory, ionTransferDvMs, solveFlyby, solveTransfer } from './transfers';
 import {
@@ -357,9 +357,9 @@ function runBranch(ctx: Ctx, branch: Branch, start: Start): void {
     // Heat shield: must carry the whole stack at entry.
     if (shieldUse && alive) {
       const sh = best(equipmentOf(stack.spacecraft, 'heatShield'), 'maxEntryMassT');
-      if (!sh) add('error', 'equipment', `${label} needs a heat shield`);
+      if (!sh) add('error', 'equipment', 'Needs a heat shield on this spacecraft (Rocket → + Landing)');
       else if (sh.stats.maxEntryMassT < massStart) {
-        add('error', 'equipment', `Heat shield rated for ${formatMass(sh.stats.maxEntryMassT)}, but the spacecraft weighs ${formatMass(massStart)}`);
+        add('error', 'equipment', `Heat shield is too small: rated for ${formatMass(sh.stats.maxEntryMassT)}, but the spacecraft weighs ${formatMass(massStart)}. Use a bigger heat shield (Rocket tab).`);
       } else addFactor(sh, partReliability(sh), sh.name);
     }
 
@@ -368,7 +368,9 @@ function runBranch(ctx: Ctx, branch: Branch, start: Start): void {
     if (!failed && alive && dv > 0) {
       burnRes = burn(stack, dv, gravity ?? G0);
       if (burnRes.short) {
-        add('error', 'dv', `Out of delta-v during ${label}: needs ${formatDv(dv)}, has ${formatDv(dvBefore)}`);
+        const km = (v: number) => `${(v / 1000).toFixed(2)} km/s`;
+        const aero = m.type === 'insertion' && !m.aerocapture && ATMO(body);
+        add('error', 'dv', `Out of fuel: needs ${km(dv)}, has ${km(dvBefore)}. Add fuel to an upper stage${aero ? ', or use aerobraking' : ''}.`);
       }
       for (const f of burnRes.fired) {
         const st = f.st.stage;
@@ -377,11 +379,11 @@ function runBranch(ctx: Ctx, branch: Branch, start: Start): void {
       }
       if (twrMode === 'launch') {
         twr = burnRes.fired[0]?.twr ?? 0;
-        if (twr <= 1) add('error', 'twr', `Liftoff thrust-to-weight ${twr.toFixed(2)}: must be above 1`);
-        else if (twr < 1.2) add('warning', 'twr', `Liftoff thrust-to-weight ${twr.toFixed(2)} is marginal (below 1.2)`);
+        if (twr <= 1) add('error', 'twr', `Too weak to lift off (lift ratio ${twr.toFixed(2)}, needs above 1). Add engines to the first stage.`);
+        else if (twr < 1.2) add('warning', 'twr', `Barely strong enough to lift off (lift ratio ${twr.toFixed(2)}, below 1.2). Consider more engines.`);
       } else if (twrMode === 'all') {
         twr = burnRes.fired.length ? Math.min(...burnRes.fired.map((f) => f.twr)) : 0;
-        if (twr <= 1) add('error', 'twr', `Thrust-to-weight ${twr.toFixed(2)} too low for ${label} (gravity ${body.surfaceGravity} m/s²)`);
+        if (twr <= 1) add('error', 'twr', `Engines too weak for ${label} (lift ratio ${twr.toFixed(2)}, needs above 1 in ${body.name}'s gravity). Add engines.`);
       }
       if (ion) {
         const ionFired = burnRes.fired.filter((f) => f.st.stage.propulsion === 'ion');
@@ -399,9 +401,9 @@ function runBranch(ctx: Ctx, branch: Branch, start: Start): void {
     if (legsUse && alive) {
       const legs = best(equipmentOf(stack.spacecraft, 'legs'), 'maxLandingMassT');
       const mTouch = stackMassT(stack);
-      if (!legs) add('error', 'equipment', `Landing on ${body.name} needs landing legs`);
+      if (!legs) add('error', 'equipment', 'Needs landing legs (Rocket → + Landing)');
       else if (legs.stats.maxLandingMassT < mTouch) {
-        add('error', 'equipment', `Landing legs rated for ${formatMass(legs.stats.maxLandingMassT)}, touchdown mass is ${formatMass(mTouch)}`);
+        add('error', 'equipment', `Landing legs are too weak: rated for ${formatMass(legs.stats.maxLandingMassT)}, touchdown mass is ${formatMass(mTouch)}. Use stronger legs (Rocket tab).`);
       } else addFactor(legs, partReliability(legs), legs.name);
     }
 

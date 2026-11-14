@@ -173,6 +173,10 @@ export interface ManeuverOption {
   label: string;          // e.g. "Transfer to Mars", "Land on Mars"
   enabled: boolean;
   reason?: string;        // why disabled
+  /** Less likely next steps (other destinations, flybys): shown under "More…" in the menu. */
+  secondary?: boolean;
+  /** For 'separate': the spacecraft this option releases onto a new branch. */
+  spacecraftId?: string;
 }
 
 // --------------------------------------------------------- flight states
@@ -231,6 +235,8 @@ export interface ProcurementTask {
   /** Research keys / unlock keys this part exceeds (empty if within research). */
   beyondResearch: string[];
   status: TaskStatus;
+  /** Day the part is needed by: the planned launch day (kept up to date while the task is open). */
+  neededByDay: number;
   createdDay: number;
   updatedDay: number;
 }

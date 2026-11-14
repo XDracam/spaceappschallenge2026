@@ -1,8 +1,10 @@
 import { useState } from 'preact/hooks';
-import type { Issue } from '../model/types';
-import { uiStore, useEvaluation, useGame, useUi } from '../state/store';
-import { formatDv } from '../model/units';
-import { SeverityIcon, branchColor, chanceClass, highlightPart, openManeuverEdit, pct } from './common';
+import type { Issue, ManeuverType, Severity } from '../model/types';
+import { uiStore, useClock, useEvaluation, useGame, useUi } from '../state/store';
+import { DAYS_PER_MONTH, formatDv } from '../model/units';
+import {
+  SeverityIcon, branchColor, branchDisplayName, chanceClass, highlightPart, openManeuverEdit, openTab, partReadiness, pct, plural,
+} from './common';
 
 /** Bottom row of three floating glass cards: Δv budget, goals, issues. */
 export function BottomStrip() {
@@ -19,8 +21,14 @@ function km(ms: number): string {
   return (ms / 1000).toFixed(2);
 }
 
+const SHORT_LABEL: Record<ManeuverType, string> = {
+  launch: 'Launch', changeOrbit: 'Orbit change', transfer: 'Transfer', flyby: 'Flyby', insertion: 'Orbit',
+  land: 'Land', ascent: 'Ascent', separate: 'Separate', entry: 'Entry',
+};
+
 function DvCard() {
-  const branches = useGame((g) => g.plan.branches);
+  const game = useGame((g) => g);
+  const branches = game.plan.branches;
   const selected = useUi((u) => u.selectedBranchId);
   const selManeuver = useUi((u) => u.selectedManeuverId);
   const ev = useEvaluation();
@@ -29,8 +37,13 @@ function DvCard() {
   const br = ev.branches.find((b) => b.branchId === branch?.id);
   const required = br?.dvRequiredTotalMs ?? 0;
   const available = br?.dvAvailableTotalMs ?? 0;
+  const margin = available - required;
+  const short = margin < -0.5;
   const scale = Math.max(required, available, 1);
-  const short = required > available + 0.5;
+  const stageName = (id: string) => {
+    const s = br?.stageBands.find((b) => b.stageId === id);
+    return s ? `${s.ownerName} · ${s.stageName}` : id;
+  };
 
   return (
     <section class="card glass dv-card">
@@ -38,49 +51,43 @@ function DvCard() {
         <span class="label">Δv budget</span>
         {branches.length > 1 && (
           <div class="branch-chips">
-            {branches.map((b, i) => (
-              <button class={`mini-pill${b.id === branch?.id ? ' active' : ''}`} key={b.id} title={b.name}
-                onClick={() => uiStore.update((u) => { u.selectedBranchId = b.id; })}>
-                <span class="dot" style={{ background: branchColor(i) }} />{b.name}
-              </button>
-            ))}
+            {branches.map((b, i) => {
+              const name = branchDisplayName(game, b);
+              return (
+                <button class={`mini-pill${b.id === branch?.id ? ' active' : ''}`} key={b.id} title={name}
+                  onClick={() => uiStore.update((u) => { u.selectedBranchId = b.id; })}>
+                  <span class="dot" style={{ background: branchColor(i) }} />{name}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
-      <div class="big-line" title={`Required ${formatDv(required)} · available ${formatDv(available)}${short ? ' — not enough Δv' : ''}`}>
-        <span class={`big-num num${short ? ' err-text' : ''}`}>{km(required)}</span>
-        <span class="big-sep num"> / {km(available)}</span>
+      <div class="dv-head" title={`Required ${formatDv(required)} · available ${formatDv(available)}${short ? ' — not enough Δv' : ''}`}>
+        <span class="dv-margin-label">Margin</span>
+        <span class={`dv-margin num ${short ? 'err-text' : 'ok-text'}`}>{margin >= 0 ? '+' : '−'}{km(Math.abs(margin))}</span>
         <span class="unit">km/s</span>
-        <span class="muted tiny big-note">required / available</span>
+        <span class="muted small dv-sub num">needs {km(required)} of {km(available)} km/s</span>
       </div>
-      {!br || (br.maneuvers.length === 0 && br.stageBands.length === 0) ? (
-        <div class="muted small">No results yet for this branch.</div>
+      {!br || br.maneuvers.length === 0 ? (
+        <div class="muted small">No maneuvers planned yet.</div>
       ) : (
-        <div class="seg-bars">
-          <div class="seg-bar">
-            {br.maneuvers.map((m) => {
-              const w = (m.dvRequiredMs / scale) * 100;
-              return (
-                <button key={m.maneuverId}
-                  class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${w < 0.6 ? ' zero' : ''}`}
-                  style={{ width: w < 0.6 ? undefined : `${w}%`, '--seg': branchColor(idx) }}
-                  title={`${m.label}: ${formatDv(m.dvRequiredMs)}${m.ok ? '' : ' — fails here'}`}
-                  onClick={() => openManeuverEdit(m.maneuverId, m.branchId)} />
-              );
-            })}
-          </div>
-          <div class="seg-bar stages">
-            {br.stageBands.map((s) => {
-              const w = (s.dvTotalMs / scale) * 100;
-              const used = s.dvTotalMs > 0 ? Math.min(1, s.dvUsedMs / s.dvTotalMs) : 0;
-              return (
-                <div key={s.stageId} class="band" style={{ width: `${w}%` }}
-                  title={`${s.ownerName} · ${s.stageName}: ${formatDv(s.dvTotalMs)} (used ${formatDv(s.dvUsedMs)})`}>
-                  <div class="band-fill" style={{ width: `${used * 100}%` }} />
-                </div>
-              );
-            })}
-          </div>
+        <div class="seg-bar">
+          {br.maneuvers.map((m) => {
+            const w = (m.dvRequiredMs / scale) * 100;
+            const tiny = w < 0.6;
+            const stages = m.burns.filter((b) => b.dvMs > 0.5).map((b) => `${stageName(b.stageId)} ${formatDv(b.dvMs)}`);
+            return (
+              <button key={m.maneuverId}
+                class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${tiny ? ' zero' : ''}`}
+                style={{ width: tiny ? undefined : `${w}%`, '--seg': branchColor(idx) }}
+                title={`${m.label}: ${formatDv(m.dvRequiredMs)}${m.ok ? '' : ' — fails here'}${stages.length ? `\nPaid by ${stages.join(', ')}` : ''}`}
+                onClick={() => openManeuverEdit(m.maneuverId, m.branchId)}>
+                {w > 15 && <span class="seg-label">{SHORT_LABEL[m.type] ?? m.label}</span>}
+              </button>
+            );
+          })}
+          {short && <span class="seg-avail" style={{ left: `${(available / scale) * 100}%` }} title={`Available ${formatDv(available)}`} />}
         </div>
       )}
     </section>
@@ -89,7 +96,7 @@ function DvCard() {
 
 function GoalsCard() {
   const goals = useGame((g) => g.mission.goals);
-  const branches = useGame((g) => g.plan.branches);
+  const game = useGame((g) => g);
   const ev = useEvaluation();
   return (
     <section class="card glass goals-card">
@@ -98,17 +105,25 @@ function GoalsCard() {
         {goals.map((g) => {
           const r = ev.goals.find((x) => x.goalId === g.id);
           const c = r?.successChance ?? 0;
-          const na = !r || !r.achievable;
-          const bi = branches.findIndex((b) => b.id === r?.branchId);
-          const cls = na ? 'err' : chanceClass(c);
-          const tip = na
-            ? r?.reason ?? 'Not reached by the plan'
-            : `${pct(c)} success chance${bi >= 0 ? ` · reached on ${branches[bi].name}` : ''}`;
+          const na = !r || !r.achievable || c <= 0;
+          const reason = r?.reason ?? 'Not reached by the plan';
+          const notPlanned = na && /^The plan does not/.test(reason);
+          const branch = game.plan.branches.find((b) => b.id === r?.branchId);
+          if (na) {
+            return (
+              <li key={g.id} class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}`} title={`${g.name}: ${reason}`}>
+                <span class="goal-name">{g.name}</span>
+                <span class="goal-status">{notPlanned ? 'Not planned' : 'Blocked'}</span>
+                <span class="goal-reason">{reason}</span>
+              </li>
+            );
+          }
+          const cls = chanceClass(c);
           return (
-            <li key={g.id} title={`${g.name}: ${tip}`}>
+            <li key={g.id} class="goal" title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`}>
               <span class="goal-name">{g.name}</span>
-              <span class="goal-bar"><span class={`gb-fill ${cls}`} style={{ width: na ? '0%' : `${Math.max(2, c * 100)}%` }} /></span>
-              <span class={`goal-chance num ${cls}`}>{na ? '—' : pct(c)}</span>
+              <span class="goal-bar"><span class={`gb-fill ${cls}`} style={{ width: `${Math.max(2, c * 100)}%` }} /></span>
+              <span class={`goal-chance num ${cls}`}>{pct(c)}</span>
             </li>
           );
         })}
@@ -119,22 +134,41 @@ function GoalsCard() {
 
 const SEV_ORDER = { error: 0, warning: 1, info: 2 } as const;
 
-function isNotProcured(i: Issue) {
-  return i.severity === 'info' && i.code === 'delivery' && /not procured yet$/.test(i.message);
+/** Readiness lines are summarised in the top row; per-part delivery items are not listed. */
+function isDeliveryItem(i: Issue) {
+  return i.code === 'delivery';
+}
+
+function ReadinessRow() {
+  const game = useGame((g) => g);
+  const ev = useEvaluation();
+  const r = partReadiness(game, ev);
+  const soon = useClock((c) => game.plan.launchDay - c.day < 6 * DAYS_PER_MONTH);
+  if (r.notDelivered === 0 && r.late === 0) return null;
+  const sev: Severity = soon || r.late > 0 ? 'error' : 'warning';
+  const parts: string[] = [];
+  if (r.draft > 0) parts.push(`${plural(r.draft, 'part')} not ordered — launch will be scrubbed`);
+  if (r.ordered > 0) parts.push(`${plural(r.ordered, 'part')} ordered, not delivered yet`);
+  if (r.late > 0) parts.push(`${plural(r.late, 'delivery', 'deliveries')} after launch date`);
+  return (
+    <li class={`issue readiness ${sev} clickable`} title={`${parts.join(' · ')}\nClick to open the Rocket panel (part status and arrival dates)`}
+      onClick={() => openTab('rocket')}>
+      <SeverityIcon severity={sev} />
+      <span class="issue-text">{parts.join(' · ')}</span>
+    </li>
+  );
 }
 
 function IssuesCard() {
   const ev = useEvaluation();
+  const emptyPlan = useGame((g) => g.plan.branches.every((b) => b.maneuvers.length === 0));
   const [all, setAll] = useState(false);
-  const [showNp, setShowNp] = useState(false);
-  const issues = [...ev.issues].sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
-  const notProcured = issues.filter(isNotProcured);
-  const main = issues.filter((i) => !isNotProcured(i));
-  const errors = issues.filter((i) => i.severity === 'error').length;
-  const warnings = issues.filter((i) => i.severity === 'warning').length;
+  const list = ev.issues.filter((i) => !isDeliveryItem(i)).sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
+  const errors = ev.issues.filter((i) => i.severity === 'error').length;
+  const warnings = ev.issues.filter((i) => i.severity === 'warning').length;
   const click = (i: Issue) => {
-    if (i.maneuverId) openManeuverEdit(i.maneuverId, i.branchId);
-    else if (i.partId) highlightPart(i.partId);
+    if (i.partId) highlightPart(i.partId);
+    else if (i.maneuverId) openManeuverEdit(i.maneuverId, i.branchId);
   };
   const row = (i: Issue, k: number) => (
     <li key={k} class={`issue ${i.severity}${i.maneuverId || i.partId ? ' clickable' : ''}`} title={i.message} onClick={() => click(i)}>
@@ -142,41 +176,28 @@ function IssuesCard() {
       <span class="issue-text">{i.message}</span>
     </li>
   );
-  const shown = all ? main : main.slice(0, 3);
+  const many = list.length > 3;
+  const shown = all ? list : list.slice(0, 3);
 
   return (
     <div class="issues-slot">
       <section class={`card glass issues-card${all ? ' expanded' : ''}`}>
         <div class="card-top">
           <span class="label">Issues</span>
+          <span class={`issue-count num${errors ? ' err-text' : ''}`}>{plural(errors, 'error')}</span>
+          <span class={`issue-count num${warnings ? ' warn-text' : ''}`}>{plural(warnings, 'warning')}</span>
           <div class="spacer" />
-          {(main.length > 3 || notProcured.length > 0) && (
-            <button class="text-btn" onClick={() => setAll(!all)}>{all ? 'Show less' : 'Show all'}</button>
+          {many && <button class="text-btn" onClick={() => setAll(!all)}>{all ? 'Show less' : `Show all ${list.length}`}</button>}
+        </div>
+        <ul class={`issue-list${all ? ' thin-scroll' : ''}`}>
+          <ReadinessRow />
+          {shown.map(row)}
+          {list.length === 0 && (
+            emptyPlan
+              ? <li class="issue empty-note muted">Nothing planned yet.</li>
+              : <li class="issue empty-note ok-text">No problems found by the live test.</li>
           )}
-        </div>
-        <div class="issue-counts">
-          <span class={`big-num num${errors ? ' err-text' : ''}`}>{errors}</span>
-          <span class="muted small">errors</span>
-          <span class={`big-num num small-big${warnings ? ' warn-text' : ''}`}>{warnings}</span>
-          <span class="muted small">warnings</span>
-        </div>
-        {main.length === 0 && !all ? (
-          <div class="ok-text small">No problems found by the live test.</div>
-        ) : (
-          <ul class={`issue-list${all ? ' thin-scroll' : ''}`}>
-            {shown.map(row)}
-            {all && notProcured.length > 0 && (
-              <>
-                <li class="issue info clickable np-head" onClick={() => setShowNp(!showNp)}>
-                  <SeverityIcon severity="info" />
-                  <span class="issue-text">{notProcured.length} parts not procured</span>
-                  <span class="muted tiny">{showNp ? 'hide' : 'show'}</span>
-                </li>
-                {showNp && notProcured.map((i, k) => row(i, 1000 + k))}
-              </>
-            )}
-          </ul>
-        )}
+        </ul>
       </section>
     </div>
   );

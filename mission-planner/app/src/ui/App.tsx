@@ -5,12 +5,13 @@ import { playthrough } from '../physics';
 import { TopBar } from './TopBar';
 import { BottomStrip } from './BottomStrip';
 import { RocketTab } from './RocketTab';
-import { TasksTab } from './TasksTab';
 import { VersionsTab } from './VersionsTab';
 import { DevTab } from './DevTab';
 import { PopupLayer } from './Popups';
 import { backToEdit } from './Heatmap';
 import { PlaythroughOverlay } from './Playthrough';
+import { Briefing } from './Briefing';
+import { NextStep } from './NextStep';
 import {
   CARDS_H, CloseIcon, EDGE, HEADER_H, PANEL_W, PLAYBACK_W, closePopup, localUi, setMapContainer, useLocalUi,
 } from './common';
@@ -27,11 +28,12 @@ function restorePlaythrough() {
   });
 }
 
-const TAB_TITLE = { rocket: 'Rocket', tasks: 'Procurement', versions: 'Versions', dev: 'Dev' } as const;
+const TAB_TITLE = { rocket: 'Rocket', versions: 'Versions' } as const;
 
 export function App() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const panelOpen = useLocalUi((s) => s.panelOpen);
+  // The side panel and the Dev drawer occupy the same right-hand column.
+  const panelOpen = useLocalUi((s) => s.panelOpen || s.devOpen);
   const hasPlayback = useUi((u) => !!u.playthrough);
 
   useEffect(() => {
@@ -52,6 +54,11 @@ export function App() {
     return () => setMapContainer(null);
   }, []);
 
+  // The playthrough needs the map: close the side panel and the dev drawer when it starts.
+  useEffect(() => {
+    if (hasPlayback) localUi.update((s) => { s.panelOpen = false; s.devOpen = false; });
+  }, [hasPlayback]);
+
   const insets = useMemo(() => ({
     top: HEADER_H,
     right: panelOpen ? PANEL_W + EDGE * 2 : 0,
@@ -67,12 +74,14 @@ export function App() {
       <div class="map-area" ref={mapRef}>
         <div class="map-host"><MapCanvas insets={insets} /></div>
         <div class="map-vignette" />
+        <NextStep />
         <TopBar />
         <SidePanel />
         <BottomStrip />
         <DevDrawer />
         <PlaythroughOverlay />
         <PopupLayer />
+        <Briefing />
       </div>
     </div>
   );
@@ -83,7 +92,8 @@ function SidePanel() {
   const open = useLocalUi((s) => s.panelOpen);
   const phase = useGame((g) => g.phase);
   const locked = phase !== 'planning';
-  const shown = tab === 'dev' ? 'rocket' : tab;
+  // No Procurement panel on the planner station (D-006); 'tasks' and 'dev' fall back to Rocket.
+  const shown = tab === 'versions' ? 'versions' : 'rocket';
   return (
     <aside class={`side glass${open ? '' : ' closed'}`} aria-hidden={!open}>
       <div class="side-head">
@@ -96,7 +106,6 @@ function SidePanel() {
       <div class="side-body thin-scroll">
         <fieldset class="plain" disabled={locked}>
           {shown === 'rocket' && <RocketTab />}
-          {shown === 'tasks' && <TasksTab />}
           {shown === 'versions' && <VersionsTab />}
         </fieldset>
       </div>

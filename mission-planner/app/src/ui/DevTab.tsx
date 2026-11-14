@@ -1,3 +1,4 @@
+import type { ComponentChildren } from 'preact';
 import { useState } from 'preact/hooks';
 import type { ProcurementTask } from '../model/types';
 import {
@@ -6,7 +7,7 @@ import {
 import { PART_KIND_LABEL, VARIANTS, estimatedCostM, makePart, statDefs, unlockKey, variantLabel } from '../data/parts';
 import { findPart } from '../model/rocketUtils';
 import { DAYS_PER_MONTH, DEFAULT_DAYS_PER_SECOND, formatDay, formatMoney } from '../model/units';
-import { PauseIcon, PlayIcon, fmtNum, pct } from './common';
+import { ChevronIcon, PauseIcon, PlayIcon, fmtNum, pct } from './common';
 import { MinimumsTable } from './TasksTab';
 import type { PartKind } from '../model/types';
 
@@ -20,20 +21,41 @@ export const SPEED_PRESETS = [
 
 export function DevTab() {
   const phase = useGame((g) => g.phase);
+  const locked = phase !== 'planning';
   return (
     <div class="dev-tab">
-      <fieldset disabled={phase !== 'planning'} class="plain">
+      <fieldset disabled={locked} class="plain">
         <CalendarSection />
-        <ProcurementSection />
-        <ScienceSection />
       </fieldset>
-      <section>
-        <h3>Game</h3>
-        <button class="btn danger" onClick={() => confirm('Reset the whole game? All progress is lost.') && actions.resetGame()}>
+      <div class="inline dev-reset">
+        <span class="muted small">Start over from the beginning</span>
+        <div class="spacer" />
+        <button class="btn small danger" onClick={() => confirm('Reset the whole game? All progress is lost.') && actions.resetGame()}>
           Reset game
         </button>
-      </section>
+      </div>
+      <Collapsible title="Procurement player (stand-in)" defaultOpen>
+        <fieldset disabled={locked} class="plain"><ProcurementSection /></fieldset>
+      </Collapsible>
+      <Collapsible title="Science player (stand-in)" defaultOpen>
+        <fieldset disabled={locked} class="plain"><ScienceSection /></fieldset>
+      </Collapsible>
     </div>
+  );
+}
+
+function Collapsible({ title, defaultOpen, children, sub }: {
+  title: string; defaultOpen?: boolean; children: ComponentChildren; sub?: boolean;
+}) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <section class={`collapsible${sub ? ' sub' : ''}${open ? ' open' : ''}`}>
+      <button type="button" class="collapse-head" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <ChevronIcon open={open} />
+        <span>{title}</span>
+      </button>
+      {open && <div class="collapse-body">{children}</div>}
+    </section>
   );
 }
 
@@ -76,7 +98,7 @@ function ProcurementSection() {
   const running = contracts.filter((c) => c.status === 'running');
   return (
     <section>
-      <h3>Procurement</h3>
+      <h4>Open tasks</h4>
       {open.length === 0 && <p class="empty">No open tasks.</p>}
       {open.map((t) => <ContractForm key={t.id} task={t} />)}
       <h4>Running contracts</h4>
@@ -170,7 +192,19 @@ function ScienceSection() {
   const extra = Object.keys(research).filter((k) => !ALL_RESEARCH_KEYS.some((r) => r.key === k));
   return (
     <section>
-      <h3>Science: research limits</h3>
+      <h4>Unlocks</h4>
+      <div class="unlock-grid">
+        {(Object.keys(VARIANTS) as PartKind[]).flatMap((kind) => VARIANTS[kind].map((v) => {
+          const key = unlockKey(kind, v);
+          return (
+            <label class="check" key={key} title={key}>
+              <input type="checkbox" checked={unlocked.includes(key)} onChange={(e) => devActions.setUnlocked(key, (e.currentTarget as HTMLInputElement).checked)} />
+              {PART_KIND_LABEL[kind]}{VARIANTS[kind].length > 1 ? ` · ${variantLabel(kind, v)}` : ''}
+            </label>
+          );
+        }))}
+      </div>
+      <Collapsible title="Research limits" sub>
       <p class="hint">Empty = no limit. Values in display units.</p>
       <table class="mini-table research-table">
         <tbody>
@@ -195,18 +229,7 @@ function ScienceSection() {
           ))}
         </tbody>
       </table>
-      <h3>Science: unlocks</h3>
-      <div class="unlock-grid">
-        {(Object.keys(VARIANTS) as PartKind[]).flatMap((kind) => VARIANTS[kind].map((v) => {
-          const key = unlockKey(kind, v);
-          return (
-            <label class="check" key={key} title={key}>
-              <input type="checkbox" checked={unlocked.includes(key)} onChange={(e) => devActions.setUnlocked(key, (e.currentTarget as HTMLInputElement).checked)} />
-              {PART_KIND_LABEL[kind]}{VARIANTS[kind].length > 1 ? ` · ${variantLabel(kind, v)}` : ''}
-            </label>
-          );
-        }))}
-      </div>
+      </Collapsible>
     </section>
   );
 }

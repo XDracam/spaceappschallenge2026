@@ -34,13 +34,46 @@ interface FreeRect {
   h: number;
 }
 
+type Rect = FreeRect;
+
+interface Circle {
+  x: number;
+  y: number;
+  r: number;
+}
+
 type TipLine = { text: string; color?: string; bold?: boolean };
 
 type HitAction =
   | { kind: 'back' }
+  /** Hover-only target (tooltip); clicking does nothing. */
+  | { kind: 'info' }
   | { kind: 'body'; body: BodyId }
   | { kind: 'maneuver'; maneuverId: string; branchId: string; x: number; y: number }
   | { kind: 'endState'; branchId: string };
+
+/** A "+ Next step" pill waiting for layout (placed after markers so it can avoid them). */
+interface PillRequest {
+  branchId: string;
+  label: string;
+  color: string;
+  alpha: number;
+  /** Centre of the thing the pill belongs to (body or chevron) and its outer radius. */
+  ax: number;
+  ay: number;
+  r: number;
+  /** Preferred direction (screen radians, y down). */
+  angle: number;
+  tooltip: TipLine[];
+}
+
+/** Body drawn at the departure / arrival day of the focused maneuver. */
+interface Ghost {
+  body: BodyId;
+  day: number;
+  text: string;
+  a: Anchor;
+}
 
 interface HitTarget {
   key: string;
@@ -75,6 +108,21 @@ interface Frame {
   anchors: Map<string, Anchor | null>;
   stack: Map<string, number>;
   drawnProxies: Set<string>;
+  /** Why the map shows this day (date line). */
+  why: string;
+  /** Departure / arrival ghosts of the hovered / edited maneuver. */
+  ghosts: Ghost[];
+  /** Bodies whose regular (map-day) position is dimmed because a ghost is shown. */
+  dimBodies: Set<BodyId>;
+  /** Outer extents of state rings / pins drawn around bodies (marker rows sit above them). */
+  rings: Circle[];
+  /** Body discs, marker spots and body labels: pills avoid them. */
+  discs: Circle[];
+  markerPts: Circle[];
+  labelRects: Rect[];
+  pills: PillRequest[];
+  /** Drawn on top of the map content, below the HUD. */
+  overlays: (() => void)[];
 }
 
 interface PendingMarker {
@@ -181,14 +229,38 @@ function describeState(s: FlightState): string {
   }
 }
 
-/** Cosmetic low-orbit ring offset: 6..14 px, log of altitude within the body's allowed range. */
-function orbitRingOffset(body: BodyId, altKm: number): number {
+/**
+ * Cosmetic orbit ring gap from the body disc: 12..20 px (log of altitude within
+ * the body's allowed range), growing mildly with zoom so rings never hug the disc.
+ * Moon proxies in the system view are tiny and sit next to their planet: smaller gap.
+ */
+function orbitRingGap(body: BodyId, altKm: number, zoom: number, proxy: boolean): number {
   const b = BODIES[body];
   const lo = Math.max(1, b.minOrbitAltKm);
   const hi = Math.max(lo * 1.001, b.maxOrbitAltKm);
   const t = clamp(Math.log(Math.max(altKm, lo) / lo) / Math.log(hi / lo), 0, 1);
-  return 6 + 8 * t;
+  if (proxy) return 5 + 3 * t;
+  return (12 + 8 * t) * clamp(Math.pow(zoom, 0.2), 1, 1.8);
 }
+
+function rectsOverlap(a: Rect, b: Rect, pad = 0): boolean {
+  return a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad;
+}
+
+function rectHitsCircle(r: Rect, c: Circle): boolean {
+  const nx = clamp(c.x, r.x, r.x + r.w);
+  const ny = clamp(c.y, r.y, r.y + r.h);
+  return Math.hypot(nx - c.x, ny - c.y) < c.r;
+}
+
+function truncate(s: string, max: number): string {
+  return s.length > max ? `${s.slice(0, max - 1).trimEnd()}…` : s;
+}
+
+/** The zoom/pan hint shows at the bottom-left for the first seconds after page load. */
+const HINT_SHOWN_AT = performance.now();
+const HINT_VISIBLE_MS = 17_000;
+const HINT_FADE_MS = 3_000;
 
 function failIndexOf(br: BranchResult): number {
   if (br.failedAtManeuverId) {
@@ -197,6 +269,15 @@ function failIndexOf(br: BranchResult): number {
   }
   const j = br.maneuvers.findIndex((m) => !m.ok);
   return j >= 0 ? j : Infinity;
+}
+
+function findManeuverResult(ev: Evaluation | null, id: string): ManeuverResult | undefined {
+  if (!ev) return undefined;
+  for (const br of ev.branches) {
+    const m = br.maneuvers.find((x) => x.maneuverId === id);
+    if (m) return m;
+  }
+  return undefined;
 }
 
 function worstSeverity(m: ManeuverResult): 'error' | 'warning' | null {
@@ -415,7 +496,7 @@ export class MapRenderer {
     const next = this.drag?.moved ? null : this.hitTest(this.mouse);
     const changed = (next?.key ?? null) !== (this.hover?.key ?? null);
     this.hover = next;
-    if (!this.drag?.moved) this.canvas.style.cursor = next ? 'pointer' : 'default';
+    if (!this.drag?.moved) this.canvas.style.cursor = next ? (next.action.kind === 'info' ? 'help' : 'pointer') : 'default';
     // Tooltip follows the mouse, so redraw whenever something is hovered.
     if (changed || next?.tooltip) this.request();
     const mnv = next?.action.kind === 'maneuver' ? next.action.maneuverId : null;
@@ -441,6 +522,8 @@ export class MapRenderer {
     }
     const a = hit.action;
     switch (a.kind) {
+      case 'info':
+        break;
       case 'back':
         uiStore.update((u) => { u.viewCenter = 'sun'; u.popup = null; });
         break;
@@ -510,13 +593,14 @@ export class MapRenderer {
     };
     this.time = performance.now() / 1000;
     this.animating = false;
-    // Default to the planned launch day while planning, so Earth and the launch orbit line up.
-    const day = ui.playthrough?.day ?? ui.mapDay ?? (game.phase === 'planning' ? game.plan.launchDay : clock.day);
+    const { day, why } = this.resolveDay(game, ui, clock.day, center, evaluation);
     const F: Frame = {
       ctx, game, ui, evaluation, day, center, proj,
       planning: game.phase === 'planning',
       startISO: game.mission.startDateISO,
       anchors: new Map(), stack: new Map(), drawnProxies: new Set(),
+      why, ghosts: [], dimBodies: new Set(),
+      rings: [], discs: [], markerPts: [], labelRects: [], pills: [], overlays: [],
     };
 
     this.hits = [];
@@ -526,16 +610,19 @@ export class MapRenderer {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    if (evaluation) this.collectGhosts(F, evaluation);
     this.drawBackground(F);
     this.drawOrbits(F);
     this.drawBodies(F);
     if (evaluation) {
       this.drawTrajectories(F, evaluation);
-      this.drawGhosts(F, evaluation);
+      this.drawGhosts(F);
       this.drawStates(F, evaluation);
       this.drawMarkers(F, evaluation);
+      this.drawPills(F);
       if (ui.playthrough) this.drawSpacecraft(F, evaluation);
     }
+    for (const o of F.overlays) o();
     this.drawHud(F);
 
     // Hits changed: refresh hover (does not loop: only re-requests on change).
@@ -555,6 +642,70 @@ export class MapRenderer {
       this.animTimer = 0;
       this.request();
     }, 1000 / ANIM_FPS);
+  }
+
+  /**
+   * Day the planets are shown for, and why (date line). While planning the default
+   * is the launch day; a nested view defaults to the selected branch's first day in
+   * that system (e.g. Mars arrival), so its moons line up with the arrival.
+   */
+  private resolveDay(game: GameState, ui: UiState, clockDay: number, center: BodyId, ev: Evaluation | null): { day: number; why: string } {
+    if (ui.playthrough) return { day: ui.playthrough.day, why: 'playthrough' };
+    if (ui.mapDay !== null) {
+      const id = ui.popup && 'maneuverId' in ui.popup ? ui.popup.maneuverId : null;
+      const m = id ? findManeuverResult(ev, id) : undefined;
+      let why = 'selected step';
+      if (m && Math.abs(ui.mapDay - m.startDay) < 0.5) why = m.type === 'transfer' || m.type === 'flyby' ? 'departure' : 'selected step';
+      else if (m && Math.abs(ui.mapDay - m.endDay) < 0.5) why = 'arrival';
+      return { day: ui.mapDay, why };
+    }
+    if (game.phase !== 'planning') return { day: clockDay, why: 'today' };
+    const launch = game.plan.launchDay;
+    if (center !== 'sun' && ev) {
+      // Selected branch plus the branches it split from.
+      const ids = new Set<string>();
+      let br = game.plan.branches.find((b) => b.id === ui.selectedBranchId);
+      while (br && !ids.has(br.id)) {
+        ids.add(br.id);
+        const parentId = br.parent?.branchId;
+        br = parentId ? game.plan.branches.find((b) => b.id === parentId) : undefined;
+      }
+      let first = Infinity;
+      for (const r of ev.branches) {
+        if (!ids.has(r.branchId)) continue;
+        for (const m of r.maneuvers) {
+          for (const s of [m.stateBefore, m.stateAfter]) {
+            const b = stateBody(s);
+            if (b && (b === center || BODIES[b].parent === center) && Number.isFinite(s.day)) first = Math.min(first, s.day);
+          }
+        }
+      }
+      if (Number.isFinite(first) && first > launch + 0.5) return { day: first, why: `arrival at ${BODIES[center].name}` };
+    }
+    return { day: launch, why: 'launch day' };
+  }
+
+  /** Departure / arrival ghosts: only for the hovered maneuver or the one whose edit popup is open. */
+  private collectGhosts(F: Frame, ev: Evaluation) {
+    const { ui, day } = F;
+    const popupId = ui.popup && (ui.popup.kind === 'maneuverEdit' || ui.popup.kind === 'heatmap') ? ui.popup.maneuverId : null;
+    const focus = ui.hoverManeuverId ?? popupId;
+    if (!focus) return;
+    const m = findManeuverResult(ev, focus);
+    if (!m || (m.type !== 'transfer' && m.type !== 'flyby')) return;
+    const list: { body: BodyId; day: number; text: string }[] = [];
+    const from = stateBody(m.stateBefore);
+    const to = stateBody(m.stateAfter);
+    if (from) list.push({ body: from, day: m.startDay, text: 'departure' });
+    if (to) list.push({ body: to, day: m.endDay, text: 'arrival' });
+    for (const g of list) {
+      const a = this.anchor(F, g.body, g.day);
+      const now = this.anchor(F, g.body, day);
+      if (!a || a.isCenter || a.proxy) continue;
+      if (now && Math.hypot(now.x - a.x, now.y - a.y) < 6) continue;
+      F.ghosts.push({ ...g, a });
+      F.dimBodies.add(g.body);
+    }
   }
 
   // ---------------------------------------------------------- anchors
@@ -719,11 +870,12 @@ export class MapRenderer {
       drawBody(ctx, this.dpr, center, c.x, c.y, c.r, this.lightAngle(F, c.x, c.y), true);
     }
     ctx.restore();
+    F.discs.push({ x: c.x, y: c.y, r: c.r + 2 });
     // Below the flare streak.
     if (center === 'sun') this.label(F, cb.name, c.x + c.r * 0.7 + 4, c.y + c.r + 13, false);
     this.hits.push({
       key: `body:${center}`, priority: 0, action: { kind: 'body', body: center },
-      contains: (x, y) => Math.hypot(x - c.x, y - c.y) <= Math.max(c.r, 9),
+      contains: (x, y) => Math.hypot(x - c.x, y - c.y) <= this.discHitR(c),
       tooltip: [{ text: cb.name, bold: true }],
     });
 
@@ -731,10 +883,14 @@ export class MapRenderer {
       const a = this.anchor(F, b.id, day);
       if (!a) continue;
       const hot = hoverBody === b.id || this.selectedBody === b.id;
+      // A ghost of this body (departure / arrival) is shown: fade its map-day position.
+      const dim = F.dimBodies.has(b.id) ? 0.4 : 1;
       ctx.save();
-      drawGlow(ctx, b.color, a.x, a.y, a.r * (hot ? 5 : 3.6), hot ? 0.6 : 0.38);
+      ctx.globalAlpha = dim;
+      drawGlow(ctx, b.color, a.x, a.y, a.r * (hot ? 5 : 3.6), (hot ? 0.6 : 0.38) * dim);
       drawBody(ctx, this.dpr, b.id, a.x, a.y, a.r, this.lightAngle(F, a.x, a.y), false);
       ctx.restore();
+      F.discs.push({ x: a.x, y: a.y, r: a.r + 2 });
       if (this.selectedBody === b.id) {
         ctx.save();
         ctx.strokeStyle = withAlpha(COLORS.accent, 0.8);
@@ -746,16 +902,68 @@ export class MapRenderer {
         ctx.stroke();
         ctx.restore();
       }
+      ctx.save();
+      ctx.globalAlpha = dim;
       this.label(F, b.name, a.x + a.r + 6, a.y + 4, hot);
+      ctx.restore();
       const nested = center === 'sun' && SYSTEM_VIEW_BODIES.includes(b.id);
-      const tip: TipLine[] = [{ text: b.name, bold: true }];
-      if (nested) tip.push({ text: `Click to open the ${b.name} system`, color: COLORS.muted });
       this.hits.push({
         key: `body:${b.id}`, priority: 1, action: { kind: 'body', body: b.id },
-        contains: (x, y) => Math.hypot(x - a.x, y - a.y) <= Math.max(a.r + 4, 10),
-        tooltip: tip,
+        contains: (x, y) => Math.hypot(x - a.x, y - a.y) <= this.discHitR(a),
+        // Nested planets show the "View … ›" chip instead of a tooltip.
+        tooltip: nested ? undefined : [{ text: b.name, bold: true }],
       });
+      if (nested && hoverBody === b.id) F.overlays.push(() => this.viewChip(F, a, b.id));
     }
+  }
+
+  /** Disc click radius; state rings / pills only take clicks outside it. */
+  private discHitR(a: Anchor): number {
+    if (a.isCenter) return Math.max(a.r, 9);
+    if (a.proxy) return 7;
+    return Math.max(a.r + 4, 10);
+  }
+
+  /** Glass chip "View Mars ›" next to a hovered planet that has a nested view. */
+  private viewChip(F: Frame, a: Anchor, body: BodyId) {
+    const { ctx } = F;
+    const text = `View ${BODIES[body].name} ›`;
+    ctx.save();
+    ctx.font = FONT_BOLD;
+    setSpacing(ctx, '0px');
+    const w = Math.ceil(ctx.measureText(text).width) + 20;
+    const h = 22;
+    const fr = this.free();
+    let x = a.x + a.r + 6;
+    let y = a.y + 10;
+    if (x + w > fr.x + fr.w - 4) x = a.x - a.r - 6 - w;
+    if (y + h > fr.y + fr.h - 4) y = a.y - 12 - h;
+    const hot = this.hover?.key === `chip:${body}`;
+    roundRectPath(ctx, x, y, w, h, h / 2);
+    ctx.shadowColor = withAlpha(COLORS.accent, hot ? 0.5 : 0.3);
+    ctx.shadowBlur = hot ? 14 : 10;
+    ctx.fillStyle = hot ? COLORS.glassHot : COLORS.glass;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = hot ? COLORS.glassBorderHot : COLORS.glassBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = hot ? '#ffffff' : COLORS.text;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x + 10, y + h / 2 + 0.5);
+    ctx.restore();
+    this.hits.push({
+      key: `chip:${body}`, priority: 6, action: { kind: 'body', body },
+      contains: (px, py) => px >= x && px <= x + w && py >= y && py <= y + h,
+    });
+    // Low-priority bridge over the gap to the disc, so moving onto the chip keeps it open
+    // (state rings in the same spot still win).
+    const disc = this.discHitR(a);
+    this.hits.push({
+      key: `chipgap:${body}`, priority: 1, action: { kind: 'body', body },
+      contains: (px, py) => px >= Math.min(x, a.x) && px <= Math.max(x + w, a.x) && py >= Math.min(y, a.y) && py <= Math.max(y + h, a.y)
+        && Math.hypot(px - a.x, py - a.y) > disc && Math.hypot(px - a.x, py - a.y) < a.r + 30,
+    });
   }
 
   private label(F: Frame, text: string, x: number, y: number, hot: boolean) {
@@ -768,7 +976,9 @@ export class MapRenderer {
       ctx.shadowColor = withAlpha(COLORS.accent, 0.6);
       ctx.shadowBlur = 6;
     }
-    ctx.fillText(text.toUpperCase(), x, y);
+    const t = text.toUpperCase();
+    ctx.fillText(t, x, y);
+    F.labelRects.push({ x, y: y - 9, w: ctx.measureText(t).width, h: 12 });
     ctx.restore();
   }
 
@@ -836,43 +1046,45 @@ export class MapRenderer {
     }
   }
 
-  /** Bodies at departure / arrival day of the focused transfer or flyby. */
-  private drawGhosts(F: Frame, ev: Evaluation) {
-    const { ctx, ui, day } = F;
-    const focus = ui.hoverManeuverId ?? ui.selectedManeuverId;
-    if (!focus) return;
-    let m: ManeuverResult | undefined;
-    for (const br of ev.branches) {
-      m = br.maneuvers.find((x) => x.maneuverId === focus);
-      if (m) break;
-    }
-    if (!m || (m.type !== 'transfer' && m.type !== 'flyby')) return;
-    const ghosts: { body: BodyId; day: number; text: string }[] = [];
-    const from = stateBody(m.stateBefore);
-    const to = stateBody(m.stateAfter);
-    if (from) ghosts.push({ body: from, day: m.startDay, text: 'departure' });
-    if (to) ghosts.push({ body: to, day: m.endDay, text: 'arrival' });
-    for (const g of ghosts) {
-      const a = this.anchor(F, g.body, g.day);
-      const now = this.anchor(F, g.body, day);
-      if (!a || a.isCenter || a.proxy) continue;
-      if (now && Math.hypot(now.x - a.x, now.y - a.y) < 6) continue;
+  /** Bodies at departure / arrival day of the hovered / edited transfer or flyby (see collectGhosts). */
+  private drawGhosts(F: Frame) {
+    const { ctx } = F;
+    for (const g of F.ghosts) {
+      const a = g.a;
       ctx.save();
       const color = BODIES[g.body].color;
-      drawGlow(ctx, color, a.x, a.y, a.r * 3, 0.25);
+      drawGlow(ctx, color, a.x, a.y, a.r * 3.4, 0.45);
+      drawBody(ctx, this.dpr, g.body, a.x, a.y, a.r, this.lightAngle(F, a.x, a.y), false);
       ctx.strokeStyle = color;
-      ctx.globalAlpha = 0.8;
+      ctx.globalAlpha = 0.85;
       ctx.lineWidth = 1.2;
       ctx.setLineDash([2, 3]);
       ctx.beginPath();
-      ctx.arc(a.x, a.y, a.r + 1, 0, Math.PI * 2);
+      ctx.arc(a.x, a.y, a.r + 3, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.globalAlpha = 0.9;
+      ctx.restore();
+      F.discs.push({ x: a.x, y: a.y, r: a.r + 3 });
+
+      // Short label; flips to the other side (then below) if it would cover another label.
+      ctx.save();
       ctx.font = FONT_LABEL;
-      setSpacing(ctx, '0.8px');
-      ctx.fillStyle = COLORS.muted;
-      ctx.fillText(`${BODIES[g.body].name} at ${g.text} · ${formatDay(g.day, F.startISO)}`.toUpperCase(), a.x + a.r + 6, a.y - 6);
+      setSpacing(ctx, '0.4px');
+      const text = `${BODIES[g.body].name} · ${g.text} ${formatDay(g.day, F.startISO)}`;
+      const tw = ctx.measureText(text).width;
+      const candidates: Rect[] = [
+        { x: a.x + a.r + 7, y: a.y - 15, w: tw, h: 12 },
+        { x: a.x - a.r - 7 - tw, y: a.y - 15, w: tw, h: 12 },
+        { x: a.x - tw / 2, y: a.y + a.r + 6, w: tw, h: 12 },
+        { x: a.x - tw / 2, y: a.y - a.r - 20, w: tw, h: 12 },
+      ];
+      const rect = candidates.find((c) => !F.labelRects.some((l) => rectsOverlap(c, l, 2))) ?? candidates[0];
+      F.labelRects.push(rect);
+      ctx.fillStyle = COLORS.text;
+      ctx.globalAlpha = 0.92;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+      ctx.shadowBlur = 4;
+      ctx.fillText(text, rect.x, rect.y + 9.5);
       ctx.restore();
     }
   }
@@ -881,6 +1093,8 @@ export class MapRenderer {
 
   private drawStates(F: Frame, ev: Evaluation) {
     const { ui, game } = F;
+    // Branches with a clickable end state: one -> "+ Next step"; several -> "+ <branch>".
+    const endCount = ev.branches.filter((br) => stateKey(br.finalState)).length;
     ev.branches.forEach((br, i) => {
       const failIdx = failIndexOf(br);
       const selected = br.branchId === ui.selectedBranchId;
@@ -895,14 +1109,38 @@ export class MapRenderer {
       });
       if (!finalKey) return;
       const failed = failIdx !== Infinity;
-      const name = game.plan.branches.find((b) => b.id === br.branchId)?.name ?? br.branchId;
+      const branch = game.plan.branches.find((b) => b.id === br.branchId);
+      const name = this.branchDisplayName(F, br.branchId);
+      let label = endCount > 1 ? `+ ${truncate(name, 28)}` : '+ Next step';
+      if (branch && !branch.parent && branch.maneuvers.length === 0) label = '+ Launch';
       this.drawState(F, br.finalState, failed ? COLORS.fail : color, selected ? 1 : 0.5,
-        F.planning ? { branchId: br.branchId, name } : null);
+        F.planning ? { branchId: br.branchId, name, label } : null);
     });
   }
 
+  /** Root branch ("Main"): the spacecraft still aboard, e.g. "Orbiter + Lander"; others: the branch name. */
+  private branchDisplayName(F: Frame, branchId: string): string {
+    const branch = F.game.plan.branches.find((b) => b.id === branchId);
+    if (!branch) return branchId;
+    if (branch.parent) return branch.name;
+    const gone = new Set<string>();
+    for (const m of branch.maneuvers) if (m.type === 'separate') m.spacecraftIds.forEach((id) => gone.add(id));
+    const names = F.game.rocket.spacecraft
+      .filter((sc) => branch.spacecraftIds.includes(sc.id) && !gone.has(sc.id))
+      .map((sc) => sc.name);
+    return names.length ? names.join(' + ') : branch.name;
+  }
+
+  /** Preferred pill direction: away from the view centre (and the Sun); lower right around the centre body. */
+  private pillAngle(F: Frame, a: Anchor): number {
+    if (a.isCenter) return Math.PI / 5;
+    const dx = a.x - F.proj.ox;
+    const dy = a.y - F.proj.oy;
+    return dx === 0 && dy === 0 ? Math.PI / 5 : Math.atan2(dy, dx);
+  }
+
   /** Draws one flight state at its body. `end` = clickable branch end state. */
-  private drawState(F: Frame, s: FlightState, color: string, alpha: number, end: { branchId: string; name: string } | null) {
+  private drawState(F: Frame, s: FlightState, color: string, alpha: number, end: { branchId: string; name: string; label: string } | null) {
     const b = stateBody(s);
     if (!b) return;
     // Draw the state where the body is on the state's own day, so the marker sits
@@ -919,14 +1157,20 @@ export class MapRenderer {
       drawGlow(ctx, BODIES[b].color, a.x, a.y, a.r * 3, 0.5);
       drawBody(ctx, this.dpr, b, a.x, a.y, a.r, this.lightAngle(F, a.x, a.y), false);
       ctx.restore();
+      F.discs.push({ x: a.x, y: a.y, r: a.r + 2 });
     }
     const hitKey = end ? `end:${end.branchId}` : '';
-    const hot = !!end && this.hover?.key === hitKey;
-    const tooltip: TipLine[] | undefined = end ? [
+    const hot = !!end && (this.hover?.key === hitKey || this.hover?.key === `pill:${end.branchId}`);
+    const tooltip: TipLine[] = end ? [
       { text: `${end.name}: ${describeState(s)}`, bold: true },
       { text: `Since ${formatDay(s.day, F.startISO)}`, color: COLORS.muted },
-      { text: 'Click to add the next maneuver', color: COLORS.muted },
-    ] : undefined;
+      { text: 'Click to plan the next step', color: COLORS.muted },
+    ] : [];
+    const discR = this.discHitR(a);
+    const requestPill = (ax: number, ay: number, r: number, angle: number) => {
+      if (!end) return;
+      F.pills.push({ branchId: end.branchId, label: end.label, color, alpha: Math.max(alpha, 0.7), ax, ay, r, angle, tooltip });
+    };
 
     // Clickable end states pulse slowly (subtle).
     let pulse = 0;
@@ -943,15 +1187,16 @@ export class MapRenderer {
     ctx.shadowBlur = hot ? 16 : end ? 6 + 6 * pulse : 4;
 
     if (s.kind === 'orbit') {
-      let r = a.r + orbitRingOffset(b, s.altitudeKm);
+      let r = a.r + orbitRingGap(b, s.altitudeKm, this.zoom, a.proxy);
       if (a.isCenter) r = Math.max(r, radiusPx(proj, BODIES[b].radiusKm + s.altitudeKm));
-      r += 4 * this.stackCount(F, `ring:${a.key}:${Math.round(r)}`);
+      r += 4 * this.stackCount(F, `ring:${a.key}:${Math.round(a.x)},${Math.round(a.y)}:${Math.round(r)}`);
       ctx.lineWidth = end ? (hot ? 2.4 : 1.6) : 1;
       ctx.setLineDash(end ? [5, 3] : []);
       ctx.beginPath();
       ctx.arc(a.x, a.y, r, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
+      F.rings.push({ x: a.x, y: a.y, r: r + (end ? 5 : 1) });
       if (end) {
         // Soft echo ring breathing outward with the pulse.
         ctx.save();
@@ -962,18 +1207,15 @@ export class MapRenderer {
         ctx.arc(a.x, a.y, r + 3 + 2 * pulse, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
-        // "+" badge on the ring to hint that it is clickable.
-        const bx = a.x + r * Math.SQRT1_2;
-        const by = a.y - r * Math.SQRT1_2;
-        this.plusBadge(ctx, bx, by, color);
         this.hits.push({
           key: hitKey, priority: 2, action: { kind: 'endState', branchId: end.branchId }, tooltip,
           contains: (x, y) => {
             const d = Math.hypot(x - a.x, y - a.y);
-            // Band around the ring, but leave the body disc itself clickable.
-            return (d > a.r + 1 && Math.abs(d - r) <= RING_HIT_BAND_PX) || Math.hypot(x - bx, y - by) <= 8;
+            // Only the band around the ring: the disc (and its click margin) opens the body's view.
+            return d > discR && Math.abs(d - r) <= RING_HIT_BAND_PX;
           },
         });
+        requestPill(a.x, a.y, r + 2, this.pillAngle(F, a));
       }
     } else if (s.kind === 'surface') {
       const n = this.stackCount(F, `pin:${a.key}`);
@@ -993,15 +1235,17 @@ export class MapRenderer {
       ctx.beginPath();
       ctx.arc(hx, hy, end ? 3.5 : 2.5, 0, Math.PI * 2);
       ctx.fill();
+      F.rings.push({ x: a.x, y: a.y, r: a.r + len + 4 });
       if (end) {
         ctx.strokeStyle = COLORS.bg;
         ctx.lineWidth = 1;
         ctx.stroke();
-        this.plusBadge(ctx, hx + 8, hy - 6, color);
         this.hits.push({
           key: hitKey, priority: 2, action: { kind: 'endState', branchId: end.branchId }, tooltip,
-          contains: (x, y) => Math.hypot(x - hx, y - hy) <= 11 || Math.hypot(x - (hx + 8), y - (hy - 6)) <= 8,
+          contains: (x, y) => Math.hypot(x - hx, y - hy) <= 11 && Math.hypot(x - a.x, y - a.y) > discR,
         });
+        // Pill continues the pin outward.
+        requestPill(a.x, a.y, a.r + len + 4, ang);
       }
     } else if (s.kind === 'approach') {
       const v = s.vInf;
@@ -1031,43 +1275,116 @@ export class MapRenderer {
         ctx.setLineDash([]);
         this.hits.push({
           key: hitKey, priority: 2, action: { kind: 'endState', branchId: end.branchId }, tooltip,
-          contains: (x, y) => Math.hypot(x - cx, y - cy) <= 9 + RING_HIT_BAND_PX,
+          contains: (x, y) => Math.hypot(x - cx, y - cy) <= 9 + RING_HIT_BAND_PX && Math.hypot(x - a.x, y - a.y) > discR,
         });
+        // Pill on the far side of the chevron, away from the body.
+        requestPill(cx, cy, 11, Math.atan2(cy - a.y, cx - a.x));
       }
     }
     ctx.restore();
   }
 
-  /** "+" badge as a small glass circle. */
-  private plusBadge(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+  /**
+   * Lays out and draws the "+ Next step" pills: off the body, along the preferred
+   * direction, rotated in steps until a spot is free of other pills, markers, body
+   * discs, labels and the HUD corner.
+   */
+  private drawPills(F: Frame) {
+    const { ctx } = F;
+    if (!F.pills.length) return;
+    const fr = this.free();
+    // Title, date line and the UI's "Next step" line (≈ insets.top + 64) sit in the top-left.
+    const hud: Rect = { x: fr.x, y: fr.y, w: Math.min(fr.w, 480), h: 86 };
+    const placed: Rect[] = [];
+    const circles = [...F.discs, ...F.markerPts];
+    const h = 22;
+    const GAP = 20;
+    const steps = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6];
     ctx.save();
-    ctx.globalAlpha = Math.max(ctx.globalAlpha, 0.85);
-    ctx.setLineDash([]);
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = COLORS.glass;
+    ctx.font = FONT_BOLD;
+    setSpacing(ctx, '0px');
+    for (const p of F.pills) {
+      const w = Math.ceil(ctx.measureText(p.label).width) + 22;
+      const at = (th: number, dist: number): { rect: Rect; px: number; py: number; th: number } => {
+        const c = Math.cos(th);
+        const s = Math.sin(th);
+        const px = p.ax + c * (p.r + dist);
+        const py = p.ay + s * (p.r + dist);
+        // Nearest edge of the pill touches (px, py).
+        const mx = px + c * (w / 2);
+        const my = py + s * (h / 2);
+        return { rect: { x: mx - w / 2, y: my - h / 2, w, h }, px, py, th };
+      };
+      const fits = (r: Rect, strict: boolean) => {
+        if (r.x < fr.x + 4 || r.y < fr.y + 4 || r.x + r.w > fr.x + fr.w - 4 || r.y + r.h > fr.y + fr.h - 4) return false;
+        if (placed.some((q) => rectsOverlap(r, q, 4))) return false;
+        if (!strict) return true;
+        if (rectsOverlap(r, hud)) return false;
+        if (circles.some((c) => rectHitsCircle(r, c))) return false;
+        if (F.labelRects.some((l) => rectsOverlap(r, l, 1))) return false;
+        return true;
+      };
+      let pick: ReturnType<typeof at> | null = null;
+      outer: for (const strict of [true, false]) {
+        for (const dist of [GAP, GAP + 24]) {
+          for (const k of steps) {
+            const cand = at(p.angle + (k * Math.PI) / 6, dist);
+            if (fits(cand.rect, strict)) { pick = cand; break outer; }
+          }
+        }
+      }
+      if (!pick) pick = at(p.angle, GAP + 26 * this.stackCount(F, `pill:${Math.round(p.ax)},${Math.round(p.ay)}`));
+      placed.push(pick.rect);
+      this.drawPill(F, p, pick.rect, p.ax + Math.cos(pick.th) * p.r, p.ay + Math.sin(pick.th) * p.r, pick.px, pick.py);
+    }
+    ctx.restore();
+  }
+
+  private drawPill(F: Frame, p: PillRequest, r: Rect, lx0: number, ly0: number, lx1: number, ly1: number) {
+    const { ctx } = F;
+    const key = `pill:${p.branchId}`;
+    const hot = this.hover?.key === key || this.hover?.key === `end:${p.branchId}`;
+    const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.4);
+    this.animating = true;
+    ctx.save();
+    ctx.globalAlpha = hot ? 1 : p.alpha;
+    // Leader from the ring / pin to the pill.
+    ctx.strokeStyle = withAlpha(p.color, 0.6);
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 3]);
     ctx.beginPath();
-    ctx.arc(x, y, 6.5, 0, Math.PI * 2);
+    ctx.moveTo(lx0, ly0);
+    ctx.lineTo(lx1, ly1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    roundRectPath(ctx, r.x, r.y, r.w, r.h, r.h / 2);
+    ctx.shadowColor = withAlpha(p.color, hot ? 0.7 : 0.35 + 0.2 * pulse);
+    ctx.shadowBlur = hot ? 16 : 10;
+    ctx.fillStyle = hot ? COLORS.glassHot : COLORS.glass;
     ctx.fill();
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = withAlpha(color, 0.7);
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = withAlpha(p.color, hot ? 0.95 : 0.55 + 0.25 * pulse);
+    ctx.lineWidth = hot ? 1.4 : 1;
     ctx.stroke();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.moveTo(x - 3, y);
-    ctx.lineTo(x + 3, y);
-    ctx.moveTo(x, y - 3);
-    ctx.lineTo(x, y + 3);
-    ctx.stroke();
+    ctx.textBaseline = 'middle';
+    const ty = r.y + r.h / 2 + 0.5;
+    // "+" in the branch colour, the rest in text colour.
+    ctx.fillStyle = p.color;
+    ctx.fillText('+', r.x + 11, ty);
+    const plusW = ctx.measureText('+ ').width;
+    ctx.fillStyle = hot ? '#ffffff' : COLORS.text;
+    ctx.fillText(p.label.replace(/^\+ /, ''), r.x + 11 + plusW, ty);
     ctx.restore();
+    this.hits.push({
+      key, priority: 4, action: { kind: 'endState', branchId: p.branchId }, tooltip: p.tooltip,
+      contains: (x, y) => x >= r.x - 2 && x <= r.x + r.w + 2 && y >= r.y - 2 && y <= r.y + r.h + 2,
+    });
   }
 
   // ----------------------------------------------------------- markers
 
   private drawMarkers(F: Frame, ev: Evaluation) {
-    const { ui, center, proj, day } = F;
+    const { ui, center, proj } = F;
     const pending: PendingMarker[] = [];
     ev.branches.forEach((br, i) => {
       const failIdx = failIndexOf(br);
@@ -1076,7 +1393,8 @@ export class MapRenderer {
         const failed = mi >= failIdx;
         const t = m.trajectory;
         const b = stateBody(m.stateBefore);
-        const a = b ? this.anchor(F, b, day) : null;
+        // Where the body is on the maneuver's own day (e.g. Mars at arrival), not on the map day.
+        const a = b ? this.anchor(F, b, m.startDay) : null;
         if (t && t.centerBody === center && t.points.length > 0 && finite(t.points[0])) {
           const p = toScreen(proj, t.points[0]);
           // Starts on top of its body (e.g. departing at the shown day): join the body's row instead.
@@ -1090,13 +1408,23 @@ export class MapRenderer {
       });
     });
 
-    // Body-anchored markers: a centred row above their body.
-    const groups = new Map<string, PendingMarker[]>();
-    for (const p of pending) if (p.anchorKey) groups.set(p.anchorKey, [...(groups.get(p.anchorKey) ?? []), p]);
-    for (const list of groups.values()) {
+    // Body-anchored markers: a centred row above their body. Group by body and screen
+    // position (the same body on nearby days, e.g. Mars insertion and landing).
+    const groups: PendingMarker[][] = [];
+    for (const p of pending) {
+      if (!p.anchor) continue;
+      const g = groups.find((l) => l[0].anchor!.body === p.anchor!.body
+        && Math.hypot(l[0].anchor!.x - p.anchor!.x, l[0].anchor!.y - p.anchor!.y) < 8);
+      if (g) g.push(p);
+      else groups.push([p]);
+    }
+    for (const list of groups) {
       const a = list[0].anchor!;
       this.ensureProxyDrawn(F, a);
-      const y = a.y - a.r - (a.proxy ? 10 : 24);
+      // Above any state ring / pin drawn around this body.
+      let top = a.r + (a.proxy ? 10 : 24);
+      for (const c of F.rings) if (Math.hypot(c.x - a.x, c.y - a.y) < 8) top = Math.max(top, c.r + 12);
+      const y = a.y - top;
       list.forEach((p, k) => {
         p.x = a.x + (k - (list.length - 1) / 2) * 14;
         p.y = y;
@@ -1114,7 +1442,10 @@ export class MapRenderer {
     // Selected/hovered last so they draw on top.
     const focus = ui.hoverManeuverId ?? ui.selectedManeuverId;
     pending.sort((a, b) => Number(a.m.maneuverId === focus) - Number(b.m.maneuverId === focus) || Number(b.dim) - Number(a.dim));
-    for (const p of pending) this.drawMarker(F, p);
+    for (const p of pending) {
+      this.drawMarker(F, p);
+      F.markerPts.push({ x: p.x, y: p.y, r: 12 });
+    }
   }
 
   private drawMarker(F: Frame, p: PendingMarker) {
@@ -1187,7 +1518,11 @@ export class MapRenderer {
     const tip: TipLine[] = [{ text: m.label, bold: true }];
     let when = formatDay(m.startDay, F.startISO);
     if (m.endDay - m.startDay >= 1) when += ` → ${formatDay(m.endDay, F.startISO)}`;
-    tip.push({ text: `Δv ${formatDv(m.dvRequiredMs)} · ${when}`, color: COLORS.muted });
+    tip.push({
+      text: m.dvRequiredMs > 0.5 ? `Uses ${formatDv(m.dvRequiredMs)} of fuel (Δv)` : 'Uses no fuel (Δv 0)',
+      color: COLORS.text,
+    });
+    tip.push({ text: when, color: COLORS.muted });
     for (const issue of m.issues.slice(0, 4)) {
       if (issue.severity === 'info') continue;
       tip.push({ text: `⚠ ${issue.message}`, color: issue.severity === 'error' ? COLORS.fail : COLORS.warn });
@@ -1255,8 +1590,9 @@ export class MapRenderer {
     const fr = this.free();
     const left = fr.x + 16;
     let x = left;
-    const y = fr.y + 16;
-    const rowH = 28;
+    // Compact: title row + date line end by ≈ fr.y + 56 (the UI's "Next step" line sits at + 64).
+    const y = fr.y + 10;
+    const rowH = 26;
     ctx.save();
     ctx.textBaseline = 'middle';
     if (center !== 'sun') {
@@ -1294,38 +1630,43 @@ export class MapRenderer {
     const title = center === 'sun' ? 'Solar system' : `${BODIES[center].name} system`;
     ctx.fillText(title, x, y + rowH / 2 + 1);
     ctx.shadowBlur = 0;
+    // Zoom / pan help lives in the title's tooltip.
+    const tw = ctx.measureText(title).width;
+    const tx = x;
+    const hintTip: TipLine[] = [
+      { text: 'Moving around the map', bold: true },
+      { text: 'Scroll to zoom · drag to pan', color: COLORS.muted },
+      { text: 'Double-click to reset the view', color: COLORS.muted },
+    ];
+    if (center === 'sun') hintTip.push({ text: 'Click Earth, Mars or Jupiter to see its moons', color: COLORS.muted });
+    this.hits.push({
+      key: 'title', priority: 10, action: { kind: 'info' }, tooltip: hintTip,
+      contains: (px, py) => px >= tx && px <= tx + tw && py >= y && py <= y + rowH,
+    });
 
     ctx.font = FONT_HUD;
-    setSpacing(ctx, LABEL_SPACING);
-    const mode = ui.playthrough ? 'Playthrough' : ui.mapDay !== null ? 'Positions' : F.game.phase === 'planning' ? 'Launch day' : 'Today';
-    const dateY = y + rowH + 16;
+    setSpacing(ctx, '0.3px');
+    const dateY = y + rowH + 12;
     // Small cyan status dot before the date line.
     ctx.fillStyle = ui.playthrough ? COLORS.accent : withAlpha(COLORS.accent, 0.7);
     ctx.beginPath();
     ctx.arc(left + 3, dateY, 2.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = COLORS.muted;
-    ctx.fillText(`${mode} · ${formatDay(F.day, F.startISO)}`.toUpperCase(), left + 12, dateY);
+    ctx.fillText(`Planets shown on ${formatDay(F.day, F.startISO)} · ${F.why}`, left + 12, dateY);
 
-    // Hint, wrapped to the free area.
-    const hint = center === 'sun'
-      ? 'Scroll to zoom · drag to pan · double-click to reset · click Earth, Mars or Jupiter for its moons'
-      : 'Scroll to zoom · drag to pan · double-click to reset';
-    ctx.font = FONT_HINT;
-    setSpacing(ctx, '0.3px');
-    ctx.globalAlpha = 0.6;
-    const maxW = Math.max(160, fr.w - 32);
-    const lines: string[] = [];
-    let cur = '';
-    for (const part of hint.split(' · ')) {
-      const next = cur ? `${cur} · ${part}` : part;
-      if (cur && ctx.measureText(next).width > maxW) {
-        lines.push(cur);
-        cur = part;
-      } else cur = next;
+    // First seconds only: a small zoom / pan hint at the bottom-left, then fade out.
+    const age = performance.now() - HINT_SHOWN_AT;
+    if (age < HINT_VISIBLE_MS + HINT_FADE_MS) {
+      this.animating = true;
+      const hint = center === 'sun'
+        ? 'Scroll to zoom · drag to pan · double-click to reset · click Earth, Mars or Jupiter for its moons'
+        : 'Scroll to zoom · drag to pan · double-click to reset';
+      ctx.font = FONT_HINT;
+      ctx.globalAlpha = 0.6 * clamp(1 - (age - HINT_VISIBLE_MS) / HINT_FADE_MS, 0, 1);
+      ctx.fillStyle = COLORS.muted;
+      ctx.fillText(hint, left, fr.y + fr.h - 14);
     }
-    if (cur) lines.push(cur);
-    lines.forEach((l, i) => ctx.fillText(l, left, dateY + 18 + i * 14));
     ctx.restore();
   }
 

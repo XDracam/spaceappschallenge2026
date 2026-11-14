@@ -22,6 +22,7 @@ Labels: **user direction** = stated by the user (source: [UI and testing notes](
 │ └──────────────┘ └──────────────┘ └──────────────┘           └──────────────────┘
 ```
 
+- **User direction (2026-11-14):** no Procurement panel on the planner station — that is the procurement player's station (D-006). Navigation is Rocket · Versions; each part row in the Rocket panel shows its order status and arrival date versus the launch date.
 - Details appear on demand: rocket parts are compact rows that expand one at a time to show their sliders; procurement rows expand for contract details; the version comparison is behind a toggle.
 - The calendar date runs on its own (pulsing dot); pause and speed live only in the Dev drawer (gear icon).
 - While planning, the map shows positions on the planned launch day ("Launch day" in the map title line); editing a transfer shows its departure day; the playthrough shows its own date.

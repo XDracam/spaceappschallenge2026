@@ -22,6 +22,29 @@ export function transferTargets(body: BodyId): BodyId[] {
 
 const hasAtmosphere = (id: BodyId) => BODIES[id].atmosphere === 'thin' || BODIES[id].atmosphere === 'thick';
 
+/** True if `id` is `ancestor` or orbits it (directly or via a parent). */
+function isWithin(id: BodyId, ancestor: BodyId): boolean {
+  for (let b: BodyId | null = id; b; b = BODIES[b].parent) if (b === ancestor) return true;
+  return false;
+}
+
+/** Does a transfer from `from` to `t` bring the spacecraft closer to one of the goal bodies? */
+function leadsToward(from: BodyId, t: BodyId, goalBodies: Set<BodyId>): boolean {
+  const parent = BODIES[from].parent;
+  for (const g of goalBodies) {
+    if (g === from) continue;
+    if (g === t) return true;
+    if (t === parent) {
+      if (!isWithin(g, from)) return true;   // leaving a moon toward somewhere else
+    } else if (isWithin(g, t)) return true;  // the goal is a moon of the target
+  }
+  return false;
+}
+
+/**
+ * Next-step menu for the end of a branch. Options that lead toward a mission goal body, or are the
+ * goal action at the current body, come first; everything else is `secondary` (shown under "More…").
+ */
 export function availableManeuvers(game: GameState, branch: Branch, state: FlightState): ManeuverOption[] {
   const isRoot = game.plan.branches[0]?.id === branch.id;
   if (isRoot && branch.maneuvers.length === 0) {
@@ -30,70 +53,95 @@ export function availableManeuvers(game: GameState, branch: Branch, state: Fligh
   }
   if (state.kind === 'lost') return [];
   const body = BODIES[state.body];
+  const goalBodies = new Set(game.mission.goals.map((g) => g.body));
+  const landBodies = new Set(game.mission.goals.filter((g) => g.kind === 'land' || g.kind === 'surfaceData').map((g) => g.body));
+  const atGoal = goalBodies.has(body.id);
   const scIds = branchSpacecraftAtEnd(game, branch);
   const scs = scIds
     .map((id) => game.rocket.spacecraft.find((s) => s.id === id))
     .filter((s): s is Spacecraft => !!s);
   const opts: ManeuverOption[] = [];
+  /** Disabled options never count as primary. */
+  const push = (o: ManeuverOption, primary: boolean) => {
+    opts.push(primary && o.enabled ? o : { ...o, secondary: true });
+  };
   switch (state.kind) {
     case 'orbit': {
-      opts.push({ type: 'changeOrbit', label: 'Change orbit', enabled: true });
-      for (const t of transferTargets(body.id)) {
-        opts.push({ type: 'transfer', target: t, label: `Transfer to ${BODIES[t].name}`, enabled: true });
+      // Release: one option per spacecraft; the first one always stays on this branch.
+      for (const sc of scs.slice(1)) {
+        push({ type: 'separate', spacecraftId: sc.id, label: `Release ${sc.name}`, enabled: true }, atGoal);
       }
       if (body.landable) {
         const canLand = scs.some((sc) => CAN_LAND.includes(sc.payloadType));
-        opts.push({
+        push({
           type: 'land', label: `Land on ${body.name}`, enabled: canLand,
           ...(canLand ? {} : { reason: 'No lander on this branch' }),
-        });
+        }, landBodies.has(body.id));
       }
-      if (scIds.length >= 2) opts.push({ type: 'separate', label: 'Separate', enabled: true });
+      for (const t of transferTargets(body.id)) {
+        push({ type: 'transfer', target: t, label: `Transfer to ${BODIES[t].name}`, enabled: true }, leadsToward(body.id, t, goalBodies));
+      }
+      push({ type: 'changeOrbit', label: 'Change orbit height', enabled: true }, false);
       break;
     }
     case 'approach': {
-      opts.push({ type: 'insertion', label: `Orbit insertion at ${body.name}`, enabled: true });
-      for (const t of siblingsOf(body.id)) {
-        opts.push({ type: 'flyby', target: t, label: `Flyby of ${body.name} toward ${BODIES[t].name}`, enabled: true });
-      }
+      push({ type: 'insertion', label: `Enter orbit at ${body.name}`, enabled: true }, atGoal);
       if (hasAtmosphere(body.id) && body.landable) {
-        opts.push({ type: 'entry', label: body.id === 'earth' ? 'Earth entry' : `Atmospheric entry at ${body.name}`, enabled: true });
+        push({
+          type: 'entry', enabled: true,
+          label: body.id === 'earth' ? 'Splash down on Earth' : `Land directly on ${body.name} (no orbit)`,
+        }, landBodies.has(body.id));
+      }
+      for (const t of siblingsOf(body.id)) {
+        push({ type: 'flyby', target: t, label: `Swing past ${body.name} toward ${BODIES[t].name}`, enabled: true }, false);
       }
       break;
     }
     case 'surface': {
       const can = body.launchDvMs > 0;
-      opts.push({
-        type: 'ascent', label: `Ascent from ${body.name}`, enabled: can,
+      const elsewhere = [...goalBodies].some((g) => g !== body.id);
+      push({
+        type: 'ascent', label: `Lift off from ${body.name}`, enabled: can,
         ...(can ? {} : { reason: `No ascent possible from ${body.name}` }),
-      });
+      }, elsewhere);
       break;
     }
   }
-  return opts;
+  // Primary first; original order kept within each group.
+  return [...opts.filter((o) => !o.secondary), ...opts.filter((o) => o.secondary)];
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-/** Earliest window whose cost is within 5 % of the grid's best (so defaults don't skip a near-equal window). */
-function earliestGoodWindow(g: TransferGrid): TransferGrid['best'] {
-  if (!Number.isFinite(g.best.dvMs)) return g.best;
-  const cols = g.departDays.map((departDay, ix) => {
-    let dvMs = Infinity;
-    let travelDays = g.travelDays[0];
-    for (let iy = 0; iy < g.travelDays.length; iy++) {
-      if (g.dvMs[iy][ix] < dvMs) {
-        dvMs = g.dvMs[iy][ix];
-        travelDays = g.travelDays[iy];
+/**
+ * Earliest window whose cost is within 5 % of the grid's best (so defaults don't skip a near-equal window).
+ * Only cells arriving by `maxArrivalDay` count, unless none does.
+ */
+function earliestGoodWindow(g: TransferGrid, maxArrivalDay = Infinity): TransferGrid['best'] {
+  const scan = (limit: number): TransferGrid['best'] => {
+    let best: TransferGrid['best'] = { departDay: g.departDays[0], travelDays: g.travelDays[0], dvMs: Infinity };
+    const cols = g.departDays.map((departDay, ix) => {
+      let dvMs = Infinity;
+      let travelDays = g.travelDays[0];
+      for (let iy = 0; iy < g.travelDays.length; iy++) {
+        if (departDay + g.travelDays[iy] > limit) continue;
+        if (g.dvMs[iy][ix] < dvMs) {
+          dvMs = g.dvMs[iy][ix];
+          travelDays = g.travelDays[iy];
+        }
       }
+      if (dvMs < best.dvMs) best = { departDay, travelDays, dvMs };
+      return { departDay, travelDays, dvMs };
+    });
+    if (!Number.isFinite(best.dvMs)) return best;
+    for (let ix = 0; ix < cols.length; ix++) {
+      const c = cols[ix];
+      if (c.dvMs <= best.dvMs * 1.05 && (ix === cols.length - 1 || c.dvMs <= cols[ix + 1].dvMs)) return c;
     }
-    return { departDay, travelDays, dvMs };
-  });
-  for (let ix = 0; ix < cols.length; ix++) {
-    const c = cols[ix];
-    if (c.dvMs <= g.best.dvMs * 1.05 && (ix === cols.length - 1 || c.dvMs <= cols[ix + 1].dvMs)) return c;
-  }
-  return g.best;
+    return best;
+  };
+  const within = scan(maxArrivalDay);
+  return Number.isFinite(within.dvMs) ? within : scan(Infinity);
 }
 
 export function createManeuver(
@@ -119,11 +167,12 @@ export function createManeuver(
       const rel = transferRelation(from.body, target);
       const earliest = Math.ceil(from.day);
       if (rel === 'sibling') {
+        const deadline = game.mission.completionDeadlineDay;
         const r = transferRanges(from.body, target, from.day);
         const nx = 60;
         const ny = 40;
         const g = transferGrid(from, target, r.depart, r.travel, nx, ny);
-        let bestPt = earliestGoodWindow(g);
+        let bestPt = earliestGoodWindow(g, deadline);
         if (Number.isFinite(bestPt.dvMs)) {
           const dx = (r.depart[1] - r.depart[0]) / (nx - 1);
           const dy = (r.travel[1] - r.travel[0]) / (ny - 1);
@@ -132,7 +181,8 @@ export function createManeuver(
             [Math.max(from.day, bestPt.departDay - dx), bestPt.departDay + dx],
             [Math.max(1, bestPt.travelDays - dy), bestPt.travelDays + dy], 15, 15,
           );
-          if (fine.best.dvMs < bestPt.dvMs) bestPt = fine.best;
+          const arrivalLimit = Math.max(deadline, bestPt.departDay + bestPt.travelDays);
+          if (fine.best.dvMs < bestPt.dvMs && fine.best.departDay + fine.best.travelDays <= arrivalLimit) bestPt = fine.best;
           return {
             id, type: 'transfer', target,
             departDay: Math.max(earliest, Math.round(bestPt.departDay)),
@@ -161,7 +211,8 @@ export function createManeuver(
       return { id, type: 'entry' };
     case 'separate': {
       const ids = branchSpacecraftAtEnd(game, branch);
-      return { id, type: 'separate', spacecraftIds: ids.length ? [ids[ids.length - 1]] : [], newBranchId: newId('branch') };
+      const pick = option.spacecraftId && ids.includes(option.spacecraftId) ? option.spacecraftId : ids[ids.length - 1];
+      return { id, type: 'separate', spacecraftIds: pick ? [pick] : [], newBranchId: newId('branch') };
     }
   }
 }
