@@ -54,26 +54,26 @@ Full specification: [Mission planner UI](ui.md).
 
 ## Running the app
 
-The implementation lives in [`app/`](app/).
+Since the integration (D-015) the planner is one station view of the integrated game in [`game/`](../game/); its code is in [`game/src/stations/planner/`](../game/src/stations/planner/). How the stations share state: [integration design](../docs/design/integration.md).
 
 ```bash
-cd mission-planner/app
+cd game
 npm install
 npm run dev
 ```
 
-Open http://localhost:5173. `npm run build` type-checks and builds to `app/dist/`.
+Open http://localhost:5173 and pick the planner station.
 
-Code layout:
+Code layout (under `game/src/stations/planner/`):
 
 | Folder | Contents |
 | --- | --- |
-| `app/src/model/` | Shared types, units and formatting, rocket lookup helpers |
-| `app/src/data/` | Hand-crafted content: bodies, propulsion types, part rules, missions |
-| `app/src/physics/` | Ephemeris, Lambert transfers, maneuver costs, staging, live evaluation, playthrough |
-| `app/src/state/` | Stores (game, UI, agency calendar) and all actions, incl. dev controls |
-| `app/src/map/` | Canvas solar-system map |
-| `app/src/ui/` | Preact UI: top bar, side panel tabs, Δv bar, popups, heat map, playthrough |
+| `model/` | Planner types, units and formatting, rocket lookup helpers |
+| `data/` | Hand-crafted content: bodies, propulsion types, part rules, missions |
+| `physics/` | Ephemeris, Lambert transfers, maneuver costs, staging, live evaluation, playthrough |
+| `logic.ts`, `slice.ts` | Planner reducers and its part of the shared game state |
+| `map/` | Canvas solar-system map |
+| `ui/` | Preact UI: top bar, side panel, Δv bar, popups, heat map, playthrough |
 
 Implementation notes (choices made while building, within the baseline):
 

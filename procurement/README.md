@@ -10,6 +10,25 @@ The proposed [role actions](role-actions.md) map player choices to procurement-f
 
 The proposed [Task and conversation boundary](tasks-and-conversation.md) distinguishes persistent goals from the coordination players do by talking.
 
+## Implementation
+
+**Status (November 14, 2026):** the station runs as a view of the integrated game app (D-015), code in [`game/src/stations/procurement`](../game/src/stations/procurement). It ports the Full HD mockup's layout and interactions to the shared state at about 1440 × 900, styled with the planner's glass look (D-013).
+
+- **Content** (`data/`, hand-authored per D-005): 7 fictional suppliers with distinct traits (cheap/slow, reliable/expensive, fast, balanced, propulsion specialist, flexible terms, experimental), 77 Resources covering every planner part kind and variant on the planner's stat keys, and 152 catalogue Offers (1–3 per Resource). Prices use the planner's estimated-cost formula times a supplier factor; lead times are 2–14 months; reliability is 0.85–0.995. The Mars starting design can be bought from the catalogue. Call responses are authored templates per part kind, built to the Task's minimums.
+- **Actions** (`logic.ts`): `signOffer` creates a Contract and an Allocation and commits the price if the Budget allows. `openCall` opens a Call that closes after 30 days, `closeCall` withdraws one, `cancelContract` cancels, and `allocate` and `release` manage Allocations. `devAddSampleTasks` is a dev stand-in for the planner's "Order part".
+- **Tick:** a delivery at `expectedAt` moves the price from committed to spent and makes the Allocation available. A Call that closes produces Offers, which stay valid for 90 days. Comms modifiers expire. The `contract.late` flag is kept current and a news item is posted once per late Contract. Signing the cheapest of several fitting Offers sets `contract.cheapest`; cancelling sets `contract.cancelled`.
+- **Rules** (`rules.ts`; placeholders):
+  - Catalogue prices follow comms `priceModifier`. Active `deliveryDelay` modifiers push back new Contracts.
+  - A Resource beyond research (`research.limits` or `unlocked`) is tender-only. Its Call Offers cost 1.5–3× and are less reliable.
+  - Refund on cancellation = price × (1 − cancellationPct) × time remaining ÷ lead time. The non-refunded share is spent.
+- **UI** (`Station.tsx`, `ui/`, `procurement.css` scoped under `.st-procurement`):
+  - Header: date, launch countdown, and Budget (available, committed, spent, funding).
+  - Needs list: coverage, lateness, and contracted parts that no longer fit revised Tasks.
+  - Catalogue: categories, search, sort, matches-only and hide-tender-only filters, and up to 3-way comparison.
+  - Decision panel: fit check per Offer (for example "Isp 432 s < 445 s"), delivery against the need date, and Budget. It also suggests an Offer and asks for confirmation before signing.
+  - Calls and comms partner Offers, a Contracts inventory with cancel, refund, and allocate, and a news strip.
+- **Open:** Task status (`completed`) is left to the shared Task system. Contract failure is not modelled. Payment is due on delivery.
+
 ## Desktop design mockup
 
 Open the [Full HD catalogue mockup](mockups/catalogue-full-hd.html) in a browser at 1920 × 1080 or larger. The [mockup notes](mockups/README.md) describe interactions and illustrative fixture rules.

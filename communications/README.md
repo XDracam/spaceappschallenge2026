@@ -96,23 +96,25 @@ Three slots; the third opens at strong trust with any stakeholder (proposal with
 
 **User direction (2026-11-14):** a standalone app in `app/` with the planner's stack (Preact, TypeScript, Vite); a dev drawer stands in for the other stations until they connect (Q-012); shared event-system code lives in the top-level [`shared/`](../shared/) folder. Claude drafts the content (events, characters, projects, trust numbers) as the baseline; tone is light satire, grounded; portraits are stylised initials.
 
+**Integration (D-015):** comms is now one station view of the integrated game in [`game/`](../game/); code in [`game/src/stations/comms/`](../game/src/stations/comms/), shared event engine in [`game/src/shared/events/`](../game/src/shared/events/). Effects act on the shared state instead of the stand-in outbox ([integration design](../docs/design/integration.md)).
+
 ```bash
-cd communications/app
+cd game
 npm install
 npm run dev
 ```
 
-Open http://localhost:5175 (the planner uses 5173, science 5174).
+Open http://localhost:5173 and pick the communications station.
 
 **Status (2026-11-14):** built and checked in the browser at 1440×900: briefing (calendar waits), events arriving and expiring with their default outcome, answering with revealed outcomes, projects, flag-triggered event chains (RTG flag → plutonium story → protest), news feed, and the dev drawer's outbox of effects for the other stations. Content: 5 characters, 34 events (8 timeline, 11 triggered, 15 pool), 10 projects, 5 in-flight events — Claude-drafted baseline, tone light satire. Not integrated with the other stations (Q-012); not playtested.
 
-| Folder | Contents |
+| Folder (under `game/src/`) | Contents |
 | --- | --- |
-| `app/src/data/` | Hand-authored content: characters, events, projects, in-flight events; mission constants |
-| `app/src/model/` | Comms types |
-| `app/src/state/` | Game state, calendar, actions, dev stand-ins |
-| `app/src/ui/` | Preact UI (layout A) |
-| `../shared/events/` | Shared event types and engine for all stations |
+| `stations/comms/data/` | Hand-authored content: characters, events, projects, in-flight events; mission constants |
+| `stations/comms/model/` | Comms types |
+| `stations/comms/logic.ts`, `slice.ts` | Comms reducers, tick handler and its part of the shared state |
+| `stations/comms/ui/` | Preact UI (layout A) |
+| `shared/events/` | Shared event types and engine for all stations |
 
 ## Open questions
 

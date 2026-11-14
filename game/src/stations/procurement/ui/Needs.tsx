@@ -1,0 +1,104 @@
+// Left column: shared needs (open Tasks from any role) with coverage per criterion.
+import type { Criterion, Task } from '../../../core/model';
+import { procurementActions } from '../logic';
+import {
+  budgetAvailableM, criterionCoverage, fmtDate, fmtM, fmtStatValue, offersForCriterion, openTasks, suggestion, taskCode,
+  type Coverage, type PView,
+} from '../rules';
+import { categoryOf, setUi, useP, useUi } from './uiState';
+
+const ROLE: Record<string, string> = { planner: 'Planner', procurement: 'Procurement', science: 'Science', comms: 'Comms' };
+
+export function criterionSummary(c: Criterion): string {
+  const mins = Object.entries(c.minimums).map(([k, v]) => `≥ ${fmtStatValue(c.partKind, c.variant, k, v)}`).join(' · ');
+  return `${c.quantity > 1 ? `${c.quantity}× ` : ''}${mins}`;
+}
+
+export function coverageText(cov: Coverage): { text: string; tone: '' | 'good' | 'warn' } {
+  if (cov.mismatch.length) return { text: `Revised — contracted part fails: ${cov.mismatch[0]}`, tone: 'warn' };
+  if (cov.late) return { text: `Late — arrives ${fmtDate(cov.expectedAt!)}`, tone: 'warn' };
+  if (cov.status === 'delivered') return { text: 'Delivered', tone: 'good' };
+  if (cov.status === 'contracted') return { text: `Contracted — arrives ${fmtDate(cov.expectedAt!)}`, tone: 'good' };
+  if (cov.status === 'partial') return { text: `${cov.covered} of ${cov.needed} contracted`, tone: 'warn' };
+  if (cov.openCall) return { text: `Call open — answers ${fmtDate(cov.openCall.closesAt)}`, tone: '' };
+  return { text: 'Not covered', tone: '' };
+}
+
+function focusNeed(task: Task, c: Criterion) {
+  setUi({
+    focus: { taskId: task.id, criterionId: c.id }, inspect: 'need', view: 'catalogue',
+    category: categoryOf(c.partKind), matchesOnly: false, query: '',
+  });
+}
+
+/** Cheapest fitting signable cost of every uncovered criterion (budget pressure, D-011). */
+function uncoveredCost(v: PView): { cost: number; unsolvable: number } {
+  let cost = 0;
+  let unsolvable = 0;
+  for (const t of openTasks(v)) {
+    for (const c of t.criteria) {
+      const cov = criterionCoverage(v, t, c);
+      if (cov.missing === 0) continue;
+      const best = suggestion(offersForCriterion(v, t, c));
+      if (best) cost += best.totalPriceM; else unsolvable++;
+    }
+  }
+  return { cost, unsolvable };
+}
+
+export function Needs() {
+  const v = useP();
+  const focus = useUi((u) => u.focus);
+  const tasks = openTasks(v);
+  const rows = tasks.flatMap((t) => t.criteria.map((c) => ({ t, c, cov: criterionCoverage(v, t, c) })));
+  const uncovered = rows.filter((r) => r.cov.missing > 0).length;
+  const issues = rows.filter((r) => r.cov.late || r.cov.mismatch.length).length;
+  const { cost, unsolvable } = uncoveredCost(v);
+  const available = budgetAvailableM(v.budget);
+  return (
+    <aside class="pr-panel pr-needs" aria-label="Shared needs">
+      <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length}</span></div>
+      <div class="pr-situation">
+        <div><strong>{uncovered}</strong> <span class="muted">not fully covered</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div>
+        {uncovered ? (
+          <div class={cost > available ? 'warn' : 'muted'}>
+            Cheapest fitting cover ≈ {fmtM(cost)}{unsolvable ? ` + ${unsolvable} without catalogue fit` : ''} · {fmtM(available)} available
+          </div>
+        ) : null}
+      </div>
+      <div class="pr-need-list">
+        {rows.map(({ t, c, cov }) => {
+          const st = coverageText(cov);
+          const pressed = focus?.taskId === t.id && focus.criterionId === c.id;
+          return (
+            <button key={`${t.id}:${c.id}`} type="button" class={`pr-need${st.tone === 'warn' ? ' review' : ''}`} aria-pressed={pressed} onClick={() => (pressed ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c))}>
+              <span class="pr-need-top">
+                <span>{taskCode(t)}{t.revision > 1 ? ` · rev ${t.revision}` : ''}</span>
+                <span>From {ROLE[t.authorRole] ?? t.authorRole}{t.priority === 'high' ? ' · high' : ''}</span>
+              </span>
+              <span class="pr-need-title">{t.title}</span>
+              <span class="pr-need-crit">{c.label} · {criterionSummary(c)}</span>
+              {t.beyondResearch.length ? <span class="pr-chip warn">Beyond research</span> : null}
+              <span class="pr-need-status">
+                <span class={st.tone}>{st.text}</span>
+                <span class="muted">Needed {fmtDate(t.neededAt)}</span>
+              </span>
+            </button>
+          );
+        })}
+        {!rows.length ? (
+          <div class="pr-empty">
+            <p>No open needs yet. The planner's “Order part” publishes Tasks here; science and comms can add needs too.</p>
+          </div>
+        ) : null}
+      </div>
+      {import.meta.env.DEV ? (
+        <div class="pr-dev">
+          <button type="button" class="pr-btn small" onClick={() => procurementActions.devAddSampleTasks()} title="Dev stand-in for the planner: one Task per part of the current rocket">
+            Dev · add Tasks from rocket
+          </button>
+        </div>
+      ) : null}
+    </aside>
+  );
+}

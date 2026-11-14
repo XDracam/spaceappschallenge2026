@@ -2,16 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "mission-planner",
+      "name": "game",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "mission-planner/app", "run", "dev"],
+      "runtimeArgs": ["--prefix", "game", "run", "dev"],
       "port": 5173
-    },
-    {
-      "name": "communications",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "communications/app", "run", "dev"],
-      "port": 5175
     }
   ]
 }

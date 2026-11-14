@@ -35,6 +35,7 @@
 | [Science module](../science/README.md) | Science role: research field graph and project drafting (standalone visual prototype) |
 | [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
 | [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
+| [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015) |
 
 ## Persistent project memory
 
