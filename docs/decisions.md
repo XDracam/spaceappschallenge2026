@@ -71,6 +71,19 @@ Tasks are shared problems whose applicable roles may be unclear, as in the origi
 
 See the [source clarification](notes/2026-11-14-tasks-and-conversation.md), the [shared Tasks brainstorm](design/shared-tasks.md), and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
 
+## D-008 — Procurement alignment after incoming mission-planner work
+
+User clarification on November 14, 2026, following the integration review.
+
+- Tasks are shared problems. Replace the incoming role-addressed “Send to procurement” workflow with publication to the shared Task list.
+- Inventory is contract-only. A delivered Contract continues to represent what is available for use and Allocation.
+- Procurement consumes Tasks and publishes assessments and its own procurement records. Task creation and replacement Task identity belong to the planner/shared Task design.
+- Domestic research limits are distinct from acquisition routes. Expensive external purchase and diplomacy can remain possible before domestic research unlocks a part.
+- Detailed mission feasibility and the mass consequences of slider minimums remain within the planner's scope. Procurement checks the supplied Task criteria.
+- Planner displays for Budget, delivery status and goal risk require ordinary state integration. They do not create a concept conflict with direct player conversation. Broader visibility details can be considered during interface design.
+
+See the [user response](notes/2026-11-14-procurement-alignment.md) and the [review resolution](reviews/2026-11-14-mission-planner-integration.md#resolution-after-user-review).
+
 ## Future decision template
 
 ```markdown

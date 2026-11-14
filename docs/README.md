@@ -35,6 +35,7 @@
 | [Taxonomy request](notes/2026-11-14-taxonomy.md) | User request for a taxonomy and visual handoff |
 | [Role action request](notes/2026-11-14-role-actions.md) | User scope for actions impacting procurement |
 | [Tasks and conversation clarification](notes/2026-11-14-tasks-and-conversation.md) | User direction on spoken coordination and shared Tasks |
+| [Procurement alignment response](notes/2026-11-14-procurement-alignment.md) | User resolution of the incoming concept findings |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |

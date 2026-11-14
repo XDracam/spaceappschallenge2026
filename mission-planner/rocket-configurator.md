@@ -2,6 +2,8 @@
 
 Labels: **user direction** = stated by the user (sources in [notes](notes/2026-11-14-maneuvers-and-configurator.md)). **Proposal** = suggested, not yet accepted.
 
+Cross-module clarification in [D-008](../docs/decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) selects shared role-neutral Tasks and contract-only inventory. The current lifecycle below reflects that clarification.
+
 ## Structure
 
 **User direction:**
@@ -87,7 +89,7 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 
 ## Link to procurement
 
-**User direction:** the planner does not shop (I-031). When the planner turns a tested version into procurement tasks, each slider value becomes the task's minimum, for example "engine, hydrogen/oxygen, Isp at least 340 s, thrust at least 900 kN". This applies to payload components too.
+**User direction:** the planner does not shop (I-031). When the planner publishes tested part needs as shared Tasks, each slider value becomes the task's minimum, for example "engine, hydrogen/oxygen, Isp at least 340 s, thrust at least 900 kN". This applies to payload components too.
 
 **Proposal:**
 
@@ -99,7 +101,7 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 **User direction:**
 
 - A contract can be cancelled, but cancelling does not refund the full cost.
-- When a contract has run through, the agency has the part and can use it at no further cost.
+- A delivered Contract records that its resource is available for use and Allocation at no further procurement cost.
 - A contracted or delivered part cannot be changed. If the planner needs something different, that requires an entirely new contract.
 - Only procurement can cancel a contract. (Assistant reading: the game has no planner-side cancel request; the planner asks procurement by talking to them.)
 - One level is one mission. Parts and contracts exist only within that level; nothing carries over to another mission. Within the level, a delivered part stays available to the design until launch.
@@ -108,20 +110,20 @@ Payload equipment gates maneuvers: landing on an airless body needs landing legs
 
 | State | Meaning | Planner can edit sliders? | Cost |
 | --- | --- | --- | --- |
-| Draft | in the design, not sent | yes, freely | none |
-| Task sent | procurement is looking for offers | yes; the task's minimums update | none |
+| Draft | in the design, need unpublished | yes, freely | none |
+| Task published | shared need can be addressed through several roles | yes; the task's minimums update | none |
 | Contracted | contract signed; part on its way, arriving on the delivery date | no, stats fixed to the contracted part | price committed at signing |
-| Delivered | contract has run through; the agency has the part | no | none further |
+| Delivered | Contract records available resource quantity | no | none further |
 
 Changing a contracted or delivered part:
 
-1. The planner unlocks the part in the design; this creates a new draft for a replacement part, keeping the old part in the Tasks tab.
-2. The replacement goes through the normal flow: task sent, then a new contract.
-3. The old contract keeps running unless procurement cancels it. A delivered part stays in the agency's inventory.
+1. The planner unlocks the part in the design; this creates a new draft for a replacement part, retaining the old Contract in the design status view.
+2. The replacement follows the shared Task and procurement flow and requires a new Contract. Task identity is handled by the planner/shared Task design.
+3. The old Contract keeps running unless procurement cancels it. A delivered Contract remains in the Contract list, which acts as inventory.
 
 Cancellation refund: the refund is a share of the price that shrinks as the delivery date approaches, from 50% right after signing to 0% on delivery. Values are placeholders for balancing.
 
-This refines the procurement idea "we never own things, only contracts" ([roles](../docs/design/roles.md#resource-management-and-procurement--i-001)): a contract that has run through means the agency has the part.
+D-008 confirms contract-only inventory. A delivered Contract represents the continuing availability of the supplied resource. Allocation connects that availability to shared Tasks.
 
 ## Beyond-research parts
 

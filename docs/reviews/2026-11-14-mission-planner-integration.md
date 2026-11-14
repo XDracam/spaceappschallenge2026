@@ -8,7 +8,22 @@ The incoming module's README records acceptance of its proposals as the baseline
 
 The pull encountered one textual conflict in `docs/README.md`. Both sides added links to their respective module. The resolution retains the procurement entries and the mission-planner entry. Incoming module content and local concept records are preserved.
 
-## Findings requiring alignment
+## Resolution after user review
+
+The user responded to the six findings. [D-008](../decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) records the resulting direction. The original findings below remain as review history.
+
+| Finding | Disposition |
+| --- | --- |
+| 1. Task routing | Shared role-neutral Tasks win. Corrected the incoming publication wording. |
+| 2. Inventory | Contract-only inventory wins. Delivered Contracts represent available resources. |
+| 3. Replacement identity | Outside procurement's responsibility. Procurement consumes Tasks and tracks Contracts and Allocations. |
+| 4. Research access | Retain alternative purchase and diplomacy routes. Domestic research limits do not globally block acquisition. |
+| 5. Physical feasibility | Outside procurement's scope. Procurement checks the supplied criteria. Planner owns detailed mission feasibility. |
+| 6. Visibility | Closed as a concept conflict. Accepted planner displays require normal state integration and coexist with spoken coordination. |
+
+See the [verbatim user response](../notes/2026-11-14-procurement-alignment.md).
+
+## Findings at time of pull
 
 ### 1. Task routing and responsibility
 
@@ -18,7 +33,7 @@ This is a wording and workflow tension. Sending could mean publishing a shared n
 
 The integration decision is what the button does and how the planner's Task view relates to the global list. A filtered view and lifecycle feedback can coexist with spoken coordination.
 
-Sources include [our Task boundary](../../procurement/tasks-and-conversation.md#task-boundary-to-explore), [planner sending tasks](../../mission-planner/ui.md#sending-tasks), and [beyond-research parts](../../mission-planner/rocket-configurator.md#beyond-research-parts).
+Sources include [our Task boundary](../../procurement/tasks-and-conversation.md#task-boundary-to-explore), [planner sending tasks](../../mission-planner/ui.md#publishing-tasks), and [beyond-research parts](../../mission-planner/rocket-configurator.md#beyond-research-parts).
 
 ### 2. Delivered parts and inventory
 

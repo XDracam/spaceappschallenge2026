@@ -92,7 +92,7 @@ Does “every task has at least one solution” mean a theoretical solution exis
 
 ## Q-023 — Contract inventory and discarded things
 
-If nothing is owned and everything is a contract, what exactly does a contract represent? How are active, fulfilled, cancelled, discarded, replaced, or historical contracts and their associated items tracked? What is a discarded item versus a cancelled contract?
+D-008 selects contract-only inventory. What exactly does a Contract represent over its lifecycle? How are active, fulfilled, cancelled, discarded, replaced, or historical contracts and their associated items tracked? What is a discarded item versus a cancelled contract?
 
 ## Q-024 — Need dates and assembly
 
@@ -100,7 +100,7 @@ How do we track when a part is needed, assembly duration, delivery and minimum l
 
 ## Q-025 — Editing tasks and changing constraints
 
-What happens to requests, offers, contracts, and deadlines when planning edits a task or an event changes its constraints? Who is notified and who can change or cancel commitments?
+What happens to requests, offers, contracts, and deadlines when planning edits a task or an event changes its constraints? Which state changes are visible, and who can revise needs or cancel commitments? Procurement consumes the supplied Task identity. Replacement Task identity is outside its scope under D-008.
 
 ## Q-026 — Authored content boundary
 
@@ -124,4 +124,4 @@ How do visual-novel interactions and unhandled events turn into consequences or 
 
 ## Q-031 — Tasks, conversation, and information visibility
 
-Which persistent shared goals should be Tasks, and which requests or negotiations should happen through direct conversation? What do the other roles see of procurement's options, assessments, commitments, and Budget? How can the interface help players reference facts while preserving meaningful conversation? See D-007 and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
+Which persistent shared goals should be Tasks, and which requests or negotiations should happen through direct conversation? D-008 accepts planner displays of Budget, delivery status and goal risk. What additional procurement options and assessment details should other roles see? How can the interface help players reference facts while preserving meaningful conversation? See D-007 and the proposed [Task boundary](../procurement/tasks-and-conversation.md).

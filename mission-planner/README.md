@@ -6,6 +6,8 @@ Labels: **user direction** = stated by the user. **Proposal** = suggested by the
 
 **Baseline (user direction, 2026-11-14):** all proposals in this module's documents dated up to 2026-11-14 are accepted as the baseline. They change as building reveals problems. Numbers marked as placeholders remain balancing values.
 
+Later cross-module clarification in [D-008](../docs/decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) selects shared role-neutral Tasks and contract-only inventory. These supersede the original routed-task and separate-inventory wording. Procurement consumes Tasks.
+
 Related project docs: [roles](../docs/design/roles.md#mission-planning--i-004), [shared tasks](../docs/design/shared-tasks.md), ideas I-004, I-030, I-031, questions Q-007, Q-009, Q-029.
 
 ## Solar system and maneuvers
@@ -18,13 +20,13 @@ Full specification: [Solar system and maneuvers](solar-system-and-maneuvers.md).
 
 ## Rocket configurator
 
-**User direction:** expendable stacked stages plus a multi-component payload spacecraft that can have its own stages. Sliders set exact part stats for a rocket version, tested in simulation. Slider values become minimums on procurement tasks. Planning beyond current research is allowed, including better-than-state-of-the-art instruments; such parts become one "get that part" task solvable through research, expensive purchase, or diplomacy. The planner alone owns the payload design. Ion propulsion is in scope, simplified.
+**User direction:** expendable stacked stages plus a multi-component payload spacecraft that can have its own stages. Sliders set exact part stats for a rocket version, tested in simulation. Slider values become minimums on shared Tasks. Planning beyond current research is allowed, including better-than-state-of-the-art instruments; such parts become one "get that part" task solvable through research, expensive purchase, or diplomacy. The planner alone owns the payload design. Ion propulsion is in scope, simplified.
 
 Full specification: [Rocket configurator](rocket-configurator.md).
 
 ## UI
 
-**User direction:** the map is always visible with a docked side panel for rocket, tasks, and versions. The test runs live on every edit; results show on the map (red trajectory, warning icons) and on the delta-v bar with goal success chances. Parts are sent to procurement one at a time.
+**User direction:** the map is always visible with a docked side panel for rocket, tasks, and versions. The test runs live on every edit; results show on the map (red trajectory, warning icons) and on the delta-v bar with goal success chances. Part needs are published as shared Tasks one at a time.
 
 Full specification: [Mission planner UI](ui.md).
 

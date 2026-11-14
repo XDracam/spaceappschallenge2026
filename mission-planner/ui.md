@@ -2,9 +2,11 @@
 
 Labels: **user direction** = stated by the user (source: [UI and testing notes](notes/2026-11-14-ui-and-testing.md)). **Proposal** = suggested, not yet accepted.
 
+Cross-module clarification in [D-008](../docs/decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) supersedes the original role-addressed Task workflow. Tasks are shared problems and players discuss solutions directly.
+
 ## Layout
 
-**User direction:** the solar system map is always visible. The rocket configurator, procurement tasks, and versions sit in a docked side panel.
+**User direction:** the solar system map is always visible. The rocket configurator, shared Tasks, and versions sit in a docked side panel.
 
 **Proposal:**
 
@@ -28,7 +30,7 @@ Labels: **user direction** = stated by the user (source: [UI and testing notes](
 - **Bottom strip:** the delta-v bar and goal success chances, always visible.
 - **Side panel tabs:**
   - **Rocket:** stage stack (rocket stages, payload stages, payload equipment) with each part's sliders, research limits, and lock icons.
-  - **Tasks:** the planner's procurement tasks with status (draft, sent, offers received, contracted, delivered) and expected delivery date against the launch date.
+  - **Tasks:** a view of shared Tasks relevant to this design, with procurement progress (draft, published, offers received, contracted, delivered) and expected delivery date against the launch date.
   - **Versions:** saved versions for comparison.
 
 ## Live testing
@@ -49,13 +51,15 @@ Labels: **user direction** = stated by the user (source: [UI and testing notes](
 | Part beyond research | part in the Rocket tab |
 | Delivery after launch date | task in the Tasks tab and the launch date in the top bar |
 
-## Sending tasks
+## Publishing Tasks
 
-**User direction:** tasks are sent per part. The planner marks individual parts as ready and sends each as its own task, for example sending the engine early while still tuning the payload.
+**User direction:** part needs are published individually as shared Tasks. The planner can publish the engine need while still tuning the payload. Applicable roles can contribute solutions.
 
 **Proposal:**
 
-- Each part in the Rocket tab has a "Send to procurement" action. The task carries the part's slider values as minimums (see [rocket configurator](rocket-configurator.md#link-to-procurement)).
-- Each part shows its state inline: draft, task sent, contracted, delivered (see [part lifecycle](rocket-configurator.md#part-lifecycle)).
-- Changing a sent part's sliders marks the task "changed" so procurement sees the new minimums.
+- Each part in the Rocket tab has a "Publish Task" action. The task carries the part's slider values as minimums (see [rocket configurator](rocket-configurator.md#link-to-procurement)).
+- Each part shows its state inline: draft, Task published, contracted, delivered (see [part lifecycle](rocket-configurator.md#part-lifecycle)).
+- Changing slider values for a published part need marks the Task "changed" so the shared list and affected assessments reflect the new minimums.
 - Contracted and delivered parts show a lock; their sliders are fixed to the real part's stats. A "Replace" action creates a new draft for a replacement; the old contract stays in the Tasks tab, with its current cancellation refund shown. Only procurement can cancel it.
+
+Task identity during replacement is handled by the planner/shared Task design. Procurement uses the Task references it receives and tracks Contracts and Allocations.

@@ -16,7 +16,7 @@ A [standalone procurement prototype sketch](../../procurement/README.md) explore
 
 **Contributes:** what the mission can acquire, its cost, its expected availability, and its reliability implications.
 
-**Further ideas:** RP manages money and constrained requests through a large catalogue and Calls (*Ausschreibungen*) with competing offers. With enough money, time, and risk a Call might theoretically solve any problem. A contract list acts as inventory: the proposed model is that nothing is owned, only contracted, with cancellation cost, risk, delays, and minimum time until arrival. RP may also recruit personnel.
+**Further ideas:** RP manages money and constrained requests through a large catalogue and Calls (*Ausschreibungen*) with competing offers. With enough money, time, and risk a Call might theoretically solve any problem. The Contract list is inventory under D-008. Delivered Contracts continue to represent usable resources. Contract terms include cancellation cost, risk, delays, and minimum time until arrival. RP may also recruit personnel.
 
 **Unresolved:** feasibility of Calls; records of existing, discarded, cancelled, or changed contracts; timing of needs and assembly; how reliability and communications effects work. See Q-005, Q-022–Q-024, and Q-028.
 
