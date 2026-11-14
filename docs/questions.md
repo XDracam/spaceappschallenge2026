@@ -127,3 +127,12 @@ What does a simplified 2D simulation model, what parameters and launch windows d
 ## Q-030 — Proactive and reactive communications
 
 How do visual-novel interactions and unhandled events turn into consequences or positive opportunities? How do galas or relationship projects run, use staff or funding, unlock options, and trigger further events? Which effects are visible to other roles?
+
+## Q-031 — Graph scale and orientation
+
+How large is the research graph (the v2 mockup uses about 130 nodes), how much is known at the start, and how does the player orient in it? Relabeling is dropped; each node carries a factual description. How do search, filters, zoom and a frontier list support orientation, and are descriptions ever revealed gradually? See I-036 and I-038.
+
+## Q-032 — Combining nodes into projects
+
+How many nodes can be combined (the mockup uses two or three)? Are recipes fixed and authored, discovered by trial, or hinted by the graph? What do failed or unknown combinations cost? How does this stay inside the hand-crafted baseline (D-005, Q-026) and keep science from becoming an idle game? See I-039.
+

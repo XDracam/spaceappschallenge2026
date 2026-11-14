@@ -13,6 +13,7 @@
 | [Mission flow](design/mission-flow.md) | Preparation, commitment, simulation, and outcome |
 | [Prototype plan](prototype.md) | Proposed smallest useful experiment |
 | [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
+| [Science module](../science/README.md) | Science role: research field graph and project drafting (standalone visual prototype) |
 
 ## Persistent project memory
 
@@ -21,7 +22,7 @@
 | [Ideas](ideas.md) | All substantive ideas, including tentative and deferred ones |
 | [Decisions](decisions.md) | Accepted choices, sources, and rationale |
 | [Questions](questions.md) | Missing choices and what they block |
-| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md), and [player stations note](notes/2026-11-14-player-stations.md) | Verbatim user input from November 14, 2026 |
+| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md), [player stations note](notes/2026-11-14-player-stations.md), and [science module note](notes/2026-11-14-science-module.md) | Verbatim user input from November 14, 2026 |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 
