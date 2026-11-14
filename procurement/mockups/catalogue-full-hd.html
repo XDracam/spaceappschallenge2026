@@ -51,31 +51,31 @@ svg.asset{display:block}svg.symbols{position:absolute;width:0;height:0;overflow:
 <div id="game">
 <header class="topbar">
  <div class="brand"><div class="brand-mark" aria-hidden="true"></div><div><h1>PROCUREMENT</h1></div></div>
- <nav class="main-nav" aria-label="Procurement views"><button type="button" data-view="catalogue" aria-pressed="true">Catalogue</button><button type="button" data-view="plan" aria-pressed="false">Plan <span class="nav-count" id="plan-count">0</span></button><button type="button" data-view="contracts" aria-pressed="false">Contracts <span class="nav-count" id="contract-count">4</span></button><button type="button" data-view="calls" aria-pressed="false">Calls <span class="nav-count" id="call-count">1</span></button><button type="button" data-view="changes" aria-pressed="false">Changes <span class="nav-count" id="change-count">0</span></button></nav>
- <div class="mission"><div class="eyebrow">Current mission</div><strong>Mars · Orbiter & lander</strong></div>
- <div class="calendar"><div class="eyebrow">Agency calendar</div><strong id="calendar">SEP 2028</strong><span class="small muted">Launch · Sep 2029</span></div>
- <div class="budget"><div><div class="eyebrow">Available budget</div><div class="budget-number"><span id="available">120</span> <span style="font-size:17px">credits</span></div></div><dl><dt>Funding</dt><dd id="funding">180</dd><dt>Spent</dt><dd id="spent">24</dd><dt>Committed</dt><dd id="committed">36</dd></dl></div>
+ <nav class="main-nav" aria-label="Procurement views"><button type="button" data-view="catalogue" aria-pressed="true">Catalogue</button><button type="button" data-view="plan" aria-pressed="false">Plan <span class="nav-count" id="plan-count">0</span></button><button type="button" data-view="contracts" aria-pressed="false">Contracts</button><button type="button" data-view="calls" aria-pressed="false">Calls <span class="nav-count" id="call-count">1</span></button><button type="button" data-view="changes" aria-pressed="false">Changes <span class="nav-count" id="change-count">0</span></button></nav>
+ <div class="mission"><strong>Mars · Orbiter & lander</strong></div>
+ <div class="calendar"><strong id="calendar">SEP 2028</strong><span class="small muted">Launch · Sep 2029</span></div>
+ <details class="budget" id="budget-details"><summary title="Budget breakdown"><div class="eyebrow">Available Budget</div><div class="budget-number"><span id="available">120</span> <span style="font-size:17px">credits</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 5 4 4 4-4"/></svg></div></summary><dl><dt>Funding</dt><dd id="funding">180</dd><dt>Spent</dt><dd id="spent">24</dd><dt>Committed</dt><dd id="committed">36</dd></dl></details>
 </header>
 <div class="workspace">
- <aside class="needs" aria-label="Shared mission needs"><div class="section-heading"><h2>Shared needs</h2><span class="count" id="need-count">6</span></div><section id="mission-overview" aria-label="Mission situation"></section><div id="needs-list"></div></aside>
+ <aside class="needs" aria-label="Shared mission needs"><div class="section-heading"><h2>Shared needs</h2></div><section id="mission-overview" aria-label="Mission situation"></section><div id="needs-list"></div></aside>
  <main class="catalogue" aria-label="Resource catalogue">
-  <div class="catalogue-head"><div class="catalogue-title"><div><h2>Resource catalogue</h2></div><div class="active-filter" id="active-filter" hidden></div></div>
+  <div class="catalogue-head"><div class="catalogue-title"><div class="active-filter" id="active-filter" hidden></div></div>
   <nav class="category-nav" id="categories" aria-label="Resource categories"></nav>
-  <div class="toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" name="catalogue-search" type="search" autocomplete="off" placeholder="Search equipment, qualifications, parts…" aria-label="Search catalogue"></label><span class="count" id="result-count">15 resources</span><button type="button" class="secondary" id="compare-open">Compare selected <span id="compare-count">0</span></button><select id="sort" aria-label="Sort catalogue"><option value="featured">Catalogue order</option><option value="price">Lowest price</option><option value="arrival">Soonest available</option></select></div>
+  <div class="toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" name="catalogue-search" type="search" autocomplete="off" placeholder="Search equipment, qualifications, parts…" aria-label="Search catalogue"></label><button type="button" class="secondary" id="compare-open">Compare selected <span id="compare-count">0</span></button><select id="sort" aria-label="Sort catalogue"><option value="featured">Catalogue order</option><option value="price">Lowest price</option><option value="arrival">Soonest available</option></select></div>
   </div>
   <div class="catalogue-grid" id="catalogue-grid"></div>
-  <div class="catalogue-footer"><span id="catalogue-summary">All catalogue resources · authored scenario</span><span>Prices and scenario details are illustrative.</span></div>
+
  </main>
  <aside class="inspector" aria-label="Active decision">
  <div id="resource-inspector">
-  <div class="context-heading"><h2 class="inspector-title" id="selected-name"></h2></div>
+  <div class="context-heading"><h2 class="inspector-title" id="selected-name"></h2><p id="selected-qualification"></p></div>
   <div class="decision-detail">
    <div class="inspector-art" id="inspector-art"></div>
-   <div class="inspector-main"><p class="inspector-description" id="selected-description"></p><div class="supplier"><span class="muted">Supplier</span><span id="supplier"></span></div><dl class="facts" id="facts"></dl><details class="terms"><summary>Prototype Contract terms</summary><p id="terms"></p></details></div>
+   <div class="inspector-main"><dl class="facts" id="facts"></dl><details class="resource-details"><summary>Details & Contract terms</summary><p class="inspector-description" id="selected-description"></p><div class="supplier"><span class="muted">Supplier</span><span id="supplier"></span></div><p id="terms"></p></details></div>
   </div>
   <div class="decision-actions">
    <div id="decision-summary" class="decision-summary"></div>
-   <div class="use-for"><label class="field-label" for="allocation">Contract supply for</label><select id="allocation"></select><p class="allocation-explanation" id="allocation-note"></p></div>
+   <div class="use-for"><label class="field-label" for="allocation">For</label><select id="allocation"></select><p class="allocation-explanation" id="allocation-note"></p></div>
    <div class="purchase-row"><div class="stepper" aria-label="Quantity"><button type="button" id="minus" aria-label="Reduce quantity">−</button><output id="quantity">1</output><button type="button" id="plus" aria-label="Increase quantity">+</button></div><div class="purchase-price"><span id="price">22</span> <span style="font-size:15px">cr</span></div></div>
    <button type="button" class="primary buy" id="buy">Procure</button><div class="purchase-note" id="purchase-note"></div>
    <div class="button-row"><button type="button" class="secondary" id="plan-add">Add to plan</button><button type="button" class="secondary" id="compare-add">Add to compare</button><button type="button" class="text-button" id="inspect-supply">Existing supply</button></div>
@@ -84,7 +84,7 @@ svg.asset{display:block}svg.symbols{position:absolute;width:0;height:0;overflow:
  <div id="context-inspector" hidden></div>
  </aside>
 </div>
-<footer class="statusbar"><span class="status" id="status" role="status" aria-live="polite">Catalogue available · mission preparation underway.</span><div class="mock-controls"><span>MOCKUP CONTROLS</span><select id="scenario-event" aria-label="Authored scenario event"><option value="funding">Comms · funding +30</option><option value="cut">Comms · funding −70</option><option value="task">Planning · revise engine need</option><option value="delay">Supplier · delay engine</option><option value="research">Science · new instrument Offer</option><option value="bulk">Planning & science · computer needs</option><option value="withdraw">Science · withdraw materials Task</option></select><button type="button" id="apply-event">Apply event</button><button type="button" id="next-month">Advance one month</button><button type="button" id="fullscreen">Full screen</button></div></footer>
+<footer class="statusbar"><span class="status" id="status" role="status" aria-live="polite"></span><div class="station-options"><button type="button" id="fullscreen" class="text-button">Full screen</button><details id="scenario-controls"><summary>Scenario controls</summary><div class="mock-controls"><label for="scenario-event">Prototype events</label><select id="scenario-event" aria-label="Authored scenario event"><option value="funding">Comms · funding +30</option><option value="cut">Comms · funding −70</option><option value="task">Planning · revise engine need</option><option value="delay">Supplier · delay engine</option><option value="research">Science · new instrument Offer</option><option value="bulk">Planning & science · computer needs</option><option value="withdraw">Science · withdraw materials Task</option></select><button type="button" id="apply-event">Apply event</button><button type="button" id="next-month">Advance one month</button><p class="muted">Authored scenario · illustrative costs and timings.</p></div></details></div></footer>
 </div>
 <section class="overlay" id="plan-view" hidden aria-label="Acquisition plan"></section>
 <section class="overlay" id="contracts-view" hidden aria-label="Contract inventory"></section>

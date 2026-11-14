@@ -54,3 +54,7 @@ Latest previews are `catalogue-station.jpg` and `acquisition-plan.jpg`. The plan
 ## Focused-label cleanup
 
 The latest catalogue preview is `catalogue-focused.jpg`. The [follow-up walkthrough](../../docs/playtests/2026-11-14-procurement-gameplay-iteration.md#follow-up-cleanup-sweep) records contribution-specific matches, comparison-selection icons, Offer review wording, delivery context and consolidated plan/supply information.
+
+## Gameplay-first default view
+
+Latest preview — `catalogue-clean.jpg`. Open Available Budget for its accounting breakdown, Details & Contract terms for supporting Resource information, and Scenario controls in the footer for authored test events and month advancement. The default view emphasizes the current decision and mission needs.

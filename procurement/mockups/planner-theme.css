@@ -246,3 +246,28 @@ input { caret-color: var(--accent); }
 .resource-body { flex: 1 0 auto; }
 .resource-bottom { margin-top: auto; padding-top: 9px; }
 #contracts-view > h2 { margin-bottom: 24px; }
+
+/* Keep routine play focused on choices; supporting records open on demand. */
+.topbar { position: relative; z-index: 10; }
+.budget { position: relative; display: block; min-width: 160px; }
+.budget summary { cursor: pointer; list-style: none; }
+.budget summary::-webkit-details-marker { display: none; }
+.budget-number svg { margin-left: 10px; vertical-align: middle; }
+.budget dl { position: absolute; right: 0; top: calc(100% + 10px); min-width: 200px; padding: 16px; border: 1px solid var(--glass-border); border-radius: 12px; background: #0e1626; box-shadow: 0 14px 30px #0007; }
+.catalogue-title { justify-content: flex-end; }
+.category-nav { padding-top: 0; }
+.catalogue-grid { flex: 1; }
+#resource-inspector .context-heading p { margin-top: 8px; }
+.resource-details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.resource-details > p { margin-top: 14px; font-size: 13px; color: var(--muted); }
+#facts { margin-bottom: 16px; }
+#compare-add { position: relative; width: 34px; height: 34px; padding: 6px; }
+#compare-add .selection-check { position: absolute; width: 12px; height: 12px; bottom: 1px; right: 0; }
+.statusbar { position: relative; z-index: 21; }
+.station-options { margin-left: auto; display: flex; align-items: center; gap: 22px; flex: none; }
+#scenario-controls { position: relative; }
+#scenario-controls > summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+#scenario-controls .mock-controls { position: absolute; bottom: calc(100% + 12px); right: 0; display: flex; flex-direction: column; align-items: stretch; gap: 10px; width: 285px; padding: 18px; border: 1px solid var(--glass-border); border-radius: 14px; background: #0e1626; box-shadow: 0 14px 30px #0007; }
+#scenario-controls .mock-controls select { max-width: none; padding: 8px; }
+#scenario-controls .mock-controls button { padding: 8px; }
+#scenario-controls .mock-controls p { font-size: 12px; }
