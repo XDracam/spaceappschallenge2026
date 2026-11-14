@@ -135,6 +135,14 @@ Merge provenance — the incoming branch used D-006 for this decision. D-006 alr
 - Consequences: retain D-013's planner-derived procurement style; apply web-oriented recommendations in the context of desktop game stations. Review canvas interactions separately. Player coordination and enjoyment still require actual multiplayer observation.
 - Related: I-059, D-004, D-007, D-010–D-013.
 
+## D-015 — Dollars and standard icons in procurement
+
+- Date: 2026-11-14
+- Status: accepted user direction
+- Direction: use dollar amounts throughout the procurement prototype, a standard icon pack, and explicit names for missing items.
+- Implementation: dollar notation such as $22 and $4.50, Lucide Static 0.468.0, and shortage labels drawn from authored Task descriptions.
+- Source and observed checks: [user corrections and walkthrough](playtests/2026-11-14-procurement-gameplay-iteration.md#standard-icon-pack-dollars-and-named-shortages).
+
 ## Future decision template
 
 ```markdown

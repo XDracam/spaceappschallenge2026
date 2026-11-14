@@ -85,3 +85,19 @@ Removed the redundant catalogue heading, category captions and image annotations
 At Full HD, opened Budget breakdown and Resource details and read their retained values. Opened scenario controls while purchase confirmation was held, applied a funding cut, reviewed the new facts and confirmed the bench. Funds changed from 120 to 50 to 28, with one materials contribution still missing. Compared Atlas and Pioneer and observed their reliability figures. Added a bench to a draft and observed 22 proposed cost and 98 available afterward. The page measured 1920 × 1080 and the Buy action ended around y=934. No card was internally clipped and the browser error log was empty. JavaScript syntax and Git whitespace checks passed. The localhost server was restarted after it stopped responding, and verification continued in a fresh preview tab.
 
 Saved `procurement/mockups/catalogue-clean.jpg`. The information disclosure choices are prototype refinements and still need feedback from players.
+
+## Repeated labels replaced by icons
+
+Following the user's further cleanup request, recurring availability, need-by date, reliability, currency and supply-state labels now use shared SVG icons with values, tooltips and accessible group names. Calendar marks expected availability, flag marks the need-by date, shield marks reliability, and coin marks cost. Missing, promised and ready counts use triangle, hourglass and check-circle respectively. Late warnings retain explicit text. Contribution names and Task codes remain specific. Generic guidance in Plan, Compare and Changes was trimmed, and Contract quantities use one Total / unallocated column heading.
+
+Verified Full HD rendering and icon names/values, purchased the bench and observed one missing and one promised contribution, inspected the resulting Contract quantity of 1 / 0, and staged the 44-credit engine with 54 remaining after the draft. The browser error log was empty, the page measured 1920 × 1080 and Resource cards had no internal clipping. Syntax and whitespace checks passed. Saved `procurement/mockups/catalogue-icons.jpg`. Icon comprehension remains a prototype design judgment pending player feedback.
+
+## Standard icon pack, dollars and named shortages
+
+User corrections requested a real icon pack, consistent currency and explicit missing items, followed by “actually just use dollars instead of credits, make it simpler”.
+
+The prototype now uses a local subset of Lucide Static 0.468.0 with its ISC license. Comparison, selection, calendar, deadline, reliability, search and budget-chevron symbols come from that pack. Dollar amounts share one formatter across cards, Budget, plans, Contracts, confirmations, history and scenario messages. Whole amounts display as $22 and fractional amounts as $4.50.
+
+Task shortages use the authored Task wording. Initially T-017 shows “Missing test bench, materials researcher”. After buying the bench it shows “Missing materials researcher” and “test bench incoming”. The bulk computer Task shows “Missing 2 × Workstation”.
+
+Verified the bench confirmation at $22 and Budget $120 → $98, a venue cancellation fee of $4.50 and resulting $93.50 Budget, funding increasing that to $123.50, and a $44 draft leaving $79.50. Comparison showed $44/$30 options and $76/$90 remaining. Rendered text contained neither old currency abbreviations nor NaN. Full HD had no internally clipped cards and the browser error log was empty. Syntax and whitespace checks passed. Saved `procurement/mockups/catalogue-dollars.jpg`.

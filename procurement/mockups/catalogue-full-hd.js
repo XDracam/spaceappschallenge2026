@@ -28,12 +28,12 @@ const callResponseDefinitions={
  fuel:{baseId:null,id:'call-fuel',name:'Flight tank package',category:'Flight hardware',art:'chamber',label:'Propellant storage',description:'An authored supplier response for the shared fuel-supply need.',supplier:'Orbital Works',price:20,lead:3,qualification:'Flight tank package',reliability:96,matches:['fuel'],contribution:'Flight tanks',tags:'fuel flight tank storage'}
 };
 const needs=[
-{id:'materials',code:'T-017',title:'Test flight materials',origin:'Science',description:'Test bench + materials researcher.',due:2,requirements:['Laboratory equipment','Qualified researcher']},
-{id:'propulsion',code:'T-014',title:'Flight propulsion',origin:'Planning',description:'Engine · ≥ 900 kN, ≥ 340 s Isp.',due:7,requirements:['Propulsion unit']},
-{id:'minerals',code:'T-021',title:'Map surface minerals',origin:'Science',description:'One orbital spectrometer.',due:9,requirements:['Orbital instrument']},
-{id:'analysis',code:'T-023',title:'Staff trajectory analysis',origin:'Planning',description:'Flight dynamics engineer.',due:3,requirements:['Qualified engineer']},
-{id:'briefing',code:'T-026',title:'Host industry briefing',origin:'Comms',description:'Venue + technical support.',due:2,requirements:['Event service']},
-{id:'fuel',code:'T-008',title:'Prepare fuel supply',origin:'Planning',description:'Flight tanks contracted.',due:5,requirements:['Flight tanks']}
+{id:'materials',requirementLabels:{"Laboratory equipment": "test bench", "Qualified researcher": "materials researcher"},code:'T-017',title:'Test flight materials',origin:'Science',description:'Test bench + materials researcher.',due:2,requirements:['Laboratory equipment','Qualified researcher']},
+{id:'propulsion',requirementLabels:{"Propulsion unit": "engine"},code:'T-014',title:'Flight propulsion',origin:'Planning',description:'Engine · ≥ 900 kN, ≥ 340 s Isp.',due:7,requirements:['Propulsion unit']},
+{id:'minerals',requirementLabels:{"Orbital instrument": "orbital spectrometer"},code:'T-021',title:'Map surface minerals',origin:'Science',description:'One orbital spectrometer.',due:9,requirements:['Orbital instrument']},
+{id:'analysis',requirementLabels:{"Qualified engineer": "flight dynamics engineer"},code:'T-023',title:'Staff trajectory analysis',origin:'Planning',description:'Flight dynamics engineer.',due:3,requirements:['Qualified engineer']},
+{id:'briefing',requirementLabels:{"Event service": "venue & technical support"},code:'T-026',title:'Host industry briefing',origin:'Comms',description:'Venue + technical support.',due:2,requirements:['Event service']},
+{id:'fuel',requirementLabels:{"Flight tanks": "flight tanks"},code:'T-008',title:'Prepare fuel supply',origin:'Planning',description:'Flight tanks contracted.',due:5,requirements:['Flight tanks']}
 ];
 const initialContracts=[
 {id:'C-001',name:'Laboratory computers',resourceId:null,quantity:1,price:16,lead:0,expected:0,status:'Delivered',needId:null,contribution:'Workstation',origin:'Research support'},
@@ -80,8 +80,24 @@ const state = {
 };
 const $ = id => document.getElementById(id);
 const resource = id => catalogue.find(item => item.id === id);
-const comparisonIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M6 9h3m-3 4h3m6-4h3m-3 4h3"/></svg>';
-const selectionIcon = '<svg class="selection-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="m2 6 3 3 5-6"/></svg>';
+function money(value) {
+ return new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD',
+  minimumFractionDigits: Number.isInteger(value) ? 0 : 2, maximumFractionDigits: 2
+ }).format(value);
+}
+function icon(name, extraClass = '') {
+ return LUCIDE_ICONS[name].replace('class="ui-icon"', `class="ui-icon ${extraClass}"`);
+}
+const comparisonIcon = icon('columns-2');
+const selectionIcon = icon('check', 'selection-check');
+function statIcon(name, value, label) {
+ return `<span class="icon-stat" role="group" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}">${icon(name)}<span>${escapeHTML(value)}</span></span>`;
+}
+
+document.querySelector('.search-icon').innerHTML = icon('search');
+$('budget-chevron').innerHTML = icon('chevron-down');
+
 const need = id => needs.find(task => task.id === id);
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, character => ({
  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -92,6 +108,7 @@ const monthLabel = offset => new Date(Date.UTC(2028, 8 + offset, 1)).toLocaleDat
 const art = item => `<svg class="asset" viewBox="0 0 300 180" role="img" aria-label="${escapeHTML(item.name)} illustration"><use href="#art-${item.art || 'computer'}"/></svg>`;
 const liveContracts = () => state.contracts.filter(contract => contract.status !== 'Cancelled');
 const requiredQuantity = (task, contribution) => task.quantities[contribution] || 1;
+const requirementName = (task, contribution) => task.requirementLabels?.[contribution] || contribution;
 const freeQuantity = contract => contract.quantity - contract.allocations.reduce((sum, allocation) => sum + allocation.quantity, 0);
 
 function budget() {
@@ -169,13 +186,15 @@ function renderNeeds() {
  $('needs-list').innerHTML = needs.map(task => {
   const rows = task.requirements.map(contribution => ({ contribution, ...coverage(task, contribution) }));
   const ready = rows.reduce((sum, row) => sum + Math.min(row.needed, row.ready), 0);
-  const promised = rows.reduce((sum, row) => sum + Math.min(Math.max(0, row.needed - row.ready), row.promised), 0);
   const total = rows.reduce((sum, row) => sum + row.needed, 0);
   const issues = rows.some(row => row.late || row.mismatch);
-  const missing = Math.max(0, total - ready - promised);
+  const missingItems = rows.filter(row => row.missing > 0);
+  const incomingItems = rows.filter(row => row.promised > 0);
   const summary = task.status === 'withdrawn' ? 'Withdrawn · review reservations'
-   : ready === total ? `${total} ready` : `${missing} missing · ${promised} promised`;
-  return `<button type="button" class="need ${issues ? 'has-review' : ''}" data-need="${task.id}" aria-pressed="${state.focusNeed === task.id}" aria-label="Inspect shared need ${escapeHTML(task.title)}"><span class="need-top"><span>${task.code}</span><span>From ${task.origin}</span></span><span class="need-title">${task.title}</span><span class="need-description">${task.description}</span><span class="need-status"><span class="${issues ? 'warn' : ready === total ? 'good' : ''}">${summary}${issues ? ' · review' : ''}</span><span class="need-due">Needed ${monthLabel(task.due)}</span></span></button>`;
+   : ready === total ? `${icon('circle-check')}<span>Ready</span>`
+   : (missingItems.length ? `<span class="missing-item">Missing ${missingItems.map(row => `${row.missing > 1 ? `${row.missing} × ` : ''}${escapeHTML(requirementName(task, row.contribution))}`).join(', ')}</span>` : '')
+     + incomingItems.map(row => `<span class="incoming-item">${row.promised > 1 ? `${row.promised} × ` : ''}${escapeHTML(requirementName(task, row.contribution))} incoming</span>`).join('');
+  return `<button type="button" class="need ${issues ? 'has-review' : ''}" data-need="${task.id}" aria-pressed="${state.focusNeed === task.id}" aria-label="Inspect shared need ${escapeHTML(task.title)}"><span class="need-top"><span>${task.code}</span><span>From ${task.origin}</span></span><span class="need-title">${task.title}</span><span class="need-description">${task.description}</span><span class="need-status"><span class="${issues ? 'warn' : ready === total ? 'good' : ''}">${summary}${issues ? ' · review' : ''}</span><span class="need-due">${statIcon('flag', monthLabel(task.due), `Needed by ${monthLabel(task.due)}`)}</span></span></button>`;
  }).join('');
  if (focusedNeed) document.querySelector(`[data-need="${focusedNeed}"]`)?.focus({ preventScroll: true });
 }
@@ -204,12 +223,12 @@ function renderCatalogue() {
   const owned = supply(item.id);
   const focusedFit = focused ? fit(item, focused) : null;
   const matchingTasks = needs.filter(task => fit(item, task).matches);
-  let match = matchingTasks.length ? `${item.contribution} for ${matchingTasks.map(task => task.code).join(', ')}` : '';
-  if (focusedFit?.matches) match = `${item.contribution} for ${focused.code}`;
+  let match = matchingTasks.length ? `${item.contribution} · ${matchingTasks.map(task => task.code).join(', ')}` : '';
+  if (focusedFit?.matches) match = `${item.contribution} · ${focused.code}`;
   else if (focused?.requirements.includes(item.contribution)) match = `${focused.code} · ${focusedFit.reason}`;
   const supplyText = supplySummary(owned);
   const late = focusedFit?.matches && state.month + item.lead > focused.due;
-  return `<div class="resource-wrap"><button type="button" class="resource ${focusedFit?.matches ? 'related' : 'unrelated'}" data-resource="${item.id}" aria-pressed="${state.selected === item.id}"><span class="resource-art ${item.category === 'Personnel' ? 'portrait' : ''}">${art(item)}</span><span class="resource-body"><h3>${item.name}</h3><span class="resource-description">${item.qualification}</span><span class="resource-match ${late || focused?.requirements.includes(item.contribution) && !focusedFit.matches ? 'warning' : ''}">${escapeHTML(match)}${late ? ' · late' : ''}</span><span class="resource-supply">${supplyText}</span><span class="resource-bottom"><span class="resource-price">${item.price} <small>credits</small></span><span class="resource-eta">${item.category === 'Personnel' ? 'Available' : 'Delivery'} ${monthLabel(state.month + item.lead)}${item.reliability !== null ? ` · ${item.reliability}% reliable` : ''}</span></span></span></button><button type="button" class="card-compare" data-compare-resource="${item.id}" aria-pressed="${state.compare.includes(item.id)}" title="${state.compare.includes(item.id) ? 'Remove' : 'Select'} ${escapeHTML(item.name)} ${state.compare.includes(item.id) ? 'from' : 'for'} comparison" aria-label="${state.compare.includes(item.id) ? 'Remove' : 'Select'} ${escapeHTML(item.name)} ${state.compare.includes(item.id) ? 'from' : 'for'} comparison">${comparisonIcon}${state.compare.includes(item.id) ? selectionIcon : ''}</button></div>`;
+  return `<div class="resource-wrap"><button type="button" class="resource ${focusedFit?.matches ? 'related' : 'unrelated'}" data-resource="${item.id}" aria-pressed="${state.selected === item.id}"><span class="resource-art ${item.category === 'Personnel' ? 'portrait' : ''}">${art(item)}</span><span class="resource-body"><h3>${item.name}</h3><span class="resource-description">${item.qualification}</span><span class="resource-match ${late || focused?.requirements.includes(item.contribution) && !focusedFit.matches ? 'warning' : ''}">${escapeHTML(match)}${late ? ' · late' : ''}</span><span class="resource-supply">${supplyText}</span><span class="resource-bottom"><span class="resource-price">${money(item.price)}</span><span class="resource-eta">${statIcon('calendar-days', monthLabel(state.month + item.lead), `Expected availability ${monthLabel(state.month + item.lead)}`)}${item.reliability !== null ? statIcon('shield-check', `${item.reliability}%`, `Reliability ${item.reliability}%`) : ''}</span></span></span></button><button type="button" class="card-compare" data-compare-resource="${item.id}" aria-pressed="${state.compare.includes(item.id)}" title="${state.compare.includes(item.id) ? 'Remove' : 'Select'} ${escapeHTML(item.name)} ${state.compare.includes(item.id) ? 'from' : 'for'} comparison" aria-label="${state.compare.includes(item.id) ? 'Remove' : 'Select'} ${escapeHTML(item.name)} ${state.compare.includes(item.id) ? 'from' : 'for'} comparison">${comparisonIcon}${state.compare.includes(item.id) ? selectionIcon : ''}</button></div>`;
  }).join('') : '<div class="empty"><h3>No Resources in this view</h3><p>Try another search or browse the full catalogue.</p><button type="button" class="secondary" data-reset-catalogue>Reset search & filters</button></div>';
  $('catalogue-grid').scrollTop = scrollTop;
  $('compare-count').textContent = state.compare.length;
@@ -240,7 +259,7 @@ function purchaseFacts() {
  else if (task && state.quantity > shortage(task, item.contribution)) reason = 'The requested quantity is already covered. Inspect existing supply or procure unallocated.';
  else if (state.quantity < 1 || !Number.isInteger(state.quantity)) reason = 'Choose a whole quantity of at least one.';
  else if (item.category === 'Personnel' && state.quantity !== 1) reason = 'This named person is one candidate.';
- else if (item.price * state.quantity > available) reason = `Exceeds available Budget by ${item.price * state.quantity - available} credits. Choose a cheaper Resource or discuss funding.`;
+ else if (item.price * state.quantity > available) reason = `Need ${money(item.price * state.quantity - available)} more. Review spending or funding.`;
  return {
   itemId: item.id, name: item.name, unitPrice: item.price, price: item.price * state.quantity,
   quantity: state.quantity, needId: task?.id || null, taskRevision: task?.revision || null,
@@ -258,7 +277,7 @@ function renderInspector() {
  $('selected-name').textContent = item.name;
  $('selected-qualification').textContent = item.qualification;
  $('selected-description').textContent = item.description;
- $('decision-summary').innerHTML = `<span class="${facts.late ? 'warn' : ''}">${facts.late ? 'Late · ' : ''}Expected ${monthLabel(facts.arrival)}${facts.needId ? ` · needed ${monthLabel(facts.due)}` : ' · unallocated'}</span>${item.reliability !== null ? `<span>${item.reliability}% reliability</span>` : ''}`;
+ $('decision-summary').innerHTML = `${statIcon('calendar-days', monthLabel(facts.arrival), `Expected availability ${monthLabel(facts.arrival)}`)}${facts.needId ? `<span class="${facts.late ? 'warn' : ''}">${statIcon('flag', monthLabel(facts.due), `Needed by ${monthLabel(facts.due)}`)}${facts.late ? ' Late' : ''}</span>` : ''}${item.reliability !== null ? statIcon('shield-check', `${item.reliability}%`, `Reliability ${item.reliability}%`) : ''}`;
  $('supplier').textContent = item.supplier;
  $('facts').innerHTML = supplySummary(owned) ? `<div><dt>Contracted supply</dt><dd>${supplySummary(owned)}</dd></div>` : '';
  $('facts').hidden = !$('facts').textContent;
@@ -270,10 +289,10 @@ function renderInspector() {
  $('quantity').textContent = state.quantity;
  $('plus').disabled = item.category === 'Personnel' || !!state.allocation && state.quantity >= shortage(need(state.allocation), item.contribution);
  $('minus').disabled = state.quantity <= 1;
- $('price').textContent = facts.price;
- $('buy').textContent = `Procure · ${facts.price} credits`;
+ $('price').textContent = money(facts.price);
+ $('buy').textContent = `Procure · ${money(facts.price)}`;
  $('buy').disabled = !!facts.reason;
- $('purchase-note').textContent = facts.reason || `${facts.remaining} credits remain for other needs`;
+ $('purchase-note').textContent = facts.reason || `${money(facts.remaining)} left`;
  $('purchase-note').classList.toggle('warn', !!facts.reason);
  $('purchase-note').setAttribute('role', 'status');
  $('plan-add').disabled = false;
@@ -300,12 +319,12 @@ function contractIssue(contract) {
 }
 
 function renderContracts() {
- $('contracts-view').innerHTML = '<h2>Contracts & deliveries</h2><table><thead><tr><th>Contract / Resource</th><th>Quantity</th><th>Allocations</th><th>Status</th><th>Delivery / value</th><th>Actions</th></tr></thead><tbody>' + state.contracts.slice().reverse().map(contract => {
+ $('contracts-view').innerHTML = '<h2>Contracts & deliveries</h2><table><thead><tr><th>Contract / Resource</th><th>Total / unallocated</th><th>Allocations</th><th>Status</th><th>Delivery / value</th><th>Actions</th></tr></thead><tbody>' + state.contracts.slice().reverse().map(contract => {
   const active = contract.status !== 'Cancelled';
   const allocations = contract.allocations.map(allocation => `<span>${need(allocation.needId)?.code || allocation.needId} ×${allocation.quantity} <button type="button" class="secondary" data-release="${contract.id}" data-allocation-need="${allocation.needId}">Release</button></span>`).join('') || '<span class="muted">Unallocated</span>';
   const history = contract.status === 'Cancelled' && contract.releasedAllocations?.length ? `<div class="small muted">Released: ${contract.releasedAllocations.map(entry => `${need(entry.needId)?.code || entry.needId} ×${entry.quantity}`).join(', ')}</div>` : '';
   const issue = contractIssue(contract);
-  return `<tr data-contract-row="${contract.id}"><td><span class="eyebrow">${contract.id}</span><br><button type="button" class="text-button contract-select" data-contract="${contract.id}">${escapeHTML(contract.name)}</button></td><td>${contract.quantity} total<br><span class="small muted">${active ? freeQuantity(contract) : 0} unallocated</span></td><td><span class="allocation-list">${allocations}${history}</span></td><td>${contract.status === 'Active' ? 'Promised' : contract.status === 'Delivered' ? 'Ready' : 'Cancelled'}${issue && active ? `<div class="warn table-status">${escapeHTML(issue)}</div>` : ''}</td><td>${monthLabel(contract.deliveredAt ?? contract.expected)}<br>${contract.price} cr</td><td><span class="contract-actions">${active && freeQuantity(contract) > 0 ? `<button type="button" class="secondary" data-allocate="${contract.id}">Allocate</button>` : ''}${contract.status === 'Active' ? `<button type="button" class="secondary" data-cancel="${contract.id}">Cancel · ${contract.price / 2} cr fee</button>` : ''}${contract.resourceId ? `<button type="button" class="secondary" data-replacement="${contract.id}">Inspect alternative</button>` : ''}</span></td></tr>`;
+  return `<tr data-contract-row="${contract.id}"><td><span class="eyebrow">${contract.id}</span><br><button type="button" class="text-button contract-select" data-contract="${contract.id}">${escapeHTML(contract.name)}</button></td><td title="${contract.quantity} total · ${active ? freeQuantity(contract) : 0} unallocated">${contract.quantity} / <span class="muted">${active ? freeQuantity(contract) : 0}</span></td><td><span class="allocation-list">${allocations}${history}</span></td><td>${contract.status === 'Active' ? 'Promised' : contract.status === 'Delivered' ? 'Ready' : 'Cancelled'}${issue && active ? `<div class="warn table-status">${escapeHTML(issue)}</div>` : ''}</td><td>${monthLabel(contract.deliveredAt ?? contract.expected)}<br>${money(contract.price)}</td><td><span class="contract-actions">${active && freeQuantity(contract) > 0 ? `<button type="button" class="secondary" data-allocate="${contract.id}">Allocate</button>` : ''}${contract.status === 'Active' ? `<button type="button" class="secondary" data-cancel="${contract.id}">Cancel · ${money(contract.price / 2)} fee</button>` : ''}${contract.resourceId ? `<button type="button" class="secondary" data-replacement="${contract.id}">Inspect alternative</button>` : ''}</span></td></tr>`;
  }).join('') + '</tbody></table>';
 }
 
@@ -321,7 +340,7 @@ function renderCalls() {
   const changed = task.revision !== call.taskRevision;
   const returned = resource(call.offerId);
   const assessment = returned ? fit(returned, task) : null;
-  return `<article class="call-card"><span class="eyebrow">${call.id} · ${callStatusLabel(call)}</span><h3><button type="button" class="text-button call-select" data-call="${call.id}">${task.title}</button></h3><span class="call-facts"><span>Response ${monthLabel(call.due)}</span>${changed ? `<span>Revision ${call.taskRevision} → ${task.revision}</span>` : ''}</span>${changed ? '<div class="context-warning">The Task changed after this Call opened. Returned Offers are checked against its current criteria.</div>' : ''}<p>${returned ? `${escapeHTML(returned.name)} · ${returned.price} cr · expected ${monthLabel(state.month + returned.lead)}${returned.reliability !== null ? ` · ${returned.reliability}% reliability` : ''}. ${assessment.matches ? `${returned.contribution} meets current criteria.` : escapeHTML(assessment.reason)}` : call.status === 'Withdrawn' ? 'This Call was withdrawn.' : 'Waiting for supplier terms.'}</p><div class="button-row">${returned ? `<button type="button" class="secondary" data-show-response="${call.id}">Review Offer</button>` : ''}${call.status === 'Open' ? `<button type="button" class="text-button" data-withdraw="${call.id}">Withdraw Call</button>` : ''}</div></article>`;
+  return `<article class="call-card"><span class="eyebrow">${call.id} · ${callStatusLabel(call)}</span><h3><button type="button" class="text-button call-select" data-call="${call.id}">${task.title}</button></h3><span class="call-facts"><span>Response ${monthLabel(call.due)}</span>${changed ? `<span>Revision ${call.taskRevision} → ${task.revision}</span>` : ''}</span>${changed ? '<div class="context-warning">The Task changed after this Call opened. Returned Offers are checked against its current criteria.</div>' : ''}<p>${returned ? `${escapeHTML(returned.name)} · ${money(returned.price)} · expected ${monthLabel(state.month + returned.lead)}${returned.reliability !== null ? ` · ${returned.reliability}% reliability` : ''}. ${assessment.matches ? `${returned.contribution} meets current criteria.` : escapeHTML(assessment.reason)}` : call.status === 'Withdrawn' ? 'This Call was withdrawn.' : 'Waiting for supplier terms.'}</p><div class="button-row">${returned ? `<button type="button" class="secondary" data-show-response="${call.id}">Review Offer</button>` : ''}${call.status === 'Open' ? `<button type="button" class="text-button" data-withdraw="${call.id}">Withdraw Call</button>` : ''}</div></article>`;
  }).join('');
 }
 
@@ -331,14 +350,14 @@ function renderComparison() {
  const isBaseline = item => !!baseline && item.id === baseline.resourceId;
  const arrival = item => isBaseline(item) ? baseline.deliveredAt ?? baseline.expected : state.month + item.lead;
  const extraCost = item => isBaseline(item) ? 0 : item.price;
- $('compare-view').innerHTML = `<div class="compare-toolbar"><h2>Compare Resources</h2><button type="button" class="secondary" data-return-browse>Back to ${state.returnView === 'calls' ? 'Calls' : state.returnView === 'contracts' ? 'Contracts' : 'catalogue'}</button></div><p>${baseline ? `Compare ${baseline.id}'s accepted supply with a new commitment. Cancellation is a separate decision.` : 'Compare terms against the supplied mission needs.'}</p><table class="compare-table"><thead><tr><th>Current facts</th>${items.map(item => `<th><div class="compare-art">${art(item)}</div><strong>${item.name}</strong><p class="small">${isBaseline(item) ? baseline.id + ' · accepted Contract' : 'New Offer'}</p>${isBaseline(item) ? `<button type="button" class="text-button" data-contract="${baseline.id}">Inspect Contract</button>` : `<button type="button" class="text-button" data-inspect="${item.id}">Inspect and procure</button>`}</th>`).join('')}</tr></thead><tbody>${[
+ $('compare-view').innerHTML = `<div class="compare-toolbar"><h2>Compare Resources</h2><button type="button" class="secondary" data-return-browse>Back to ${state.returnView === 'calls' ? 'Calls' : state.returnView === 'contracts' ? 'Contracts' : 'catalogue'}</button></div>${baseline ? `<p>${baseline.id} · accepted terms. Cancellation is separate.</p>` : ''}<table class="compare-table"><thead><tr><th>Current facts</th>${items.map(item => `<th><div class="compare-art">${art(item)}</div><strong>${item.name}</strong><p class="small">${isBaseline(item) ? baseline.id + ' · accepted Contract' : 'New Offer'}</p>${isBaseline(item) ? `<button type="button" class="text-button" data-contract="${baseline.id}">Inspect Contract</button>` : `<button type="button" class="text-button" data-inspect="${item.id}">Inspect and procure</button>`}</th>`).join('')}</tr></thead><tbody>${[
   ['Capability', item => item.qualification],
-  ['Value / additional cost', item => isBaseline(item) ? `${baseline.price} cr Contract · 0 new` : `${item.price} cr new commitment`],
+  ['Value / additional cost', item => isBaseline(item) ? `${money(baseline.price)} Contract · ${money(0)} new` : `${money(item.price)} new commitment`],
   ['Availability', item => `${monthLabel(arrival(item))}${isBaseline(item) ? baseline.status === 'Delivered' ? ' · ready' : ' · promised' : ' · if signed now'}`],
   ['Reliability', item => item.reliability === null ? 'Personnel qualification shown above' : `${item.reliability}%`],
   ['Selected need', item => state.focusNeed ? `${fit(item, need(state.focusNeed)).reason}${fit(item, need(state.focusNeed)).matches && arrival(item) > need(state.focusNeed).due ? ' · late' : ''}` : 'Browse without a selected need'],
   ['Unallocated ready supply', item => `${supply(item.id).ready + supply(item.id).compatible} ready`],
-  ['Available after this choice', item => `${budget().available - extraCost(item)} credits`]
+  ['Available after this choice', item => `${money(budget().available - extraCost(item))}`]
  ].map(([label, value]) => `<tr><td>${label}</td>${items.map(item => `<td>${escapeHTML(value(item))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 }
 
@@ -357,7 +376,7 @@ function renderSituation() {
  $('mission-overview').innerHTML = `<div class="situation-counts"><strong>${missing.length} needs missing supply</strong><span>${open.length - missing.length} covered by Contracts</span></div>
   ${selected ? `<button type="button" class="selected-need" data-show-need="${selected.id}"><strong>${selected.code} · ${escapeHTML(selected.title)}</strong><span>Needed ${monthLabel(selected.due)}</span></button>` : ''}
   <div class="situation-actions">${incoming.length ? `<button type="button" class="secondary" data-view="changes">${incoming.length} new information</button>` : ''}
-  ${state.plan.length && state.view !== 'plan' ? `<button type="button" class="secondary" data-view="plan">Plan ${planCost} cr · ${Math.abs(afterPlan)} cr ${afterPlan < 0 ? 'gap' : 'after'}</button>` : ''}
+  ${state.plan.length && state.view !== 'plan' ? `<button type="button" class="secondary" data-view="plan">Plan ${money(planCost)} · ${money(Math.abs(afterPlan))} ${afterPlan < 0 ? 'gap' : 'after'}</button>` : ''}
   ${budget().available < 0 ? '<button type="button" class="secondary warn" data-view="plan">Funding shortfall · review plan</button>' : ''}
   ${issues.length ? `<button type="button" class="secondary warn" ${issues.length === 1 ? `data-contract="${issues[0].id}"` : 'data-view="changes"'}>${issues.length} supply issue${issues.length === 1 ? '' : 's'} to resolve</button>` : ''}</div>`;
 }
@@ -386,11 +405,10 @@ function addToPlan() {
 
 function renderPlan() {
  $('plan-view').innerHTML = `<div class="context-header"><h2>Acquisition plan</h2><button type="button" class="secondary" data-view="catalogue">Browse Resources</button></div>
-  ${state.plan.length ? '<p>Review and sign each proposed Contract separately.</p>' : ''}
   ${state.plan.length ? `<table class="plan-table"><thead><tr><th>Resource / destination</th><th>Quantity / cost</th><th>Expected availability / need</th><th>Decision</th></tr></thead><tbody>${state.plan.map(entry => {
    const item = resource(entry.resourceId), task = need(entry.needId);
    const assessment = planAssessment(entry);
-   return `<tr><td><strong>${escapeHTML(item.name)}</strong><br><span class="muted">${task ? `${task.code} · ${escapeHTML(task.title)}` : 'Unallocated supply'}</span></td><td>${entry.quantity} unit${entry.quantity === 1 ? '' : 's'}${entry.quantity > 1 ? ` · ${item.price} cr each` : ''}<br><strong>${entry.quantity * item.price} cr</strong></td><td>${monthLabel(state.month + item.lead)}${item.reliability !== null ? ` · ${item.reliability}% reliability` : ''}<br><span class="${assessment.startsWith('Meets') || assessment === 'Unallocated' ? 'muted' : 'warn'}">${escapeHTML(assessment)}</span></td><td><div class="button-row"><button type="button" class="secondary" data-plan-review="${entry.id}">Review Contract</button><button type="button" class="text-button" data-plan-remove="${entry.id}">Remove</button></div></td></tr>`;
+   return `<tr><td><strong>${escapeHTML(item.name)}</strong><br><span class="muted">${task ? `${task.code} · ${escapeHTML(task.title)}` : 'Unallocated supply'}</span></td><td>${entry.quantity} unit${entry.quantity === 1 ? '' : 's'}${entry.quantity > 1 ? ` · ${money(item.price)} each` : ''}<br><strong>${money(entry.quantity * item.price)}</strong></td><td>${monthLabel(state.month + item.lead)}${item.reliability !== null ? ` · ${item.reliability}% reliability` : ''}<br><span class="${assessment.startsWith('Meets') || assessment === 'Unallocated' ? 'muted' : 'warn'}">${escapeHTML(assessment)}</span></td><td><div class="button-row"><button type="button" class="secondary" data-plan-review="${entry.id}">Review Contract</button><button type="button" class="text-button" data-plan-remove="${entry.id}">Remove</button></div></td></tr>`;
   }).join('')}</tbody></table>` : '<div class="empty"><p>Use Add to plan in the catalogue to explore the combined cost of serving several needs.</p></div>'}`;
 }
 
@@ -413,37 +431,37 @@ function renderContext() {
   content = contextPanel(task.title, `${task.code} · from ${task.origin} · needed ${monthLabel(task.due)}`,
    `<p>${escapeHTML(task.description)}</p><div class="need-criteria">${task.requirements.map(contribution => {
     const row = coverage(task, contribution);
-    return `<p><strong>${escapeHTML(contribution)} ×${row.needed}</strong><br>${row.ready} ready · ${row.promised} promised · ${shortage(task, contribution)} missing${row.late ? ` · ${row.late} late` : ''}${row.mismatch ? ` · ${row.mismatch} no longer fit` : ''}</p>`;
-   }).join('')}</div><h3>Resources by contribution</h3>${options.map(item => `<button type="button" class="context-option" data-inspect="${item.id}"><strong>${escapeHTML(item.name)}</strong><span>${item.contribution} · ${item.price} cr · ${monthLabel(state.month + item.lead)}${item.reliability !== null ? ` · ${item.reliability}% reliable` : ''}</span></button>`).join('') || '<p>No current catalogue Resource matches these contributions.</p>'}`,
+    return `<p><strong>${escapeHTML(requirementName(task, contribution))} ×${row.needed}</strong><br>${row.ready} ready · ${row.promised} promised · ${shortage(task, contribution)} missing${row.late ? ` · ${row.late} late` : ''}${row.mismatch ? ` · ${row.mismatch} no longer fit` : ''}</p>`;
+   }).join('')}</div><h3>Resources by contribution</h3>${options.map(item => `<button type="button" class="context-option" data-inspect="${item.id}"><strong>${escapeHTML(item.name)}</strong><span>${item.contribution} · ${money(item.price)} · ${monthLabel(state.month + item.lead)}${item.reliability !== null ? ` · ${item.reliability}% reliable` : ''}</span></button>`).join('') || '<p>No current catalogue Resource matches these contributions.</p>'}`,
    `<button type="button" class="secondary" data-view="plan">Review acquisition plan</button>`);
  } else if (state.view === 'contracts') {
   const contract = state.contracts.find(entry => entry.id === state.activeContract) || state.contracts[0];
   const issue = contractIssue(contract);
   const reservations = contract.status === 'Cancelled' ? contract.releasedAllocations || [] : contract.allocations;
   content = contextPanel(contract.name, `${contract.id} · ${contract.status === 'Delivered' ? 'Ready' : contract.status === 'Active' ? 'Promised' : 'Cancelled'}`,
-   `<dl class="context-facts"><dt>Quantity</dt><dd>${contract.quantity} total · ${contract.status === 'Cancelled' ? 0 : freeQuantity(contract)} unallocated</dd><dt>${contract.status === 'Delivered' ? 'Delivered' : contract.status === 'Cancelled' ? 'Former delivery date' : 'Expected delivery'}</dt><dd>${monthLabel(contract.deliveredAt ?? contract.expected)}</dd><dt>Contract value</dt><dd>${contract.price} cr</dd></dl><h3>${contract.status === 'Cancelled' ? 'Released reservations' : 'Reservations'}</h3>${reservations.map(allocation => `<p>${need(allocation.needId)?.code} · ${escapeHTML(need(allocation.needId)?.title)} ×${allocation.quantity}</p>`).join('') || `<p>${contract.status === 'Cancelled' ? 'None' : 'Unallocated supply'}</p>`}${issue && contract.status !== 'Cancelled' ? `<p class="context-warning">${escapeHTML(issue)}</p>` : ''}`,
-   `${contract.status !== 'Cancelled' && freeQuantity(contract) > 0 ? `<button type="button" class="primary" data-allocate="${contract.id}">Allocate supply</button>` : ''}${contract.resourceId ? `<button type="button" class="secondary" data-replacement="${contract.id}">Compare alternatives</button>` : ''}${contract.status === 'Active' ? `<button type="button" class="secondary" data-cancel="${contract.id}">Cancel · ${contract.price / 2} cr fee</button>` : ''}`);
+   `<dl class="context-facts"><dt>Quantity</dt><dd>${contract.quantity} total · ${contract.status === 'Cancelled' ? 0 : freeQuantity(contract)} unallocated</dd><dt>${contract.status === 'Delivered' ? 'Delivered' : contract.status === 'Cancelled' ? 'Former delivery date' : 'Expected delivery'}</dt><dd>${monthLabel(contract.deliveredAt ?? contract.expected)}</dd><dt>Contract value</dt><dd>${money(contract.price)}</dd></dl><h3>${contract.status === 'Cancelled' ? 'Released reservations' : 'Reservations'}</h3>${reservations.map(allocation => `<p>${need(allocation.needId)?.code} · ${escapeHTML(need(allocation.needId)?.title)} ×${allocation.quantity}</p>`).join('') || `<p>${contract.status === 'Cancelled' ? 'None' : 'Unallocated supply'}</p>`}${issue && contract.status !== 'Cancelled' ? `<p class="context-warning">${escapeHTML(issue)}</p>` : ''}`,
+   `${contract.status !== 'Cancelled' && freeQuantity(contract) > 0 ? `<button type="button" class="primary" data-allocate="${contract.id}">Allocate supply</button>` : ''}${contract.resourceId ? `<button type="button" class="secondary" data-replacement="${contract.id}">Compare alternatives</button>` : ''}${contract.status === 'Active' ? `<button type="button" class="secondary" data-cancel="${contract.id}">Cancel · ${money(contract.price / 2)} fee</button>` : ''}`);
   document.querySelectorAll('[data-contract-row]').forEach(row => row.classList.toggle('active-row', row.dataset.contractRow === contract.id));
  } else if (state.view === 'calls') {
   const call = state.calls.find(entry => entry.id === state.activeCall);
   const selectedTask = call && need(call.needId);
   content = call ? contextPanel(selectedTask.title, `${call.id} · ${callStatusLabel(call)}`,
-   `<p>${escapeHTML(selectedTask.description)}</p><p>Supplier response ${monthLabel(call.due)}. Needed ${monthLabel(selectedTask.due)}.</p>${call.offerId ? `<p><strong>${escapeHTML(resource(call.offerId).name)}</strong><br>${resource(call.offerId).price} cr · expected ${monthLabel(state.month + resource(call.offerId).lead)}${resource(call.offerId).reliability !== null ? `<br>${resource(call.offerId).reliability}% reliability` : ''}</p>` : ''}`,
+   `<p>${escapeHTML(selectedTask.description)}</p><p>Supplier response ${monthLabel(call.due)}. Needed ${monthLabel(selectedTask.due)}.</p>${call.offerId ? `<p><strong>${escapeHTML(resource(call.offerId).name)}</strong><br>${money(resource(call.offerId).price)} · expected ${monthLabel(state.month + resource(call.offerId).lead)}${resource(call.offerId).reliability !== null ? `<br>${resource(call.offerId).reliability}% reliability` : ''}</p>` : ''}`,
    `${call.offerId ? `<button type="button" class="primary" data-show-response="${call.id}">Compare returned Offer</button>` : ''}${call.status === 'Open' ? `<button type="button" class="secondary" data-withdraw="${call.id}">Withdraw Call</button>` : ''}`) : contextPanel('Calls', 'Select a Call to inspect its current terms.', '');
  } else if (state.view === 'plan') {
   const total = state.plan.reduce((sum, entry) => sum + resource(entry.resourceId).price * entry.quantity, 0);
   const affected = new Set(state.plan.map(entry => entry.needId).filter(Boolean));
-  content = contextPanel('Plan consequences', state.plan.length ? `${state.plan.length} draft entries · ${affected.size} shared needs` : 'Choose Resources across shared needs',
-   state.plan.length ? `<dl class="context-facts plan-budget"><dt>Proposed cost</dt><dd>${total} cr</dd><dt>${budget().available - total < 0 ? 'Funding gap' : 'Available after draft'}</dt><dd class="${budget().available - total < 0 ? 'warn' : ''}">${Math.abs(budget().available - total)} cr</dd></dl>${budget().available - total < 0 ? '<p class="context-warning">Choose another package or discuss funding with the team.</p>' : ''}` : '',
+  content = contextPanel('Plan consequences', state.plan.length ? `${state.plan.length} planned · ${affected.size} needs` : '',
+   state.plan.length ? `<dl class="context-facts plan-budget"><dt>Proposed cost</dt><dd>${money(total)}</dd><dt>${budget().available - total < 0 ? 'Funding gap' : 'Available after draft'}</dt><dd class="${budget().available - total < 0 ? 'warn' : ''}">${money(Math.abs(budget().available - total))}</dd></dl>` : '',
    '<button type="button" class="secondary" data-view="catalogue">Continue exploring</button>');
  } else if (state.view === 'compare') {
   content = contextPanel('Compare candidates', task ? `${task.code} · ${task.title}` : 'Explore terms across current needs',
-   '<p>Inspect a candidate to choose its destination and review the Budget effect.</p>',
+   '',
    '<button type="button" class="secondary" data-view="plan">Review combined plan</button>');
  } else {
   const issues = liveContracts().filter(contract => contractIssue(contract));
-  content = contextPanel('Mission attention', 'Reading information leaves supply issues visible until their state changes.',
-   `${issues.map(contract => `<button type="button" class="context-option warn" data-contract="${contract.id}"><strong>${contract.id} · ${escapeHTML(contract.name)}</strong><span>${escapeHTML(contractIssue(contract))}</span></button>`).join('') || '<p>Current Contracts have no supplied-criteria or delivery-date exceptions.</p>'}<p>Available Budget ${budget().available} cr. Draft plan ${state.plan.reduce((sum, entry) => sum + resource(entry.resourceId).price * entry.quantity, 0)} cr.</p>`,
+  content = contextPanel('Mission attention', '',
+   `${issues.map(contract => `<button type="button" class="context-option warn" data-contract="${contract.id}"><strong>${contract.id} · ${escapeHTML(contract.name)}</strong><span>${escapeHTML(contractIssue(contract))}</span></button>`).join('') || '<p>No supply exceptions.</p>'}`,
    '<button type="button" class="secondary" data-view="plan">Review acquisition plan</button>');
  }
  $('context-inspector').innerHTML = content;
@@ -453,10 +471,10 @@ function renderContext() {
 
 function render() {
  const balance = budget();
- $('available').textContent = balance.available;
- $('spent').textContent = balance.spent;
- $('committed').textContent = balance.committed;
- $('funding').textContent = state.funding;
+ $('available').textContent = money(balance.available);
+ $('spent').textContent = money(balance.spent);
+ $('committed').textContent = money(balance.committed);
+ $('funding').textContent = money(state.funding);
  document.querySelector('.budget').classList.toggle('over-budget', balance.available < 0);
  $('calendar').textContent = monthLabel(state.month).toUpperCase();
  const offersToReview = state.calls.filter(call => call.status === 'Responded' && !liveContracts().some(contract => contract.resourceId === call.offerId)).length;
@@ -529,18 +547,18 @@ function renderDialog() {
  let title, body, controls = '';
  if (draft.type === 'purchase') {
   title = `Procure ${facts.name}?`;
-  body = `${facts.quantity} unit${facts.quantity === 1 ? '' : 's'} · ${facts.price} credits committed · arrival ${monthLabel(facts.arrival)}.<br><br>${escapeHTML(facts.taskTitle)}${facts.taskRevision ? ` · revision ${facts.taskRevision}` : ''}.<br>Available Budget ${facts.available} → ${facts.remaining} credits.<br>Cancellation fee ${facts.price / 2} credits; payment on delivery.`;
+  body = `${facts.quantity} unit${facts.quantity === 1 ? '' : 's'} · ${money(facts.price)} committed · arrival ${monthLabel(facts.arrival)}.<br><br>${escapeHTML(facts.taskTitle)}${facts.taskRevision ? ` · revision ${facts.taskRevision}` : ''}.<br>Available Budget ${money(facts.available)} → ${money(facts.remaining)}.<br>Cancellation fee ${money(facts.price / 2)}; payment on delivery.`;
  } else if (draft.type === 'cancel') {
   title = `Cancel ${facts.name}?`;
-  body = facts.reason ? `Contract status is ${facts.status}. Available Budget remains ${facts.available} credits.` : `Cancellation costs ${facts.fee} credits. Available Budget ${facts.available} → ${facts.remaining}. Its Allocations will be released and the Contract retained in history.`;
+  body = facts.reason ? `Contract status is ${facts.status}. Available Budget remains ${money(facts.available)}.` : `Cancellation costs ${money(facts.fee)}. Available Budget ${money(facts.available)} → ${money(facts.remaining)}. Its Allocations will be released and the Contract retained in history.`;
  } else {
   const contract = state.contracts.find(entry => entry.id === draft.contractId);
   title = `Allocate ${facts.name}`;
-  body = `${facts.free} unallocated units · ${facts.status === 'Delivered' ? 'ready now' : 'promised for ' + monthLabel(contract.expected)}. Budget stays ${facts.remaining} credits.`;
+  body = `${facts.free} unallocated units · ${facts.status === 'Delivered' ? 'ready now' : 'promised for ' + monthLabel(contract.expected)}. Budget stays ${money(facts.remaining)}.`;
   const candidates = needs.filter(task => task.status === 'open' && fit(contract.resource, task).matches && shortage(task, contract.resource.contribution) > 0);
   controls = `<label for="dialog-allocation">Shared need<select id="dialog-allocation">${candidates.map(task => `<option value="${task.id}" ${draft.needId === task.id ? 'selected' : ''}>${task.code} · ${task.title}</option>`).join('')}</select></label><label for="dialog-quantity">Quantity<input id="dialog-quantity" type="number" min="1" max="${facts.free}" value="${draft.quantity}"></label>`;
  }
- const changeNote = changed ? `<div class="context-warning">Facts changed since this review opened. ${facts.available !== undefined ? `Available Budget is now ${facts.available} credits. ` : ''}${facts.taskRevision ? `Current Task revision ${facts.taskRevision}. ` : ''}Review the updated facts before committing.</div>` : '';
+ const changeNote = changed ? `<div class="context-warning">Facts changed since this review opened. ${facts.available !== undefined ? `Available Budget is now ${money(facts.available)}. ` : ''}${facts.taskRevision ? `Current Task revision ${facts.taskRevision}. ` : ''}Review the updated facts before committing.</div>` : '';
  const warning = facts.reason || (facts.late ? 'This supply arrives after the current need-by date. Discuss a plan change or another solution.' : '');
  $('dialog').innerHTML = `<h2 id="dialog-title">${escapeHTML(title)}</h2><p>${body}</p>${controls}${changeNote}<div class="context-warning" id="dialog-warning" ${warning ? '' : 'hidden'}>${escapeHTML(warning)}</div><div class="button-row"><button type="button" class="secondary" id="dialog-back">Back</button><button type="button" class="primary" id="dialog-confirm" ${facts.reason ? 'disabled' : ''}>${changed ? 'Review updated facts' : draft.type === 'purchase' ? 'Confirm Contract' : draft.type === 'cancel' ? 'Confirm cancellation' : 'Allocate quantity'}</button></div>`;
  if (focusedControlId) {
@@ -571,7 +589,7 @@ function confirmDialog() {
   };
   state.contracts.push(contract);
   if (draft.planId) state.plan = state.plan.filter(entry => entry.id !== draft.planId);
-  recordChange('Procurement', `${item.name} contracted`, `${facts.price} credits committed. ${facts.quantity} promised for ${monthLabel(facts.arrival)}${facts.needId ? ' for ' + need(facts.needId).code : ', unallocated'}.`, { contractId: contract.id, needId: facts.needId });
+  recordChange('Procurement', `${item.name} contracted`, `${money(facts.price)} committed. ${facts.quantity} promised for ${monthLabel(facts.arrival)}${facts.needId ? ' for ' + need(facts.needId).code : ', unallocated'}.`, { contractId: contract.id, needId: facts.needId });
  } else if (draft.type === 'cancel') {
   const contract = state.contracts.find(entry => entry.id === draft.contractId);
   contract.status = 'Cancelled';
@@ -579,7 +597,7 @@ function confirmDialog() {
   contract.allocations = [];
   contract.revision++;
   state.cancellationFees += facts.fee;
-  recordChange('Procurement', `${contract.name} cancelled`, `${facts.fee} credits paid in cancellation costs. Reservations released; Contract retained.`, { contractId: contract.id });
+  recordChange('Procurement', `${contract.name} cancelled`, `${money(facts.fee)} paid in cancellation costs. Reservations released; Contract retained.`, { contractId: contract.id });
  } else {
   const contract = state.contracts.find(entry => entry.id === draft.contractId);
   const existing = contract.allocations.find(allocation => allocation.needId === facts.needId);
@@ -650,7 +668,7 @@ function advanceMonth() {
   recordChange('Supplier', `Offer returned for ${need(call.needId).code}`, `${definition.name} is available to inspect. ${need(call.needId).revision !== call.taskRevision ? 'The Task changed while this Call was pending.' : 'Current criteria and timing still need checking.'}`, { callId: call.id, needId: call.needId });
  }
  render();
- status(`Calendar ${monthLabel(state.month)} · ${budget().available} credits available. Changes remain in the review list.`);
+ status(`Calendar ${monthLabel(state.month)} · ${money(budget().available)} available. Changes remain in the review list.`);
 }
 
 function applyEvent() {
@@ -659,7 +677,7 @@ function applyEvent() {
   const delta = event === 'funding' ? 30 : -70;
   const before = state.funding;
   state.funding += delta;
-  recordChange('Comms outcome', `Funding ${before} → ${state.funding} credits`, `Available Budget is now ${budget().available} credits. Existing Contracts and reservations remain in place.`);
+  recordChange('Comms outcome', `Funding ${money(before)} → ${money(state.funding)}`, `Available Budget is now ${money(budget().available)}. Existing Contracts and reservations remain in place.`);
  } else if (event === 'task') {
   const task = need('propulsion');
   if (task.minimumThrust === 940) { status('The authored engine revision is already applied.'); return; }
@@ -677,7 +695,7 @@ function applyEvent() {
  } else if (event === 'research') {
   if (resource(researchOffer.id)) { status('The authored research Offer is already in the catalogue.'); return; }
   catalogue.push(structuredClone(researchOffer));
-  recordChange('Science outcome', 'Domestic instrument Offer unlocked', '21 credits, two-month lead time, 90% reliability. External and Call alternatives remain available. Existing Contracts keep accepted terms.', { needId: 'minerals' });
+  recordChange('Science outcome', 'Domestic instrument Offer unlocked', '$21, two-month lead time, 90% reliability. External and Call alternatives remain available. Existing Contracts keep accepted terms.', { needId: 'minerals' });
  } else if (event === 'bulk') {
   if (need('flight-computers')) { status('The authored computer needs are already published.'); return; }
   needs.push(...structuredClone(bulkTasks));

@@ -54,14 +54,14 @@ svg.asset{display:block}svg.symbols{position:absolute;width:0;height:0;overflow:
  <nav class="main-nav" aria-label="Procurement views"><button type="button" data-view="catalogue" aria-pressed="true">Catalogue</button><button type="button" data-view="plan" aria-pressed="false">Plan <span class="nav-count" id="plan-count">0</span></button><button type="button" data-view="contracts" aria-pressed="false">Contracts</button><button type="button" data-view="calls" aria-pressed="false">Calls <span class="nav-count" id="call-count">1</span></button><button type="button" data-view="changes" aria-pressed="false">Changes <span class="nav-count" id="change-count">0</span></button></nav>
  <div class="mission"><strong>Mars · Orbiter & lander</strong></div>
  <div class="calendar"><strong id="calendar">SEP 2028</strong><span class="small muted">Launch · Sep 2029</span></div>
- <details class="budget" id="budget-details"><summary title="Budget breakdown"><div class="eyebrow">Available Budget</div><div class="budget-number"><span id="available">120</span> <span style="font-size:17px">credits</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 5 4 4 4-4"/></svg></div></summary><dl><dt>Funding</dt><dd id="funding">180</dd><dt>Spent</dt><dd id="spent">24</dd><dt>Committed</dt><dd id="committed">36</dd></dl></details>
+ <details class="budget" id="budget-details"><summary title="Budget breakdown"><div class="eyebrow">Available Budget</div><div class="budget-number"><span id="available">$120</span><span id="budget-chevron" aria-hidden="true"></span></div></summary><dl><dt>Funding</dt><dd id="funding">$180</dd><dt>Spent</dt><dd id="spent">$24</dd><dt>Committed</dt><dd id="committed">$36</dd></dl></details>
 </header>
 <div class="workspace">
  <aside class="needs" aria-label="Shared mission needs"><div class="section-heading"><h2>Shared needs</h2></div><section id="mission-overview" aria-label="Mission situation"></section><div id="needs-list"></div></aside>
  <main class="catalogue" aria-label="Resource catalogue">
   <div class="catalogue-head"><div class="catalogue-title"><div class="active-filter" id="active-filter" hidden></div></div>
   <nav class="category-nav" id="categories" aria-label="Resource categories"></nav>
-  <div class="toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" name="catalogue-search" type="search" autocomplete="off" placeholder="Search equipment, qualifications, parts…" aria-label="Search catalogue"></label><button type="button" class="secondary" id="compare-open">Compare selected <span id="compare-count">0</span></button><select id="sort" aria-label="Sort catalogue"><option value="featured">Catalogue order</option><option value="price">Lowest price</option><option value="arrival">Soonest available</option></select></div>
+  <div class="toolbar"><label class="search"><span class="search-icon" aria-hidden="true"></span><input id="search" name="catalogue-search" type="search" autocomplete="off" placeholder="Search equipment, qualifications, parts…" aria-label="Search catalogue"></label><button type="button" class="secondary" id="compare-open">Compare selected <span id="compare-count">0</span></button><select id="sort" aria-label="Sort catalogue"><option value="featured">Catalogue order</option><option value="price">Lowest price</option><option value="arrival">Soonest available</option></select></div>
   </div>
   <div class="catalogue-grid" id="catalogue-grid"></div>
 
@@ -76,7 +76,7 @@ svg.asset{display:block}svg.symbols{position:absolute;width:0;height:0;overflow:
   <div class="decision-actions">
    <div id="decision-summary" class="decision-summary"></div>
    <div class="use-for"><label class="field-label" for="allocation">For</label><select id="allocation"></select><p class="allocation-explanation" id="allocation-note"></p></div>
-   <div class="purchase-row"><div class="stepper" aria-label="Quantity"><button type="button" id="minus" aria-label="Reduce quantity">−</button><output id="quantity">1</output><button type="button" id="plus" aria-label="Increase quantity">+</button></div><div class="purchase-price"><span id="price">22</span> <span style="font-size:15px">cr</span></div></div>
+   <div class="purchase-row"><div class="stepper" aria-label="Quantity"><button type="button" id="minus" aria-label="Reduce quantity">−</button><output id="quantity">1</output><button type="button" id="plus" aria-label="Increase quantity">+</button></div><div class="purchase-price"><span id="price">$22</span></div></div>
    <button type="button" class="primary buy" id="buy">Procure</button><div class="purchase-note" id="purchase-note"></div>
    <div class="button-row"><button type="button" class="secondary" id="plan-add">Add to plan</button><button type="button" class="secondary" id="compare-add">Add to compare</button><button type="button" class="text-button" id="inspect-supply">Existing supply</button></div>
   </div>
@@ -84,13 +84,14 @@ svg.asset{display:block}svg.symbols{position:absolute;width:0;height:0;overflow:
  <div id="context-inspector" hidden></div>
  </aside>
 </div>
-<footer class="statusbar"><span class="status" id="status" role="status" aria-live="polite"></span><div class="station-options"><button type="button" id="fullscreen" class="text-button">Full screen</button><details id="scenario-controls"><summary>Scenario controls</summary><div class="mock-controls"><label for="scenario-event">Prototype events</label><select id="scenario-event" aria-label="Authored scenario event"><option value="funding">Comms · funding +30</option><option value="cut">Comms · funding −70</option><option value="task">Planning · revise engine need</option><option value="delay">Supplier · delay engine</option><option value="research">Science · new instrument Offer</option><option value="bulk">Planning & science · computer needs</option><option value="withdraw">Science · withdraw materials Task</option></select><button type="button" id="apply-event">Apply event</button><button type="button" id="next-month">Advance one month</button><p class="muted">Authored scenario · illustrative costs and timings.</p></div></details></div></footer>
+<footer class="statusbar"><span class="status" id="status" role="status" aria-live="polite"></span><div class="station-options"><button type="button" id="fullscreen" class="text-button">Full screen</button><details id="scenario-controls"><summary>Scenario controls</summary><div class="mock-controls"><label for="scenario-event">Prototype events</label><select id="scenario-event" aria-label="Authored scenario event"><option value="funding">Comms · funding +$30</option><option value="cut">Comms · funding −$70</option><option value="task">Planning · revise engine need</option><option value="delay">Supplier · delay engine</option><option value="research">Science · new instrument Offer</option><option value="bulk">Planning & science · computer needs</option><option value="withdraw">Science · withdraw materials Task</option></select><button type="button" id="apply-event">Apply event</button><button type="button" id="next-month">Advance one month</button><p class="muted">Authored scenario · illustrative costs and timings.</p></div></details></div></footer>
 </div>
 <section class="overlay" id="plan-view" hidden aria-label="Acquisition plan"></section>
 <section class="overlay" id="contracts-view" hidden aria-label="Contract inventory"></section>
 <section class="overlay" id="calls-view" hidden aria-label="Calls"></section><section class="overlay" id="compare-view" hidden aria-label="Compare Resources"></section><section class="overlay" id="changes-view" hidden aria-label="Scenario changes"></section>
 <div class="dialog-backdrop" id="dialog-backdrop" hidden><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" id="dialog"></section></div>
 <div class="minscreen" id="minscreen">1920 × 1080 desktop design · use a larger window or browser zoom to view the whole station.</div>
+<script src="icons/lucide.js"></script>
 <script src="catalogue-full-hd.js"></script>
 </body>
 </html>

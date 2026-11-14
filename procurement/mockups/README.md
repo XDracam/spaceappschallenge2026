@@ -58,3 +58,7 @@ The latest catalogue preview is `catalogue-focused.jpg`. The [follow-up walkthro
 ## Gameplay-first default view
 
 Latest preview — `catalogue-clean.jpg`. Open Available Budget for its accounting breakdown, Details & Contract terms for supporting Resource information, and Scenario controls in the footer for authored test events and month advancement. The default view emphasizes the current decision and mission needs.
+
+Latest icon-based preview — `catalogue-icons.jpg`. Hover the calendar, flag, shield, coin and supply-state icons for their meanings. Critical warnings and contribution names retain text.
+
+Latest corrected preview — `catalogue-dollars.jpg`. Procurement uses dollar amounts, the vendored [Lucide icons](icons/README.md), and explicit shortage descriptions. See D-015 and the [verified correction pass](../../docs/playtests/2026-11-14-procurement-gameplay-iteration.md#standard-icon-pack-dollars-and-named-shortages).
