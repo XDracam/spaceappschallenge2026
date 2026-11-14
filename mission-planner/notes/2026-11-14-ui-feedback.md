@@ -22,3 +22,11 @@ The assistant explained the launch deadline capped preparation time, and propose
 
 > One mission deadline
 
+## Starting state
+
+> why do i start with some rocket already in orbit?
+
+The plan started with a built-in launch step, and the map showed today's positions while the launch orbit was drawn at Earth's launch-day position. The assistant proposed starting on the launch pad with an empty plan and showing launch-day positions by default. The user answered:
+
+> Yes, both
+

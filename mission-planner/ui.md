@@ -24,6 +24,7 @@ Labels: **user direction** = stated by the user (source: [UI and testing notes](
 
 - Details appear on demand: rocket parts are compact rows that expand one at a time to show their sliders; procurement rows expand for contract details; the version comparison is behind a toggle.
 - The calendar date runs on its own (pulsing dot); pause and speed live only in the Dev drawer (gear icon).
+- While planning, the map shows positions on the planned launch day ("Launch day" in the map title line); editing a transfer shows its departure day; the playthrough shows its own date.
 - The launch chip opens a popover with the launch-date control, the mission's launch deadline, and "Launch now".
 
 **Earlier proposal (first build), kept for history:**

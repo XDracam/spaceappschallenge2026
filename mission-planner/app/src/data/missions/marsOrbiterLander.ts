@@ -101,7 +101,8 @@ export const MARS_ORBITER_LANDER: MissionDef = {
     branches: [
       {
         id: 'branch-root', name: 'Main', spacecraftIds: [orbiterId, landerId], carriesRocketStages: true,
-        maneuvers: [{ id: id('mnv'), type: 'launch', body: 'earth', altitudeKm: 200 }],
+        // Starts on the launch pad: the planner's first step is the launch.
+        maneuvers: [],
       },
     ],
   },

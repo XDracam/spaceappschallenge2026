@@ -84,6 +84,8 @@ The game has two separate kinds of time.
 
 **User direction:** clicking an orbit opens a menu of maneuver types; each type has a few sliders.
 
+**User direction (2026-11-14):** the plan starts empty with the rocket on the launch pad at Earth; the planner's first step is "Launch" (with the orbit altitude). While planning, the map shows planet positions on the planned launch day by default, so Earth and the launch orbit line up.
+
 ## Maneuver types
 
 **User direction:** transfers, orbit insertion, landing, gravity-assist flybys, separation into several spacecraft, and return trips (ascent from a surface, transfer back, Earth entry).

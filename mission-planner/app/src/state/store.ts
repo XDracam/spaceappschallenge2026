@@ -13,7 +13,7 @@ import { createStore, useStore } from './createStore';
 
 // ================================================================== stores
 
-const SAVE_KEY = 'mission-planner.save.v2';
+const SAVE_KEY = 'mission-planner.save.v3';
 
 function newGame(mission: MissionDef): GameState {
   return {
@@ -499,7 +499,6 @@ export const actions = {
     gameStore.update((g) => {
       const found = findManeuver(g.plan, maneuverId);
       if (!found) return;
-      if (found.branch.id === g.plan.branches[0].id && found.index === 0) return; // keep the launch
       const removed = found.branch.maneuvers.splice(found.index);
       const dropBranches = new Set<string>();
       const collect = (ms: Maneuver[]) => {

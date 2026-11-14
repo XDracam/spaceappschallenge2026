@@ -510,7 +510,8 @@ export class MapRenderer {
     };
     this.time = performance.now() / 1000;
     this.animating = false;
-    const day = ui.playthrough?.day ?? ui.mapDay ?? clock.day;
+    // Default to the planned launch day while planning, so Earth and the launch orbit line up.
+    const day = ui.playthrough?.day ?? ui.mapDay ?? (game.phase === 'planning' ? game.plan.launchDay : clock.day);
     const F: Frame = {
       ctx, game, ui, evaluation, day, center, proj,
       planning: game.phase === 'planning',
@@ -1296,7 +1297,7 @@ export class MapRenderer {
 
     ctx.font = FONT_HUD;
     setSpacing(ctx, LABEL_SPACING);
-    const mode = ui.playthrough ? 'Playthrough' : ui.mapDay !== null ? 'Positions' : 'Today';
+    const mode = ui.playthrough ? 'Playthrough' : ui.mapDay !== null ? 'Positions' : F.game.phase === 'planning' ? 'Launch day' : 'Today';
     const dateY = y + rowH + 16;
     // Small cyan status dot before the date line.
     ctx.fillStyle = ui.playthrough ? COLORS.accent : withAlpha(COLORS.accent, 0.7);

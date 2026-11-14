@@ -226,14 +226,11 @@ function ManeuverEdit({ maneuverId, screen }: { maneuverId: string; screen: Vec2
           </button>
         )}
         <div class="spacer" />
-        {isLaunch ? (
-          <span class="muted tiny">The launch can’t be deleted.</span>
-        ) : (
-          <button class="round-btn small danger" title="Delete maneuver (also removes all later maneuvers in this branch)"
-            onClick={() => actions.removeManeuver(m.id)}>
-            <TrashIcon />
-          </button>
-        )}
+        <button class="round-btn small danger"
+          title={isLaunch ? 'Delete the launch (removes the whole plan; the rocket goes back to the pad)' : 'Delete maneuver (also removes all later maneuvers in this branch)'}
+          onClick={() => actions.removeManeuver(m.id)}>
+          <TrashIcon />
+        </button>
       </div>
     </Floating>
   );
