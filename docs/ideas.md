@@ -51,6 +51,7 @@ All entries created November 14, 2026. User ideas come from the [kickoff](notes/
 | I-044 | A few mild in-flight events per mission, resolved automatically from the state at launch (comms: trust levels; possibly science and procurement too). | User, [comms questions](../communications/notes/2026-11-14-comms-questions.md) | User direction | [Event system](design/events.md#in-flight-events) |
 | I-045 | Much larger graph (many more nodes) with flexible cluster naming: cluster labels change with zoom level, coarser when zoomed out and finer when zoomed in. | User, [science module note](notes/2026-11-14-science-module.md) | Tentative user idea; not built | Q-034; extends I-036 and Q-031 |
 | I-046 | "Level design" of the details pane: split a field's information into tab-like views for datasets, observation methods, and related papers or analyses. | User, [science module note](notes/2026-11-14-science-module.md) | Tentative user idea; not built; wording interpreted, see note | Q-034; relates to the deferred data analysis (I-040) |
+| I-047 | Science task inbox: tasks posted by Mission Planning (raise a research limit, unlock a part) shown in the science UI; opening one marks its related fields. The search module, the inspect/combine mode switch, and the "tried so far" log were removed, and the bench changes only through an explicit button. | User, [science module note](notes/2026-11-14-science-module.md) | User direction; prototype with placeholder tasks, not connected to the planner | [Science module](../science/README.md); Q-034 |
 
 ## New entry template
 

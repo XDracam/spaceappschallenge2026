@@ -3,16 +3,12 @@ import type { Science } from '../state/science';
 import { GRAPH } from '../model/graph';
 import { DISCIPLINES } from '../data/fields';
 import { MAX_BENCH } from '../model/combine';
-import { RECIPES } from '../data/recipes';
 
 const ODDS_COLOR = { Good: '#4cc38a', Medium: '#f2b84b', 'Long shot': '#ff8a5d' } as const;
-const OUT_COLOR = { 'Project idea': '#4cc38a', Textbook: '#8a97ad', 'Long shot': '#ff8a5d' } as const;
 
 export function Bench({ s }: { s: Science }) {
   const canCombine = s.bench.length >= 2;
   const r = s.result;
-  const ideas = s.log.filter((l) => l.out === 'Project idea').length;
-  const total = RECIPES.length;
   return (
     <section class="bench" aria-label="Combination bench">
       <div class="bench-left">
@@ -30,7 +26,7 @@ export function Bench({ s }: { s: Science }) {
                   <div class="slot filled">
                     <span class="dot" style={{ background: DISCIPLINES[GRAPH.byId[id].discipline].color }} />
                     <span class="ellipsis grow">{GRAPH.byId[id].label}</span>
-                    <button class="x" aria-label={`Remove ${GRAPH.byId[id].label} from bench`} onClick={() => s.toggleBench(id)}>
+                    <button class="x" aria-label={`Remove ${GRAPH.byId[id].label} from bench`} onClick={() => s.removeFromBench(id)}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a97ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
                     </button>
                   </div>
@@ -54,7 +50,7 @@ export function Bench({ s }: { s: Science }) {
         {!r && (
           <div class="result empty">
             <div class="strong">Nothing combined yet</div>
-            <div>Switch to Combine mode, click fields on the map to put them on the bench, then press Combine.</div>
+            <div>Select a field on the map, press Add to bench in the details pane, then press Combine.</div>
           </div>
         )}
         {r?.kind === 'recipe' && (
@@ -91,19 +87,6 @@ export function Bench({ s }: { s: Science }) {
         )}
       </div>
 
-      <div class="bench-right">
-        <div class="row baseline">
-          <h2 class="eyebrow">Tried so far</h2>
-          <span class="grow" />
-          <span class="muted small">project ideas <strong class="mono">{ideas} / {total}</strong></span>
-        </div>
-        {s.log.slice(0, 4).map((l) => (
-          <div key={l.names} class="log-row">
-            <span class="ellipsis grow soft">{l.names}</span>
-            <span class="log-out" style={{ color: OUT_COLOR[l.out] }}>{l.out}</span>
-          </div>
-        ))}
-      </div>
     </section>
   );
 }

@@ -12,8 +12,9 @@ Labels: **user direction** = stated by the user. **Proposal** = suggested by the
 
 ## Screens
 
-1. **Field map and combination bench:** pan and zoom the graph, search, filter by discipline, jump to frontier fields, read "About this field" in the details pane, put fields on the bench and combine them. A combination is a project idea (recipe), textbook territory, or a long shot.
-2. **Draft a project:** choose scope and method, see a rough estimate and what other stations would need to provide. Starting a project only shows a confirmation; nothing is saved or sent.
+1. **Field map and combination bench:** pan and zoom the graph, read "About this field" in the details pane. In Overview zoom a discipline list floats on the map and hides or shows each discipline. Selecting a field never changes the bench: a field goes on the bench only with the "Add to bench" button. Clicking empty map space deselects. Combine shows a project idea (recipe), textbook territory, or a long shot.
+2. **Tasks from Mission Planning** (left rail): research and unlock requests, modelled on the planner's "get that part" tasks (see [rocket configurator](../mission-planner/rocket-configurator.md#beyond-research-parts)). Opening a task marks its related fields on the map. "Start research" and "finish research now" are stand-ins: nothing is sent to the planner yet, and the four tasks are placeholders.
+3. **Draft a project:** choose scope and method, see a rough estimate and what other stations would need to provide. Starting a project only shows a confirmation; nothing is saved or sent.
 
 ## Run it
 

@@ -1,4 +1,4 @@
-import type { CombineResult, ResultLabel } from './types';
+import type { CombineResult } from './types';
 import { GRAPH } from './graph';
 import { findRecipe } from '../data/recipes';
 
@@ -12,8 +12,4 @@ export function combine(ids: readonly string[]): CombineResult | null {
   // Two established fields are textbook territory. Anything touching a frontier or hinted field is a long shot.
   if (ids.every((id) => GRAPH.byId[id].state === 'est')) return { kind: 'known', names };
   return { kind: 'none', names };
-}
-
-export function resultLabel(r: CombineResult): ResultLabel {
-  return r.kind === 'recipe' ? 'Project idea' : r.kind === 'known' ? 'Textbook' : 'Long shot';
 }

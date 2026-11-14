@@ -48,5 +48,23 @@ export type CombineResult =
   | { kind: 'known'; names: string }
   | { kind: 'none'; names: string };
 
-export type ResultLabel = 'Project idea' | 'Textbook' | 'Long shot';
-export interface LogEntry { names: string; out: ResultLabel }
+/** open: waiting for science. running: research under way. done: result delivered to the requester. */
+export type TaskStatus = 'open' | 'running' | 'done';
+
+/** A request from another station. Today only Mission Planning posts them. */
+export interface ResearchTask {
+  id: string;
+  title: string;
+  /** research: raise a limit. unlock: make a part available. */
+  kind: 'research' | 'unlock';
+  requestedBy: 'Mission Planning';
+  part: string;
+  detail: string;
+  why: string;
+  /** Fields most relevant to answering the task. */
+  fieldIds: string[];
+  /** Days from now until the result is needed. */
+  dueInDays: number;
+  duration: string;
+  status: TaskStatus;
+}

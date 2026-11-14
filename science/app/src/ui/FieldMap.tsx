@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type { Science } from '../state/science';
 import { ZOOMS } from '../state/science';
 import type { FieldState, GraphNode } from '../model/types';
 import { GRAPH, edgePath } from '../model/graph';
 import { DISCIPLINES } from '../data/fields';
-import { matchingFields } from './LeftRail';
+import { DisciplineOverview } from './DisciplineOverview';
 
 const STATE_LABEL: Record<FieldState, string> = { est: 'Established', fr: 'Frontier', hint: 'Hinted', fog: 'Unknown' };
 
@@ -13,7 +13,7 @@ const WITHIN = edgePath(GRAPH, GRAPH.edges.filter((e) => e[2] === 0).map((e) => 
 const CROSS = edgePath(GRAPH, GRAPH.edges.filter((e) => e[2] === 1).map((e) => [e[0], e[1]]));
 const FOG = edgePath(GRAPH, GRAPH.edges.filter((e) => e[2] === 2).map((e) => [e[0], e[1]]));
 
-function nodeStyle(n: GraphNode, o: { zoom: number; pill: boolean; selected: boolean; benched: boolean; dim: boolean }): JSX.CSSProperties {
+function nodeStyle(n: GraphNode, o: { zoom: number; pill: boolean; selected: boolean; benched: boolean; related: boolean; dim: boolean }): JSX.CSSProperties {
   const col = DISCIPLINES[n.discipline].color;
   const detail = o.zoom >= 0.7;
   const s: JSX.CSSProperties = {
@@ -35,6 +35,7 @@ function nodeStyle(n: GraphNode, o: { zoom: number; pill: boolean; selected: boo
   if (n.state === 'hint') { s.background = 'rgba(11,15,23,0.75)'; s.border = '2px dashed #7d8aa3'; }
   if (n.state === 'fog') { s.background = 'rgba(11,15,23,0.4)'; s.border = '2px dotted #4a5873'; s.color = '#8a97ad'; }
   if (o.selected) { s.outline = '2px solid #e6edf7'; s.outlineOffset = '4px'; s.zIndex = 5; }
+  if (o.related) { s.outline = '2px dashed #f2b84b'; s.outlineOffset = '4px'; s.zIndex = 4; }
   if (o.benched) { s.outline = '3px solid #5fb3ff'; s.outlineOffset = '4px'; s.zIndex = 5; }
   if (o.dim) { s.opacity = 0.13; s.pointerEvents = 'none'; }
   return s;
@@ -44,18 +45,17 @@ export function FieldMap({ s }: { s: Science }) {
   const detail = s.zoom >= 0.7;
   const scroller = useRef<HTMLDivElement>(null);
 
-  // Keep the selected field in view, for example after a jump from the frontier list.
+  // Keep the selected field in view, for example after opening a task.
   useEffect(() => {
     const el = scroller.current;
-    const n = GRAPH.byId[s.selected];
+    const n = s.selected ? GRAPH.byId[s.selected] : null;
     if (!el || !n) return;
     el.scrollTo({ left: n.x * s.zoom - el.clientWidth / 2, top: n.y * s.zoom - el.clientHeight / 2, behavior: 'smooth' });
   }, [s.selected, s.zoom]);
 
-  const matches = useMemo(() => new Set(matchingFields(s.search)), [s.search]);
-  const searching = s.search.trim().length > 0;
+  const related = new Set(s.activeTask?.fieldIds ?? []);
 
-  const highlight = edgePath(GRAPH, GRAPH.edges.filter(([a, b]) => a === s.selected || b === s.selected).map(([a, b]) => [a, b]));
+  const highlight = edgePath(GRAPH, GRAPH.edges.filter(([a, b]) => s.selected !== null && (a === s.selected || b === s.selected)).map(([a, b]) => [a, b]));
   const pairs: [string, string][] = [];
   for (let i = 0; i < s.bench.length; i++) for (let j = i + 1; j < s.bench.length; j++) pairs.push([s.bench[i], s.bench[j]]);
   const benchPath = edgePath(GRAPH, pairs);
@@ -63,16 +63,7 @@ export function FieldMap({ s }: { s: Science }) {
   return (
     <main class="graph">
       <div class="toolbar">
-        <div class="seg" role="group" aria-label="Interaction mode">
-          {(['inspect', 'combine'] as const).map((m) => (
-            <button key={m} aria-pressed={s.mode === m} class={s.mode === m ? 'on' : ''} onClick={() => s.setMode(m)}>
-              {m === 'inspect' ? 'Inspect' : 'Combine'}
-            </button>
-          ))}
-        </div>
-        <span class="hint grow">
-          {s.mode === 'inspect' ? 'Inspect: click a field to read about it and see what it connects to.' : 'Combine: click fields to put them on the bench (up to three).'}
-        </span>
+        <span class="hint grow">Click a field to read about it. Click empty space to deselect.</span>
         <div class="seg" role="group" aria-label="Zoom">
           {ZOOMS.map((z) => (
             <button key={z.value} aria-pressed={s.zoom === z.value} class={s.zoom === z.value ? 'on' : ''} onClick={() => s.setZoom(z.value)}>
@@ -82,7 +73,13 @@ export function FieldMap({ s }: { s: Science }) {
         </div>
       </div>
 
-      <div class="viewport" ref={scroller}>
+      <div class="viewport-wrap">
+      {s.zoom === ZOOMS[0].value && <DisciplineOverview s={s} />}
+      <div
+        class="viewport"
+        ref={scroller}
+        onClick={(e) => { if (!(e.target as HTMLElement).closest('button')) s.select(null); }}
+      >
         <div style={{ position: 'relative', width: `${Math.round(GRAPH.width * s.zoom)}px`, height: `${Math.round(GRAPH.height * s.zoom)}px` }}>
           <div style={{ position: 'absolute', left: 0, top: 0, width: `${GRAPH.width}px`, height: `${GRAPH.height}px`, transform: `scale(${s.zoom})`, transformOrigin: '0 0' }}>
             {GRAPH.titles.map((t) => (
@@ -104,15 +101,16 @@ export function FieldMap({ s }: { s: Science }) {
             {GRAPH.nodes.map((n) => {
               const selected = n.id === s.selected;
               const benched = s.bench.includes(n.id);
-              const dim = (searching && !matches.has(n.id)) || !!s.hidden[n.discipline];
-              const pill = detail || selected || benched;
+              const dim = !!s.hidden[n.discipline];
+              const isRelated = related.has(n.id);
+              const pill = detail || selected || benched || isRelated;
               return (
                 <button
                   key={n.id}
                   aria-pressed={selected || benched}
                   aria-label={`${n.label}, ${STATE_LABEL[n.state]} field in ${DISCIPLINES[n.discipline].name}`}
-                  style={nodeStyle(n, { zoom: s.zoom, pill, selected, benched, dim })}
-                  onClick={() => s.pickNode(n.id)}
+                  style={nodeStyle(n, { zoom: s.zoom, pill, selected, benched, related: isRelated, dim })}
+                  onClick={() => s.select(n.id)}
                 >
                   {pill && (
                     <>
@@ -125,6 +123,7 @@ export function FieldMap({ s }: { s: Science }) {
             })}
           </div>
         </div>
+      </div>
       </div>
     </main>
   );

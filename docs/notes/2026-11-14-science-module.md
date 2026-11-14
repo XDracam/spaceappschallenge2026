@@ -64,3 +64,27 @@ Source: user message in the project conversation. The original wording is preser
 - Recorded only. Nothing was built.
 - Point 1 was read as a larger graph whose cluster names change with the zoom level.
 - Point 2 ("Level Design") was read as the structure of the details pane, with three tab-like views per field. This reading is uncertain: it could also mean levels or screens of the game. Confirm before design work.
+
+## Follow-up — November 14, 2026 (sixth message)
+
+Source: user message in the project conversation. The original wording is preserved below.
+
+> Allright. Let's adapt this a bit further. Please insert the UI for handling Tasks spawned from Mission Planning Module. Scrap the Search Module on the left instead. Scrap the inspect/ combine tabs, just keep the inspect one. Deselect item when clicking on an empty map point. Only Add to workbench when user explicitly clicks on the "add to bench" button. Scrap the "tried so far" module.
+
+### Interpretation boundaries
+
+- The task UI takes the place of the search module in the left rail. The frontier list, discipline filter, and legend stay. This reading is an assumption.
+- "Tasks spawned from Mission Planning" was read as the planner's beyond-research "get that part" tasks, shown as research and unlock requests. The four tasks in the prototype are placeholders modelled on the planner's current example mission. How a task is answered (a project, several fields combined, a direct start) is open.
+- "Workbench" was read as the existing combination bench. Combine itself stays; only the interaction modes, search, and the log were removed.
+- Starting and finishing research in the prototype are stand-ins. No integration with the planner exists.
+
+## Follow-up — November 14, 2026 (seventh message)
+
+Source: user message in the project conversation. The original wording is preserved below.
+
+> Sieht schonmal gut aus. Wir werfen auch die Frontier Pbersicht raus. die Discipline - Übersicht bitte in die Map mit rein, solange wir im "Overview" sind.
+
+### Interpretation boundaries
+
+- The frontier list in the left rail is removed. Frontier fields stay visible on the map and in the top bar count.
+- The discipline list (it also works as the show/hide filter) is now an overlay on the map, shown only in Overview zoom. The overlay covers part of the map in the top left; its placement is a first guess.

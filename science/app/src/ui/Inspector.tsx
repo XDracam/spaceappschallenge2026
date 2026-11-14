@@ -13,6 +13,16 @@ const STATE: Record<FieldState, { label: string; cls: string }> = {
 };
 
 export function Inspector({ s }: { s: Science }) {
+  if (!s.selected) {
+    return (
+      <aside class="inspector">
+        <div class="empty-note">
+          <h1 class="field-title">No field selected</h1>
+          <p class="muted">Click a field on the map to read about it, see what it connects to, and add it to the bench.</p>
+        </div>
+      </aside>
+    );
+  }
   const n = GRAPH.byId[s.selected];
   const disc = DISCIPLINES[n.discipline];
   const fog = n.state === 'fog';
@@ -58,7 +68,7 @@ export function Inspector({ s }: { s: Science }) {
       </div>
 
       {!fog && (
-        <button class={'bench-toggle' + (onBench ? ' remove' : '')} disabled={full} onClick={() => s.toggleBench(n.id)}>
+        <button class={'bench-toggle' + (onBench ? ' remove' : '')} disabled={full} onClick={() => (onBench ? s.removeFromBench(n.id) : s.addToBench(n.id))}>
           {onBench ? 'Remove from bench' : full ? 'Bench is full' : 'Add to bench'}
         </button>
       )}

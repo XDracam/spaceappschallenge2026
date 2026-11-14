@@ -1,10 +1,9 @@
 import { useState } from 'preact/hooks';
-import type { CombineResult, Discipline, LogEntry } from '../model/types';
-import { MAX_BENCH, combine, resultLabel } from '../model/combine';
-import { findRecipe } from '../data/recipes';
+import type { CombineResult, Discipline, ResearchTask, TaskStatus } from '../model/types';
+import { MAX_BENCH, combine } from '../model/combine';
+import { INITIAL_TASKS } from '../data/tasks';
 import { GRAPH } from '../model/graph';
 
-export type Mode = 'inspect' | 'combine';
 export type Screen = 'map' | 'draft';
 export const ZOOMS = [
   { value: 0.36, label: 'Overview' },
@@ -12,57 +11,48 @@ export const ZOOMS = [
   { value: 1.1, label: 'Detail' },
 ] as const;
 
-const START_BENCH = ['a5', 'b1'];
-
-function seededResult(): CombineResult {
-  const recipe = findRecipe(START_BENCH)!;
-  return { kind: 'recipe', names: START_BENCH.map((id) => GRAPH.byId[id].label).join(' + '), recipe };
-}
-
-const SEED_LOG: LogEntry[] = [
-  { names: 'Methane variability + Biosignature gases', out: 'Project idea' },
-  { names: 'Cloud microphysics + Dust storm dynamics', out: 'Textbook' },
-  { names: 'Impact cratering + Radiometric surface dating', out: 'Textbook' },
-];
-
 /** All local UI state of the science station. Nothing here is shared with other stations yet. */
 export function useScience() {
   const [screen, setScreen] = useState<Screen>('map');
-  const [selected, setSelected] = useState('a5');
-  const [mode, setMode] = useState<Mode>('combine');
+  const [selected, setSelected] = useState<string | null>(null);
   const [zoom, setZoom] = useState<number>(ZOOMS[0].value);
-  const [bench, setBench] = useState<string[]>(START_BENCH);
+  const [bench, setBench] = useState<string[]>([]);
   const [hidden, setHidden] = useState<Partial<Record<Discipline, boolean>>>({});
-  const [search, setSearch] = useState('');
-  const [result, setResult] = useState<CombineResult | null>(seededResult);
-  const [log, setLog] = useState<LogEntry[]>(SEED_LOG);
+  const [result, setResult] = useState<CombineResult | null>(null);
+  const [tasks, setTasks] = useState<ResearchTask[]>(INITIAL_TASKS);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
-  const toggleBench = (id: string) => {
-    if (GRAPH.byId[id].state === 'fog') return;
-    setBench((b) => (b.includes(id) ? b.filter((x) => x !== id) : b.length < MAX_BENCH ? [...b, id] : b));
-    setResult(null);
-  };
+  const activeTask = tasks.find((t) => t.id === activeTaskId) ?? null;
 
   return {
-    screen, selected, mode, zoom, bench, hidden, search, result, log,
+    screen, selected, zoom, bench, hidden, result, tasks, activeTask,
     openDraft: () => setScreen('draft'),
     closeDraft: () => setScreen('map'),
-    setMode, setZoom, setSearch,
+    setZoom,
     toggleDiscipline: (d: Discipline) => setHidden((h) => ({ ...h, [d]: !h[d] })),
+    /** Passing null clears the selection, for example after a click on empty map. */
     select: setSelected,
-    /** In Combine mode a click also puts the field on the bench. */
-    pickNode: (id: string) => {
-      setSelected(id);
-      if (mode === 'combine') toggleBench(id);
+    /** The bench changes only through an explicit click on its buttons, never by selecting a field. */
+    addToBench: (id: string) => {
+      if (GRAPH.byId[id].state === 'fog') return;
+      setBench((b) => (b.includes(id) || b.length >= MAX_BENCH ? b : [...b, id]));
+      setResult(null);
     },
-    toggleBench,
+    removeFromBench: (id: string) => { setBench((b) => b.filter((x) => x !== id)); setResult(null); },
     clearBench: () => { setBench([]); setResult(null); },
     runCombine: () => {
       const r = combine(bench);
-      if (!r) return;
-      setResult(r);
-      setLog((l) => [{ names: r.names, out: resultLabel(r) }, ...l.filter((e) => e.names !== r.names)].slice(0, 6));
+      if (r) setResult(r);
     },
+    /** Pick a task, or toggle it off. Its linked fields are marked on the map and the first one is selected. */
+    selectTask: (id: string | null) => {
+      const next = id === activeTaskId ? null : id;
+      setActiveTaskId(next);
+      const t = tasks.find((x) => x.id === next);
+      if (t) setSelected(t.fieldIds[0]);
+    },
+    setTaskStatus: (id: string, status: TaskStatus) =>
+      setTasks((ts) => ts.map((t) => (t.id === id ? { ...t, status } : t))),
   };
 }
 
