@@ -11,11 +11,17 @@ The user proposes that **every task must have at least one solution**. What coun
 ## How roles could interact
 
 1. Mission planning starts with constraints, including new or changed constraints from events. It explores the design, then creates and can edit a task such as “a part or person with at least X and at most Y.”
-2. RP receives requests and constraints, considers the catalogue or an *Ausschreibung* (a tender or request for proposals), compares offers, and manages resulting procurement contracts. The idea is that a tender can in theory address any problem with enough money, time, and risk. This has not been reconciled with practical feasibility.
+2. RP receives requests and constraints, considers the catalogue or a Call (*Ausschreibung*, or request for proposals), compares offers, and manages resulting procurement contracts. The idea is that a Call can in theory address any problem with enough money, time, and risk. This has not been reconciled with practical feasibility.
 3. Science projects may unlock options for mission planning, procurement, or communications; projects may themselves need staff, funding, or procurement.
 4. Communications can handle outside events; consequences or positive opportunities may change mission constraints, contracts, funding, risks, or research.
 
 This is an illustrative relationship between user ideas, not a mandatory sequence or assignment of every task to a single role. Task ownership, visibility, coordination, and authorization remain open.
+
+## Conversation and persistent goals
+
+Players coordinate by talking directly. Tasks are shared problems, and the role that can contribute a solution may be unclear. An author records provenance. It does not imply an assignee.
+
+The proposed [Task boundary](../../procurement/tasks-and-conversation.md) retains goals with evaluable completion criteria while players discuss help, compromises and priorities. The assistant's earlier automatic support-Task workflow is withdrawn. Details of this boundary and information visibility need exploration.
 
 ## Records and timing — open
 
@@ -26,4 +32,4 @@ This is an illustrative relationship between user ideas, not a mandatory sequenc
 
 ## Example, not a rule
 
-A broad destination goal leads planning to discover an engine requirement. The planner explores the configuration, then posts a requirement with limits. RP examines existing offers or seeks tender offers; science may unlock more options and communications may change constraints. Exactly how tasks are discovered, whether alternatives are feasible, how contracts are represented, and when the engine is needed are open.
+A broad destination goal leads planning to discover an engine requirement. The planner explores the configuration, then posts a requirement with limits. RP examines existing offers or seeks Call offers; science may unlock more options and communications may change constraints. Exactly how tasks are discovered, whether alternatives are feasible, how contracts are represented, and when the engine is needed are open.

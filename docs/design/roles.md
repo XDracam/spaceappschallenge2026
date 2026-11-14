@@ -2,7 +2,11 @@
 
 These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md), [follow-up](../notes/2026-11-14-brainstorm.md), and [personnel and roles notes](../notes/2026-11-14-personnel-tasks-roles.md), not a selected player count or permission model. Focus is multiplayer first, and switching roles is an idea. See [Q-001](../questions.md#q-001--players-and-role-ownership). The key requirement is meaningful concurrent activity for every role (D-004).
 
+A [procurement-facing action map](../../procurement/role-actions.md) records the current proposed actions and their effects.
+
 ## Resource management and procurement — I-001
+
+A [standalone procurement prototype sketch](../../procurement/README.md) explores this role; it is a proposal and has not been tested.
 
 **User brainstorm:** “I need this, how do I get it?” Budget, cost, reliability, delivery time, and the effect of communications belong in the decision.
 
@@ -12,9 +16,9 @@ These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md)
 
 **Contributes:** what the mission can acquire, its cost, its expected availability, and its reliability implications.
 
-**Further ideas:** RP manages money and constrained requests through a large catalogue and tenders (*Ausschreibungen*) with competing offers. With enough money, time, and risk a tender might theoretically solve any problem. A contract list acts as inventory: the proposed model is that nothing is owned, only contracted, with cancellation cost, risk, delays, and minimum time until arrival. RP may also recruit personnel.
+**Further ideas:** RP manages money and constrained requests through a large catalogue and Calls (*Ausschreibungen*) with competing offers. With enough money, time, and risk a Call might theoretically solve any problem. A contract list acts as inventory: the proposed model is that nothing is owned, only contracted, with cancellation cost, risk, delays, and minimum time until arrival. RP may also recruit personnel.
 
-**Unresolved:** feasibility of tenders; records of existing, discarded, cancelled, or changed contracts; timing of needs and assembly; how reliability and communications effects work. See Q-005, Q-022–Q-024, and Q-028.
+**Unresolved:** feasibility of Calls; records of existing, discarded, cancelled, or changed contracts; timing of needs and assembly; how reliability and communications effects work. See Q-005, Q-022–Q-024, and Q-028.
 
 ## Communications and public relations — I-002
 

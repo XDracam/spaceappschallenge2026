@@ -1,6 +1,6 @@
 # Decision log
 
-This log records explicit project direction. Proposed mechanics remain in [ideas](ideas.md) until accepted. All initial decisions are sourced from the [November 14 kickoff](notes/2026-11-14-kickoff.md).
+This log records explicit project direction. Proposed mechanics remain in [ideas](ideas.md) until accepted. Entries link their source notes.
 
 ## D-001 — Work in the prototype phase
 
@@ -44,6 +44,32 @@ This log records explicit project direction. Proposed mechanics remain in [ideas
 - Source: [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md).
 - Open boundary: whether and how authored content can be selected, varied, combined, or revealed at runtime, and how player-created tasks relate to this baseline. Do not assume that all randomness or changing state is prohibited. See Q-026.
 - Related: I-023, [shared tasks](design/shared-tasks.md), Q-026.
+
+## D-006 — Procurement terminology
+
+Accepted by the user on November 14, 2026. Use these terms consistently across procurement and the current design documents.
+
+| Term | Meaning |
+| --- | --- |
+| Task | A goal and its completion criteria. |
+| Resource | A part, person, or service that can be supplied. |
+| Call | An invitation to suppliers to submit Offers addressing a Task. |
+| Offer | Supplier terms for providing a Resource. |
+| Contract | An accepted Offer and the resulting commitment. |
+| Allocation | Contracted quantity reserved for a particular Task criterion. |
+| Budget | Funding, spending, commitments, and available funds. |
+
+Players open a Call, receive Offers, sign a Contract, and allocate what it provides to Tasks. Catalogue Offers can also be accepted directly.
+
+Record fields, ownership, state transitions, payment schedules, and detailed mechanics remain under discussion. Related material includes I-036 and the [procurement interfaces](../procurement/interfaces.md). The [terminology discussion](notes/2026-11-14-procurement-terminology.md) records the user's selection and the previous term for Call.
+
+## D-007 — Direct conversation between roles
+
+User direction on November 14, 2026. Players coordinate by talking directly to one another. This communication is an important part of the gameplay.
+
+Tasks are shared problems whose applicable roles may be unclear, as in the original brainstorm. The assistant's support-Task workflow has been withdrawn. The exact distinction between persistent Tasks and conversational requests remains a design question. Information visibility and automated interface assistance also remain open.
+
+See the [source clarification](notes/2026-11-14-tasks-and-conversation.md), the [shared Tasks brainstorm](design/shared-tasks.md), and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
 
 ## Future decision template
 

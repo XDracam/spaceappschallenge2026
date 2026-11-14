@@ -18,7 +18,7 @@ No runtime dynamic generation; missions, part lists, possible events, and simila
 
 ## Areas to explore
 
-- **Resource management and procurement:** manage budget and constrained requests through a catalogue, tenders, and a contract inventory; weigh cost, reliability, delivery time, and communications. Astronauts could also be expensive and difficult to replace.
+- **Resource management and procurement:** manage budget and constrained requests through a catalogue, Calls, and a contract inventory; weigh cost, reliability, delivery time, and communications. Astronauts could also be expensive and difficult to replace.
 - **Science:** choose sensors and scientific details, influence mission planning, and perhaps use minigames or staff research projects with uncertain outcomes and cross-role unlocks.
 - **Mission planning:** explore a simplified 2D mission and payload configuration, parameters, and launch windows; convert constraints into editable tasks rather than shopping for individual tasks. Planning simulations are distinct from the earlier final-mission idea; their relationship remains open.
 - **External communications:** respond to events in a visual-novel style and proactively build relationships; consequences and opportunities could affect all roles. Political, industry, and public relations might be separate roles.

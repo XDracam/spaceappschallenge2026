@@ -35,7 +35,7 @@ Comms might use visual-novel-style interactions, and unhandled events could chan
 
 ## Procurement and people — I-001, I-015
 
-Start from “I need this, how do I get it?” Compare cost, reliability, and delivery time within a budget. RP could handle constrained requests using a catalogue and tenders with competing offers. An idea is that everything is represented by contracts, with cancellation costs, risk, delays, and minimum time until arrival. Crew could be procured similarly to parts. Feasibility, contract history, and staffing are open (Q-005, Q-023, Q-028).
+Start from “I need this, how do I get it?” Compare cost, reliability, and delivery time within a budget. RP could handle constrained requests using a catalogue and Calls with competing offers. An idea is that everything is represented by contracts, with cancellation costs, risk, delays, and minimum time until arrival. Crew could be procured similarly to parts. Feasibility, contract history, and staffing are open (Q-005, Q-023, Q-028).
 
 ## Science and mission planning — I-003, I-004, I-016, I-019
 

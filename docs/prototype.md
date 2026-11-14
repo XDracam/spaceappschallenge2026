@@ -14,7 +14,7 @@ These are options to compare, not an ordered or approved implementation plan:
 2. **Communications event exercise:** present messages and player-triggered events, explore response options, and observe whether consequences reach procurement, science, or planning in understandable ways.
 3. **Mission flow exercise:** explore how broad destination goals, planning, real-time events, and the earlier one-shot simulation idea might fit together.
 4. **Progression exercise:** compare a roguelite run with a campaign that retains some overarching progress. Explore failure without deciding the structure in advance.
-5. **Shared task exercise:** start from a broad goal, uncover tasks, compare catalogue and tender options, and observe what happens when a constraint or schedule changes. Explicitly probe whether a solution remains feasible and every role remains engaged.
+5. **Shared task exercise:** start from a broad goal, uncover tasks, compare catalogue and Call options, and observe what happens when a constraint or schedule changes. Explicitly probe whether a solution remains feasible and every role remains engaged.
 6. **Personnel comparison:** explore how named people, skilled pools, or simple headcounts communicate training and create engaging choices across roles.
 
 A paper exercise and a shared planning sheet were earlier assistant suggestions (I-006 and I-008). They could help with some questions; the right format for real-time multiplayer remains open. Prototype mechanics and invented values may be chosen provisionally for an experiment without making them final design decisions.

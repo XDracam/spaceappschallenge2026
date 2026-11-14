@@ -88,7 +88,7 @@ Are tasks, problems, and goals separate concepts or views of one list? How are n
 
 ## Q-022 — Guaranteeing task solutions
 
-Does “every task has at least one solution” mean a theoretical solution exists in authored content, a solution is currently accessible, or one is affordable and timely given the current state? What happens when deadlines, budgets, contracts, or event-driven constraints rule out options? How do tenders and risk affect this guarantee?
+Does “every task has at least one solution” mean a theoretical solution exists in authored content, a solution is currently accessible, or one is affordable and timely given the current state? What happens when deadlines, budgets, contracts, or event-driven constraints rule out options? How do Calls and risk affect this guarantee?
 
 ## Q-023 — Contract inventory and discarded things
 
@@ -104,15 +104,15 @@ What happens to requests, offers, contracts, and deadlines when planning edits a
 
 ## Q-026 — Authored content boundary
 
-What counts as runtime dynamic generation? Can the game randomly select or combine authored events, outcomes, missions, or offers, and can players create tasks during play? How can tasks be uncovered and tenders produce multiple offers under the hand-crafted-content baseline? D-005 does not settle these details.
+What counts as runtime dynamic generation? Can the game randomly select or combine authored events, outcomes, missions, or offers, and can players create tasks during play? How can tasks be uncovered and Calls produce multiple offers under the hand-crafted-content baseline? D-005 does not settle these details.
 
 ## Q-027 — Research mechanics
 
 How are researchers assigned, duration and budget determined, and rough rewards communicated? How do failure, project unlocks, events, and cross-role options work? Does procurement provide project needs? Is there a tech tree?
 
-## Q-028 — Catalogue, tenders, and contracts
+## Q-028 — Catalogue, Calls, and contracts
 
-What belongs in the authored catalogue and what can tenders offer? How are multiple offers, costs, lead times, cancellation, and risk determined? How should the theoretical ability to solve any problem coexist with limited resources, hand-crafted content, and Q-022?
+What belongs in the authored catalogue and what can Calls offer? How are multiple offers, costs, lead times, cancellation, and risk determined? How should the theoretical ability to solve any problem coexist with limited resources, hand-crafted content, and Q-022?
 
 ## Q-029 — Mission planning configurator
 
@@ -121,3 +121,7 @@ What does a simplified 2D simulation model, what parameters and launch windows d
 ## Q-030 — Proactive and reactive communications
 
 How do visual-novel interactions and unhandled events turn into consequences or positive opportunities? How do galas or relationship projects run, use staff or funding, unlock options, and trigger further events? Which effects are visible to other roles?
+
+## Q-031 — Tasks, conversation, and information visibility
+
+Which persistent shared goals should be Tasks, and which requests or negotiations should happen through direct conversation? What do the other roles see of procurement's options, assessments, commitments, and Budget? How can the interface help players reference facts while preserving meaningful conversation? See D-007 and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
