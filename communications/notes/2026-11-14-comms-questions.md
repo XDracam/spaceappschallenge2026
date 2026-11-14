@@ -42,3 +42,10 @@ The first layout question used ASCII-art previews; the user answered "um that as
 - Comms staff? → "No staff, slots only"
 - Do final trust levels count in the result? →
   > goals only and we had the idea for those auto resolved events during the final mission simulation at the very end?
+
+## Before implementation
+
+- Build approach? → "Standalone app + stand-ins (Recommended)" (communications/app with the planner's stack; a dev drawer fakes the other stations; shared event-system code in a new top-level shared/ folder)
+- Who writes the content? → "Claude drafts, proposals = baseline (Recommended)" (Claude authors the events, project catalogue and trust numbers; the user reviews and changes later)
+- Tone? → "Light satire, grounded (Recommended)"
+- Portraits? → "Stylised initials (Recommended)"

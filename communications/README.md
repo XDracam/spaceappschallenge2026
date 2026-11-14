@@ -92,6 +92,28 @@ Three slots; the third opens at strong trust with any stakeholder (proposal with
 - No staff: the 2–3 project slots are the only limit (revisit if a shared personnel system is decided).
 - The mission result counts goals only. Trust levels matter through their effects during play and through the auto-resolved in-flight events in the final playthrough (see [During the flight](#during-the-flight)).
 
+## Build
+
+**User direction (2026-11-14):** a standalone app in `app/` with the planner's stack (Preact, TypeScript, Vite); a dev drawer stands in for the other stations until they connect (Q-012); shared event-system code lives in the top-level [`shared/`](../shared/) folder. Claude drafts the content (events, characters, projects, trust numbers) as the baseline; tone is light satire, grounded; portraits are stylised initials.
+
+```bash
+cd communications/app
+npm install
+npm run dev
+```
+
+Open http://localhost:5175 (the planner uses 5173, science 5174).
+
+**Status (2026-11-14):** built and checked in the browser at 1440×900: briefing (calendar waits), events arriving and expiring with their default outcome, answering with revealed outcomes, projects, flag-triggered event chains (RTG flag → plutonium story → protest), news feed, and the dev drawer's outbox of effects for the other stations. Content: 5 characters, 34 events (8 timeline, 11 triggered, 15 pool), 10 projects, 5 in-flight events — Claude-drafted baseline, tone light satire. Not integrated with the other stations (Q-012); not playtested.
+
+| Folder | Contents |
+| --- | --- |
+| `app/src/data/` | Hand-authored content: characters, events, projects, in-flight events; mission constants |
+| `app/src/model/` | Comms types |
+| `app/src/state/` | Game state, calendar, actions, dev stand-ins |
+| `app/src/ui/` | Preact UI (layout A) |
+| `../shared/events/` | Shared event types and engine for all stations |
+
 ## Open questions
 
 1. Event content for the Mars mission: the authored timeline, triggers, and pool (how many events, which characters).
