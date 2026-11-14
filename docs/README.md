@@ -69,6 +69,7 @@
 | [Player stations note](notes/2026-11-14-player-stations.md) | User decision for four separate stations and seats |
 | [Integration questions](notes/2026-11-14-integration-questions.md) | User answers on connection, code layout, hosting, fewer players and terminology (D-015) |
 | [Science module note](notes/2026-11-14-science-module.md) | Verbatim science station input |
+| [Agent playtest, round r001](playtests/2026-11-14-agent-playtest-r001.md) | Four AI players with no knowledge of the game complete the weather-satellite mission; 16 findings, limits of the method ([harness](../playtest/README.md)) |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |

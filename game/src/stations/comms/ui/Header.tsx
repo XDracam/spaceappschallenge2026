@@ -1,16 +1,17 @@
 import { useGame } from '../../../core/store';
-import { DAYS_PER_MONTH, MISSION_NAME, START_ISO, uiStore, useBudgetLeft, useLaunched, useToday, useUi } from './store';
+import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useLaunched, useMission, useStartISO, useToday, useUi } from './store';
 import { GearIcon } from './common';
 import { formatDay, formatDuration, formatMoney, formatRealTime } from './format';
 
 /** Floating header: wordmark + mission, Today / Budget / Launch chips (shared state), Dev pill. */
 export function Header() {
   const devOpen = useUi((u) => u.devOpen);
+  const mission = useMission();
   return (
     <header class="header">
       <div class="brand">
         <div class="wordmark">COMMUNICATIONS</div>
-        <div class="brand-sub">{MISSION_NAME}</div>
+        <div class="brand-sub">{mission.name}</div>
       </div>
       <div class="spacer" />
       <div class="chips">
@@ -30,6 +31,7 @@ function TodayChip() {
   const launched = useLaunched();
   const day = useToday();
   const running = useGame((s) => s.clock.running);
+  const startISO = useStartISO();
   const dps = useGame((s) => s.clock.daysPerSecond);
   const months = +((dps * 60) / DAYS_PER_MONTH).toFixed(1);
   const flowing = running && !launched;
@@ -38,7 +40,7 @@ function TodayChip() {
       <span class={`pulse${flowing ? '' : ' still'}`} />
       <div class="chip-stack">
         <span class="chip-label">Today</span>
-        <span class="chip-value num">{formatDay(day, START_ISO)}</span>
+        <span class="chip-value num">{formatDay(day, startISO)}</span>
         <span class="chip-sub">{launched ? 'launched' : running ? `1 min = ${months} month${months === 1 ? '' : 's'}` : 'calendar stopped'}</span>
       </div>
     </div>
@@ -69,6 +71,7 @@ function LaunchChip() {
   const launched = useLaunched();
   const running = useGame((s) => s.clock.running);
   const now = useToday();
+  const startISO = useStartISO();
   const realSec = useGame((s) => Math.ceil(Math.max(0, launchDay - s.clock.day) / Math.max(1e-9, s.clock.daysPerSecond)));
   if (launched) {
     return (
@@ -76,7 +79,7 @@ function LaunchChip() {
         <div class="chip-stack">
           <span class="chip-label">Launch</span>
           <span class="chip-value">LAUNCHED</span>
-          <span class="chip-sub num">{formatDay(launchDay, START_ISO)}</span>
+          <span class="chip-sub num">{formatDay(launchDay, startISO)}</span>
         </div>
       </div>
     );
@@ -87,7 +90,7 @@ function LaunchChip() {
       <div class="chip-stack">
         <span class="chip-label">Launch</span>
         <span class="chip-value num">
-          {formatDay(launchDay, START_ISO)}
+          {formatDay(launchDay, startISO)}
           <span class={soon ? 'warn-text' : 'muted'}> · {running ? `in ${formatRealTime(realSec)}` : `in ${formatDuration(Math.max(0, launchDay - now))}`}</span>
         </span>
         <span class="chip-sub">{running ? 'real time at current speed' : 'calendar stopped'}</span>

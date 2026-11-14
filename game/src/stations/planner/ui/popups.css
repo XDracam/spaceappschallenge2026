@@ -21,6 +21,7 @@
 .st-planner .edit-popup .release-line { margin: 0 0 6px; font-size: 13px; }
 .st-planner .edit-popup .edit-controls { margin-top: 10px; }
 .st-planner .edit-popup .edit-controls:empty { display: none; }
+.st-planner .edit-popup .goal-alt-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: -4px; }
 
 .st-planner .slider-caption { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--muted); margin-top: 1px; }
 

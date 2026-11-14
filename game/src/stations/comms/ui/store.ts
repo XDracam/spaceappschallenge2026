@@ -3,14 +3,21 @@
 import { createStore, useStore } from '../../../core/createStore';
 import { getState, useGame } from '../../../core/store';
 import { budgetAvailableM } from '../../../core/state';
-import { MISSION } from '../../../core/mission';
+import { missionById } from '../../../core/mission';
+import type { MissionDef } from '../../planner/model/types';
 import { commsActions } from '../logic';
 import type { CommsSlice } from '../slice';
-import { canStartProject, getEventDef, isLaunched, projectSlotsFor, type ProjectBlock } from '../state/world';
+import {
+  canStartProject, contentOf, getEventDef, isLaunched, projectSlotsFor, type Content, type ProjectBlock,
+} from '../state/world';
 
 export { DAYS_PER_MONTH } from '../state/world';
-export const MISSION_NAME = MISSION.name;
-export const START_ISO = MISSION.startDateISO;
+/** The game's mission (from the shared state, so it follows the mission the host picked). */
+export const useMission = (): MissionDef => missionById(useGame((s) => s.meta.missionId));
+/** Mission start date (day 0 of the agency calendar). */
+export const useStartISO = (): string => useMission().startDateISO;
+/** Comms content (events, projects, cast) of the game's mission. */
+export const useContent = (): Content => useGame(contentOf);
 
 export interface UiState {
   selectedInstanceId: string | null;
@@ -42,7 +49,7 @@ export const actions = {
     commsActions.answer(instanceId, optionId);
     const inst = getState().comms.inbox.find((i) => i.instanceId === instanceId);
     if (inst?.status !== 'answered' || inst.chosenOptionId !== optionId) return;
-    const text = getEventDef(inst.eventId)?.options.find((o) => o.id === optionId)?.outcome ?? '';
+    const text = getEventDef(inst.eventId, contentOf(getState()))?.options.find((o) => o.id === optionId)?.outcome ?? '';
     uiStore.set({ ...uiStore.get(), lastOutcome: { instanceId, text } });
   },
   startProject(defId: string): void {

@@ -1,5 +1,5 @@
 import type { EventDef, EventInstance } from '../model/types';
-import { actions, START_ISO, useBudgetLeft, useComms, useLaunched, useToday, useUi } from './store';
+import { actions, useBudgetLeft, useComms, useLaunched, useStartISO, useToday, useUi } from './store';
 import { optionEffects } from '../state/world';
 import {
   Avatar, ChangeList, HintPills, InternalTag, SH, dueClass, eventById, eventCharacter, openByUrgency,
@@ -44,7 +44,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
   const ch = eventCharacter(def);
   const today = useToday();
   const budget = useBudgetLeft();
-  const startISO = START_ISO;
+  const startISO = useStartISO();
   const launched = useLaunched();
   const inbox = useComms((s) => s.inbox);
   const lastOutcome = useUi((u) => u.lastOutcome);

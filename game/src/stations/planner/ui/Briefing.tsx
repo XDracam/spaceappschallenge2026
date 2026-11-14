@@ -1,3 +1,4 @@
+import { useEffect } from 'preact/hooks';
 import { createStore, useStore } from '../../../core/createStore';
 import { useClock, usePlanner } from '../state/store';
 import { formatDay } from '../model/units';
@@ -5,35 +6,41 @@ import { fmtMoneyShort, useLocalUi } from './common';
 
 // One-time mission briefing, centred over the free map area.
 
+// Seen once per mission: a new mission shows its own briefing.
 const SEEN_KEY = 'mission-planner.briefing.seen';
+const seenKey = (missionId: string) => `${SEEN_KEY}.${missionId}`;
 
-function seenBefore(): boolean {
+function seenBefore(missionId: string): boolean {
   try {
-    return localStorage.getItem(SEEN_KEY) === '1';
+    return localStorage.getItem(seenKey(missionId)) === '1';
   } catch {
     return false;
   }
 }
 
 // The shared calendar keeps running while it is open (other stations are playing).
-const briefingStore = createStore({ open: !seenBefore() });
+const briefingStore = createStore({ open: false, missionId: '' });
 
 export function openBriefing() {
-  briefingStore.set({ open: true });
+  briefingStore.set({ ...briefingStore.get(), open: true });
 }
 
 function closeBriefing() {
+  const { missionId } = briefingStore.get();
   try {
-    localStorage.setItem(SEEN_KEY, '1');
+    localStorage.setItem(seenKey(missionId), '1');
   } catch {
     /* storage unavailable: the briefing shows again next load */
   }
-  briefingStore.set({ open: false });
+  briefingStore.set({ open: false, missionId });
 }
 
 export function Briefing() {
   const open = useStore(briefingStore, (s) => s.open);
   const mission = usePlanner((g) => g.mission);
+  useEffect(() => {
+    if (briefingStore.get().missionId !== mission.id) briefingStore.set({ open: !seenBefore(mission.id), missionId: mission.id });
+  }, [mission.id]);
   const phase = usePlanner((g) => g.phase);
   const launchDay = usePlanner((g) => g.plan.launchDay);
   const insets = useLocalUi((s) => s.insets);
@@ -47,8 +54,9 @@ export function Briefing() {
       <section class="briefing glass strong" role="dialog" aria-labelledby="briefing-title">
         <div class="tb-label">Mission briefing</div>
         <h2 id="briefing-title" class="briefing-title">Mission: {mission.name}</h2>
+        <p>{mission.briefing}</p>
         <p>
-          All goals must be done by <b class="num">{formatDay(mission.completionDeadlineDay, start)}</b>.
+          Deadline <b class="num">{formatDay(mission.completionDeadlineDay, start)}</b>.
           Budget <b class="num">{fmtMoneyShort(budgetM)}</b>. Each goal scores separately:
         </p>
         <ul class="briefing-goals">

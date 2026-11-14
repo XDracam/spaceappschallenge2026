@@ -3,6 +3,7 @@ import { BODIES } from '../data/bodies';
 import { CAN_LAND } from '../data/parts';
 import { childrenIdsOf, siblingsOf, transferRelation } from './ephemeris';
 import { bestFlybyTravel, hohmannTravelDays, transferGrid, transferRanges, type TransferGrid } from './transfers';
+import { altitudeGoalsAt, altitudeOk, goalOrbitChangeLabel } from './goals';
 
 // Maneuver menu and default maneuvers.
 
@@ -67,6 +68,15 @@ export function availableManeuvers(game: PlannerGame, branch: Branch, state: Fli
   };
   switch (state.kind) {
     case 'orbit': {
+      // A goal here needs a specific orbit (e.g. geostationary): offer it in one click.
+      const altGoals = altitudeGoalsAt(game.mission, body.id);
+      const missed = altGoals.find((g) => !altitudeOk(g, state.altitudeKm));
+      if (missed) {
+        push({
+          type: 'changeOrbit', altitudeKm: missed.altitudeKm, enabled: true,
+          label: goalOrbitChangeLabel(missed, state.altitudeKm),
+        }, true);
+      }
       // Release: one option per spacecraft; the first one always stays on this branch.
       for (const sc of scs.slice(1)) {
         push({ type: 'separate', spacecraftId: sc.id, label: `Release ${sc.name}`, enabled: true }, atGoal);
@@ -81,7 +91,7 @@ export function availableManeuvers(game: PlannerGame, branch: Branch, state: Fli
       for (const t of transferTargets(body.id)) {
         push({ type: 'transfer', target: t, label: `Transfer to ${BODIES[t].name}`, enabled: true }, leadsToward(body.id, t, goalBodies));
       }
-      push({ type: 'changeOrbit', label: 'Change orbit height', enabled: true }, false);
+      push({ type: 'changeOrbit', label: 'Change orbit height', enabled: true }, altGoals.length > 0);
       break;
     }
     case 'approach': {
@@ -156,6 +166,9 @@ export function createManeuver(
     case 'ascent':
       return { id, type: 'ascent', altitudeKm: body.lowOrbitAltKm };
     case 'changeOrbit': {
+      if (option.altitudeKm !== undefined) {
+        return { id, type: 'changeOrbit', altitudeKm: Math.round(clamp(option.altitudeKm, body.minOrbitAltKm, body.maxOrbitAltKm)) };
+      }
       const cur = state.kind === 'orbit' ? state.altitudeKm : body.lowOrbitAltKm;
       return { id, type: 'changeOrbit', altitudeKm: Math.round(clamp(cur * 2, body.minOrbitAltKm, body.maxOrbitAltKm)) };
     }

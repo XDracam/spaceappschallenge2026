@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { STATIONS, type Seat, type StationId } from '../core/model';
+import { DEFAULT_MISSION_ID, MISSIONS, missionById } from '../core/mission';
 import { setLocalStation, useGame, useSync } from '../core/store';
 import type { InviteInfo } from '../net/webrtc';
 import { STATION_INFO } from './stations';
@@ -128,15 +129,81 @@ function SeatGrid({ seats, me, onPick, names }: {
   );
 }
 
+/** The mission of the game this browser holds (host) or joined (player). */
+function MissionLine() {
+  const missionId = useGame((s) => s.meta.missionId);
+  const m = missionById(missionId);
+  const card = MISSION_CARD[m.id];
+  return (
+    <p class="shell-mission-line">
+      <span class="shell-label">Mission</span> <b>{m.name}</b>
+      {card && <span class="shell-muted"> · {card.text}</span>}
+    </p>
+  );
+}
+
 function dayLabel(day: number): string {
   return `day ${Math.floor(day)}`;
 }
 
 // ------------------------------------------------------------------ start
 
+/** Lobby copy per mission (one line each); the first mission in MISSIONS is the default. */
+const MISSION_CARD: Record<string, { tag: string; text: string }> = {
+  'weather-geo': {
+    tag: 'Start here',
+    text: 'One satellite: launch to low Earth orbit, then raise it to geostationary orbit. Short game.',
+  },
+  'mars-orbiter-lander': {
+    tag: 'Harder',
+    text: 'An orbiter and a lander to Mars: launch windows, orbit insertion and a landing. Long game.',
+  },
+};
+
+function MissionPicker({ onBack }: { onBack: () => void }) {
+  const [pick, setPick] = useState(DEFAULT_MISSION_ID);
+  const chosen = MISSIONS.find((m) => m.id === pick) ?? MISSIONS[0];
+  return (
+    <section class="shell-missions" aria-labelledby="shell-missions-title">
+      <h2 id="shell-missions-title">Pick a mission</h2>
+      <div class="shell-mission-list" role="radiogroup" aria-labelledby="shell-missions-title">
+        {MISSIONS.map((m) => {
+          const card = MISSION_CARD[m.id];
+          const on = m.id === pick;
+          return (
+            <button key={m.id} class={`shell-mission${on ? ' is-on' : ''}`} role="radio" aria-checked={on} onClick={() => setPick(m.id)}>
+              <span class="shell-mission-head">
+                <span class="shell-mission-radio" aria-hidden="true" />
+                <span class="shell-choice-title">{m.name}</span>
+                {card && <span class={`shell-chip${m.id === DEFAULT_MISSION_ID ? ' shell-chip-accent' : ''}`}>{card.tag}</span>}
+              </span>
+              <span class="shell-choice-text">{card?.text ?? m.briefing}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div class="shell-mission-actions">
+        <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => hostNewGame(chosen.id)}>
+          Host “{chosen.name}”
+        </button>
+        <button class="shell-link" onClick={onBack}>← Back</button>
+      </div>
+    </section>
+  );
+}
+
 function StartScreen() {
   const name = useSession((s) => s.name);
   const saved = useMemo(() => hasSavedGame(), []);
+  const [picking, setPicking] = useState(false);
+  if (picking) {
+    return (
+      <>
+        <Brand />
+        <MissionPicker onBack={() => setPicking(false)} />
+      </>
+    );
+  }
   return (
     <>
       <Brand />
@@ -155,17 +222,17 @@ function StartScreen() {
         />
       </label>
       <div class="shell-choices">
-        <button class="shell-choice" onClick={hostNewGame}>
+        <button class="shell-choice" onClick={() => setPicking(true)}>
           <span class="shell-choice-title">Host a new game</span>
           <span class="shell-choice-text">
-            Your browser runs the game. Invite up to three players — or start alone and switch between stations.
+            Pick a mission. Your browser runs the game. Invite up to three players — or start alone and switch between stations.
           </span>
         </button>
         {saved && (
           <button class="shell-choice" onClick={resumeHostedGame}>
             <span class="shell-choice-title">Resume hosted game</span>
             <span class="shell-choice-text">
-              Continue the game saved in this browser ({saved.phase === 'lobby' ? 'not started yet' : dayLabel(saved.day)}).
+              Continue the {saved.missionName} game saved in this browser ({saved.phase === 'lobby' ? 'not started yet' : dayLabel(saved.day)}).
               Players join again with new codes.
             </span>
           </button>
@@ -218,6 +285,7 @@ function HostScreen() {
   return (
     <>
       <Brand tag={started ? `Hosting · ${dayLabel(day)}` : 'Hosting'} />
+      <MissionLine />
       <div class="shell-cols">
         <div>
           <Step n={1} title="Choose your station" done={!!mine}>
@@ -357,6 +425,7 @@ function JoinScreen() {
   return (
     <>
       <Brand tag={ready ? 'Connected' : 'Joining'} />
+      {ready && <MissionLine />}
       <Step n={1} title="Paste the invite code from the host" done={join.status !== 'idle'}>
         {join.status === 'idle' ? (
           <>

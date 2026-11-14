@@ -34,7 +34,10 @@ export function loadSaved(): GameState | null {
     if (!raw) return null;
     const s = JSON.parse(raw) as GameState;
     if (s?.version === 1) migrateV1(s);
-    return s?.version === STATE_VERSION ? s : null;
+    if (s?.version !== STATE_VERSION) return null;
+    // Saves from before mission selection were Mars games.
+    s.meta.missionId ??= 'mars-orbiter-lander';
+    return s;
   } catch {
     return null;
   }

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from 'preact/hooks';
 import { MapCanvas } from '../map/MapCanvas';
 import { getState } from '../../../core/store';
-import { actions, stepPlaythrough, uiStore, usePlanner, useUi } from '../state/store';
+import { actions, getPlanner, stepPlaythrough, uiStore, usePlanner, useUi } from '../state/store';
+import { BODIES } from '../data/bodies';
 import { computeMissionResult } from '../result';
 import { TopBar } from './TopBar';
 import { BottomStrip } from './BottomStrip';
@@ -36,6 +37,14 @@ export function App() {
   const launched = usePlanner((g) => g.phase === 'launched');
 
   useEffect(() => syncPlaythrough(launched), [launched]);
+
+  // Map opens on the mission's arena: Earth's system when every goal is there, else the solar system.
+  const missionId = usePlanner((g) => g.mission.id);
+  useEffect(() => {
+    const goals = getPlanner().mission.goals;
+    const nearEarth = goals.length > 0 && goals.every((g) => g.body === 'earth' || BODIES[g.body].parent === 'earth');
+    uiStore.update((u) => { u.viewCenter = nearEarth ? 'earth' : 'sun'; });
+  }, [missionId]);
 
   // Playthrough animation clock (the agency calendar itself is host-driven, core/clock.ts).
   useEffect(() => {

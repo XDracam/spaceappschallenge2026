@@ -5,7 +5,9 @@ import type {
   TransferManeuver, Vec2,
 } from '../model/types';
 import { actions, getPlanner, uiStore, useEvaluation, usePlanner, useUi } from '../state/store';
-import { availableManeuvers, branchEndState, createManeuver, transferRanges, transferRelation } from '../physics';
+import {
+  altitudeGoalsAt, altitudeOk, availableManeuvers, branchEndState, createManeuver, goalOrbitText, transferRanges, transferRelation,
+} from '../physics';
 import { bodyById, childrenOf } from '../data/bodies';
 import { findBranch, findManeuver } from '../model/rocketUtils';
 import { formatDay, formatDuration } from '../model/units';
@@ -377,14 +379,47 @@ function defaultLabel(m: Maneuver): string {
   }
 }
 
+/** One-click buttons that set the altitude to a goal orbit at this body (e.g. geostationary). */
+function GoalAltitudeButtons({ body, value, onPick }: { body: BodyId; value: number; onPick: (v: number) => void }) {
+  const mission = usePlanner((g) => g.mission);
+  const goals = altitudeGoalsAt(mission, body);
+  const seen = new Set<number>();
+  const list = goals.filter((g) => !seen.has(g.altitudeKm) && (seen.add(g.altitudeKm), true));
+  if (!list.length) return null;
+  return (
+    <div class="goal-alt-row">
+      {list.map((g) => (
+        <button key={g.id} class="pill small" disabled={altitudeOk(g, value)}
+          title={altitudeOk(g, value) ? `Already in ${goalOrbitText(g)}` : `Set the altitude to the goal orbit: ${goalOrbitText(g)}`}
+          onClick={() => onPick(g.altitudeKm)}>
+          {altitudeOk(g, value) ? `In ${goalOrbitText(g)}` : `Set to ${goalOrbitText(g)}`}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function ManeuverControls({ m, branch, index, result, upd }: {
   m: Maneuver; branch: Branch; index: number; result?: ManeuverResult; upd: (p: Partial<Maneuver>) => void;
 }) {
   const before = result?.stateBefore;
   switch (m.type) {
     case 'launch':
-      return altSlider(m.body, m.altitudeKm, (v) => upd({ altitudeKm: v }));
-    case 'changeOrbit':
+      return (
+        <>
+          {altSlider(m.body, m.altitudeKm, (v) => upd({ altitudeKm: v }))}
+          <GoalAltitudeButtons body={m.body} value={m.altitudeKm} onPick={(v) => upd({ altitudeKm: v })} />
+        </>
+      );
+    case 'changeOrbit': {
+      const body = stateBody(before) ?? 'earth';
+      return (
+        <>
+          {altSlider(body, m.altitudeKm, (v) => upd({ altitudeKm: v }))}
+          <GoalAltitudeButtons body={body} value={m.altitudeKm} onPick={(v) => upd({ altitudeKm: v })} />
+        </>
+      );
+    }
     case 'ascent':
       return altSlider(stateBody(before) ?? 'earth', m.altitudeKm, (v) => upd({ altitudeKm: v }));
     case 'insertion': {

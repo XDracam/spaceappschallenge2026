@@ -1,0 +1,13 @@
+{
+  "name": "mission-control-playtest",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Agent playtest harness: four isolated browser stations, a player CLI and overseer telemetry.",
+  "scripts": {
+    "harness": "node harness/server.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.65.1"
+  }
+}

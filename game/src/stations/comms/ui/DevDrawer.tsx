@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
-import { EVENTS } from '../data/content';
 import { commsActions } from '../logic';
-import { START_ISO, uiStore, useComms, useUi } from './store';
+import { uiStore, useComms, useContent, useStartISO, useUi } from './store';
 import { CloseIcon, STATION_LABEL } from './common';
 import { formatDay, formatMoney } from './format';
 
@@ -39,13 +38,14 @@ export function DevDrawer() {
 function FireSection() {
   const [id, setId] = useState('');
   const fired = useComms((c) => c.fired);
+  const events = useContent().events;
   return (
     <section>
       <h4>Fire event</h4>
       <div class="inline">
-        <select value={id} onChange={(e) => setId((e.target as HTMLSelectElement).value)} disabled={!EVENTS.length} style={{ flex: 1 }}>
-          <option value="">{EVENTS.length ? 'Choose an event…' : 'No events authored yet'}</option>
-          {EVENTS.map((ev) => (
+        <select value={id} onChange={(e) => setId((e.target as HTMLSelectElement).value)} disabled={!events.length} style={{ flex: 1 }}>
+          <option value="">{events.length ? 'Choose an event…' : 'No events authored yet'}</option>
+          {events.map((ev) => (
             <option key={ev.id} value={ev.id}>{fired.includes(ev.id) ? '✓ ' : ''}{ev.title} ({ev.source})</option>
           ))}
         </select>
@@ -59,16 +59,17 @@ function StatusSection() {
   const nextPoolDay = useComms((c) => c.nextPoolDay);
   const modifiers = useComms((c) => c.modifiers);
   const budget = useGame((s) => s.budget);
+  const startISO = useStartISO();
   return (
     <section>
       <h4>Comms state</h4>
-      <div class="muted small">Next pool draw: {formatDay(nextPoolDay, START_ISO)}</div>
+      <div class="muted small">Next pool draw: {formatDay(nextPoolDay, startISO)}</div>
       <div class="muted small">
         Budget: funding {formatMoney(budget.fundingTotalM)} · spent {formatMoney(budget.spentM)} · committed {formatMoney(budget.committedM)}
       </div>
       {modifiers.map((m, i) => (
         <div key={i} class="muted small">
-          {m.effect.kind === 'eventOdds' ? `“${m.effect.tag}” ×${m.effect.factor}` : m.effect.kind} until {formatDay(m.untilDay, START_ISO)}
+          {m.effect.kind === 'eventOdds' ? `“${m.effect.tag}” ×${m.effect.factor}` : m.effect.kind} until {formatDay(m.untilDay, startISO)}
         </div>
       ))}
     </section>
@@ -107,6 +108,7 @@ function OffersSection() {
 
 function NewsSection() {
   const news = useGame((s) => s.events.news);
+  const startISO = useStartISO();
   return (
     <section>
       <h4>Shared news · {news.length}</h4>
@@ -114,7 +116,7 @@ function NewsSection() {
         {news.slice(0, 30).map((n) => (
           <li key={n.id}>
             <div class="outbox-top">
-              <span class="muted num">{formatDay(n.day, START_ISO)}</span>
+              <span class="muted num">{formatDay(n.day, startISO)}</span>
               <span class="outbox-to">{STATION_LABEL[n.from]} → {n.affects.map((s) => STATION_LABEL[s]).join(', ')}</span>
             </div>
             <div>{n.text}</div>

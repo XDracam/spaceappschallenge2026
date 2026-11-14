@@ -1,13 +1,10 @@
 // Events caused by other players' actions (source 'player', on the flags other
 // stations raise in s.events.flags, see docs/design/integration.md) and by game state (source 'trigger', on
 // trust and budget). Each fires once, the first time its `when` holds.
-import type { EventDef } from '../model/types';
+import type { EventDef } from '../../model/types';
 import {
-  allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, trust, trustAbove, trustBelow,
-} from './helpers';
-
-/** Flag set by this content: the plutonium story ran without the agency's side. */
-export const FLAG_RTG_STORY = 'press.rtgStory';
+  FLAG_RTG_STORY, allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, trust, trustAbove, trustBelow,
+} from '../helpers';
 
 export const PLAYER_EVENTS: EventDef[] = [
   {

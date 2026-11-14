@@ -1,9 +1,8 @@
 import { useEffect } from 'preact/hooks';
 import type { ActiveProject, ProjectDef, ProjectKind } from '../model/types';
-import { PROJECTS } from '../data/content';
 import { MAX_PROJECT_SLOTS, TRUST_STRONG } from '../data/mission';
 import { useGame } from '../../../core/store';
-import { actions, uiStore, useBudgetLeft, useComms, useLaunched, useUi } from './store';
+import { actions, uiStore, useBudgetLeft, useComms, useContent, useLaunched, useUi } from './store';
 import type { ProjectBlock } from '../state/world';
 import {
   CloseIcon, HintPills, InternalTag, SH, characterById, projectById, trustHints,
@@ -89,13 +88,14 @@ function ProjectCard({ p }: { p: ActiveProject }) {
   );
 }
 
-/** Modal list of PROJECTS to start. */
+/** Modal list of the mission's projects to start. */
 export function ProjectPicker() {
   const open = useUi((u) => u.projectPickerOpen);
   const projects = useComms((s) => s.projects);
   const budget = useBudgetLeft();
   const trust = useComms((s) => s.trust);
   useLaunched(); // re-render on launch (canStartProject)
+  const projectDefs = useContent().projects;
   const slots = actions.projectSlots();
   const free = Math.max(0, slots - projects.length);
   const close = () => uiStore.update((u) => { u.projectPickerOpen = false; });
@@ -119,8 +119,8 @@ export function ProjectPicker() {
           <button class="round-btn" title="Close" onClick={close}><CloseIcon /></button>
         </div>
         <div class="picker-list thin-scroll">
-          {PROJECTS.length === 0 && <div class="empty-box">No projects available yet.</div>}
-          {PROJECTS.map((def) => {
+          {projectDefs.length === 0 && <div class="empty-box">No projects available yet.</div>}
+          {projectDefs.map((def) => {
             const req = def.requires;
             const reqUnmet = !!req && (trust[req.stakeholder] ?? 0) < req.min;
             const running = projects.some((p) => p.defId === def.id);

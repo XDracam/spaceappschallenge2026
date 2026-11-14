@@ -8,6 +8,13 @@ import type { Effect, EventDef, StakeholderId } from '../model/types';
 type Option = EventDef['options'][number];
 type OfferEffect = Extract<Effect, { kind: 'offer' }>;
 
+// -------------------------------------------- flags raised by comms content
+
+/** A plutonium (RTG) story ran without the agency's side (both missions). */
+export const FLAG_RTG_STORY = 'press.rtgStory';
+/** A partner ground-station deal completed (used by in-flight events). */
+export const FLAG_GROUND_STATION = 'comms.groundStation';
+
 // ------------------------------------------------------------------ effects
 
 export const trust = (stakeholder: StakeholderId, delta: number): Effect => ({ kind: 'trust', stakeholder, delta });
@@ -40,6 +47,8 @@ export const lacksFlag = (flag: string): Condition => ({ kind: 'notFlag', flag }
 export const trustBelow = (stakeholder: StakeholderId, value: number): Condition => ({ kind: 'trustBelow', stakeholder, value });
 export const trustAbove = (stakeholder: StakeholderId, value: number): Condition => ({ kind: 'trustAbove', stakeholder, value });
 export const budgetBelow = (valueM: number): Condition => ({ kind: 'budgetBelow', valueM });
+/** Holds from this agency-calendar day on (comms stops at launch, so: "still on the ground by then"). */
+export const dayAfter = (day: number): Condition => ({ kind: 'dayAfter', day });
 export const allOf = (...of: Condition[]): Condition => ({ kind: 'all', of });
 export const anyOf = (...of: Condition[]): Condition => ({ kind: 'any', of });
 

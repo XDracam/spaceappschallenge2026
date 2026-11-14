@@ -1,13 +1,13 @@
 import type { NewsItem } from '../model/types';
 import { useGame } from '../../../core/store';
-import { START_ISO } from './store';
+import { useStartISO } from './store';
 import { STATION_LABEL } from './common';
 import { formatDay } from './format';
 
 /** Bottom strip: shared news feed, newest first; hover expands the full list. */
 export function NewsFeed() {
   const news = useGame((s) => s.events.news);
-  const startISO = START_ISO;
+  const startISO = useStartISO();
   const items = [...news].sort((a, b) => b.day - a.day);
   return (
     <section class="news glass" tabIndex={0}>

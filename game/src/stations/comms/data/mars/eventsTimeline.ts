@@ -1,8 +1,8 @@
 // Scripted mission timeline: events that arrive on a fixed agency-calendar day.
 // Day 0 = 1 Jan 2030; planned launch day 230. Events after day 230 only appear
 // when the planner moves the launch later (up to day 1277).
-import type { EventDef } from '../model/types';
-import { budget, constraint, option, pace, price, trust, unlock } from './helpers';
+import type { EventDef } from '../../model/types';
+import { budget, constraint, option, pace, price, trust, unlock } from '../helpers';
 
 export const TIMELINE_EVENTS: EventDef[] = [
   {
