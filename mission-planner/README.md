@@ -2,7 +2,9 @@
 
 All work for the mission planning role lives in this folder: specification, notes, and later implementation. This document specifies the final system; it does not describe staged versions.
 
-Labels: **user direction** = stated by the user. **Proposal** = suggested, not yet accepted. Source notes are in [notes/](notes/).
+Labels: **user direction** = stated by the user. **Proposal** = suggested by the assistant. Source notes are in [notes/](notes/).
+
+**Baseline (user direction, 2026-11-14):** all proposals in this module's documents dated up to 2026-11-14 are accepted as the baseline. They change as building reveals problems. Numbers marked as placeholders remain balancing values.
 
 Related project docs: [roles](../docs/design/roles.md#mission-planning--i-004), [shared tasks](../docs/design/shared-tasks.md), ideas I-004, I-030, I-031, questions Q-007, Q-009, Q-029.
 
@@ -25,3 +27,23 @@ Full specification: [Rocket configurator](rocket-configurator.md).
 **User direction:** the map is always visible with a docked side panel for rocket, tasks, and versions. The test runs live on every edit; results show on the map (red trajectory, warning icons) and on the delta-v bar with goal success chances. Parts are sent to procurement one at a time.
 
 Full specification: [Mission planner UI](ui.md).
+
+## Build
+
+**User direction (2026-11-14, [notes](notes/2026-11-14-build-decisions.md)):**
+
+- **Stack:** web, TypeScript, rendering on HTML canvas. Applies to this module.
+- **Other roles:** until procurement, science, and communications exist, a dev-controls panel stands in for them: contract a task, deliver a part, raise a research limit, advance the calendar.
+- **First authored mission:** Mars orbiter + lander.
+
+**Proposal — Mars orbiter + lander mission content:**
+
+- Start: Earth, agency calendar at the start date; launch must happen before a fixed deadline that includes two Mars windows (about 26 months apart).
+- Goals: reach Mars orbit (orbiter); deliver orbital instrument data; land on Mars (lander); deliver surface instrument data.
+- Requires: transfer, orbit insertion (or aerocapture), separation, atmospheric landing with heat shield.
+- Budget, research limits, and slider ranges per propulsion type: authored with the mission data; values are balancing placeholders.
+
+## Open before integration
+
+1. **Task data format:** what a task, offer, and contract contain, shared with the procurement module.
+2. **Map scale:** the Moon at 384,000 km and Jupiter at 5.2 AU cannot share one zoom level usefully. Proposal: a Sun-centered system view plus a nested view per planet system, switched by clicking a planet.
