@@ -51,6 +51,8 @@ The team reviewed the JPL paper [*Space Mission Concept Development Using Concep
 
 ## Running the game
 
+**Submission trailer:** [Watch T-Minus](https://missioncontrol.dractec.com/submission/) — 29.5 seconds, with [description and credits](game/public/submission/credits.txt).
+
 The integrated game lives in [`game/`](game/) (one web app, four station views; see [D-015](docs/decisions.md#d-015--integration-architecture) and the [integration design](docs/design/integration.md)).
 
 - **Online:** https://missioncontrol.dractec.com/ (GitHub Pages; deployed by `.github/workflows/pages.yml` on every push to `main` that touches `game/`). The workflow reads the site's base path from GitHub Pages configuration.
