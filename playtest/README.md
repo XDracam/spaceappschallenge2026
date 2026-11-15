@@ -79,6 +79,13 @@ Each round serves its own build (`runs/<round>/dist`), so source edits during pl
 4. **Polish** — up to four bugs or unclear screens. One commit.
 5. **Rework** — the picked root problem: rules, balance, content, what stations show each other. Verified in a running one-player session. One commit.
 
-Before anything is committed, a fresh agent that was not told the author's reasons compares the game before (the players' screenshots) and after (a running session) and accepts only what is clearly better for a first-time player; the rest is discarded and logged in `rejected.md`. Each commit then passes typecheck and build, or the tree is put back. If the game no longer starts in a round, the changes since it last started are reverted. Nothing is pushed.
+Before anything is committed, a fresh agent that was not told the author's reasons compares the game before (the players' screenshots) and after (a running session) and accepts only what is clearly better for a first-time player; the rest is discarded and logged in `rejected.md`. Each commit then passes typecheck and build, or the tree is put back. If the game no longer starts in a round, the changes since it last started are reverted. Every round first merges `origin/main`, so it always plays the team's current game. With `pushToMain: true` (user direction, 2026-11-15) each accepted commit is rebased onto `origin/main`, typechecked again and pushed there — this deploys the site. Conflicts or a failed typecheck after the rebase keep the commit local. Never force-pushed.
+
+Start it from a dedicated worktree on a branch that tracks main:
+
+```
+Workflow scriptPath: playtest/loop/overnight.workflow.js
+args: { repo, branch, avoid, stamp: "MMDD", pushToMain: true, maxRounds: 8, stopHour: 7 }
+```
 
 The loop may change rules and content without approval for the night of 2026-11-15 ([user direction](../docs/notes/2026-11-15-overnight-playtest-autonomy.md)). What it changes is not an accepted decision; `morning.md` lists each change with the command to drop it.
