@@ -10,7 +10,7 @@ import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
 import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci, teamCapacity } from '../model/research';
 import { facilityState, techFacilities } from '../model/needs';
-import { FacilityIcon } from '../../../shell/FacilityIcon';
+import { FacilityArt } from '../../../shell/FacilityArt';
 import { MAX_HIRED_TEAMS, hiredTeams } from '../../../core/facilities';
 import { isCovered, neededAsPrerequisite, LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
 import { partTests, testCheck, testCounts, testDays, testDurationText } from '../model/tests';
@@ -228,7 +228,7 @@ function Equipment({ g, techId }: { g: GameState; techId: string }) {
           const asked = g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'facility' && q.facilityId === f.id);
           return (
             <li key={f.id}>
-              <FacilityIcon id={f.id} size={22} class="sc-equip-icon" /> {st.kind === 'active' ? '✓' : st.kind === 'coming' ? '⏳' : '○'} {f.name}
+              <FacilityArt id={f.id} class="sc-equip-art" /> {st.kind === 'active' ? '✓' : st.kind === 'coming' ? '⏳' : '○'} {f.name}
               <span class="muted"> · {st.kind === 'active' ? (st.untilDay !== undefined ? `until ${formatDate(st.untilDay)}` : 'owned')
                 : st.kind === 'coming' ? `ready ${formatDate(st.fromDay)}` : asked ? 'asked, waiting for Procurement' : 'not held'}</span>
               {st.kind === 'missing' && !asked && g.meta.phase === 'planning'

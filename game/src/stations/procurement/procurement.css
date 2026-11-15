@@ -416,9 +416,9 @@
 .st-procurement .pr-rs-card { border: 1px solid var(--line, #2a3347); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.02); }
 .st-procurement .pr-rs-card.wanted { border-color: #f2c14e; box-shadow: 0 0 0 1px #f2c14e; }
 .st-procurement .pr-rs-actions { display: flex; flex-wrap: wrap; gap: 6px; }
-.st-procurement .pr-rs-ok { color: #4fb477; font-size: 12px; }
-.st-procurement .pr-rs-soon { color: #f2c14e; font-size: 12px; }
+.st-procurement .pr-rs-ok { color: var(--good); }
+.st-procurement .pr-rs-soon { color: var(--warn); }
 
-.st-procurement .pr-rs-card .facility-icon { color: #9fb3d1; margin-bottom: 2px; }
-.st-procurement .pr-rs-card.wanted .facility-icon { color: #f2c14e; }
-.st-procurement .pr-rs-card { --fi-accent: #6fd0ff; }
+.st-procurement .pr-rs-grid { overflow: visible; padding: 2px 0 4px; flex: none; }
+.st-procurement .pr-rs-actions { display: flex; flex-wrap: wrap; gap: 5px; padding-top: 6px; }
+.st-procurement .pr-card .facility-art { position: absolute; left: 50%; transform: translateX(-50%); right: auto; bottom: -2px; width: 118px; height: 71px; }

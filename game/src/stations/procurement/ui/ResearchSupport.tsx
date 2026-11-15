@@ -10,7 +10,7 @@ import { TECH_BY_ID } from '../../science/data/techs';
 import { INITIAL_SLOTS } from '../../science/slice';
 import { procurementActions } from '../logic';
 import { fmtDate, fmtM } from '../rules';
-import { FacilityIcon } from '../../../shell/FacilityIcon';
+import { FacilityArt } from '../../../shell/FacilityArt';
 
 function Status({ f, now }: { f: Facility; now: ReturnType<typeof useRes> }) {
   const day = now.day;
@@ -66,40 +66,59 @@ export function ResearchSupport() {
               ))}
             </ul>
           ) : null}
-          <div class="pr-rs-grid">
-            {TEAM_OFFERS.map((o) => (
-              <div class="pr-rs-card" key={o.id}>
-                <FacilityIcon id={o.id} /><strong>{o.label}</strong>
-                <span class="muted small">{o.blurb} At work after {o.leadDays} days.</span>
-                <button type="button" class="pr-btn" disabled={!planning || hired.length >= MAX_HIRED_TEAMS || o.feeM > available + 1e-9}
-                  title={hired.length >= MAX_HIRED_TEAMS ? 'The most teams are hired.' : o.feeM > available ? 'Not enough budget available.' : undefined}
-                  onClick={() => procurementActions.hireTeam(o.id)}>Hire · {fmtM(o.feeM)}</button>
-              </div>
-            ))}
+          <div class="pr-grid pr-rs-grid">
+            {TEAM_OFFERS.map((o) => {
+              const blocked = !planning || hired.length >= MAX_HIRED_TEAMS || o.feeM > available + 1e-9;
+              return (
+                <div class="pr-card" key={o.id}>
+                  <span class="pr-card-art"><FacilityArt id={o.id} /><span class="pr-card-kind">Research team</span></span>
+                  <span class="pr-card-body">
+                    <h3>{o.label}</h3>
+                    <span class="pr-card-stats">{o.blurb}</span>
+                    <span class="pr-card-match">At work {o.leadDays} days after hiring</span>
+                    <span class="pr-card-bottom">
+                      <span class="pr-card-price">{fmtM(o.feeM)}</span>
+                      <button type="button" class="pr-btn" disabled={blocked}
+                        title={hired.length >= MAX_HIRED_TEAMS ? 'The most teams are hired.' : o.feeM > available ? 'Not enough budget available.' : undefined}
+                        onClick={() => procurementActions.hireTeam(o.id)}>Hire</button>
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         <section>
           <h3>Facilities</h3>
-          <div class="pr-rs-grid">
+          <div class="pr-grid pr-rs-grid">
             {FACILITIES.map((f) => {
               const wanted = open.some((q) => q.kind === 'facility' && q.facilityId === f.id);
+              const lowest = Math.round(f.rentPerMonthM * RENT_MONTHS[0] * 100) / 100;
               return (
-                <div class={`pr-rs-card${wanted ? ' wanted' : ''}`} key={f.id}>
-                  <FacilityIcon id={f.id} /><strong>{f.name}</strong>
-                  <span class="muted small">{KIND_LABEL[f.kind]} · {f.blurb}</span>
-                  <Status f={f} now={now} />
-                  <div class="pr-rs-actions">
-                    {RENT_MONTHS.map((m) => {
-                      const cost = Math.round(f.rentPerMonthM * m * 100) / 100;
-                      return <button type="button" class="pr-btn small" key={m} disabled={!planning || owned(f.id) || cost > available + 1e-9}
-                        title={`Rent for ${m} months. Ready ${f.leadDays} days after signing.`} onClick={() => procurementActions.leaseFacility(f.id, m)}>Rent {m} mo · {fmtM(cost)}</button>;
-                    })}
-                    {f.buyM !== undefined ? (
-                      <button type="button" class="pr-btn small" disabled={!planning || owned(f.id) || f.buyM > available + 1e-9}
-                        title={`Buy it for good. Ready ${f.leadDays * 2} days after signing.`} onClick={() => procurementActions.leaseFacility(f.id, 'buy')}>Buy · {fmtM(f.buyM)}</button>
-                    ) : null}
-                  </div>
+                <div class={`pr-card${wanted ? ' related' : ''}`} key={f.id}>
+                  <span class="pr-card-art"><FacilityArt id={f.id} /><span class="pr-card-kind">{KIND_LABEL[f.kind]}</span>
+                    {wanted ? <span class="pr-card-lock">Science asked</span> : null}</span>
+                  <span class="pr-card-body">
+                    <h3>{f.name}</h3>
+                    <span class="pr-card-stats">{f.blurb}</span>
+                    <span class="pr-card-match"><Status f={f} now={now} /></span>
+                    <span class="pr-card-bottom">
+                      <span class="pr-card-price">{fmtM(lowest)}<small> / {RENT_MONTHS[0]} mo</small></span>
+                      <span class="pr-card-eta">Ready after {f.leadDays} days{f.buyM !== undefined ? <><br />Buy {fmtM(f.buyM)}</> : <><br />Rent only</>}</span>
+                    </span>
+                    <span class="pr-rs-actions">
+                      {RENT_MONTHS.map((m) => {
+                        const cost = Math.round(f.rentPerMonthM * m * 100) / 100;
+                        return <button type="button" class="pr-btn small" key={m} disabled={!planning || owned(f.id) || cost > available + 1e-9}
+                          title={`Rent for ${m} months. Ready ${f.leadDays} days after signing.`} onClick={() => procurementActions.leaseFacility(f.id, m)}>{m} mo · {fmtM(cost)}</button>;
+                      })}
+                      {f.buyM !== undefined ? (
+                        <button type="button" class="pr-btn small" disabled={!planning || owned(f.id) || f.buyM > available + 1e-9}
+                          title={`Buy it for good. Ready ${f.leadDays * 2} days after signing.`} onClick={() => procurementActions.leaseFacility(f.id, 'buy')}>Buy · {fmtM(f.buyM)}</button>
+                      ) : null}
+                    </span>
+                  </span>
                 </div>
               );
             })}
