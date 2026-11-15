@@ -43,7 +43,7 @@ Every change to `GameState` is an action: `{ type: 'ns/name', args, by }`, appli
 
 The host applies actions in arrival order and broadcasts each with a sequence number. Clients apply their own actions optimistically, then rebuild from the host's confirmed state plus still-pending actions when the host's ordered echo arrives (`core/store.ts`). All browsers register the same reducers in the same order (`core/registerStations.ts` imports every station's `logic.ts` eagerly).
 
-Calendar: only the host runs the clock (`core/clock.ts`), dispatching `core/tick` four times a second; `tick` steps day by day and calls every station's `onTick` handler in registration order (planner, procurement, science, comms). The host saves the state to localStorage (`core/persist.ts`).
+Calendar: only the host runs the clock (`core/clock.ts`), dispatching `core/tick` four times a second; `tick` steps day by day and calls every station's `onTick` handler in registration order (planner, procurement, science, comms). The host attempts to save state to localStorage (`core/persist.ts`); a local status store exposes failure and a Retry save action. This status is local to the host and not part of replicated game state.
 
 ## Cross-station contracts
 
@@ -70,7 +70,9 @@ D-012 + D-015: four stations, one per player. Players claim a seat in the lobby;
 
 ## Network (D-015)
 
-WebRTC data channels, one per joining player, signalled by copy-paste codes: the host creates an invite code per player, the player pastes it and returns a reply code. Public STUN server `stun:stun.l.google.com:19302` (connection setup only; strict networks without a TURN relay may fail). If the host closes the tab, the game is saved in the host's browser and can be hosted again; players reconnect with new codes.
+WebRTC data channels, one per joining player, signalled by copy-paste codes: the host creates an invite code per player, the player pastes it and returns a reply code. Public STUN server `stun:stun.l.google.com:19302` (connection setup only; strict networks without a TURN relay may fail). If a local save succeeded, the host can resume after closing/reloading and players reconnect with new codes.
+
+Under D-027, result recovery remains inside the hosted session: host-only Retry and Choose mission dispatch the existing reset actions without replacing transports or seats. Host result recording is idempotent, and reset notifications clear planner popups, selections and playback. Non-planner result dismissal is keyed by attempt. Four connected browser stations were used to verify recovery; see the [walkthrough](../playtests/2026-11-15-release-fixes-walkthrough.md).
 
 ## Styling
 

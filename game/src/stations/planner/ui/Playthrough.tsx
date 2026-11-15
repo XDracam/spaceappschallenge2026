@@ -1,3 +1,4 @@
+import { ResultRecoveryActions } from '../../../shell/ResultRecoveryActions';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { actions, uiStore, useEvaluation, usePlanner, useUi } from '../state/store';
 import { formatDay, formatDuration, formatMass, formatMoney } from '../model/units';
@@ -168,6 +169,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
           {!scrubbed && <div class="kv"><span>Part failures</span><span class={`num${failures ? ' err-text' : ''}`}>{failures}</span></div>}
         </div>
         <div class="popup-foot">
+          <ResultRecoveryActions planner />
           <div class="spacer" />
           <button class="btn primary" onClick={onHide}>Close</button>
         </div>

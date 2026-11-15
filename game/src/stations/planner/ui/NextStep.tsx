@@ -1,11 +1,11 @@
 import type { Evaluation, FlightState, PlannerGame } from '../model/types';
-import { actions, getPlanner, getEvaluation, useEvaluation, usePlanner, useUi } from '../state/store';
+import { actions, getPlanner, getEvaluation, useEvaluation, usePlanner, useUi, uiStore } from '../state/store';
 import {
   altitudeOk, availableManeuvers, branchEndState, createManeuver, goalOrbitChangeLabel, hasAltitudeWindow,
 } from '../physics';
 import { formatDay } from '../model/units';
 import { allParts } from '../model/rocketUtils';
-import { bodyName, newId, openTab, partReadiness, plural, useLocalUi } from './common';
+import { bodyName, branchDisplayName, describeState, mapCentre, openManeuverEdit, rememberPopupFocus, newId, openTab, partReadiness, plural, useLocalUi } from './common';
 
 // One-line hint at the top-left of the free map area: what to do next, driven by plan state.
 
@@ -42,14 +42,14 @@ function routeHint(game: PlannerGame, ev: Evaluation): string | null {
     const orbit = states.find((s): s is Extract<FlightState, { kind: 'orbit' }> => s.kind === 'orbit' && s.body === goal.body);
     if (orbit) {
       if (!hasAltitudeWindow(goal)) return null;
-      return `Next: click “+ Next step” at ${name} → ${goalOrbitChangeLabel(goal, orbit.altitudeKm)}`;
+      return `Next step at ${name} → ${goalOrbitChangeLabel(goal, orbit.altitudeKm)}`;
     }
     if (states.some((s) => s.kind === 'approach' && s.body === goal.body)) {
-      return `Next: click “+ Next step” at ${name} → Enter orbit`;
+      return `Next step at ${name} → Enter orbit`;
     }
     const heading = all.some((m) => m.type === 'transfer' && m.target === goal.body);
     if (goal.body !== home && !heading && all.length === 1 && launch) {
-      return `Next: click “+ Next step” at ${bodyName(home)} → Transfer to ${name}`;
+      return `Next step at ${bodyName(home)} → Transfer to ${name}`;
     }
     return null;
   }
@@ -105,6 +105,33 @@ export function NextStep() {
 
   return (
     <div class="next-step" style={{ left: `${insets.left + 16}px`, top: `${insets.top + 64}px` }}>
+      <div class="route-actions" aria-label="Route continuation">
+        {game.plan.branches.map((branch) => {
+          const state = branchEndState(ev, branch.id);
+          if (branch.maneuvers.length === 0 && !branch.parent) return null;
+          if (!state || !availableManeuvers(game, branch, state).some((o) => o.enabled)) return null;
+          return <button key={branch.id} data-branch-id={branch.id} class="next-pill clickable" title={describeState(state, game.mission.startDateISO)}
+            onClick={() => {
+              rememberPopupFocus();
+              uiStore.update((u) => {
+              u.selectedBranchId = branch.id;
+              u.popup = { kind: 'maneuverMenu', branchId: branch.id, screen: mapCentre() };
+              });
+            }}>Next step · {branchDisplayName(game, branch)}</button>;
+        })}
+      </div>
+      <details class="route-editor glass">
+        <summary>Edit route &amp; mission tips</summary>
+        <p class="small">{game.mission.id === 'mars-orbiter-lander'
+          ? 'Preserve lander fuel for descent: check which stages pay for the shared journey. Insertion altitude changes the fuel left for landing. Both spacecraft need enough downlink for their instruments.'
+          : 'Coordinate sensor and downlink research with Science, then order the matching parts. Allow time for delivery and optional Science tests. If research or delivery slips, move the launch date and check the mission deadline.'}</p>
+        {game.plan.branches.map((branch) => <div key={branch.id} class="route-edit-branch">
+          <span class="small muted">{branchDisplayName(game, branch)}</span>
+          {branch.maneuvers.map((m, i) => <button key={m.id} class="text-btn" onClick={() => openManeuverEdit(m.id, branch.id)}>
+            Edit {i + 1}: {ev.branches.find((b) => b.branchId === branch.id)?.maneuvers.find((r) => r.maneuverId === m.id)?.label ?? m.type}
+          </button>)}
+        </div>)}
+      </details>
       {step.kind === 'button' ? (
         <button class={`next-pill clickable${step.glow ? ' glow' : ''}`} title={step.title} onClick={step.onClick}>{step.text}</button>
       ) : (

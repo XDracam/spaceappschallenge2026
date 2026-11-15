@@ -403,3 +403,7 @@
 .st-procurement .pr-schedule .pr-schedule-line .warn { color: var(--warn); }
 .st-procurement .pr-dialog .pr-note.center { text-align: left; }
 .st-procurement .pr-offer-why.warn { color: var(--warn); }
+
+.st-procurement .pr-role-guide > summary { cursor: pointer; color: var(--text); padding: 4px 0; }
+.st-procurement .pr-role-guide > summary:hover { color: var(--accent); }
+.st-procurement .pr-role-guide p { margin: 4px 0 8px; line-height: 1.5; }

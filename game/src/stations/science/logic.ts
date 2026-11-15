@@ -20,7 +20,7 @@ import type { ScienceSlice } from './slice';
 import { initialScienceSlice } from './slice';
 import { TECH_BY_ID } from './data/techs';
 import { FAILURE_LINES } from './data/flavour';
-import { covered, describeGrant, describeNeed, designNeeds, running } from './model/research';
+import { cancellationRefund, covered, describeGrant, describeNeed, designNeeds, running } from './model/research';
 import { blockInfo, startCheck, techMonths } from './model/tree';
 import { partTests, testCheck, testContracts, testDays } from './model/tests';
 
@@ -139,9 +139,7 @@ export const scienceActions = defineActions('science', {
     const sl = ensure(s);
     const p = s.research.projects.find((x) => x.id === projectId && x.status === 'running');
     if (!p) return;
-    const total = Math.max(1, p.endsAt - p.startedAt);
-    const left = Math.min(1, Math.max(0, (p.endsAt - ctx.day) / total));
-    const refund = Math.round(p.costM * left * 0.5 * 10) / 10;
+    const refund = cancellationRefund(p, ctx.day);
     s.budget.spentM = Math.max(0, Math.round((s.budget.spentM - refund) * 100) / 100);
     p.status = 'failed';
     const info = sl.info[projectId];

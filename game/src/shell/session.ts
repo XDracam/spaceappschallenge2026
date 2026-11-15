@@ -2,6 +2,7 @@
 // join progress. Wires the WebRTC transport (net/) to the replicated store (core/).
 import { createStore, useStore } from '../core/createStore';
 import { coreActions } from '../core/coreActions';
+import { computeMissionResult, missionScore } from '../stations/planner/result';
 import type { StationId } from '../core/model';
 import { STATIONS } from '../core/model';
 import { DEFAULT_MISSION_ID, missionById } from '../core/mission';
@@ -217,4 +218,20 @@ export function cancelJoin(): void {
 /** Player: sit at a station. */
 export function playerTakeSeat(st: StationId): void {
   coreActions.claimSeat(st, syncStore.get().peerId, playerName());
+}
+
+/** Recovery stays inside the hosted session: transports, invitations and seats survive. */
+export function hostRecoverMission(destination: 'retry' | 'choose'): void {
+  if (syncStore.get().role === 'client') return;
+  const s = getState();
+  if (s.meta.phase !== 'launched' && s.meta.phase !== 'finished') return;
+  const outcome = missionScore(computeMissionResult(s));
+  session.update((x) => { x.resumePaused = false; });
+  if (destination === 'retry') coreActions.restart(outcome);
+  else coreActions.returnToLobby(outcome);
+}
+
+export function hostChooseMission(missionId: string): void {
+  if (syncStore.get().role === 'client') return;
+  coreActions.setMission(missionId);
 }

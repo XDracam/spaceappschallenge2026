@@ -128,10 +128,10 @@ export const PLAYER_EVENTS: EventDef[] = [
     options: [
       option('audit', 'Order an independent audit (next delivery slips a month).',
         [trust('public', 5), trust('industry', -5), delay(1, 'next')],
-        'The auditors find shortcuts and fix them. The part arrives late but shakes properly.', 10),
+        'The audit reassures the public and strains supplier relations; the next delivery slips a month. Hardware reliability is unchanged. Ask Science to test the part to reduce its failure risk.', 10),
       option('test-clauses', 'Have procurement add test clauses (prices rise).',
         [trust('public', 5), price(10, 3)],
-        'New contracts now require test reports. Suppliers price in the extra paperwork.'),
+        'The paperwork reassures the public. Procurement prices rise 10% for three months; hardware reliability is unchanged. Science must test delivered parts to reduce their failure risk.'),
       option('defend', "Defend the supplier's record publicly.",
         [trust('industry', 5), trust('public', -10)],
         'The supplier is grateful. Okafor runs the engineer\'s interview anyway, with your quote beneath it.'),

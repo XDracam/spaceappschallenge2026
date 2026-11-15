@@ -2,9 +2,9 @@
 
 Prototype workspace for the [2026 NASA Space Apps challenge](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/).
 
-**Stage:** prototype. The [mission-planner app](mission-planner/README.md#running-the-app) and separate [procurement interaction prototype](procurement/mockups/README.md) are available. Shared integration remains open.
+**Stage:** playable multiplayer prototype. The integrated game has four connected stations and two authored missions: **Weather satellite** and **Mars orbiter + lander**. The earlier [mission-planner app](mission-planner/README.md#running-the-app) and [procurement interaction prototype](procurement/mockups/README.md) remain as development references.
 
-A multiplayer-focused brainstorming project about making mission planning and communication fun. By default, four players each operate their own station from a separate seat (see [D-012](docs/decisions.md#d-012--four-players-on-four-separate-stations)). Players could work in real time across science, procurement, planning, and external relations. A key design goal is to give every role meaningful activity at the same time, without leaving someone waiting on another role. The mechanics and overall structure remain open.
+A multiplayer game about making mission planning and communication fun. Four players operate Mission Planning, Procurement, Science and Communications from separate seats. The key design goal is meaningful concurrent activity for every role. This remains a prototype: broader mechanics and campaign structure are open, and implemented actions alone do not establish multiplayer enjoyment.
 
 ## Start here
 
@@ -25,11 +25,21 @@ The integrated game lives in [`game/`](game/) (one web app, four station views; 
 
 **Playing together.** There is no game server: one player's browser hosts the game and the others connect to it directly (WebRTC). Connecting takes one exchange of codes per player, through any chat:
 
-1. The host clicks **Host a new game**, picks a station and clicks **Invite a player**. They send the **invite code** to the player.
-2. The player clicks **Join a game**, pastes the invite code and sends back the **reply code** shown.
+1. The host clicks **New game**, chooses a mission to host, picks a station and clicks **Invite a player**. They send the **invite code** to the player.
+2. The player clicks **Join game**, pastes the invite code and sends back the **reply code** shown.
 3. The host pastes the reply code into that invite. The player is connected and picks a free station. The host clicks **Start mission** (fewer than four players is fine; anyone can switch to a free station during the game).
 
-The game is saved in the host's browser. If the host reloads, **Resume hosted game** continues it and players join again with new codes. Some networks (company or school Wi-Fi, VPNs) block direct browser connections; try another network or play on one computer by opening the game in several tabs or windows.
+The host's browser attempts to save locally; watch for a save warning if storage is unavailable or full. After a successful save, **Continue** restores it following a reload, and players join again with new codes. Some networks (company or school Wi-Fi, VPNs) block direct browser connections; try another network or play on one computer by opening the game in several tabs or windows. Check the actual demonstration network beforehand. Keep the host tab visible: background browser throttling can slow the agency calendar.
+
+### First session
+
+1. Start with **Weather satellite**. Connect and claim all four stations before starting the calendar. Use the station menu to pause while explaining the controls.
+2. Planning adds maneuvers and publishes part needs. Procurement compares offers and orders against the launch date. Science researches the design's missing capabilities, then prioritizes tests of delivered parts. Communications chooses projects and handles messages that affect the whole team.
+3. Read shared **Tasks** and use **Open work** to reach the relevant station action. Direct conversation remains useful, but required coordination is also available in the interface.
+4. Watch research, delivery and test dates. The planned launch is automatic; move it when recovery needs more time, while respecting the mission deadline.
+5. Review the goal-by-goal result. The host can retry or choose another mission inside the session; a host reload still requires new invitation codes.
+
+The [release audit](docs/reviews/2026-11-15-two-level-release-audit.md) contains facilitator reference routes and distinguishes numerical feasibility from observed play. Use Mars after the group understands the station loops.
 
 ## Repository
 
@@ -55,4 +65,4 @@ Apache 2.0 is an OSI-approved license and the default specified by the [2026 NAS
 4. Record accepted choices in the [decision log](docs/decisions.md), linking the affected docs.
 5. Record observations using the [playtest template](docs/playtests/TEMPLATE.md). A planned experiment is not evidence.
 
-The [prototype plan](docs/prototype.md) suggests ways to explore the ideas; no experiment has been selected or run. Runtime setup instructions belong here once an implementation exists.
+The [prototype plan](docs/prototype.md) retains the original experiment proposals. [Recorded walkthroughs and agent playtests](docs/README.md) document what has actually been observed and their limitations; they do not certify player enjoyment or connectivity on a different network.

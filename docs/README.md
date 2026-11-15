@@ -2,6 +2,12 @@
 
 ## Current design
 
+[Title-screen implementation and artwork correction](notes/2026-11-15-title-screen.md) records the opening menu, setup flow, browser checks and outstanding finished artwork.
+
+[Two-level hackathon release audit](reviews/2026-11-15-two-level-release-audit.md) records five expert audit packets, evaluated feasible routes, observed openings and the prioritized release gate for Weather and Mars.
+
+[Release fixes approval](notes/2026-11-15-release-fixes-approval.md) · [implementation walkthrough](playtests/2026-11-15-release-fixes-walkthrough.md) records D-027, Sol implementation/review, current route calculations and the checks actually performed.
+
 | Document | Purpose |
 | --- | --- |
 | [Concept](concept.md) | Design focus and open brainstorming |

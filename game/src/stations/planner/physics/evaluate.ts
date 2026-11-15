@@ -369,9 +369,12 @@ function runBranch(ctx: Ctx, branch: Branch, start: Start): void {
     if (!failed && alive && dv > 0) {
       burnRes = burn(stack, dv, gravity ?? G0);
       if (burnRes.short) {
-        const km = (v: number) => `${(v / 1000).toFixed(2)} km/s`;
+        const speed = (v: number) => `${v.toFixed(2)} m/s`;
         const aero = m.type === 'insertion' && !m.aerocapture && ATMO(body);
-        add('error', 'dv', `Out of fuel: needs ${km(dv)}, has ${km(dvBefore)}. Add fuel to an upper stage${aero ? ', or use aerobraking' : ''}.`);
+        const recovery = m.type === 'land' || m.type === 'entry'
+          ? 'Preserve fuel in the landing spacecraft for descent; review the capture orbit altitude and earlier burns.'
+          : `Add fuel to an upper stage${aero ? ', or use aerobraking' : ''}.`;
+        add('error', 'dv', `Out of fuel: short by ${speed(Math.max(0, dv - dvBefore))} (needs ${speed(dv)}, has ${speed(dvBefore)}). ${recovery}`);
       }
       for (const f of burnRes.fired) {
         const st = f.st.stage;

@@ -1,5 +1,6 @@
 // Host saves the authoritative state to localStorage (resume after a reload).
-import { onHostState } from './store';
+import { getState, onHostState, syncStore } from './store';
+import { createStore } from './createStore';
 import { STATE_VERSION, type GameState } from './state';
 import { initialScienceSlice } from '../stations/science/slice';
 import { contentOf, missionConstraintFlag } from '../stations/comms/state/world';
@@ -7,6 +8,14 @@ import { contentOf, missionConstraintFlag } from '../stations/comms/state/world'
 const KEY = 'mission-control.save.v1';
 let timer: ReturnType<typeof setTimeout> | null = null;
 let latest: GameState | null = null;
+
+export const persistenceStatus = createStore<'idle' | 'saved' | 'failed'>('idle');
+
+/** Explicit retry uses the current authoritative game, including pending calendar changes. */
+export function retrySave(): boolean {
+  if (syncStore.get().role === 'client') return false;
+  return save(getState());
+}
 
 export function startPersistence(): void {
   onHostState((s) => {
@@ -20,11 +29,14 @@ export function startPersistence(): void {
   addEventListener('pagehide', () => latest && save(latest));
 }
 
-function save(s: GameState): void {
+function save(s: GameState): boolean {
   try {
     localStorage.setItem(KEY, JSON.stringify(s));
+    persistenceStatus.set('saved');
+    return true;
   } catch {
-    /* storage full or unavailable: play on */
+    persistenceStatus.set('failed');
+    return false;
   }
 }
 

@@ -3,12 +3,13 @@
 // Middle: the tree. Right: details of the selected tech with Start button. Bottom: news.
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
+import { requestConfirmation } from '../../../shared/confirmation';
 import { composeTask } from '../../../shared/taskDraft';
 import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
-import { describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci } from '../model/research';
-import { LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
+import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci } from '../model/research';
+import { isCovered, neededAsPrerequisite, LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
 import { partTests, testCheck, testCounts, testDays, testDurationText } from '../model/tests';
 import type { TechStatus } from '../model/types';
 import type { GameState } from '../../../core/state';
@@ -61,6 +62,7 @@ export function App() {
       </header>
       <div class="sc-work">
         <aside class="sc-left">
+          <p class="muted">Research the design’s needs, then tell Procurement what is ready. Test delivered parts before launch; ask the Planner for more time after a failure.</p>
           <h2 data-science-home tabIndex={-1}>The mission needs</h2>
           {needs.length === 0 ? <p class="muted">Nothing. Every part in the Planner's design is within research.</p> : null}
           {needs.map((n) => {
@@ -96,7 +98,10 @@ export function App() {
                 {p.partId
                   ? <span class={testCounts(p.endsAt, g.planner.plan.launchDay) ? 'muted' : 'sc-warn'}>ends {formatDate(p.endsAt)}{testCounts(p.endsAt, g.planner.plan.launchDay) ? '' : ': not before the launch, it will not count'}</span>
                   : <span class="muted">{paused ? 'Paused by Comms · ' : ''}ends {formatDate(p.endsAt)} · {Math.round(p.successChance * 100)} % success</span>}
-                <button type="button" class="sc-btn small" onClick={() => scienceActions.cancelProject(p.id)}>Cancel (half refund of unspent)</button>
+                <button type="button" class="sc-btn small" onClick={async () => {
+                  const accepted = await requestConfirmation(`Cancel “${p.title}”? Current refund: ${cancellationRefund(p, g.clock.day).toFixed(1)} M of ${p.costM} M invested. Only half the unspent share returns; the refund decreases while the calendar runs. Cancellation provides no research or test result.`, 'Cancel project');
+                  if (accepted) scienceActions.cancelProject(p.id);
+                }}>Cancel project…</button>
               </div>
             );
           })}
@@ -128,7 +133,7 @@ export function App() {
                   style={{ left: `${p.x - NODE_W / 2}px`, top: `${p.y - NODE_H / 2}px`, width: `${NODE_W}px`, height: `${NODE_H}px`, '--c': BRANCH_COLOR[t.branch] }}
                   onClick={(e) => { e.stopPropagation(); setSel(t.id); }}>
                   <b>{v.status === 'fog' ? '?' : t.name}</b>
-                  <small>{v.goal ? '★ goal · ' : ''}{STATUS_TEXT[v.status]}</small>
+                  <small>{v.goal ? '★ goal · ' : ''}{v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : STATUS_TEXT[v.status]}</small>
                 </button>
               );
             })}
@@ -218,6 +223,10 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
       <p>{t.blurb}</p>
       {t.gives.length ? <><h3>Result</h3><ul>{t.gives.map((x, i) => <li key={i}>{describeGrant(x)}</li>)}</ul></> : <p class="muted">Opens further techs.</p>}
       {reqs.length ? <p class="sc-goal">★ The mission needs this: {reqs.map(describeNeed).join('; ')}</p> : null}
+      {isCovered(t, g.research) && neededAsPrerequisite(g, t.id) && v.status !== 'researched'
+        ? <p class="muted">Its results are already within research. Research it to satisfy later technology prerequisites; it will not raise these limits again.</p> : null}
+      {reqs.some(n => n.researchBy !== undefined && g.clock.day + months * DAYS_PER_MONTH > n.researchBy)
+        ? <p class="sc-warn">This route finishes after the current order-by date. Ask the Planner to move launch, or choose a faster research route.</p> : null}
       <h3>Requires</h3>
       {t.requires.length === 0 ? <p class="muted">Nothing.</p> : (
         <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} {views[r].status === 'fog' ? '?' : TECH_BY_ID[r].name}</li>)}</ul>

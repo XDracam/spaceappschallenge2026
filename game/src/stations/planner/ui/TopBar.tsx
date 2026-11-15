@@ -190,7 +190,7 @@ function LaunchChip() {
             <span class="muted small">{timed ? `≈ ${realMin} real minute${realMin === 1 ? '' : 's'} from now` : 'calendar paused'}</span>
           </div>
           <div class="launch-slider">
-            <Slider min={sliderMin} max={Math.max(sliderMin + 1, deadline)} step={7} scale="linear"
+            <Slider label="Launch date" valueText={formatDay(launchDay, startISO)} min={sliderMin} max={Math.max(sliderMin + 1, deadline)} step={7} scale="linear"
               value={launchDay} disabled={!planning} onChange={(v) => actions.setLaunchDay(v)} />
             <div class="ls-deadline-mark" title={`Mission deadline ${formatDay(deadline, startISO)}`} />
             <div class="ls-ends muted tiny">

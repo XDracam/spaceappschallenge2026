@@ -2,6 +2,7 @@ import { useEffect } from 'preact/hooks';
 import type { ActiveProject, ProjectDef, ProjectKind } from '../model/types';
 import { MAX_PROJECT_SLOTS, TRUST_STRONG } from '../data/mission';
 import { useGame } from '../../../core/store';
+import { DAYS_PER_MONTH } from '../../../core/state';
 import { actions, uiStore, useBudgetLeft, useComms, useContent, useLaunched, useUi } from './store';
 import type { ProjectBlock } from '../state/world';
 import {
@@ -64,6 +65,8 @@ export function Projects() {
 function ProjectCard({ p }: { p: ActiveProject }) {
   const def = projectById(p.defId);
   const day = useGame((s) => Math.floor(s.clock.day * 4) / 4);
+  const launchDay = useGame((s) => s.planner.plan.launchDay);
+  const launched = useLaunched();
   const span = Math.max(1e-6, p.endDay - p.startDay);
   const frac = Math.max(0, Math.min(1, (day - p.startDay) / span));
   const partner = characterById(def?.partnerCharacterId);
@@ -83,6 +86,7 @@ function ProjectCard({ p }: { p: ActiveProject }) {
           <InternalTag effects={def.effects} />
         </div>
       )}
+      {(launched || p.endDay >= launchDay) && <p class="project-timing-warning small">{launched ? 'Unfinished at launch — completion effects were not applied.' : 'Finishes on or after launch — no completion effects unless the Planner delays launch. This slot stays occupied.'}</p>}
       <div class="pbar"><i style={{ width: `${frac * 100}%` }} /></div>
     </div>
   );
@@ -95,6 +99,8 @@ export function ProjectPicker() {
   const budget = useBudgetLeft();
   const trust = useComms((s) => s.trust);
   useLaunched(); // re-render on launch (canStartProject)
+  const day = useGame((s) => s.clock.day);
+  const launchDay = useGame((s) => s.planner.plan.launchDay);
   const projectDefs = useContent().projects;
   const slots = actions.projectSlots();
   const free = Math.max(0, slots - projects.length);
@@ -148,6 +154,7 @@ export function ProjectPicker() {
                     )}
                     <InternalTag effects={def.effects} />
                   </div>
+                  {day + def.months * DAYS_PER_MONTH >= launchDay && <p class="project-timing-warning small">Finishes on or after launch. Starting spends the cost and occupies a slot; completion effects will not apply unless the Planner delays launch.</p>}
                   {req && (
                     <div class={`pick-req${reqUnmet ? ' unmet' : ''}`}>
                       Needs {SH[req.stakeholder].label} trust {req.min}{reqUnmet ? ` (now ${Math.round(trust[req.stakeholder] ?? 0)})` : ' ✓'}

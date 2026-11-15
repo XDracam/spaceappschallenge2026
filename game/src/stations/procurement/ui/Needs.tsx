@@ -82,6 +82,10 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
     <aside class="pr-panel pr-needs" aria-label="Mission needs">
       <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length || (drafts.length ? `${drafts.length} drafts` : '')}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>
       <div class="pr-situation">
+        <details class="pr-role-guide">
+          <summary>Your procurement loop</summary>
+          <p>Study draft offers while the Planner prepares part requests. Once published, source each need: balance the shared budget, delivery dates and time for Science testing. Source Science supplies too, so research can progress.</p>
+        </details>
         {rows.length ? <div><strong>{uncovered}</strong> <span class="muted">to buy</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div> : null}
         {buy.count ? (
           <div class={spare < 0 ? 'warn' : 'muted'} title="The suggested offer for every need not yet contracted, drafts included, against the free shared budget.">

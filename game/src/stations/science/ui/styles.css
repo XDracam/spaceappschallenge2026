@@ -25,7 +25,7 @@
 .st-science .sc-node{position:absolute;box-sizing:border-box;text-align:left;border:1px solid var(--c);border-left-width:4px;border-radius:6px;background:#1b2030;color:inherit;padding:5px 8px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .st-science .sc-node b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.st-science .sc-node small{font-size:10px;color:#9aa5b8}
 .st-science .sc-node.researched{background:#1d3a2a}.st-science .sc-node.running{background:#3a3220}
-.st-science .sc-node.locked,.st-science .sc-node.covered{opacity:.6}.st-science .sc-node.fog{opacity:.35;border-style:dashed}
+.st-science .sc-node.locked,.st-science .sc-node.covered{border-color:#566176;background:#171c28}.st-science .sc-node.fog{border-color:#566176;background:#171c28;border-style:dashed}
 .st-science .sc-node.blocked{border-color:#d4574a;background:#2d1d1f}
 .st-science .sc-node.goal{box-shadow:0 0 0 2px #f2c14e}.st-science .sc-node.sel{outline:2px solid #7db4ff}
 .st-science .sc-warn{color:#ff8f84}.st-science .sc-goal{color:#f2c14e}

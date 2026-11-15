@@ -1,6 +1,6 @@
 // Pure research rules shared by the science reducers (logic.ts) and the UI: labels, dates,
 // slice access, request coverage. No UI imports, no randomness.
-import type { ResearchState } from '../../../core/model';
+import type { ResearchProject, ResearchState } from '../../../core/model';
 import type { GameState } from '../../../core/state';
 import { MISSION } from '../../../core/mission';
 import { beyondResearch, partName, statDefs } from '../../planner/data/parts';
@@ -137,4 +137,11 @@ export function designNeeds(s: GameState): Need[] {
     }
   }
   return [...out.values()];
+}
+
+/** Half the remaining project cost, rounded exactly as the cancellation reducer. */
+export function cancellationRefund(p: ResearchProject, day: number): number {
+  const total = Math.max(1, p.endsAt - p.startedAt);
+  const left = Math.min(1, Math.max(0, (p.endsAt - day) / total));
+  return Math.round(p.costM * left * 0.5 * 10) / 10;
 }

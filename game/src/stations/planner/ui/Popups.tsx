@@ -14,7 +14,7 @@ import { formatDay, formatDuration } from '../model/units';
 import { Slider } from './Slider';
 import {
   ChevronIcon, CloseIcon, HeatIcon, ManeuverIcon, TrashIcon, bodyName, branchColor, clamp, describeState, findResult, fmtNum,
-  localUi, newId,
+  localUi, newId, rememberPopupFocus, restorePopupFocus,
 } from './common';
 import { Heatmap, kms, pickCheapest, transferTotal } from './Heatmap';
 import './popups.css';
@@ -75,6 +75,23 @@ function Floating({ screen, children, cls }: { screen: Vec2; children: Component
     if (!pos || Math.abs(pos.left - left) > 0.5 || Math.abs(pos.top - top) > 0.5) setPos({ left, top });
   });
 
+  const focused = useRef(false);
+  useLayoutEffect(() => {
+    if (!pos || focused.current) return;
+    rememberPopupFocus();
+    const el = ref.current;
+    const target = el?.querySelector<HTMLElement>('.option:not(:disabled)')
+      ?? el?.querySelector<HTMLElement>('input:not(:disabled)')
+      ?? el?.querySelector<HTMLElement>('button:not(:disabled)');
+    target?.focus({ preventScroll: true });
+    focused.current = document.activeElement === target;
+  }, [pos]);
+
+  useEffect(() => () => {
+    // Run after the replacement popup, if any, has committed. Menu → editor keeps its origin.
+    requestAnimationFrame(restorePopupFocus);
+  }, []);
+
   useEffect(() => {
     const onResize = () => setTick((t) => t + 1);
     window.addEventListener('resize', onResize);
@@ -102,7 +119,7 @@ function PopupHead({ title, sub, color, onClose }: { title: string; sub?: string
           </div>
         )}
       </div>
-      <button class="round-btn small" title="Close (Esc)" onClick={onClose}><CloseIcon /></button>
+      <button class="round-btn small" aria-label="Close maneuver popup" title="Close (Esc)" onClick={onClose}><CloseIcon /></button>
     </div>
   );
 }
@@ -185,7 +202,7 @@ function altSlider(body: BodyId, value: number, onChange: (v: number) => void, l
   return (
     <div class="stat">
       <div class="stat-head"><span class="stat-label">{label}</span><span class="stat-value num">{fmtNum(value)} km</span></div>
-      <Slider min={min} max={max} step={1} scale="log" value={value}
+      <Slider label={`${bodyName(body)} ${label}`} valueText={`${fmtNum(value)} km`} min={min} max={max} step={1} scale="log" value={value}
         onChange={(v) => onChange(v >= 1000 ? Math.round(v / 10) * 10 : Math.round(v))} />
     </div>
   );
@@ -500,7 +517,7 @@ function TransferControls({ m, result, upd }: { m: TransferManeuver; result?: Ma
         <div class="stat-head"><span class="stat-label">Departure</span>
           <span class="stat-value num">{formatDay(m.departDay, startISO)} <span class="muted">(+{formatDuration(m.departDay - earliest)})</span></span>
         </div>
-        <Slider min={d0} max={Math.max(d0 + 1, d1)} step={1} scale="linear" value={m.departDay}
+        <Slider label="Departure date" valueText={formatDay(m.departDay, startISO)} min={d0} max={Math.max(d0 + 1, d1)} step={1} scale="linear" value={m.departDay}
           onChange={(v) => upd({ departDay: Math.round(v) })} />
         <div class="slider-caption"><span class="num">Δv {dv}</span><span>{depHint}</span></div>
       </div>
@@ -508,7 +525,7 @@ function TransferControls({ m, result, upd }: { m: TransferManeuver; result?: Ma
         <div class="stat-head"><span class="stat-label">Travel time</span>
           <span class="stat-value num">{formatDuration(m.travelDays)} <span class={late ? 'err-text' : 'muted'}>· arrive {formatDay(arrive, startISO)}</span></span>
         </div>
-        <Slider min={t0} max={Math.max(t0 + 1, t1)} step={1} scale="linear" value={m.travelDays}
+        <Slider label="Travel time" valueText={formatDuration(m.travelDays)} min={t0} max={Math.max(t0 + 1, t1)} step={1} scale="linear" value={m.travelDays}
           onChange={(v) => upd({ travelDays: Math.round(v) })} />
         <div class="slider-caption"><span class="num">Δv {dv}</span><span>{travHint}</span></div>
         {late && <div class="slider-caption err-text"><span>Arrives after the mission deadline ({formatDay(deadline, startISO)})</span></div>}
@@ -537,7 +554,7 @@ function FlybyControls({ m, before, upd }: { m: FlybyManeuver; before?: FlightSt
       {altSlider(at ?? 'earth', m.periapsisAltKm, (v) => upd({ periapsisAltKm: v }), 'Closest approach')}
       <div class="stat">
         <div class="stat-head"><span class="stat-label">Travel time</span><span class="stat-value num">{formatDuration(m.travelDays)}</span></div>
-        <Slider min={t0} max={Math.max(t0 + 1, t1)} step={1} scale="linear" value={m.travelDays}
+        <Slider label="Travel time" valueText={formatDuration(m.travelDays)} min={t0} max={Math.max(t0 + 1, t1)} step={1} scale="linear" value={m.travelDays}
           onChange={(v) => upd({ travelDays: Math.round(v) })} />
       </div>
     </>

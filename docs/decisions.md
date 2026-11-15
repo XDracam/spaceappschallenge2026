@@ -274,6 +274,25 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 - Ownership: [redacted for publication].
 - Evidence: configuration, workflow deployment and public availability are verified separately in the setup record. This decision does not establish multiplayer playtest success.
 
+## D-027 — Fix the two-level hackathon audit findings
+
+- Date: 2026-11-15.
+- Status: accepted user direction for implementation; observed checks and remaining release limitations are separate.
+- Source: [approval](notes/2026-11-15-release-fixes-approval.md), following the [audit](reviews/2026-11-15-two-level-release-audit.md), I-093.
+- Decision: keep Weather introductory and budgets generous. Restrict positive in-flight goal rescue to physically achievable goals with fallible reliability factors; preserve exact Science prerequisite identities even when their grants are covered. Give Mars immediate camera research work by lowering its initial camera limit from 6 to 3 while retaining the design requirement of 4 and existing authored tech routes.
+- Recovery and guidance: host-only Retry and Choose mission preserve the connected group; record outcomes once, reset planner local state, and expose local save failures. Add DOM route continuation/editing, named sliders, focused popup navigation, readable Science statuses, reduced-motion alternatives, research cancellation confirmation with refund, concise role/route guidance, truthful Comms outcomes and project timing warnings.
+- Scope: no new tech/content systems, budget cuts, TURN service, commit, push or deployment. Existing historical notes and audit observations are retained. The Mars change adds research cost/time and requires a new feasible-route calculation; see [walkthrough](playtests/2026-11-15-release-fixes-walkthrough.md).
+- Limits: verified mechanics and agent walkthroughs do not establish human enjoyment, zero idle time or venue-network connectivity. Related: D-004, D-010, D-014–D-015, D-020–D-024.
+
+## D-028 — Open with a game title screen
+
+- Date: 2026-11-15.
+- Status: accepted user direction; initial artwork rejected and subsequently replaced with user-supplied finished artwork.
+- Decision: implement I-095's large title, compact New/Join/Continue menu, four-role introduction and setup fields after choosing an action. Preserve existing session behavior.
+- Correction: the user rejected the procedural planet treatment and decorative orbit lines. Removed them; the user subsequently supplied Earth-and-satellite artwork, now integrated in place of the atmospheric placeholder.
+- Source and observations: [title-screen record](notes/2026-11-15-title-screen.md), including the requested ChatGPT image prompt and browser/build verification limits.
+- Related: D-010, D-013–D-015, I-095.
+
 ## Future decision template
 
 ```markdown

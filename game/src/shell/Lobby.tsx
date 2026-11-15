@@ -7,10 +7,11 @@ import { DEFAULT_MISSION_ID, MISSIONS, missionById } from '../core/mission';
 import { setLocalStation, useGame, useSync } from '../core/store';
 import type { InviteInfo } from '../net/webrtc';
 import { STATION_INFO } from './stations';
+import { TitleScene } from './TitleScene';
 import { requestConfirmation } from '../shared/confirmation';
 import {
   acceptReply, backToStart, cancelInvite, cancelJoin, createInvite, hasSavedGame, hostEnterMission,
-  hostNewGame, hostTakeSeat, joinWithInvite, playerTakeSeat, resumeHostedGame, setName, setScreen, useSession,
+  hostNewGame, hostChooseMission, hostTakeSeat, joinWithInvite, playerTakeSeat, resumeHostedGame, setName, setScreen, useSession,
 } from './session';
 
 export function Lobby() {
@@ -161,8 +162,8 @@ const MISSION_CARD: Record<string, { tag: string; text: string }> = {
   },
 };
 
-function MissionPicker({ onBack }: { onBack: () => void }) {
-  const [pick, setPick] = useState(DEFAULT_MISSION_ID);
+function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; current?: string; onChoose?: (id: string) => void }) {
+  const [pick, setPick] = useState(current ?? DEFAULT_MISSION_ID);
   const chosen = MISSIONS.find((m) => m.id === pick) ?? MISSIONS[0];
   return (
     <section class="shell-missions" aria-labelledby="shell-missions-title">
@@ -184,80 +185,80 @@ function MissionPicker({ onBack }: { onBack: () => void }) {
         })}
       </div>
       <div class="shell-mission-actions">
-        <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => hostNewGame(chosen.id)}>
-          Host “{chosen.name}”
+        <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => onChoose ? onChoose(chosen.id) : hostNewGame(chosen.id)}>
+          {onChoose ? 'Select' : 'Host'} “{chosen.name}”
         </button>
-        <button class="shell-link" onClick={onBack}>← Back</button>
+        {onBack && <button class="shell-link" onClick={onBack}>← Back</button>}
       </div>
     </section>
   );
 }
 
-function StartScreen() {
+function PlayerName() {
   const name = useSession((s) => s.name);
+  return (
+    <label class="shell-field">
+      <span class="shell-label">Your name</span>
+      <input class="shell-input" value={name} maxLength={24} placeholder="e.g. Alex" autoComplete="nickname"
+        onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)} />
+    </label>
+  );
+}
+
+function StartScreen() {
   const saved = useMemo(() => hasSavedGame(), []);
   const [picking, setPicking] = useState(false);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const newGame = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (picking) heading.current?.focus();
+  }, [picking]);
   if (picking) {
     return (
-      <>
+      <div class="shell-start-setup">
         <Brand />
-        <MissionPicker onBack={() => setPicking(false)} />
-      </>
+        <h2 ref={heading} tabIndex={-1}>Assemble your mission</h2>
+        <p class="shell-muted">Choose a mission, then invite your crew. You can also start alone and use the free stations.</p>
+        <PlayerName />
+        <MissionPicker onBack={() => { setPicking(false); requestAnimationFrame(() => newGame.current?.focus()); }} />
+      </div>
     );
   }
   return (
-    <>
-      <Brand />
-      <p class="shell-lead">
-        Four players, four stations, one space mission. Each player runs a station on their own computer — planning,
-        procurement, science and communications — and everything they do is shared live.
-      </p>
-      <label class="shell-field">
-        <span class="shell-label">Your name</span>
-        <input
-          class="shell-input"
-          value={name}
-          maxLength={24}
-          placeholder="e.g. Alex"
-          onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)}
-        />
-      </label>
-      <div class="shell-choices">
-        <button class="shell-choice" onClick={() => setPicking(true)}>
-          <span class="shell-choice-title">Host a new game</span>
-          <span class="shell-choice-text">
-            Pick a mission. Your browser runs the game. Invite up to three players — or start alone and switch between stations.
-          </span>
-        </button>
-        {saved && (
-          <button class="shell-choice" onClick={resumeHostedGame}>
-            <span class="shell-choice-title">Resume hosted game</span>
-            <span class="shell-choice-text">
-              Continue the {saved.missionName} game saved in this browser ({saved.phase === 'lobby' ? 'not started yet' : dayLabel(saved.day)}).
-              Players join again with new codes.
-            </span>
+    <main class="title-screen">
+      <TitleScene />
+      <div class="title-content">
+        <h1 class="title-name">MISSION<br />CONTROL<span class="title-period">.</span></h1>
+        <p class="title-tagline">Four stations. One mission.<br /><strong>Make it fly.</strong></p>
+        <nav class="title-menu" aria-label="Game menu">
+          <button ref={newGame} class="title-action title-action-primary" onClick={() => setPicking(true)}>
+            <span>New game</span><MenuArrow />
           </button>
-        )}
-        <button class="shell-choice" onClick={() => setScreen('join')}>
-          <span class="shell-choice-title">Join a game</span>
-          <span class="shell-choice-text">Someone else is hosting and sent you an invite code.</span>
-        </button>
+          <button class="title-action" onClick={() => setScreen('join')}>
+            <span>Join game</span><MenuArrow />
+          </button>
+          {saved && <button class="title-action title-continue" onClick={resumeHostedGame}>
+            <span>Continue<span class="title-save">{saved.missionName} · {saved.phase === 'lobby' ? 'Not started' : dayLabel(saved.day)}</span></span>
+            <MenuArrow />
+          </button>}
+        </nav>
+        <p class="title-player-note">A cooperative space mission design game.<br />Best with four players. Playable with fewer.</p>
       </div>
-      <details class="shell-howto">
-        <summary>How does connecting work?</summary>
-        <p>
-          There is no game server. The host's browser holds the game and each player connects to it directly. To connect,
-          the host and the player swap two codes once — through chat, e-mail or anything else you can copy and paste into:
-        </p>
-        <ol>
-          <li>The host makes an <b>invite code</b> and sends it to the player.</li>
-          <li>The player pastes it here and gets a <b>reply code</b>, which they send back.</li>
-          <li>The host pastes the reply code. Connected — the player picks a station.</li>
-        </ol>
-        <p>Trying it alone? Host in this tab, then open this page in another tab or window and join from there.</p>
-      </details>
-    </>
+      <footer class="title-footer">
+        <div class="title-roles" aria-label="Four player stations">
+          <div style={{ '--role-color': STATION_INFO.planner.color }}><b>Mission planning</b><span>Design the spacecraft.</span></div>
+          <div style={{ '--role-color': STATION_INFO.procurement.color }}><b>Procurement</b><span>Secure the hardware.</span></div>
+          <div style={{ '--role-color': STATION_INFO.science.color }}><b>Science</b><span>Advance the science.</span></div>
+          <div style={{ '--role-color': STATION_INFO.comms.color }}><b>Communications</b><span>Win support.</span></div>
+        </div>
+        <div class="title-credits"><span>Made for NASA Space Apps 2026</span><span>Plan together. Launch together.</span></div>
+      </footer>
+    </main>
   );
+}
+
+function MenuArrow() {
+  return <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg>;
 }
 
 // ------------------------------------------------------------------ host
@@ -266,6 +267,7 @@ function HostScreen() {
   const seats = useGame((s) => s.meta.seats);
   const phase = useGame((s) => s.meta.phase);
   const day = useGame((s) => s.clock.day);
+  const missionId = useGame((s) => s.meta.missionId);
   const invites = useSession((s) => s.invites);
   const names = useSession((s) => s.peerNames);
   const [busy, setBusy] = useState(false);
@@ -279,7 +281,7 @@ function HostScreen() {
     setBusy(false);
   };
   const leave = async () => {
-    if (connected > 0 && !await requestConfirmation('Close this game? Connected players will be disconnected. The game stays saved in this browser.', 'Close game')) return;
+    if (connected > 0 && !await requestConfirmation('Close this game? Connected players will be disconnected. The browser may have a local save; check the save status before closing.', 'Close game')) return;
     backToStart();
   };
 
@@ -287,6 +289,7 @@ function HostScreen() {
     <>
       <Brand tag={started ? `Hosting · ${dayLabel(day)}` : 'Hosting'} />
       <MissionLine />
+      {!started && <MissionPicker key={missionId} current={missionId} onChoose={hostChooseMission} />}
       <div class="shell-cols">
         <div>
           <Step n={1} title="Choose your station" done={!!mine}>
@@ -426,6 +429,7 @@ function JoinScreen() {
   return (
     <>
       <Brand tag={ready ? 'Connected' : 'Joining'} />
+      {join.status === 'idle' && <PlayerName />}
       {ready && <MissionLine />}
       <Step n={1} title="Paste the invite code from the host" done={join.status !== 'idle'}>
         {join.status === 'idle' ? (
@@ -510,7 +514,7 @@ export function HostLeft({ reason }: { reason: 'bye' | 'lost' | null }) {
         {reason === 'lost'
           ? 'The connection to the host dropped. '
           : 'The host closed or reloaded the game. '}
-        The game is saved in the host's browser: once they choose “Resume hosted game”, ask for a new invite code and join again.
+        If a local save succeeded in the host's browser, ask the host to continue that game, then send you a new invite code to join again.
       </p>
       <button class="shell-btn shell-btn-primary" onClick={backToStart}>Back to lobby</button>
     </div>

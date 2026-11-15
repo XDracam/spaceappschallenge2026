@@ -220,12 +220,33 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Status: accepted action, implemented under D-025; Apache 2.0 chosen within the user's authorization.
 - Result: Apache 2.0 covers original project material; third-party licenses remain in force. The image is deleted from the working tree, with historical feedback preserved. Earlier Git commits still contain it; no history rewrite was performed. See [implementation and official source](notes/2026-11-15-publication-license.md).
 
+### I-093 — Focus the two existing levels for hackathon release
+
+- Date: 2026-11-15.
+- Source: user requested expert subagent audits of the two levels for quality, playability, balance and the shortest path to hackathon release.
+- Status: audit completed; user subsequently requested all findings fixed under D-027, using Sol subagents. See [approval](notes/2026-11-15-release-fixes-approval.md) and [implementation observations](playtests/2026-11-15-release-fixes-walkthrough.md).
+- Evidence: [five-packet release audit](reviews/2026-11-15-two-level-release-audit.md), including current evaluator/quote calculations, build verification and limited browser opening observations. No full multiplayer completion or enjoyment claim.
+- Proposals: fix impossible-goal rescue and prerequisite locks; support retry/level change; give Mars immediate mission-directed Science work; show precise fuel shortfalls; align event prose with effects; add concise role guidance and focused accessibility/recovery safeguards.
+- Balance disposition: retain generous budgets and introductory Weather difficulty for now; defer broad economy changes, new levels and cosmetic redesign. Mars objective changes require re-evaluating the concrete feasible route. These are recommendations, not accepted mechanics.
+- Related: D-004, D-010, D-014–D-015, D-020–D-024; Q-014, Q-022.
+
 ### I-094 — Mission Control custom domain on GitHub Pages
 
 - Date: 2026-11-15.
 - Source: user explicitly requested `missioncontrol.dractec.com`, [redacted for publication], with no deployment to any machine.
 - Status: accepted direction under D-026.
 - Result: DNS-only CNAME to GitHub Pages, Actions publishing and a domain-aware build base path. [redacted for publication] See [setup record](notes/2026-11-15-github-pages-domain.md).
+
+### I-095 — A game title screen with a mission-control identity
+
+- Captured: 2026-11-15.
+- Source: user called the start page bland and asked how to create a good first impression.
+- Status: user approved implementation of the proposed direction, then rejected the initial procedural artwork. Menu/layout implemented; user-supplied finished artwork integrated. See [implementation and artwork correction](notes/2026-11-15-title-screen.md).
+- Idea: frame the opening as an orbital mission-control title screen: large Mission Control lettering, an Earth limb and spacecraft as the main visual, restrained orbital motion, and a compact menu for new game, join and conditional continue. Show the four roles through short action phrases; request the name and explain connection codes within the chosen setup flow. Keep challenge attribution secondary.
+- Intended player experience: convey the scale of a space mission and the appeal of four people working together before asking players to configure their connection.
+- Evidence: inspected the current local start screen in the browser on November 15 at 1280×720. Its small heading, name field and equally weighted action cards occupy the upper portion; most of the lower viewport is empty. No revised UI or player response has been observed.
+- Dependencies and unanswered questions: final visual direction and artwork source remain unselected. Preserve existing hosting, joining and saved-game behavior; reduced-motion support is required if animation is added.
+- Related: D-010, D-013–D-015; I-094.
 
 ## New entry template
 

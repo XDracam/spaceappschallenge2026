@@ -350,7 +350,7 @@ export const POOL_EVENTS: EventDef[] = [
     options: [
       option('book', 'Book the chamber (planner gains a test facility).',
         [trust('partners', 5), service('testFacility', 'Northgate thermal vacuum chamber available for lander tests.')],
-        'The lander gets a cold, airless spa week. The planner can count on a test facility.', 10),
+        'Northgate reserves the chamber. Facility access is recorded, but no part is tested by this agreement. Science must test delivered parts to reduce their failure risk.', 10),
       option('decline', "Thanks, but we'll test in-house.",
         [trust('partners', -5)],
         'Salo rents the slot to a cubesat team within the hour.'),

@@ -51,7 +51,8 @@ export const MARS_ORBITER_LANDER: MissionDef = {
     'engine.ion.isp': 3000,
     'engine.kerolox.thrustKN': 8000,
     'engine.hydrolox.thrustKN': 2500,
-    'instrument.camera.performance': 6,
+    // Four-month sensor research plus standard camera delivery fits day 230.
+    'instrument.camera.performance': 3,
     'instrument.spectrometer.performance': 6,
     'instrument.radar.performance': 4,
     'instrument.surfaceLab.performance': 5,
