@@ -57,6 +57,7 @@ export function Avatar({ character, size = 'md' }: { character?: Character; size
         <img
           src={`${import.meta.env.BASE_URL}portraits/${portrait}`}
           alt=""
+          title="AI-generated portrait"
           draggable={false}
           onError={() => { brokenPortraits.add(portrait); setBroken((n) => n + 1); }}
         />
