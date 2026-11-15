@@ -5,7 +5,7 @@ import { getState, useGame } from '../../../core/store';
 import { budgetAvailableM } from '../../../core/state';
 import { missionById } from '../../../core/mission';
 import type { MissionDef } from '../../planner/model/types';
-import { computeMissionResult, isScrubbed } from '../../planner/result';
+import { computeMissionResult, inFlightCounted, isScrubbed } from '../../planner/result';
 import { commsActions } from '../logic';
 import type { CommsSlice } from '../slice';
 import {
@@ -44,6 +44,8 @@ export const useBudgetLeft = () => useGame((s) => budgetAvailableM(s.budget));
 export const useLaunched = () => useGame(isLaunched);
 /** Launch day came but the launch was scrubbed (a part was missing): nothing flew. */
 export const useScrubbed = () => useGame((s) => (s.meta.phase === 'launched' || s.meta.phase === 'finished') && isScrubbed(computeMissionResult(s)));
+/** The launch flew but lost every goal before the in-flight events could happen. */
+export const useFlightLost = () => useGame((s) => (s.meta.phase === 'launched' || s.meta.phase === 'finished') && !inFlightCounted(s) && !isScrubbed(computeMissionResult(s)));
 
 /** Player actions (dispatch shared reducers; UI-local bookkeeping). */
 export const actions = {

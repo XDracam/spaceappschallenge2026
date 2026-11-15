@@ -6,7 +6,8 @@
 // In-flight events (I-044, docs/design/events.md): resolved from the state at launch
 // (comms' trust levels and flags). They are few and mild: their goalChanceDelta can
 // rescue a goal that just failed (+) or lose one that just succeeded (−), each with
-// that probability, rolled from the same seed. A scrubbed launch is never rescued.
+// that probability, rolled from the same seed. They need a spacecraft that is still
+// flying: a scrubbed launch or a flight that lost every goal gets none and no rescue.
 import type { GameState } from '../../core/state';
 import { MISSION } from '../../core/mission';
 import { rng } from '../../shared/events/engine';
@@ -15,21 +16,31 @@ import type { PlaythroughResult } from './model/types';
 import { cachedPlannerGame, evaluationOf } from './derive';
 import { playthrough } from './physics';
 
-let last: { game: unknown; inFlight: unknown; result: PlaythroughResult } | null = null;
+let last: { game: unknown; inFlight: unknown; result: PlaythroughResult; flying: boolean } | null = null;
+
+function compute(state: GameState): NonNullable<typeof last> {
+  const game = cachedPlannerGame(state);
+  if (last && last.game === game && last.inFlight === state.comms.inFlight) return last;
+  const base = playthrough(game, evaluationOf(game), game.playthroughSeed);
+  // Scrubbed, or every goal lost to failures: nothing is flying when the in-flight events would happen.
+  const flying = base.goalOutcomes.some((o) => o.success);
+  const result = flying ? applyInFlight(base, commsInFlightResults(state), game.playthroughSeed) : base;
+  last = { game, inFlight: state.comms.inFlight, result, flying };
+  return last;
+}
 
 /** The PlaythroughResult for the state at launch, incl. in-flight events (memoised). */
 export function computeMissionResult(state: GameState): PlaythroughResult {
-  const game = cachedPlannerGame(state);
-  if (last && last.game === game && last.inFlight === state.comms.inFlight) return last.result;
-  const base = playthrough(game, evaluationOf(game), game.playthroughSeed);
-  const result = applyInFlight(base, commsInFlightResults(state), game.playthroughSeed);
-  last = { game, inFlight: state.comms.inFlight, result };
-  return result;
+  return compute(state).result;
+}
+
+/** Whether the in-flight events took place: false for a scrub and for a flight that lost every goal before them. */
+export function inFlightCounted(state: GameState): boolean {
+  return compute(state).flying;
 }
 
 function applyInFlight(base: PlaythroughResult, inFlight: InFlightResult[], seed: number): PlaythroughResult {
-  // A scrubbed launch never flew: no in-flight events.
-  if (!inFlight.length || isScrubbed(base)) return base;
+  if (!inFlight.length) return base;
   const delta = inFlight.reduce((sum, e) => sum + e.goalChanceDelta, 0);
   const roll = rng((seed ^ 0x5bd1e995) >>> 0);
   const day = Math.round(base.endDay - 10);

@@ -95,7 +95,7 @@ export function NextStep() {
     if (errors > 0) return { kind: 'text', text: `Next: fix ${plural(errors, 'problem')} — see Issues`, tone: 'warn' };
     if (r.draft > 0) {
       return {
-        kind: 'button', text: `Next: order ${plural(r.draft, 'part')} (Rocket → Order ${r.draft === 1 ? 'part' : 'parts'})`,
+        kind: 'button', text: `Next: Rocket → Order ${plural(r.draft, 'part')} (for Procurement)`,
         onClick: () => openTab('rocket'), title: 'Open the Rocket panel',
       };
     }

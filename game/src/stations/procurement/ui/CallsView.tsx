@@ -4,7 +4,7 @@ import type { Call, Criterion, Destination } from '../../../core/model';
 import { RESOURCE_BY_ID } from '../data/catalogue';
 import { procurementActions } from '../logic';
 import {
-  assessOffer, criterionCoverage, fmtDate, fmtM, fmtPct, fmtStats, openTasks, previewCall, quoteOrder, rankAssessments, sameKind, taskCode,
+  assessOffer, criterionCoverage, DAYS_PER_MONTH, fmtDate, fmtM, fmtPct, fmtStats, openTasks, previewCall, quoteOrder, rankAssessments, sameKind, taskCode,
   type PView,
 } from '../rules';
 import { blockReason } from './Inspector';
@@ -129,7 +129,7 @@ export function CallsView() {
                   <div class="pr-call-facts">
                     <span>{fmtStats(o.resource.partKind, o.resource.variant, o.resource.stats)}</span>
                     <span>{fmtM(a.totalPriceM)}</span>
-                    <span class={a.late ? 'warn' : ''}>Arrives {fmtDate(a.expectedAt)}</span>
+                    {o.status === 'available' ? <span class={a.late ? 'warn' : ''}>{Math.round(((a.expectedAt - v.clock.day) / DAYS_PER_MONTH) * 10) / 10} mo after signing{a.late ? ' · late' : ''}</span> : null}
                     <span>{fmtPct(o.reliability)}</span>
                     {match ? <span class={a.failures.length ? 'bad' : 'good'}>{a.failures.length ? a.failures.join(' · ') : `Fits ${taskCode(match.t)}`}</span> : <span class="muted">No matching need</span>}
                   </div>

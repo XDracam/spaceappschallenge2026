@@ -1,8 +1,9 @@
 import type { EventDef, EventInstance } from '../model/types';
+import { useGame } from '../../../core/store';
 import { actions, useBudgetLeft, useComms, useLaunched, useStartISO, useToday, useUi } from './store';
 import { optionEffects } from '../state/world';
 import {
-  Avatar, ChangeList, HintPills, InternalTag, SH, dueClass, eventById, eventCharacter, openByUrgency,
+  Avatar, ChangeList, HintPills, InternalTag, SH, dueClass, eventById, eventCharacter, offerTerms, openByUrgency,
 } from './common';
 import { formatDay, formatDuration, formatMoney } from './format';
 import { selectEvent } from './Inbox';
@@ -47,6 +48,8 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
   const startISO = useStartISO();
   const launched = useLaunched();
   const inbox = useComms((s) => s.inbox);
+  const contracts = useGame((s) => s.market.contracts);
+  const design = useGame((s) => s.planner.rocket);
   const lastOutcome = useUi((u) => u.lastOutcome);
   const isOpen = inst.status === 'open';
   const left = Math.max(0, Math.ceil(inst.deadlineDay - today));
@@ -111,6 +114,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
             const disabled = !isOpen || launched || tooExpensive;
             const isChosen = o.id === inst.chosenOptionId;
             if (!isOpen && !isChosen) return null;
+            const terms = offerTerms(o.effects, contracts, design);
             return (
               <button key={o.id} class={`opt${isChosen ? ' chosen' : ''}`} disabled={disabled && !isChosen}
                 title={tooExpensive && isOpen ? `Needs ${formatMoney(o.costM!)}; only ${formatMoney(budget)} left` : undefined}
@@ -118,7 +122,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
                   if (!disabled) actions.answer(inst.instanceId, o.id);
                 }}>
                 <span class="opt-key">{isChosen ? '✓' : idx + 1}</span>
-                <span class="opt-text">{o.text}</span>
+                <span class="opt-text">{o.text}{terms && <span class="muted small opt-terms">{terms}</span>}</span>
                 <span class="opt-meta">
                   <HintPills hints={o.hints} />
                   <InternalTag effects={o.effects} costM={o.costM} />
@@ -128,7 +132,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
             );
           })}
         </div>
-        {isOpen && <div class="muted tiny opts-note">Hints show who is likely to react, not by how much. Exact effects are revealed after you answer.</div>}
+        {isOpen && <div class="muted tiny opts-note">Hints show who is likely to react, not by how much.</div>}
       </div>
     </div>
   );

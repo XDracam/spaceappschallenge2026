@@ -4,6 +4,10 @@ import { affectedStations, effectStations } from '../../../shared/events/types';
 import type { StakeholderHint } from '../../../shared/events/types';
 import type { Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId } from '../model/types';
 import { getState } from '../../../core/store';
+import type { Contract, PartKind } from '../../../core/model';
+import { statDefs } from '../../planner/data/parts';
+import { allParts } from '../../planner/model/rocketUtils';
+import type { Rocket } from '../../planner/model/types';
 import { contentOf } from '../state/world';
 import { formatMoney, signed } from './format';
 
@@ -98,7 +102,7 @@ export function effectText(e: Effect): string {
       return e.months >= 0 ? `${what} ${signed(e.months, ' mo')}` : `${what} ${Math.abs(e.months)} mo earlier`;
     }
     case 'priceModifier': return `prices ${signed(e.pct, ' %')} for ${e.months} mo`;
-    case 'offer': return `offer: ${e.variant} ${e.partKind} from ${e.supplier}, ${formatMoney(e.priceM)}, ${e.deliveryMonths} mo`;
+    case 'offer': return `unsigned offer: ${e.variant} ${e.partKind} from ${e.supplier}, ${formatMoney(e.priceM)}, ${e.deliveryMonths} mo`;
     case 'researchPace': return `research pace ${signed(e.pct, ' %')} for ${e.months} mo`;
     case 'techAccess': return `${e.access === 'block' ? 'blocks' : 'enables'} tech: ${e.note}`;
     case 'researchLimit': return `research limit ${e.key} → ${e.value}`;
@@ -108,6 +112,32 @@ export function effectText(e: Effect): string {
     case 'flag': return `${e.flag} ${e.on ? 'set' : 'cleared'}`;
     case 'eventOdds': return `“${e.tag}” events ${e.factor >= 1 ? 'likelier' : 'rarer'} (×${e.factor}) for ${e.months} mo`;
   }
+}
+
+const pct = (v: number) => `${Math.round(v * 1000) / 10} %`;
+
+function statsText(kind: string, variant: string, stats: Record<string, number> | undefined): string {
+  if (!stats) return '';
+  return statDefs(kind as PartKind, variant).filter((d) => stats[d.key] !== undefined)
+    .map((d) => `${d.label} ${+(stats[d.key] * (d.displayFactor ?? 1)).toFixed(2)}${d.unit ? ` ${d.displayUnit ?? d.unit}` : ''}`).join(' · ');
+}
+
+/**
+ * Terms of the partner offer an option passes to procurement, and what is under contract for
+ * that part now: what Comms needs to judge the offer before sending it on. Null without an offer.
+ */
+export function offerTerms(effects: Effect[], contracts: Contract[], design: Rocket): string | null {
+  const lines = effects.flatMap((e) => {
+    if (e.kind !== 'offer') return [];
+    const terms = [statsText(e.partKind, e.variant, e.stats), `${pct(e.reliability)} reliable`, formatMoney(e.priceM), `${e.deliveryMonths} mo after signing`];
+    const have = [...contracts].reverse().find((c) => (c.status === 'active' || c.status === 'delivered')
+      && c.offerSnapshot.resource.partKind === e.partKind && c.offerSnapshot.resource.variant === e.variant);
+    const now = have
+      ? `Contracted now: ${[statsText(e.partKind, e.variant, have.offerSnapshot.resource.stats), pct(have.offerSnapshot.reliability)].filter(Boolean).join(' · ')}`
+      : allParts(design).some((l) => l.part.kind === e.partKind && l.part.variant === e.variant) ? 'Not contracted yet' : 'Not in the design';
+    return [`${terms.filter(Boolean).join(' · ')}. ${now}.`];
+  });
+  return lines.length ? lines.join(' ') : null;
 }
 
 export type ChangeKind = 'up' | 'down' | 'internal' | 'note';

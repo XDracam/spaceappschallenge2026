@@ -293,6 +293,7 @@
 .st-comms .opt:hover:not(:disabled) .opt-key { border-color: var(--accent); color: var(--accent); }
 .st-comms .opt.chosen .opt-key { color: var(--ok); border-color: rgba(63, 224, 160, 0.5); }
 .st-comms .opt-text { flex: 1 1 auto; min-width: 0; }
+.st-comms .opt-terms { display: block; margin-top: 2px; }
 .st-comms .opt-meta { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 6px; flex: 0 1 auto; max-width: 55%; }
 .st-comms .opt-cost { color: var(--muted); font-size: 12px; white-space: nowrap; margin-left: 4px; }
 .st-comms .opts-note { padding-left: 2px; }

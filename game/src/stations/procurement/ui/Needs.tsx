@@ -6,6 +6,9 @@ import {
   type Coverage, type PView,
 } from '../rules';
 import { researchEta } from '../../science/model/tree';
+import { useGame } from '../../../core/store';
+import { partStatus } from '../../planner/derive';
+import { allParts } from '../../planner/model/rocketUtils';
 import { categoryOf, setUi, useP, useUi } from './uiState';
 
 const ROLE: Record<string, string> = { planner: 'Planner', procurement: 'Procurement', science: 'Science', comms: 'Comms' };
@@ -66,6 +69,8 @@ function ResearchChip({ v, c }: { v: PView; c: Criterion }) {
 export function Needs({ onClose }: { onClose?: () => void } = {}) {
   const v = useP();
   const focus = useUi((u) => u.focus);
+  // Parts of the Planner's design that are not ordered yet: they become needs here when the Planner orders them.
+  const drafts = useGame((s) => allParts(s.planner.rocket).filter((l) => partStatus(s, l.part.id) === 'draft').length);
   const tasks = openTasks(v);
   const today = Math.floor(v.clock.day);
   const all = tasks.flatMap((t) => t.criteria.map((c) => {
@@ -85,7 +90,7 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
     <aside class="pr-panel pr-needs" aria-label="Shared needs">
       <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>
       <div class="pr-situation">
-        <div><strong>{uncovered}</strong> <span class="muted">not fully covered</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div>
+        {rows.length ? <div><strong>{uncovered}</strong> <span class="muted">not fully covered</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div> : null}
         {uncovered ? (
           <div class={cost > available ? 'warn' : 'muted'}>
             Cheapest fitting cover ≈ {fmtM(cost)}{unsolvable ? ` + ${unsolvable} without catalogue fit` : ''} · {fmtM(available)} available
@@ -116,7 +121,7 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
         })}
         {!rows.length ? (
           <div class="pr-empty">
-            <p>No open mission needs.</p>
+            <p>{drafts ? `Waiting for the Planner's order: ${drafts} draft ${drafts === 1 ? 'part' : 'parts'}.` : 'No open mission needs.'}</p>
           </div>
         ) : null}
       </div>

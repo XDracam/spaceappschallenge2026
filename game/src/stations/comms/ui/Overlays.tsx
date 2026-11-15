@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
 import { commsInFlightResults } from '../logic';
-import { uiStore, useComms, useScrubbed } from './store';
+import { uiStore, useComms, useFlightLost, useScrubbed } from './store';
 import { SH, STAKEHOLDER_ORDER } from './common';
 
 const SEEN_KEY = 'comms.briefing.seen';
@@ -44,22 +44,25 @@ export function Briefing() {
 /** Centred card after launch: in-flight events resolved from trust at launch. */
 export function LaunchedCard() {
   // Resolved at launch (or from the current state if comms has not ticked since the launch).
-  // A scrubbed launch never flew: no in-flight events to show.
+  // A scrubbed launch never flew, and a flight that lost every goal ended before them: no in-flight events to show.
   const scrubbed = useScrubbed();
+  const lost = useFlightLost();
+  const ended = scrubbed || lost;
   const resolved = commsInFlightResults(useGame((s) => s));
-  const inFlight = scrubbed ? [] : resolved;
+  const inFlight = ended ? [] : resolved;
   const trust = useComms((s) => s.trust);
+  const label = scrubbed ? 'Launch scrubbed' : lost ? 'Flight lost' : 'Mission launched';
   return (
     <div class="modal-backdrop launched-backdrop">
-      <div class={`modal glass strong launched-card${scrubbed ? ' scrubbed' : ''}`} role="dialog" aria-label={scrubbed ? 'Launch scrubbed' : 'Mission launched'}>
-        <div class={`tb-label ${scrubbed ? 'err-text' : 'ok-text'}`}>{scrubbed ? 'Launch scrubbed' : 'Mission launched'}</div>
-        <div class="briefing-title display">{scrubbed ? 'The rocket never left the pad.' : 'Your relationships carry into the flight.'}</div>
+      <div class={`modal glass strong launched-card${ended ? ' scrubbed' : ''}`} role="dialog" aria-label={label}>
+        <div class={`tb-label ${ended ? 'err-text' : 'ok-text'}`}>{label}</div>
+        <div class="briefing-title display">{scrubbed ? 'The rocket never left the pad.' : lost ? 'The flight ended before your relationships could count.' : 'Your relationships carry into the flight.'}</div>
         <div class="launch-trust">
           {STAKEHOLDER_ORDER.map((s) => (
             <div key={s}><span class="label">{SH[s].label}</span><b class="num" style={{ color: SH[s].color }}>{Math.round(trust[s] ?? 0)}</b></div>
           ))}
         </div>
-        {inFlight.length === 0 && !scrubbed && <p class="muted">No in-flight events were resolved.</p>}
+        {inFlight.length === 0 && !ended && <p class="muted">No in-flight events were resolved.</p>}
         <ul class="outcome-list">
           {inFlight.map((r) => (
             <li key={r.eventId} class={r.good ? 'ok' : 'err'}>
