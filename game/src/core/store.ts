@@ -11,7 +11,7 @@ import type { ClientTransport, HostToClient, HostTransport } from './protocol';
 import type { StationId } from './model';
 import { createGame, type GameState } from './state';
 import { createStore, useStore } from './createStore';
-import { setActiveMission } from './mission';
+import { MISSION, setActiveMission } from './mission';
 
 export type Role = 'solo' | 'host' | 'client';
 
@@ -39,6 +39,37 @@ export function useConfirmedGame<S>(selector: (s: GameState) => S): S {
 export function useSync<S>(selector: (s: SyncState) => S): S {
   return useStore(syncStore, selector);
 }
+
+// ------------------------------------------------------- new attempts (local)
+
+const resetListeners = new Set<(s: GameState) => void>();
+/**
+ * Local (never shared) notification that this browser now shows a different game
+ * or a new attempt of it: core/restart, core/returnToLobby, core/setMission, or a
+ * new/adopted game. Stations reset their UI-only stores here (selection, open
+ * panels, dismissed cards). Called after the store holds the new state.
+ */
+export function onGameReset(cb: (s: GameState) => void): () => void {
+  resetListeners.add(cb);
+  return () => resetListeners.delete(cb);
+}
+
+const gameKey = (s: GameState) => `${s.meta.missionId}|${s.meta.seed}|${s.meta.attempt}`;
+let lastKey = gameKey(gameStore.get());
+let lastPhase = gameStore.get().meta.phase;
+gameStore.subscribe(() => {
+  const s = gameStore.get();
+  // The live MISSION binding follows the shown game (core/setMission changes it by action).
+  if (MISSION.id !== s.meta.missionId) setActiveMission(s.meta.missionId);
+  const key = gameKey(s);
+  const backToLobby = lastPhase !== 'lobby' && s.meta.phase === 'lobby';
+  lastPhase = s.meta.phase;
+  if (key === lastKey) return;
+  lastKey = key;
+  // core/returnToLobby: every browser at a station goes back to the lobby screen.
+  if (backToLobby && syncStore.get().station) setLocalStation(null);
+  for (const cb of resetListeners) cb(s);
+});
 
 let confirmed: GameState = gameStore.get();
 let seq = 0;

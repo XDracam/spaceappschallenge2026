@@ -30,6 +30,44 @@ export interface Meta {
   /** Shared id counter for newId() inside reducers. */
   nextId: number;
   seats: Record<StationId, Seat>;
+  /** Attempt number of this game of the mission: 1 for a new game, +1 on every core/restart, core/returnToLobby, core/setMission. */
+  attempt: number;
+  /** Finished attempts, oldest first (core/recordAttempt). Kept across restarts; at most MAX_ATTEMPT_RECORDS. */
+  attempts: AttemptRecord[];
+}
+
+// ------------------------------------------------------------- attempts & score
+
+/** How the flight went, as the mission result says (= missionScore(computeMissionResult(s)) in stations/planner/result.ts). */
+export interface AttemptOutcome {
+  achieved: number;
+  total: number;
+  scrubbed: boolean;
+}
+
+/** Score parts (core/score.ts). Every part is always present; see SCORE_WEIGHTS for each part's maximum. */
+export type ScorePartId = 'goals' | 'budget' | 'time' | 'deliveries' | 'research' | 'trust';
+
+export interface AttemptScore {
+  /** Sum of the parts (integer, 0..SCORE_MAX). */
+  total: number;
+  /** Integer points per part, each 0..SCORE_WEIGHTS[part]. */
+  parts: Record<ScorePartId, number>;
+}
+
+/** One finished attempt (small: it travels in every snapshot). */
+export interface AttemptRecord {
+  attempt: number;
+  missionId: string;
+  achieved: number;
+  total: number;
+  scrubbed: boolean;
+  score: AttemptScore;
+  /** spent + committed at the end of the attempt (M). */
+  spentM: number;
+  fundingTotalM: number;
+  /** Launch day (calendar day); null if the attempt never launched. */
+  launchDay: number | null;
 }
 
 export interface Clock {

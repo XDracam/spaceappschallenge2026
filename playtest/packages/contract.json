@@ -1,0 +1,39 @@
+{
+  "package": "contract",
+  "status": "done",
+  "what": "Core support for multiple attempts. Nothing changes on screen yet. The shared state now counts attempts and keeps a small history of finished attempts with a score. New core actions: record an attempt, try again with the same mission and seats, go back to the lobby, and change mission in the lobby. A pure score function covers goals, budget, time, deliveries, research and trust. The save version is now 6 and older saves are migrated.",
+  "added": [
+    "GameState.meta.attempt, GameState.meta.attempts (AttemptRecord[], max 12)",
+    "types AttemptOutcome, ScorePartId, AttemptScore, AttemptRecord (core/model.ts)",
+    "core actions recordAttempt(outcome), restart(outcome?), returnToLobby(outcome?), setMission(missionId)",
+    "helpers missionEnded(s), attemptRecorded(s), MAX_ATTEMPT_RECORDS (core/coreActions.ts)",
+    "core/score.ts: scoreAttempt, scoreFractions, SCORE_WEIGHTS, SCORE_MAX, SCORE_PARTS, SCORE_PART_STATION",
+    "core/store.ts: onGameReset(cb) local hook; MISSION follows meta.missionId; return to lobby unseats each browser locally",
+    "STATE_VERSION 6 with v5->v6 migration in core/persist.ts"
+  ],
+  "removed": [],
+  "findings": ["R1115d-r01-02", "R1115m-r01-02", "Rr001-14"],
+  "files": [
+    "game/src/core/model.ts",
+    "game/src/core/state.ts",
+    "game/src/core/coreActions.ts",
+    "game/src/core/score.ts",
+    "game/src/core/store.ts",
+    "game/src/core/persist.ts",
+    "playtest/packages/contract.md",
+    "playtest/packages/contract.json"
+  ],
+  "verified": "npx tsc --noEmit passes. I bundled the real core and station logic with esbuild and ran it in Node, for both missions. Tested: startGame, ticks, planner launchNow, then recordAttempt (ignored while planning, recorded once after launch), restart, returnToLobby and setMission. After a restart: attempt 2, history kept, phase planning, calendar running from day 0, new seed, seats and player names kept, market, budget, news and comms fresh, id counter still counting. onGameReset fired once. returnToLobby recorded the attempt and cleared the local station. setMission switched MISSION and funding (350 to 900 M and back) and ignored unknown ids. Replaying the dispatched action log twice with applyAction gave identical states. In the browser (port 4730, one-player session plus my own headless page): a fresh hosted game has version 6, attempt 1 and an empty history; it launches at day 180 (scrubbed); the host save is version 6. A doctored version-5 save resumes as version 6 with attempt 1. A save without meta and an unparseable save are both ignored. A version-6 save missing the attempt fields is repaired.",
+  "notVerified": "I did not run the new actions in the running browser game. Their dispatchers are module-internal, I may not change playtestHook.ts, and no UI calls them yet. So I have not checked over WebRTC that a client-dispatched restart reaches the host and comes back. Replication is the same code path as every other action and the Node replay is deterministic, but it is untested in a browser. The score has not been seen on a flight that achieved goals: the test flights all scrubbed, so non-zero goal, budget and time parts were only checked on hand-made states. I have not tested the stations' UI after a restart, since their stale-UI resets belong to their owners.",
+  "risk": "The restart reducer replaces the whole state, which calls createGame and therefore setActiveMission inside a reducer. This is deterministic, and store.ts re-syncs MISSION after every state change. A client action sent just before a restart can land in the new attempt. Trust gives about 25 points to a team that does nothing in Comms, and the time part depends on the mission's launch window. Snapshots grow by about 300 bytes per recorded attempt, capped at 12.",
+  "coreRequests": [],
+  "foreignRequests": [
+    "A (shell/ResultOverlay.tsx): dispatch recordAttempt when the result shows; restart(outcome) and returnToLobby(outcome) buttons; reset the 'hidden' useState when meta.attempt changes",
+    "B (stations/planner/state/store.ts uiStore, stations/planner/ui/common.tsx localUi): reset selection, popup, mapDay and open/highlight ids via onGameReset",
+    "D1 (stations/procurement/ui/uiState.ts ui): reset to initial via onGameReset",
+    "D2 (stations/comms/ui/store.ts uiStore): reset to initialUi() via onGameReset",
+    "C (shell/Lobby.tsx HostScreen): mission choice in the lobby phase calling coreActions.setMission(id), not hostNewGame",
+    "B or D2: after planner/launchNow the comms tick never resolves comms.inFlight (pre-existing)"
+  ],
+  "next": ""
+}

@@ -37,9 +37,13 @@ export function loadSaved(): GameState | null {
     if (s?.version === 3) migrateV3(s);
     // Version 5 added optional fields only (Contract.tested, ResearchProject.partId).
     if (s?.version === 4) s.version = 5;
-    if (s?.version !== STATE_VERSION) return null;
+    // Version 6 added the attempt counter and history (core/restart, core/recordAttempt).
+    if (s?.version === 5) s.version = 6;
+    if (s?.version !== STATE_VERSION || !s.meta) return null;
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';
+    if (!Number.isInteger(s.meta.attempt) || s.meta.attempt < 1) s.meta.attempt = 1;
+    if (!Array.isArray(s.meta.attempts)) s.meta.attempts = [];
     return s;
   } catch {
     return null;

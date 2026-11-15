@@ -8,7 +8,7 @@ import { initialCommsSlice, type CommsSlice } from '../stations/comms/slice';
 import { initialScienceSlice, type ScienceSlice } from '../stations/science/slice';
 import { initialProcurementSlice, type ProcurementSlice } from '../stations/procurement/slice';
 
-export const STATE_VERSION = 5;
+export const STATE_VERSION = 6;
 
 export interface GameState {
   version: number;
@@ -40,6 +40,8 @@ export function createGame(seed: number, missionId: string = DEFAULT_MISSION_ID)
       rngCounter: 0,
       nextId: 1,
       seats: Object.fromEntries(STATIONS.map((s) => [s, { claimedBy: null }])) as Meta['seats'],
+      attempt: 1,
+      attempts: [],
     },
     clock: { day: 0, running: false, daysPerSecond: DEFAULT_DAYS_PER_SECOND },
     budget: { fundingTotalM: MISSION.budgetM, spentM: 0, committedM: 0 },
