@@ -329,10 +329,10 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
   - Techs of tier 2 and above need one or two **facilities** (labs, equipment, rented machine time; `game/src/stations/science/data/needs.ts`, catalogue in `game/src/core/facilities.ts`) before Science may start them. Tier-1 techs need none, so the first weather-satellite routes stay free.
   - Science asks Procurement per facility; Procurement rents it for 3, 6 or 12 months or buys it (some are rent-only). Cost is paid at once from the shared budget, delivery takes 15 to 40 days (buying takes twice as long). A rental that lapses while a project runs pauses that project (its clock stops) until Procurement renews it.
   - The agency has 2 own research teams (was 3). Science can ask for more; Procurement hires a team for 6 or 12 months or permanently (up to 3 hired). Teams are only extra slots for new starts. There is no assignment of people and no idle cost.
+  - In the Mission Planner, clicking "Goals" (or one goal) opens a full-screen window listing all goals, mission-critical first, then optional ones marked as bonus, with status, success chance and the parts they depend on.
 - Source / approval: [science module note, November 15 follow-up](notes/2026-11-14-science-module.md)
 - Rationale and evidence: user direction, to make Science and Procurement depend on each other without adding assignment or idle bookkeeping.
 - Alternatives considered: monthly fees per team and per-project assignment (rejected by the user as too complex).
-  - In the Mission Planner, clicking "Goals" (or one goal) opens a full-screen window listing all goals, mission-critical first, then optional ones marked as bonus, with status, success chance and the parts they depend on.
 - Consequences and limitations: all prices, lead times and the facility list are placeholders (D-005). The weather mission's 210 M budget (D-030) was balanced before facilities existed; routes through tier 2 cost extra. Facilities cannot be sold back.
 - Related: D-005, D-020, D-030, I-098, Q-040.
 
