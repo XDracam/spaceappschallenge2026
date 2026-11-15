@@ -220,6 +220,13 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Status: accepted action, implemented under D-025; Apache 2.0 chosen within the user's authorization.
 - Result: Apache 2.0 covers original project material; third-party licenses remain in force. The image is deleted from the working tree, with historical feedback preserved. Earlier Git commits still contain it; no history rewrite was performed. See [implementation and official source](notes/2026-11-15-publication-license.md).
 
+### I-094 — Mission Control custom domain on GitHub Pages
+
+- Date: 2026-11-15.
+- Source: user explicitly requested `missioncontrol.dractec.com`, [redacted for publication], with no deployment to any machine.
+- Status: accepted direction under D-026.
+- Result: DNS-only CNAME to GitHub Pages, Actions publishing and a domain-aware build base path. [redacted for publication] See [setup record](notes/2026-11-15-github-pages-domain.md).
+
 ## New entry template
 
 ```markdown

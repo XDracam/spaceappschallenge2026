@@ -20,7 +20,7 @@ A multiplayer-focused brainstorming project about making mission planning and co
 
 The integrated game lives in [`game/`](game/) (one web app, four station views; see [D-015](docs/decisions.md#d-015--integration-architecture) and the [integration design](docs/design/integration.md)).
 
-- **Online:** https://xdracam.github.io/spaceappschallenge2026/ (once GitHub Pages is enabled; deployed by `.github/workflows/pages.yml` on every push to `main` that touches `game/`).
+- **Online:** https://missioncontrol.dractec.com/ (GitHub Pages; deployed by `.github/workflows/pages.yml` on every push to `main` that touches `game/`). The workflow reads the site's base path from GitHub Pages configuration.
 - **Locally:** `cd game && npm install && npm run dev`, then open the printed address.
 
 **Playing together.** There is no game server: one player's browser hosts the game and the others connect to it directly (WebRTC). Connecting takes one exchange of codes per player, through any chat:

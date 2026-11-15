@@ -1,5 +1,5 @@
 # Build the game (game/) and publish it on GitHub Pages (D-015).
-# Requires Settings → Pages → Source: "GitHub Actions" (set by the repository owner).
+# Requires Settings → Pages → Source: "GitHub Actions".
 name: Deploy game to GitHub Pages
 
 on:
@@ -27,6 +27,9 @@ jobs:
         working-directory: game
     steps:
       - uses: actions/checkout@v4
+      - name: Read GitHub Pages configuration
+        uses: actions/configure-pages@v5
+        id: pages
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -35,7 +38,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          BASE_PATH: /spaceappschallenge2026/
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: game/dist

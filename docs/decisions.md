@@ -265,6 +265,15 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 - Source: [user request and implementation record](notes/2026-11-15-publication-license.md), I-092, Q-013.
 - Limits: deletion does not remove the image from existing Git history. No history rewrite, commit, push or repository visibility change is authorized by this implementation. Licensing does not establish complete submission compliance or replace resource citations.
 
+## D-026 — Host Mission Control on GitHub Pages with a custom subdomain
+
+- Date: 2026-11-15.
+- Status: accepted user direction.
+- Decision: use `missioncontrol.dractec.com` for the existing GitHub Pages deployment. Configure a DNS CNAME to `xdracam.github.io`, Actions publishing and the Pages-provided build base path. Do not deploy to any machine [redacted for publication].
+- Source and implementation record: [domain setup](notes/2026-11-15-github-pages-domain.md), I-094.
+- Ownership: [redacted for publication].
+- Evidence: configuration, workflow deployment and public availability are verified separately in the setup record. This decision does not establish multiplayer playtest success.
+
 ## Future decision template
 
 ```markdown

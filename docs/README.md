@@ -61,6 +61,8 @@
 
 [Third-party credits](../THIRD_PARTY.md) list dependency licenses, font/icon credits, submission source references and the notices shipped with the game.
 
+[GitHub Pages custom domain](notes/2026-11-15-github-pages-domain.md) records the DNS-only `missioncontrol.dractec.com` setup and domain-aware build configuration.
+
 | Document | Purpose |
 | --- | --- |
 | [Ideas](ideas.md) | All substantive ideas, including tentative and deferred ones |
