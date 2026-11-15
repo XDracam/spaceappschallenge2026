@@ -1,17 +1,18 @@
-// Contracts: the inventory (active / delivered / cancelled), arrival vs launch, allocations.
-import { useEffect, useRef, useState } from 'preact/hooks';
+// Contracts: every contract on its way or delivered, arrival against the need, and what can still be done about one.
+import { useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
 import { contractReliability, type Contract } from '../../../core/model';
 import { procurementActions } from '../logic';
-import { RESOURCES } from '../data/catalogue';
 import {
-  criterionCoverage, fitFailures, fmtDate, fmtDuration, fmtM, fmtPct, fmtStats, openTasks, refundM, sameKind, taskCode, quoteAmendment, sameHardware, findOffer, quoteOrder,
+  criterionCoverage, deliveryOptions, fitFailures, fmtDate, fmtM, fmtPct, fmtStats, openTasks, refundM, sameKind, taskCode, quoteAmendment,
   type PView,
 } from '../rules';
-import { setUi, targetKey, useP, useUi } from './uiState';
+import { testDurationText } from '../../science/model/tests';
+import { categoryOf, setUi, useP, useUi } from './uiState';
 import { ContractTimeline, marginText } from './ContractTimeline';
 import { contractTiming } from '../timing';
 import { Needs } from './Needs';
+import { testable } from './Inspector';
 
 function allocationsOf(v: PView, k: Contract) {
   return v.market.allocations.filter((a) => a.contractId === k.id);
@@ -20,29 +21,16 @@ function freeQty(v: PView, k: Contract): number {
   if (k.status === 'cancelled' || k.status === 'failed') return 0;
   return k.offerSnapshot.quantity - allocationsOf(v, k).filter((a) => a.status !== 'released').reduce((n, a) => n + a.quantity, 0);
 }
-function statusLabel(k: Contract): { text: string; tone: string } {
-  if (k.status === 'delivered') return { text: 'Delivered', tone: 'good' };
-  if (k.status === 'cancelled') return { text: 'Cancelled', tone: 'muted' };
-  if (k.status === 'failed') return { text: 'Failed', tone: 'bad' };
-  return { text: 'Active', tone: '' };
+function statusLabel(k: Contract): string {
+  return k.status === 'delivered' ? 'Delivered' : k.status === 'cancelled' ? 'Cancelled' : k.status === 'failed' ? 'Failed' : 'On its way';
 }
 
 export function ContractsView() {
   const v = useP();
   const [needsOpen, setNeedsOpen] = useState(false);
   const needsDisclosure = useRef<HTMLDetailsElement>(null);
-  const sel = useUi((u) => u.contractId);
-  const list = [...v.market.contracts].reverse();
-  const active = list.filter((k) => k.status === 'active');
-  const contractView = useUi(u => u.contractView);
-  const selectedContract = list.find(k => k.id === sel);
-  const selectedVisible = !!selectedContract && (contractView === 'table' || selectedContract.status === 'active');
-  useEffect(() => {
-    if (sel && !selectedVisible) setUi({ contractId: null });
-  }, [sel, selectedVisible]);
-  const changeView = (next: 'timeline' | 'table') => {
-    setUi({ contractView: next, ...(next === 'timeline' && selectedContract?.status !== 'active' ? { contractId: null } : {}) });
-  };
+  const live = v.market.contracts.filter((k) => k.status === 'active' || k.status === 'delivered');
+  const active = live.filter((k) => k.status === 'active');
   const lateCount = active.filter(k => contractTiming({ market: v.market, research: { projects: v.research.projects ?? [] } }, k).needs.some(n => n.margin !== undefined && n.margin < 0)).length;
   const needCoverage = openTasks(v).flatMap(t => t.criteria.map(c => criterionCoverage(v, t, c)));
   const uncovered = needCoverage.filter(c => c.missing > 0).length;
@@ -56,7 +44,7 @@ export function ContractsView() {
       <div class="pr-overlay-head">
         <h2>Contracts & deliveries</h2>
         <div class="pr-contract-head-actions">
-          <span class="muted small">{contractView === 'timeline' ? `${active.length} incoming${lateCount ? ` · ${lateCount} late` : ''}` : `${active.length} active · ${fmtM(v.budget.committedM)} committed · ${list.filter(k => k.status === 'delivered').length} delivered · ${list.filter(k => k.status === 'cancelled').length} cancelled`}</span>
+          <span class="muted small">{active.length} on their way{lateCount ? ` · ${lateCount} late` : ''} · {live.length - active.length} delivered · {fmtM(v.budget.committedM)} committed</span>
           <details ref={needsDisclosure} class="pr-contract-needs" open={needsOpen} onToggle={e => setNeedsOpen(e.currentTarget.open)} onKeyDown={e => {
             if (e.key === 'Escape' && needsOpen) { e.preventDefault(); e.stopPropagation(); closeNeeds(); }
           }}>
@@ -65,66 +53,8 @@ export function ContractsView() {
           </details>
         </div>
       </div>
-      <div class="pr-contract-tabs" role="tablist" aria-label="Contracts view">
-        {(['timeline', 'table'] as const).map(mode => <button
-          key={mode}
-          type="button"
-          role="tab"
-          id={`pr-contract-tab-${mode}`}
-          aria-selected={contractView === mode}
-          aria-controls="pr-contract-panel"
-          tabIndex={contractView === mode ? 0 : -1}
-          onClick={() => changeView(mode)}
-          onKeyDown={e => {
-            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-            e.preventDefault();
-            const next = e.key === 'Home' ? 'timeline' : e.key === 'End' ? 'table' : mode === 'timeline' ? 'table' : 'timeline';
-            changeView(next);
-            e.currentTarget.parentElement?.querySelector<HTMLButtonElement>(`#pr-contract-tab-${next}`)?.focus();
-          }}
-        >{mode === 'timeline' ? 'Incoming timeline' : 'All contracts'}</button>)}
-      </div>
-      <div class="pr-contract-panel" id="pr-contract-panel" role="tabpanel" aria-labelledby={`pr-contract-tab-${contractView}`} tabIndex={0}>
-      {contractView === 'timeline' ? <ContractTimeline /> : list.length ? (
-        <div class="pr-table-wrap">
-          <table class="pr-table">
-            <thead><tr><th>Contract</th><th>For</th><th>Qty</th><th>Status</th><th>Arrival</th><th>Reliability</th><th>Value</th></tr></thead>
-            <tbody>
-              {list.map((k) => {
-                const st = statusLabel(k);
-                const allocs = allocationsOf(v, k);
-                const live = allocs.filter((a) => a.status !== 'released');
-                const arrival = k.deliveredAt ?? k.expectedAt;
-                return (
-                  <tr key={k.id} class={sel === k.id ? 'active-row' : ''} onClick={() => setUi({ contractId: k.id })}>
-                    <td>
-                      <button type="button" class="pr-text-btn strong" aria-pressed={sel === k.id} aria-label={`${k.offerSnapshot.resource.name} · ${k.id}`} onClick={() => setUi({ contractId: k.id })}>{k.offerSnapshot.resource.name}</button>
-                      <div class="muted small">{k.offerSnapshot.supplierName} · {k.id}</div>
-                    </td>
-                    <td class="small">
-                      {live.map((a) => {
-                        const t = v.market.tasks.find((x) => x.id === a.taskId);
-                        return <div key={a.id}>{a.department ? `Department · ${a.department}` : t ? `${taskCode(t)} ${t.title}` : a.taskId}{a.quantity > 1 ? ` ×${a.quantity}` : ''}</div>;
-                      })}
-                      {!live.length ? <span class="muted">{k.status === 'cancelled' ? 'Released' : 'Unallocated'}</span> : null}
-                    </td>
-                    <td class="num">{k.offerSnapshot.quantity}</td>
-                    <td><span class={`pr-chip ${st.tone}`}>{st.text}</span></td>
-                    <td class="num">
-                      <span>{fmtDate(arrival)}</span>
-                      {k.status === 'active' ? <div class="muted small">{`in ${fmtDuration(k.expectedAt - v.clock.day)}`}</div> : null}
-                    </td>
-                    <td class="num">{fmtPct(contractReliability(k))}{k.tested ? <div class="good small">tested by Science</div> : null}</td>
-                    <td class="num">{fmtM(k.offerSnapshot.priceM)}{k.status === 'cancelled' ? <div class="muted small">refund {fmtM(k.refundM ?? 0)}</div> : null}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div class="pr-empty"><h3>No Contracts yet</h3><p>Sign an Offer to add a Contract.</p></div>
-      )}
+      <div class="pr-contract-panel" id="pr-contract-panel">
+        <ContractTimeline />
       </div>
     </main>
   );
@@ -132,82 +62,63 @@ export function ContractsView() {
 
 export function ContractInspector() {
   const projects = useGame(g => g.research.projects);
-  const [department, setDepartment] = useState<'science' | 'planner' | 'comms' | 'procurement'>('science');
-  const [quantity, setQuantity] = useState(1);
   const v = useP();
   const sel = useUi((u) => u.contractId);
   const preview = useUi(u => u.amendmentPreview);
   const k = v.market.contracts.find((x) => x.id === sel);
   if (!k) {
     return (
-      <div class="pr-ctx-head"><span class="pr-eyebrow">Contracts</span><h2>Inventory</h2><p>Select a Contract.</p></div>
+      <div class="pr-ctx-head"><span class="pr-eyebrow">Contracts</span><h2>Select a contract</h2><p>Its reliability, what it is for, and how to speed it up or replace it.</p></div>
     );
   }
   const o = k.offerSnapshot;
-  const allocs = allocationsOf(v, k);
+  const allocs = allocationsOf(v, k).filter(a => a.status !== 'released');
   const free = freeQty(v, k);
   const targets = openTasks(v).flatMap((t) => t.criteria.filter((c) => sameKind(o.resource, c)).map((c) => ({ t, c })))
     .filter(({ t, c }) => criterionCoverage(v, t, c).missing > 0);
   const refund = refundM(k, v.clock.day);
-  const replacementResource = o.resourceId ?? RESOURCES.find(r => sameHardware(r, o.resource))?.id;
-  const originalOffer = findOffer(v, o.id);
   const timing = contractTiming({ market: v.market, research: { projects } }, k);
-  const cutoff = k.amendmentCutoff ?? k.baselineExpectedAt ?? k.expectedAt;
+  const taskAlloc = allocs.find(a => a.taskId && v.market.tasks.some(t => t.id === a.taskId && t.status === 'open'));
+  const task = taskAlloc ? v.market.tasks.find(t => t.id === taskAlloc.taskId) : undefined;
+  const need = task?.criteria.find(c => c.id === taskAlloc!.criterionId);
+  // The one change a contract still allows: priority delivery, for a late part or to make time for a Science test.
+  const canPriority = k.status === 'active' && k.delivery !== 'priority' && deliveryOptions(o).some(x => x.id === 'priority');
+  const speed = canPriority ? quoteAmendment(v, k.id, 'priority') : undefined;
+  const speedUseful = !!speed && !speed.unavailable && speed.expectedAt < k.expectedAt;
+  const late = !!task && k.status === 'active' && k.expectedAt > task.neededAt;
+  const arrival = k.deliveredAt ?? k.expectedAt;
   return (
     <>
       <div class="pr-ctx-head">
         <button type="button" class="pr-btn small pr-close-details" onClick={() => setUi({ contractId: null, amendmentPreview: null })}>Close details</button>
-        <span class="pr-eyebrow">{k.id} · {statusLabel(k).text}</span>
+        <span class="pr-eyebrow">{statusLabel(k)}{task ? ` · ${taskCode(task)} ${task.title}` : ''}</span>
         <h2>{o.resource.name}</h2>
         <p>{o.supplierName} · {fmtStats(o.resource.partKind, o.resource.variant, o.resource.stats)} · {o.resource.massT} t</p>
       </div>
       <div class="pr-ctx-body">
         <dl class="pr-facts">
-          <dt>Quantity</dt><dd>{o.quantity} · {free} unallocated</dd>
-          <dt>Signed</dt><dd>{fmtDate(k.signedAt)}</dd>
-          <dt>{k.status === 'delivered' ? 'Delivered' : k.status === 'cancelled' ? 'Was due' : 'Expected'}</dt>
-          <dd>{fmtDate(k.deliveredAt ?? k.expectedAt)}</dd>
-          {timing.sinceSigning ? <><dt>Since signing</dt><dd>{timing.sinceSigning > 0 ? '+' : ''}{Math.round(timing.sinceSigning * 10) / 10} days</dd></> : null}
-          <dt>Value</dt><dd>{fmtM(o.priceM)}{k.status === 'cancelled' ? ` · refunded ${fmtM(k.refundM ?? 0)}` : ''}</dd>
-          <dt>Reliability</dt><dd>{fmtPct(contractReliability(k))}{k.tested ? ` · tested by Science (was ${fmtPct(o.reliability)})` : ''}</dd>
-          <dt>Source</dt><dd>{o.source === 'catalogue' ? 'Catalogue' : o.source === 'call' ? 'Call (tender)' : 'Comms partner offer'}</dd>
+          {o.quantity > 1 ? <><dt>Quantity</dt><dd>{o.quantity}{free ? ` · ${free} unallocated` : ''}</dd></> : null}
+          <dt>{k.status === 'delivered' ? 'Delivered' : k.status === 'cancelled' ? 'Was due' : 'Arrives'}</dt>
+          <dd>{fmtDate(arrival)}{timing.needs[0]?.neededAt !== undefined && k.status !== 'cancelled' ? ` · ${marginText(timing.needs[0].margin)}` : ''}</dd>
+          <dt>Reliability</dt><dd>{fmtPct(contractReliability(k))}{k.tested ? ` · tested by Science (was ${fmtPct(o.reliability)})` : k.status === 'delivered' ? ' · Science can test it' : k.status === 'active' ? testable(v, k.expectedAt) ? ' · arrives in time for a Science test' : ` · too late for a ${testDurationText()} Science test` : ''}</dd>
+          <dt>Price</dt><dd>{fmtM(o.priceM)}{k.status === 'cancelled' ? ` · ${fmtM(k.refundM ?? 0)} came back` : ''}{(k.amendments ?? []).length ? ` · fees ${fmtM((k.amendments ?? []).reduce((n, a) => n + a.feeM, 0))}` : ''}</dd>
+          <dt>Signed</dt><dd>{fmtDate(k.signedAt)} · {o.source === 'catalogue' ? 'catalogue' : o.source === 'call' ? 'tender' : 'partner offer from Comms'}</dd>
         </dl>
-        <h3>Assigned to</h3>
-        {allocs.filter(a => a.status !== 'released').map((a) => {
+        {allocs.filter(a => !a.taskId || a.taskId !== taskAlloc?.taskId).map((a) => {
           const t = v.market.tasks.find((x) => x.id === a.taskId);
           const c = t?.criteria.find((x) => x.id === a.criterionId);
           const fails = c ? fitFailures(o.resource, c) : [];
-          const need = timing.needs.find(n => n.id === a.id);
-          return (
-            <div key={a.id} class="pr-alloc">
-              <div>
-                <strong>{a.department ? `Department · ${a.department}` : t ? `${taskCode(t)} ${t.title}` : a.taskId}</strong> ×{a.quantity}
-                <div class="muted small">{a.projectId ? `Reserved for ${projects.find(p => p.id === a.projectId)?.title ?? 'research'}` : a.status === 'reserved' ? 'Incoming' : 'Ready'}{t && t.status !== 'open' ? ` · Task ${t.status}` : ''}</div>
-                {need ? <div class="small muted">{need.source === 'research-bonus' ? 'Research bonus · ' : ''}{need.neededAt === undefined ? 'No need date' : `${need.source === 'requested' ? 'Order requested' : 'Needed'} ${fmtDate(need.neededAt)} · ${marginText(need.margin)}${need.source === 'requested' ? ' vs order request' : ''}`}</div> : null}
-                {fails.length && a.status !== 'released' ? <div class="bad small">Revised need: {fails.join(' · ')}</div> : null}
-              </div>
-              {a.status !== 'released' && !a.projectId ? <button type="button" class="pr-btn small" onClick={() => procurementActions.release(a.id)}>Release</button> : null}
-            </div>
-          );
+          return <p key={a.id} class="small muted">Also for {a.department ? `${a.department} (${a.projectId ? projects.find(p => p.id === a.projectId)?.title ?? 'research' : 'supply'})` : t ? `${taskCode(t)} ${t.title}` : a.taskId} ×{a.quantity}{fails.length ? <span class="bad"> · revised need: {fails.join(' · ')}</span> : null}</p>;
         })}
-        {timing.needs.filter(n => n.id === `${k.id}-free`).map(n => <p class="muted small" key={n.id}>Unallocated supply ×{n.quantity} · {n.neededAt === undefined ? 'No need date' : `Order requested ${fmtDate(n.neededAt)} · ${marginText(n.margin)} vs order request`}</p>)}
-        {k.status === 'active' ? <><h3>Change delivery</h3>
-          {(['priority', 'standard', 'flexible'] as const).map(delivery => { const q = quoteAmendment(v, k.id, delivery); const chosen = preview?.contractId === k.id && preview.delivery === delivery; return <button key={delivery} type="button" class="pr-ctx-option" aria-pressed={chosen} disabled={!!q.unavailable} onClick={() => setUi({ amendmentPreview: chosen ? null : { contractId: k.id, delivery } })}>
-            <strong>{delivery[0].toUpperCase() + delivery.slice(1)} · {q.unavailable ? 'Unavailable' : fmtDate(q.expectedAt)}</strong><span>{q.unavailable || (q.expectedAt === k.expectedAt ? 'Current arrival' : `Fee ${fmtM(q.feeM)}`)}</span></button>; })}
-          {preview?.contractId === k.id ? (() => { const q = quoteAmendment(v, k.id, preview.delivery); return <div class="pr-amend-preview"><strong>Proposed: {fmtDate(k.expectedAt)} → {fmtDate(q.expectedAt)}</strong><p class="small">Fee {fmtM(q.feeM)}{q.unavailable ? ` · ${q.unavailable}` : ''}</p>{timing.needs.filter(n => n.neededAt !== undefined).map(n => <p class="small" key={n.id}>{n.label} ×{n.quantity} · {marginText(n.neededAt! - q.expectedAt)}{n.source === 'requested' ? ' vs order request' : ''}</p>)}<button type="button" class="pr-btn small" disabled={!!q.unavailable} onClick={() => setUi({ dialog: { type: 'amend', contractId: k.id, delivery: preview.delivery, token: q.token } })}>Review amendment</button></div>; })() : null}
-          <p class="small muted">{v.clock.day >= cutoff ? 'Change cutoff passed' : `Cutoff: ${fmtDate(cutoff)} (during day)`}</p>
-          {k.amendments?.length || allocs.some(a => a.status === 'released') ? (
-          <details class="pr-history">
-            <summary>Contract history</summary>
-            {(k.amendments ?? []).map((a, i) => <p key={i} class="small muted">{fmtDate(a.at)} · {fmtDate(a.from)} → {fmtDate(a.to)} · {fmtM(a.feeM)}</p>)}
-            {allocs.filter(a => a.status === 'released').map(a => <p key={a.id} class="small muted">Released {a.quantity} × {a.department ?? v.market.tasks.find(t => t.id === a.taskId)?.title ?? a.taskId}</p>)}
-          </details>
+        {speedUseful && speed ? (
+          <>
+            <h3>Speed up</h3>
+            <button type="button" class="pr-ctx-option" aria-pressed={preview?.contractId === k.id} onClick={() => setUi({ amendmentPreview: { contractId: k.id, delivery: 'priority' }, dialog: { type: 'amend', contractId: k.id, delivery: 'priority', token: speed.token } })}>
+              <strong>Priority · arrives {fmtDate(speed.expectedAt)} · fee {fmtM(speed.feeM)}</strong>
+              <span>{task && speed.expectedAt > task.neededAt ? `still ${Math.round(speed.expectedAt - task.neededAt)} d late` : late ? 'on time again' : !testable(v, k.expectedAt) && testable(v, speed.expectedAt) ? 'arrives in time for a Science test' : `${Math.round(k.expectedAt - speed.expectedAt)} d earlier`}</span>
+            </button>
+          </>
         ) : null}
-        </> : null}
-        {!replacementResource && originalOffer?.status === 'available' && (originalOffer.remainingQuantity ?? originalOffer.quantity) > 0 ? <button type="button" class="pr-btn wide" onClick={() => { const a = allocs.find(x => x.status !== 'released') ?? allocs[0]; const destination = a?.department ? { kind: 'department' as const, department: a.department } : a?.taskId && a.criterionId ? { kind: 'task' as const, taskId: a.taskId, criterionId: a.criterionId } : { kind: 'shared' as const }; const draft = { offerId: originalOffer.id, quantity: Math.min(o.quantity, originalOffer.remainingQuantity ?? originalOffer.quantity), destination, delivery: 'standard' as const }; setUi({ dialog: { type: 'order', draft, token: quoteOrder(v, draft).token } }); }}>Order remaining Offer</button> : null}
-        {!replacementResource ? <button type="button" class="pr-btn wide" onClick={() => { const a = allocs.find(x => x.status !== 'released') ?? allocs[0]; const destination = a?.department ? { kind: 'department' as const, department: a.department } : a?.taskId && a.criterionId ? { kind: 'task' as const, taskId: a.taskId, criterionId: a.criterionId } : { kind: 'shared' as const }; setUi({ view: 'calls', callResourceId: null, callTarget: '', callSnapshot: { criterion: { id: o.id, label: o.resource.name, partKind: o.resource.partKind, variant: o.resource.variant, minimums: o.resource.stats, quantity: o.quantity }, destination } }); }}>Source replacement · open Call</button> : null}
-        {replacementResource ? <button type="button" class="pr-btn wide" onClick={() => { const a = allocs.find(x => x.status !== 'released') ?? allocs[0]; setUi({ view: 'catalogue', inspect: 'resource', resourceId: replacementResource, offerId: o.source === 'catalogue' ? o.id : null, target: a?.department ? `department:${a.department}` : a?.taskId && a.criterionId ? targetKey(a.taskId, a.criterionId) : 'none', qty: o.quantity, delivery: 'standard', neededAt: null }); }}>{k.status === 'cancelled' ? 'Find replacement' : 'Order again'}</button> : null}
-        {free > 0 && (k.status === 'active' || k.status === 'delivered') ? <div class="pr-department-assign"><h3>Assign shared supply</h3><label class="pr-field"><span>Department</span><select value={department} onChange={e => setDepartment((e.target as HTMLSelectElement).value as typeof department)}><option value="science">Science</option><option value="planner">Planner</option><option value="comms">Comms</option><option value="procurement">Procurement</option></select></label><label class="pr-field"><span>Quantity</span><input type="number" min="1" max={free} value={quantity} onInput={e => setQuantity(Number((e.target as HTMLInputElement).value))} /></label><button type="button" class="pr-btn" disabled={!Number.isInteger(quantity) || quantity < 1 || quantity > free} onClick={() => { procurementActions.allocateDepartment(k.id, department, quantity); setUi({ status: 'Assignment submitted.' }); }}>Assign to department</button></div> : null}
         {free > 0 && targets.length ? (
           <>
             <h3>Allocate spare supply</h3>
@@ -225,8 +136,11 @@ export function ContractInspector() {
       </div>
       {k.status === 'active' ? (
         <div class="pr-actions">
-          <button type="button" class="pr-btn wide" onClick={() => setUi({ dialog: { type: 'cancel', contractId: k.id } })}>
-            Cancel contract · refund {fmtM(refund)}
+          {task && need ? <button type="button" class="pr-btn wide" onClick={() => setUi({ view: 'catalogue', focus: { taskId: task.id, criterionId: need.id }, inspect: 'need', category: categoryOf(need.partKind), contractId: null })}>
+            Switch to another offer
+          </button> : null}
+          <button type="button" class="pr-text-btn" onClick={() => setUi({ dialog: { type: 'cancel', contractId: k.id } })}>
+            Cancel contract · {fmtM(refund)} comes back
           </button>
         </div>
       ) : null}

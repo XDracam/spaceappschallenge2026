@@ -23,7 +23,15 @@ export interface PView {
   planner: { plan: { launchDay: number } };
   /** Industry trust (comms): strong (> 70) −10 % prices and lead times, strained (< 30) +10 %. */
   comms?: { trust: { industry: number } };
+  /**
+   * View only: the Planner's draft parts (not ordered yet) as preview Tasks with ids `draft:<partId>`.
+   * Procurement can study their offers before the order; nothing can be signed for them.
+   */
+  drafts?: Task[];
 }
+
+export const DRAFT_PREFIX = 'draft:';
+export const isDraftTask = (t: Task) => t.id.startsWith(DRAFT_PREFIX);
 
 /** Comms passive modifier from industry trust, in % (same rule as comms' passiveModifiers). */
 export function industryPct(s: PView): number {
@@ -54,6 +62,7 @@ export function fmtDuration(days: number): string {
 }
 export function fmtM(v: number): string {
   if (Math.abs(v) >= 100) return `${Math.round(v)} M`;
+  if (v > 0 && v < 0.05) return '< 0.1 M';
   return `${round1(v)} M`;
 }
 export function fmtPct(v: number): string {
@@ -149,7 +158,7 @@ export function unavailableReason(s: PView, offer: Offer): string {
     const r = offer.resourceId ? RESOURCE_BY_ID[offer.resourceId] : undefined;
     if (!r) return 'Unknown Resource';
     const beyond = beyondKeys(r.partKind, r.variant, r.stats, s.research);
-    if (beyond.length) return `Beyond research — tender only (${describeBeyond(beyond[0], r.stats, s.research)})`;
+    if (beyond.length) return `Sold once Science has researched it (${describeBeyond(beyond[0], r.stats, s.research)})`;
     return '';
   }
   if (offer.status !== 'available') return offer.status === 'accepted' ? 'Already signed' : 'Withdrawn';
@@ -245,10 +254,21 @@ export interface OfferAssessment {
   unitPriceM: number;
   quantity: number;
   totalPriceM: number;
+  /** Arrival with standard delivery. */
   expectedAt: number;
   failures: string[];
   fits: boolean;
+  /** Standard delivery arrives after the need. */
   late: boolean;
+  /** Even the offer's fastest delivery arrives after the need. */
+  lateAtBest: boolean;
+  /** Earliest arrival over the offer's delivery options. */
+  fastestAt: number;
+  /** Standard is late but a faster option is on time: that option, its arrival and total price. */
+  rescue?: { delivery: DeliveryOptionId; expectedAt: number; totalPriceM: number };
+  /** The fastest faster-than-standard option, if any (arrival and total price), whether on time or not. */
+  fastest?: { delivery: DeliveryOptionId; expectedAt: number; totalPriceM: number };
+  /** Within the available budget at the price it would be ordered at (with the rescue option if any). */
   affordable: boolean;
   /** Non-empty when the Offer cannot be signed now (research, expiry …). */
   unavailable: string;
@@ -260,6 +280,20 @@ export function assessOffer(s: PView, offer: Offer, task?: Task, c?: Criterion, 
   const total = round1(unit * qty);
   const expectedAt = expectedArrival(s, offer);
   const failures = c ? fitFailures(offer.resource, c) : [];
+  const neededAt = task ? task.neededAt : s.planner.plan.launchDay;
+  const late = expectedAt > neededAt;
+  // Judge "late" on every delivery option the supplier has, not on standard alone (playtest 1115m-r01, finding 06:
+  // once standard turned late, the suggestion fell back to price and picked the slowest supplier).
+  let fastestAt = expectedAt;
+  let rescue: OfferAssessment['rescue'];
+  let fastest: OfferAssessment['fastest'];
+  for (const o of deliveryOptions(offer)) {
+    if (o.daysFactor >= 1) continue;
+    const at = s.clock.day + Math.round(leadTimeDays(s, offer) * o.daysFactor) + deliveryShiftDays(s);
+    fastestAt = Math.min(fastestAt, at);
+    if (!fastest || at < fastest.expectedAt) fastest = { delivery: o.id, expectedAt: at, totalPriceM: round1(total * o.priceFactor) };
+    if (late && at <= neededAt && (!rescue || at < rescue.expectedAt)) rescue = { delivery: o.id, expectedAt: at, totalPriceM: round1(total * o.priceFactor) };
+  }
   return {
     offer,
     unitPriceM: unit,
@@ -268,8 +302,12 @@ export function assessOffer(s: PView, offer: Offer, task?: Task, c?: Criterion, 
     expectedAt,
     failures,
     fits: failures.length === 0,
-    late: task ? expectedAt > task.neededAt : expectedAt > s.planner.plan.launchDay,
-    affordable: total <= budgetAvailableM(s.budget) + 1e-9,
+    late,
+    lateAtBest: late && !rescue,
+    fastestAt,
+    rescue,
+    fastest,
+    affordable: (rescue?.totalPriceM ?? total) <= budgetAvailableM(s.budget) + 1e-9,
     unavailable: unavailableReason(s, offer),
   };
 }
@@ -284,20 +322,37 @@ export function offersForCriterion(s: PView, task: Task, c: Criterion): OfferAss
 }
 
 /**
- * Auto-suggest order: signable, fits, on time, affordable, then the lightest part, its most reliable supplier, then cheapest.
+ * Auto-suggest order: signable, fits, on time with standard delivery, on time with priority, affordable; then the
+ * lightest part, its most reliable supplier, then cheapest. When no option is on time: the earliest arrival.
  * (Playtest 1115d-r01: cheapest-first set the launch odds with the first nine orders while most of the budget stayed
  * unused. Lightest comes before reliable so the suggestion stays with the part the Planner sized: an oversized
- * part from a better supplier would cost the plan its delta-v margin.)
+ * part from a better supplier would cost the plan its delta-v margin. Playtest 1115m-r01: with "late" judged on
+ * standard delivery only, a late need fell back to price and suggested the slowest supplier.)
  */
 export function rankAssessments(a: OfferAssessment, b: OfferAssessment): number {
-  const score = (x: OfferAssessment) => (x.unavailable ? 8 : 0) + (x.fits ? 0 : 4) + (x.late ? 2 : 0) + (x.affordable ? 0 : 1);
-  return score(a) - score(b) || a.offer.resource.massT - b.offer.resource.massT
+  const score = (x: OfferAssessment) => (x.unavailable ? 16 : 0) + (x.fits ? 0 : 8) + (x.lateAtBest ? 4 : x.rescue ? 2 : 0) + (x.affordable ? 0 : 1);
+  return score(a) - score(b)
+    || (a.lateAtBest && b.lateAtBest ? a.fastestAt - b.fastestAt : 0)
+    || a.offer.resource.massT - b.offer.resource.massT
     || b.offer.reliability - a.offer.reliability || a.totalPriceM - b.totalPriceM;
 }
 
 export function suggestion(list: OfferAssessment[]): OfferAssessment | undefined {
   const best = list[0];
   return best && !best.unavailable && best.fits ? best : undefined;
+}
+
+
+/** The delivery option an assessment is best ordered with (priority when only priority is on time). */
+export function bestDelivery(a: OfferAssessment): DeliveryOptionId {
+  return orderedOption(a).delivery;
+}
+
+/** The option an offer would be ordered with (as preselected): arrival and price of exactly that option. */
+export function orderedOption(a: OfferAssessment): { delivery: DeliveryOptionId; expectedAt: number; totalPriceM: number } {
+  if (a.rescue) return a.rescue;
+  if (a.lateAtBest && a.fastest) return a.fastest;
+  return { delivery: 'standard', expectedAt: a.expectedAt, totalPriceM: a.totalPriceM };
 }
 
 // ------------------------------------------------------------------- money
@@ -335,7 +390,7 @@ export function resourceOf(offer: Offer) {
 // All order and amendment decisions use these same quotes in the view and host.
 import type { DeliveryOption, DeliveryOptionId, OrderDraft } from '../../core/model';
 import { SCHEDULES, SUPPLIER_BY_ID } from './data/suppliers';
-import { callTemplates } from './data/calls';
+import { callTemplates, CALL_DURATION_DAYS } from './data/calls';
 import { baseLeadMonths, clamp, estimateCostM, estimateMassT, kindReliability, round3 } from './data/pricing';
 import { defaultStats } from '../planner/data/parts';
 
@@ -406,7 +461,7 @@ export function quoteAmendment(s: PView, contractId: string, delivery: DeliveryO
   const expectedAt = contract && option ? Math.max(Math.floor(s.clock.day) + 1, Math.round(target)) : 0;
   const feeM = contract && expectedAt < contract.expectedAt ? round1(contract.offerSnapshot.priceM * 0.15 * (contract.expectedAt - expectedAt) / Math.max(1, originalLead)) : 0;
   if (feeM > budgetAvailableM(s.budget) + 1e-9) unavailable = 'Insufficient available funds';
-  const token = JSON.stringify([contractId, contract?.revision, delivery, expectedAt, feeM, unavailable, budgetAvailableM(s.budget)]);
+  const token = JSON.stringify([contractId, contract?.revision, delivery, expectedAt, feeM, unavailable]);
   return { contract, delivery, expectedAt, feeM, eventDelayDays, unavailable, token };
 }
 export interface CallPreviewOffer { supplierId: string; supplierName: string; priceM: number; expectedAt: number; offer: Offer }
@@ -425,5 +480,117 @@ export function previewCall(s: PView, criterion: Criterion, quantity: number, wi
 
 export function cancellationToken(s: PView, contractId: string): string {
   const k = contractOf(s, contractId);
-  return JSON.stringify([contractId, k?.revision, k ? refundM(k, s.clock.day) : null]);
+  // The refund falls a little every day; the dialog shows it live. The token only changes with the contract itself,
+  // so the dialog does not go stale every game day (the same fault as the order quote in playtest 1115m-r01).
+  return JSON.stringify([contractId, k?.revision, k?.status]);
+}
+
+// ------------------------------------------------------------- replacement
+
+/** The state as it would be right after cancelling a contract (refund booked, its allocations released). */
+export function afterCancel<T extends PView>(s: T, k: Contract, day: number): T {
+  const refund = refundM(k, day);
+  const price = k.offerSnapshot.priceM;
+  return {
+    ...s,
+    budget: { ...s.budget, committedM: s.budget.committedM - price, spentM: s.budget.spentM + price - refund },
+    market: {
+      ...s.market,
+      contracts: s.market.contracts.map(c => c.id === k.id ? { ...c, status: 'cancelled' as const } : c),
+      allocations: s.market.allocations.map(a => a.contractId === k.id && a.status !== 'released' ? { ...a, status: 'released' as const } : a),
+    },
+  };
+}
+
+export interface ReplacementQuote {
+  old?: Contract;
+  /** Refund for the old contract today; the rest of its price is lost. */
+  refundM: number;
+  feeM: number;
+  order: OrderQuote;
+  /** New price minus the refund: what the switch takes from the shared budget. */
+  netM: number;
+  unavailable: string;
+  token: string;
+}
+
+/**
+ * Switch a need to another offer: cancel the active contract that covers it (refund by the usual rule) and sign
+ * the new order for the same need, as one decision. Quoted on the state after the cancellation.
+ */
+export function quoteReplacement(s: PView, contractId: string, draft: OrderDraft): ReplacementQuote {
+  const old = contractOf(s, contractId);
+  const day = Math.floor(s.clock.day);
+  let unavailable = !old || old.status !== 'active' ? 'Only a contract still on its way can be switched' : '';
+  if (old && draft.destination.kind === 'task') {
+    const d = draft.destination;
+    if (!s.market.allocations.some(a => a.contractId === old.id && a.taskId === d.taskId && a.criterionId === d.criterionId && a.status !== 'released')) unavailable = 'The contract does not cover this need';
+  } else unavailable ||= 'The contract does not cover this need';
+  if (old && draft.offerId === old.offerSnapshot.id && old.offerSnapshot.source !== 'catalogue') unavailable ||= 'Same offer';
+  const order = quoteOrder(old ? afterCancel(s, old, day) : s, draft);
+  const refund = old ? refundM(old, day) : 0;
+  const fee = old ? round1(old.offerSnapshot.priceM - refund) : 0;
+  unavailable ||= order.unavailable || order.failures[0] || '';
+  const token = JSON.stringify([order.token, cancellationToken(s, contractId)]);
+  return { old, refundM: refund, feeM: fee, order, netM: round1(order.totalM - refund), unavailable, token };
+}
+
+// ---------------------------------------------------------------- the budget
+
+/** Money each station has taken from the shared budget so far (spent + committed), derived from its own records. */
+export interface SpendByStation { parts: number; science: number; comms: number }
+
+/**
+ * Parts come from Procurement's contracts (price of every live contract, the kept share of cancelled ones, delivery
+ * fees). Science from its projects (cost minus the refund of a stopped one: half of the unspent share, science/logic.ts).
+ * Comms is what remains: it is the only other station that spends. Attribution follows the records, never a guess
+ * from the last change (playtest 1115d-r01, the rejected fix for finding 06).
+ */
+export function spendByStation(s: PView, scienceInfo: Record<string, { cancelled?: boolean; endedAt?: number }> = {}): SpendByStation {
+  let parts = 0;
+  for (const k of s.market.contracts) {
+    const price = k.offerSnapshot.priceM;
+    if (k.status === 'active' || k.status === 'delivered' || k.status === 'failed') parts += price;
+    else if (k.status === 'cancelled') parts += price - (k.refundM ?? 0);
+    for (const a of k.amendments ?? []) parts += a.feeM;
+  }
+  let science = 0;
+  for (const p of s.research.projects ?? []) {
+    science += p.costM;
+    const info = scienceInfo[p.id];
+    if (info?.cancelled && info.endedAt !== undefined) {
+      const left = Math.min(1, Math.max(0, (p.endsAt - info.endedAt) / Math.max(1, p.endsAt - p.startedAt)));
+      science -= Math.round(p.costM * left * 0.5 * 10) / 10;
+    }
+  }
+  const used = s.budget.spentM + s.budget.committedM;
+  const comms = Math.max(0, used - parts - science);
+  return { parts: round1(parts), science: round1(science), comms: round1(comms) };
+}
+
+// ---------------------------------------------------------------- a Call
+
+/** What a Call opened today would bring for a criterion: the offers expected when it closes (about a month). */
+export function callEstimate(s: PView, c: Criterion): { closesAt: number; offers: CallPreviewOffer[] } {
+  return { closesAt: Math.floor(s.clock.day) + CALL_DURATION_DAYS, offers: previewCall(s, c, c.quantity, 30) };
+}
+
+// ---------------------------------------------------------- still to buy
+
+/** Cost of the suggested offer for every need still to buy, the Planner's drafts included (budget pressure, D-011). */
+export function stillToBuy(v: PView): { cost: number; count: number; unsolvable: number } {
+  let cost = 0;
+  let count = 0;
+  let unsolvable = 0;
+  for (const t of [...openTasks(v), ...(v.drafts ?? [])]) {
+    for (const c of t.criteria) {
+      if (criterionCoverage(v, t, c).missing === 0) continue;
+      count++;
+      // Parts still waiting for research count at the price they will have once researched.
+      const ranked = offersForCriterion(v, t, c);
+      const best = suggestion(ranked) ?? ranked.find((a) => a.fits && a.offer.source === 'catalogue');
+      if (best) cost += orderedOption(best).totalPriceM; else unsolvable++;
+    }
+  }
+  return { cost, count, unsolvable };
 }

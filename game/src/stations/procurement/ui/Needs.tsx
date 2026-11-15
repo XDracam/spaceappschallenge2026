@@ -1,17 +1,12 @@
-// Left column: shared needs (open Tasks from any role) with coverage per criterion.
+// Left column: the mission's needs (open Tasks, and the Planner's draft parts before the order) with coverage.
 import type { Criterion, Task } from '../../../core/model';
 import { procurementActions } from '../logic';
 import {
-  beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, suggestion, taskCode,
-  type Coverage, type PView,
+  beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, taskCode,
+  stillToBuy, type Coverage, type PView,
 } from '../rules';
 import { researchEta } from '../../science/model/tree';
-import { useGame } from '../../../core/store';
-import { partStatus } from '../../planner/derive';
-import { allParts } from '../../planner/model/rocketUtils';
 import { categoryOf, setUi, useP, useUi } from './uiState';
-
-const ROLE: Record<string, string> = { planner: 'Planner', procurement: 'Procurement', science: 'Science', comms: 'Comms' };
 
 export function criterionSummary(c: Criterion): string {
   const mins = Object.entries(c.minimums).map(([k, v]) => `≥ ${fmtStatValue(c.partKind, c.variant, k, v)}`).join(' · ');
@@ -24,7 +19,7 @@ export function coverageText(cov: Coverage): { text: string; tone: '' | 'good' |
   if (cov.status === 'delivered') return { text: 'Delivered', tone: 'good' };
   if (cov.status === 'contracted') return { text: `Contracted — arrives ${fmtDate(cov.expectedAt!)}`, tone: 'good' };
   if (cov.status === 'partial') return { text: `${cov.covered} of ${cov.needed} contracted`, tone: 'warn' };
-  if (cov.openCall) return { text: `Call open — answers ${fmtDate(cov.openCall.closesAt)}`, tone: '' };
+  if (cov.openCall) return { text: `Call open — offers ${fmtDate(cov.openCall.closesAt)}`, tone: '' };
   return { text: 'Not covered', tone: '' };
 }
 
@@ -33,21 +28,6 @@ function focusNeed(task: Task, c: Criterion) {
     focus: { taskId: task.id, criterionId: c.id }, inspect: 'need', view: 'catalogue',
     category: categoryOf(c.partKind), matchesOnly: false, query: '',
   });
-}
-
-/** Cheapest fitting signable cost of every uncovered criterion (budget pressure, D-011). */
-function uncoveredCost(v: PView): { cost: number; unsolvable: number } {
-  let cost = 0;
-  let unsolvable = 0;
-  for (const t of openTasks(v)) {
-    for (const c of t.criteria) {
-      const cov = criterionCoverage(v, t, c);
-      if (cov.missing === 0) continue;
-      const best = suggestion(offersForCriterion(v, t, c));
-      if (best) cost += best.totalPriceM; else unsolvable++;
-    }
-  }
-  return { cost, unsolvable };
 }
 
 /** Last day a standard order still arrives by the needed date, from the fastest fitting Offer that can be signed. */
@@ -66,12 +46,18 @@ function ResearchChip({ v, c }: { v: PView; c: Criterion }) {
   return <span class="pr-chip warn">{waiting ? 'Beyond research · Science not started' : `Beyond research · Science until ${fmtDate(Math.max(...(etas as number[]))).slice(0, -5)}`}</span>;
 }
 
+/** A partner or tender offer waiting for this need: its terms are in the need's own offer list. */
+function OfferChip({ v, t, c }: { v: PView; t: Task; c: Criterion }) {
+  const extra = offersForCriterion(v, t, c).filter((a) => a.offer.source !== 'catalogue' && !a.unavailable && a.fits);
+  if (!extra.length) return null;
+  return <span class="pr-chip good">{extra.length === 1 ? `${extra[0].offer.source === 'comms' ? 'Partner' : 'Tender'} offer · ${fmtM(extra[0].totalPriceM)}` : `${extra.length} new offers`}</span>;
+}
+
 export function Needs({ onClose }: { onClose?: () => void } = {}) {
   const v = useP();
   const focus = useUi((u) => u.focus);
-  // Parts of the Planner's design that are not ordered yet: they become needs here when the Planner orders them.
-  const drafts = useGame((s) => allParts(s.planner.rocket).filter((l) => partStatus(s, l.part.id) === 'draft').length);
   const tasks = openTasks(v);
+  const drafts = v.drafts ?? [];
   const today = Math.floor(v.clock.day);
   const all = tasks.flatMap((t) => t.criteria.map((c) => {
     const cov = criterionCoverage(v, t, c);
@@ -82,59 +68,59 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
     ...all.filter((r) => r.cov.missing > 0).sort((a, b) => (a.orderBy ?? 1e9) - (b.orderBy ?? 1e9)),
     ...all.filter((r) => r.cov.missing === 0),
   ];
+  const draftRows = drafts.map((t) => ({ t, c: t.criteria[0], orderBy: orderByDay(v, t, t.criteria[0]) })).sort((a, b) => (a.orderBy ?? 1e9) - (b.orderBy ?? 1e9));
   const uncovered = rows.filter((r) => r.cov.missing > 0).length;
   const issues = rows.filter((r) => r.cov.late || r.cov.mismatch.length).length;
-  const { cost, unsolvable } = uncoveredCost(v);
-  const available = budgetAvailableM(v.budget);
+  const buy = stillToBuy(v);
+  const spare = budgetAvailableM(v.budget) - buy.cost;
+  const isFocused = (t: Task, c: Criterion) => focus?.taskId === t.id && focus.criterionId === c.id;
+  const click = (t: Task, c: Criterion) => (isFocused(t, c) && !onClose ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c));
+  const orderByText = (orderBy: number | undefined, t: Task) => orderBy === undefined
+    ? <span class="muted">Needed {fmtDate(t.neededAt)}</span>
+    : <span class={orderBy < today ? 'bad' : orderBy - today < 30 ? 'warn' : 'muted'}>Order by {fmtDate(orderBy).slice(0, -5)}</span>;
   return (
-    <aside class="pr-panel pr-needs" aria-label="Shared needs">
-      <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>
+    <aside class="pr-panel pr-needs" aria-label="Mission needs">
+      <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length || (drafts.length ? `${drafts.length} drafts` : '')}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>
       <div class="pr-situation">
-        {rows.length ? <div><strong>{uncovered}</strong> <span class="muted">not fully covered</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div> : null}
-        {uncovered ? (
-          <div class={cost > available ? 'warn' : 'muted'}>
-            Cheapest fitting cover ≈ {fmtM(cost)}{unsolvable ? ` + ${unsolvable} without catalogue fit` : ''} · {fmtM(available)} available
+        {rows.length ? <div><strong>{uncovered}</strong> <span class="muted">to buy</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div> : null}
+        {buy.count ? (
+          <div class={spare < 0 ? 'warn' : 'muted'} title="The suggested offer for every need not yet contracted, drafts included, against the free shared budget.">
+            Still to buy ≈ {fmtM(buy.cost)}{buy.unsolvable ? ` + ${buy.unsolvable} without a catalogue part` : ''} · {spare < 0 ? `${fmtM(-spare)} short` : `${fmtM(spare)} spare`}
           </div>
         ) : null}
       </div>
       <div class="pr-need-list">
         {rows.map(({ t, c, cov, orderBy }) => {
           const st = coverageText(cov);
-          const pressed = focus?.taskId === t.id && focus.criterionId === c.id;
           return (
-            <button key={`${t.id}:${c.id}`} type="button" class={`pr-need${st.tone === 'warn' ? ' review' : ''}`} aria-pressed={pressed} onClick={() => (pressed && !onClose ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c))}>
-              <span class="pr-need-top">
-                <span>{taskCode(t)}{t.revision > 1 ? ` · rev ${t.revision}` : ''}</span>
-                <span>From {ROLE[t.authorRole] ?? t.authorRole}{t.priority === 'high' ? ' · high' : ''}</span>
-              </span>
+            <button key={`${t.id}:${c.id}`} type="button" class={`pr-need${st.tone === 'warn' ? ' review' : ''}`} aria-pressed={isFocused(t, c)} onClick={() => click(t, c)}>
+              <span class="pr-need-top"><span>{taskCode(t)}{t.revision > 1 ? ` · rev ${t.revision}` : ''}</span>{t.priority === 'high' ? <span>high priority</span> : null}</span>
               <span class="pr-need-title">{t.title}</span>
-              <span class="pr-need-crit">{c.label} · {criterionSummary(c)}</span>
+              <span class="pr-need-crit">{criterionSummary(c)}</span>
               {cov.missing > 0 ? <ResearchChip v={v} c={c} /> : null}
+              <OfferChip v={v} t={t} c={c} />
               <span class="pr-need-status">
                 <span class={st.tone}>{st.text}</span>
-                {orderBy === undefined
-                  ? <span class="muted">Needed {fmtDate(t.neededAt)}</span>
-                  : <span class={orderBy < today ? 'bad' : orderBy - today < 30 ? 'warn' : 'muted'}>Order by {fmtDate(orderBy).slice(0, -5)}</span>}
+                {cov.missing > 0 ? orderByText(orderBy, t) : null}
               </span>
             </button>
           );
         })}
-        {!rows.length ? (
-          <div class="pr-empty">
-            <p>{drafts ? `Waiting for the Planner's order: ${drafts} draft ${drafts === 1 ? 'part' : 'parts'}.` : 'No open mission needs.'}</p>
-          </div>
+        {draftRows.length ? (
+          <>
+            <p class="pr-need-group">{rows.length ? 'Not ordered yet by the Planner' : `The Planner's design · ${draftRows.length} parts, not ordered yet. Study the offers now; you can sign once they are ordered.`}</p>
+            {draftRows.map(({ t, c, orderBy }) => (
+              <button key={t.id} type="button" class="pr-need draft" aria-pressed={isFocused(t, c)} onClick={() => click(t, c)}>
+                <span class="pr-need-top"><span>Draft</span></span>
+                <span class="pr-need-title">{t.title}</span>
+                <span class="pr-need-crit">{criterionSummary(c)}</span>
+                <ResearchChip v={v} c={c} />
+                <span class="pr-need-status">{orderByText(orderBy, t)}</span>
+              </button>
+            ))}
+          </>
         ) : null}
-      </div>
-      <div class="pr-stock-rail"><h3>Department supply</h3>
-        {(['science', 'planner', 'comms', 'procurement'] as const).map(department => {
-          const allocs = v.market.allocations.filter(a => a.department === department && a.status !== 'released');
-          const ready = allocs.filter(a => a.status === 'available').reduce((n, a) => n + a.quantity, 0);
-          const incoming = allocs.filter(a => a.status === 'reserved').reduce((n, a) => n + a.quantity, 0);
-          const used = allocs.filter(a => a.projectId).reduce((n, a) => n + a.quantity, 0);
-          if (!ready && !incoming) return null;
-          return <div key={department} class="pr-stock-row"><strong>{department[0].toUpperCase() + department.slice(1)}</strong><span>{ready} ready · {incoming} incoming{used ? ` · ${used} in use` : ''}</span></div>;
-        })}
-        <p class="small muted">Shared supply: {v.market.contracts.filter(k => k.status === 'delivered').reduce((n, k) => n + Math.max(0, k.offerSnapshot.quantity - v.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released').reduce((sum, a) => sum + a.quantity, 0)), 0)} ready</p>
+        {!rows.length && !draftRows.length ? <div class="pr-empty"><p>No open mission needs.</p></div> : null}
       </div>
       {import.meta.env.DEV ? (
         <div class="pr-dev">

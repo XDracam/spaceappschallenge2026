@@ -2,11 +2,13 @@
 import { createContext } from 'preact';
 import { useContext, useMemo } from 'preact/hooks';
 import { createStore, useStore } from '../../../core/createStore';
-import type { NewsItem, PartKind, DeliveryOptionId, OrderDraft, Criterion, Destination } from '../../../core/model';
-import { getState, useGame } from '../../../core/store';
-import type { PView } from '../rules';
+import type { NewsItem, PartKind, DeliveryOptionId, OrderDraft, Task } from '../../../core/model';
+import { getState, onGameReset, useGame } from '../../../core/store';
+import { DRAFT_PREFIX, type PView } from '../rules';
+import { partStatus } from '../../planner/derive';
+import { allParts } from '../../planner/model/rocketUtils';
 
-export type View = 'catalogue' | 'calls' | 'contracts' | 'compare';
+export type View = 'catalogue' | 'contracts';
 export type Category = 'all' | 'propulsion' | 'tanks' | 'instruments' | 'power' | 'comms' | 'landing' | 'protection';
 
 export const CATEGORIES: { id: Category; label: string; kinds: PartKind[] }[] = [
@@ -27,9 +29,10 @@ export function categoryOf(kind: PartKind): Category {
 export interface Focus { taskId: string; criterionId: string }
 
 export type Dialog =
-  | { type: 'sign'; offerId: string; taskId?: string; criterionId?: string; qty: number }
-  | { type: 'cancel'; contractId: string }
   | { type: 'order'; draft: OrderDraft; token: string }
+  /** Switch a need from an active contract to another offer (cancel + sign in one step). */
+  | { type: 'replace'; contractId: string; draft: OrderDraft; token: string }
+  | { type: 'cancel'; contractId: string }
   | { type: 'amend'; contractId: string; delivery: DeliveryOptionId; token: string }
   | null;
 
@@ -37,62 +40,48 @@ export interface UiState {
   view: View;
   category: Category;
   query: string;
-  sort: 'featured' | 'price' | 'arrival' | 'reliability';
   matchesOnly: boolean;
-  hideLocked: boolean;
   focus: Focus | null;
   /** Right panel: the selected Resource, or the focused need's overview. */
   inspect: 'resource' | 'need';
+  /** Selected catalogue Resource (null: the first one of the open category). */
   resourceId: string | null;
   offerId: string | null;
-  /** Allocation target chosen in the inspector ('' = unallocated). */
+  /** Need chosen in the resource inspector ('' = the focused or first uncovered fitting need). */
   target: string;
-  /** Quantity override in the inspector (0 = the target's uncovered quantity). */
-  qty: number;
-  compare: string[];
   contractId: string | null;
-  contractView: 'timeline' | 'table';
   amendmentPreview: { contractId: string; delivery: DeliveryOptionId } | null;
-  callId: string | null;
-  callTarget: string;
-  delivery: DeliveryOptionId;
-  neededAt: number | null;
-  callWindow: 7 | 14 | 30;
-  callResourceId: string | null;
-  callSnapshot: { criterion: Criterion; destination: Destination; neededAt?: number } | null;
+  /** Delivery chosen in the resource inspector; null = the one the offer is best ordered with. */
+  delivery: DeliveryOptionId | null;
   dialog: Dialog;
   newsOpen: boolean;
   status: string;
 }
 
-export const ui = createStore<UiState>({
-  view: 'catalogue',
-  category: 'all',
-  query: '',
-  sort: 'featured',
-  matchesOnly: false,
-  hideLocked: false,
-  focus: null,
-  inspect: 'resource',
-  resourceId: 'e-ker-2000',
-  offerId: null,
-  target: '',
-  qty: 0,
-  compare: [],
-  contractId: null,
-  contractView: 'timeline',
-  amendmentPreview: null,
-  callId: null,
-  callTarget: '',
-  delivery: 'standard',
-  neededAt: null,
-  callWindow: 14,
-  callResourceId: null,
-  callSnapshot: null,
-  dialog: null,
-  newsOpen: false,
-  status: '',
-});
+function initialUi(): UiState {
+  return {
+    view: 'catalogue',
+    category: 'all',
+    query: '',
+    matchesOnly: false,
+    focus: null,
+    inspect: 'resource',
+    resourceId: null,
+    offerId: null,
+    target: '',
+    contractId: null,
+    amendmentPreview: null,
+    delivery: null,
+    dialog: null,
+    newsOpen: false,
+    status: '',
+  };
+}
+
+export const ui = createStore<UiState>(initialUi());
+
+// A new attempt (restart, back to the lobby, another mission, a resumed save): nothing selected survives.
+onGameReset(() => ui.set(initialUi()));
 
 export function useUi<S>(sel: (u: UiState) => S): S {
   return useStore(ui, sel);
@@ -100,9 +89,7 @@ export function useUi<S>(sel: (u: UiState) => S): S {
 export function setUi(patch: Partial<UiState>): void {
   const current = ui.get();
   const changingContract = patch.contractId !== undefined && patch.contractId !== current.contractId;
-  const openingHistory = patch.view === 'contracts' && patch.contractId && patch.contractView === undefined
-    && getState().market.contracts.some(k => k.id === patch.contractId && k.status !== 'active');
-  ui.set({ ...current, ...(changingContract ? { amendmentPreview: null } : {}), ...patch, ...(openingHistory ? { contractView: 'table' } : {}) });
+  ui.set({ ...current, ...(changingContract ? { amendmentPreview: null } : {}), ...patch });
 }
 
 /** Encodes a criterion target as one select value. */
@@ -115,6 +102,15 @@ export function parseTarget(v: string): Focus | null {
 
 // ------------------------------------------------------------ shared state view
 
+/** The Planner's draft parts as preview Tasks (ids `draft:<partId>`), so Procurement can prepare before the order. */
+function draftTasks(s: ReturnType<typeof getState>): Task[] {
+  return allParts(s.planner.rocket).filter((l) => partStatus(s, l.part.id) === 'draft').map(({ part, stage, role }) => ({
+    id: `${DRAFT_PREFIX}${part.id}`, revision: 0, authorRole: 'planner', title: part.name,
+    criteria: [{ id: 'c', label: part.name, partKind: part.kind, variant: part.variant, minimums: { ...part.stats }, quantity: role === 'engine' && stage ? Math.max(1, stage.engineCount) : 1 }],
+    neededAt: s.planner.plan.launchDay, priority: 'normal', status: 'open', partId: part.id, beyondResearch: [], createdAt: 0, updatedAt: 0,
+  }));
+}
+
 /**
  * Snapshot of the shared state procurement reads. Selected as JSON so the station
  * re-renders only when these parts change (the host ticks 4×/s; the calendar day
@@ -125,9 +121,10 @@ export function usePView(): PView {
     market: s.market,
     budget: s.budget,
     research: { limits: s.research.limits, unlocked: s.research.unlocked, projects: s.research.projects },
-    clock: { day: s.clock.day },
+    clock: { day: Math.floor(s.clock.day) },
     planner: { plan: { launchDay: s.planner.plan.launchDay } },
     comms: { trust: { industry: s.comms.trust.industry } },
+    drafts: draftTasks(s),
   }));
   return useMemo(() => JSON.parse(json) as PView, [json]);
 }

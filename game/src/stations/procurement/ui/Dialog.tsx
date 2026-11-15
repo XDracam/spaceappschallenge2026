@@ -1,20 +1,18 @@
-// Confirmation dialogs: sign an Offer, cancel a Contract. Facts are rechecked live
-// against the current shared state while the dialog is open.
-import { useEffect, useState } from 'preact/hooks';
+// Confirmation dialogs: sign an order, switch a need to another offer, speed up a delivery, cancel a contract.
+// Facts are rechecked live against the current shared state while the dialog is open.
+import { useEffect } from 'preact/hooks';
 import { procurementActions } from '../logic';
-import { useGame } from '../../../core/store';
+import { contractReliability, type Contract, type OrderDraft, type Task } from '../../../core/model';
 import {
-  budgetAvailableM, findOffer, fmtDate, fmtM, fmtPct, fmtStats, refundM, taskCode, quoteOrder, quoteAmendment, cancellationToken,
+  findOffer, fmtDate, fmtM, fmtPct, fmtStats, offersForCriterion, refundM, taskCode, quoteOrder, quoteAmendment, quoteReplacement, cancellationToken,
+  type PView,
 } from '../rules';
-import type { OrderDraft } from '../../../core/model';
+import { BudgetAfter, testable } from './Inspector';
 import { setUi, useP, useUi } from './uiState';
 
 export function Dialog() {
   const v = useP();
-  const projects = useGame(s => s.research.projects);
   const d = useUi((u) => u.dialog);
-  const [cancelToken, setCancelToken] = useState('');
-  useEffect(() => { if (d?.type === 'cancel') setCancelToken(cancellationToken(v, d.contractId)); }, [d]);
   useEffect(() => {
     if (!d) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setUi({ dialog: null }); };
@@ -22,31 +20,31 @@ export function Dialog() {
     return () => window.removeEventListener('keydown', onKey);
   }, [d]);
   if (!d) return null;
-  const close = () => setUi({ dialog: null });
+  const close = () => setUi({ dialog: null, amendmentPreview: null });
   let body = null;
 
-  if (d.type === 'sign' || d.type === 'order') {
-    const initial: OrderDraft = d.type === 'order' ? d.draft : {
-      offerId: d.offerId, quantity: d.qty,
-      destination: d.taskId && d.criterionId ? { kind: 'task', taskId: d.taskId, criterionId: d.criterionId } : { kind: 'shared' },
-      delivery: 'standard', neededAt: d.taskId ? v.market.tasks.find(t => t.id === d.taskId)?.neededAt : undefined,
-    };
-    body = <OrderReview key={d.type + initial.offerId} initial={initial} initialToken={d.type === 'order' ? d.token : undefined} close={close} />;
-  } else if (d.type === 'amend') {
+  if (d.type === 'order') body = <OrderReview draft={d.draft} token={d.token} close={close} />;
+  else if (d.type === 'replace') body = <ReplaceReview contractId={d.contractId} draft={d.draft} token={d.token} close={close} />;
+  else if (d.type === 'amend') {
     const q = quoteAmendment(v, d.contractId, d.delivery);
     const stale = q.token !== d.token;
     const k = q.contract;
-    body = <><h2 id="pr-dialog-title">{k?.offerSnapshot.resource.name ?? 'Contract unavailable'}</h2>
-      {k ? <dl class="pr-facts"><dt>Arrival</dt><dd>{fmtDate(k.expectedAt)} → {fmtDate(q.expectedAt)}</dd><dt>Fee paid now</dt><dd>{fmtM(q.feeM)}</dd><dt>Lifetime cost</dt><dd>{fmtM(k.offerSnapshot.priceM + (k.amendments ?? []).reduce((sum, a) => sum + a.feeM, 0) + q.feeM)}</dd><dt>Available after</dt><dd>{fmtM(budgetAvailableM(v.budget) - q.feeM)}</dd><dt>Affected use</dt><dd>{v.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released').map(a => a.department ? `${a.department[0].toUpperCase()}${a.department.slice(1)}${a.projectId ? ` · ${projects.find(p => p.id === a.projectId)?.title ?? 'Research project'}` : ''}` : v.market.tasks.find(t => t.id === a.taskId)?.title ?? a.taskId).join(', ') || 'Shared supply'}</dd></dl> : null}
-      {stale ? <div class="pr-callout warn">Terms changed. Refresh quote.</div> : null}{q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}
-      <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { ...d, token: q.token } })}>Refresh quote</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.amendDelivery(d.contractId, d.delivery, d.token); setUi({ dialog: null, amendmentPreview: null, status: 'Amendment submitted.' }); }}>Confirm amendment · {fmtM(q.feeM)}</button>}</div></>;
+    const task = k ? taskOf(v, k) : undefined;
+    body = <><span class="pr-eyebrow">Speed up delivery</span><h2 id="pr-dialog-title">{k?.offerSnapshot.resource.name ?? 'Contract unavailable'}</h2>
+      {k ? <dl class="pr-facts">
+        <dt>Arrival</dt><dd>{fmtDate(k.expectedAt)} → <strong>{fmtDate(q.expectedAt)}</strong>{task ? <span class={q.expectedAt > task.neededAt ? 'warn' : 'good'}>{q.expectedAt > task.neededAt ? ' · still late' : testable(v, q.expectedAt) ? ' · on time · time to test' : ' · on time'}</span> : null}</dd>
+        <dt>Fee, paid now</dt><dd>{fmtM(q.feeM)}</dd>
+      </dl> : null}
+      {k ? <BudgetAfter costM={q.feeM} /> : null}
+      {stale ? <div class="pr-callout warn">The terms changed while the dialog was open. Review them again.</div> : null}{q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}
+      <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { ...d, token: q.token } })}>Use the new terms</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.amendDelivery(d.contractId, d.delivery, d.token); setUi({ dialog: null, amendmentPreview: null, status: 'Delivery change submitted.' }); }}>Confirm · fee {fmtM(q.feeM)}</button>}</div></>;
   } else {
     const k = v.market.contracts.find((x) => x.id === d.contractId);
     if (!k || k.status !== 'active') {
       body = <><h2 id="pr-dialog-title">Contract is no longer active</h2><p class="muted">It was delivered or cancelled meanwhile.</p><div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Close</button></div></>;
     } else {
       const refund = refundM(k, v.clock.day);
-      const allocs = v.market.allocations.filter((a) => a.contractId === k.id && a.status !== 'released');
+      const task = taskOf(v, k);
       body = (
         <>
           <span class="pr-eyebrow">Cancel contract</span>
@@ -54,17 +52,17 @@ export function Dialog() {
           <p class="muted">{k.offerSnapshot.supplierName} · signed {fmtDate(k.signedAt)} · due {fmtDate(k.expectedAt)}</p>
           <dl class="pr-facts">
             <dt>Contract value</dt><dd>{fmtM(k.offerSnapshot.priceM)}</dd>
-            <dt>Refund today</dt><dd class="good">{fmtM(refund)}</dd>
-            <dt>Cancellation fee (spent)</dt><dd class="bad">{fmtM(k.offerSnapshot.priceM - refund)}</dd>
-            <dt>Releases</dt><dd>{allocs.length ? allocs.map((a) => { const t = v.market.tasks.find((x) => x.id === a.taskId); return a.department ? a.department : t ? `${taskCode(t)} ${t.title}` : a.taskId; }).join(', ') : 'No allocations'}</dd>
+            <dt>Comes back</dt><dd class="good">{fmtM(refund)}</dd>
+            <dt>Lost</dt><dd class="bad">{fmtM(k.offerSnapshot.priceM - refund)}</dd>
+            <dt>Need</dt><dd>{task ? `${taskCode(task)} ${task.title} is uncovered again` : 'None'}</dd>
           </dl>
-          {cancelToken !== cancellationToken(v, k.id) ? <div class="pr-callout warn">Cancellation terms changed. Refresh and review the current refund.</div> : null}
+          {task ? <p class="pr-note muted">To replace the part in one step instead, pick another offer on the need: a switch.</p> : null}
           <div class="pr-row end">
             <button type="button" class="pr-btn" onClick={close} autoFocus>Keep contract</button>
-            {cancelToken !== cancellationToken(v, k.id) ? <button type="button" class="pr-btn" onClick={() => setCancelToken(cancellationToken(v, k.id))}>Refresh quote</button> : <button type="button" class="pr-btn danger" onClick={() => {
-              procurementActions.cancelContract(k.id, cancelToken);
-              setUi({ dialog: null, status: 'Cancellation submitted.' });
-            }}>Cancel contract · fee {fmtM(k.offerSnapshot.priceM - refund)}</button>}
+            <button type="button" class="pr-btn danger" onClick={() => {
+              procurementActions.cancelContract(k.id, cancellationToken(v, k.id));
+              setUi({ dialog: null, contractId: null, status: 'Cancellation submitted.' });
+            }}>Cancel contract · lose {fmtM(k.offerSnapshot.priceM - refund)}</button>
           </div>
         </>
       );
@@ -78,23 +76,90 @@ export function Dialog() {
   );
 }
 
-function OrderReview({ initial, initialToken, close }: { initial: OrderDraft; initialToken?: string; close: () => void }) {
+function taskOf(v: PView, k: Contract): Task | undefined {
+  const a = v.market.allocations.find((x) => x.contractId === k.id && x.status !== 'released' && x.taskId);
+  return a ? v.market.tasks.find((t) => t.id === a.taskId) : undefined;
+}
+
+function needOf(v: PView, draft: OrderDraft) {
+  const dest = draft.destination;
+  if (dest.kind !== 'task') return {};
+  const task = v.market.tasks.find((t) => t.id === dest.taskId);
+  return { task, crit: task?.criteria.find((c) => c.id === dest.criterionId) };
+}
+
+/**
+ * The decision Procurement has, in one block: when it arrives (on time, time for a Science test), how reliable it is,
+ * what it costs, and how that compares with the cheapest offer that is also on time.
+ */
+function Tradeoff({ draft, totalM, expectedAt }: { draft: OrderDraft; totalM: number; expectedAt: number }) {
   const v = useP();
-  const [draft, setDraft] = useState(initial);
-  const [token, setToken] = useState(initialToken ?? quoteOrder(v, initial).token);
+  const offer = findOffer(v, draft.offerId);
+  const { task, crit } = needOf(v, draft);
+  if (!offer) return null;
+  const others = task && crit ? offersForCriterion(v, task, crit).filter((a) => a.fits && !a.unavailable && !a.lateAtBest && a.offer.id !== offer.id) : [];
+  const price = (a: (typeof others)[number]) => a.rescue?.totalPriceM ?? a.totalPriceM;
+  // The supplier, and the part when it is another one; "with priority" when only priority delivery is on time.
+  const name = (a: (typeof others)[number]) => `${a.offer.resource.name === offer.resource.name ? '' : `${a.offer.resource.name} from `}${a.offer.supplierName}${a.rescue ? ' with priority' : ''}`;
+  const cheapest = [...others].sort((a, b) => price(a) - price(b))[0];
+  const surer = [...others].sort((a, b) => b.offer.reliability - a.offer.reliability)[0];
+  const late = task ? expectedAt > task.neededAt : false;
+  return (
+    <>
+      <dl class="pr-facts">
+        <dt>Arrives</dt>
+        <dd>{fmtDate(expectedAt)} · {draft.delivery}{task ? <span class={late ? 'warn' : 'good'}>{late ? ` · ${Math.round(expectedAt - task.neededAt)} d after the launch` : testable(v, expectedAt) ? ' · on time, time for a Science test' : ' · on time, too late for a Science test'}</span> : null}</dd>
+        <dt>Reliability</dt><dd>{fmtPct(offer.reliability)} · {offer.supplierName}</dd>
+        <dt>Price</dt><dd class="strong">{fmtM(totalM)}</dd>
+      </dl>
+      {task && (cheapest && price(cheapest) < totalM - 0.05 || surer && surer.offer.reliability > offer.reliability) ? (
+        <p class="pr-note muted">
+          {cheapest && price(cheapest) < totalM - 0.05 ? <>Cheapest on time: {name(cheapest)}, {fmtM(price(cheapest))} at {fmtPct(cheapest.offer.reliability)}. </> : null}
+          {surer && surer.offer.reliability > offer.reliability ? <>More reliable on time: {name(surer)}, {fmtPct(surer.offer.reliability)} for {fmtM(price(surer))}.</> : null}
+        </p>
+      ) : null}
+    </>
+  );
+}
+
+function OrderReview({ draft, token, close }: { draft: OrderDraft; token: string; close: () => void }) {
+  const v = useP();
   const q = quoteOrder(v, draft);
   const offer = findOffer(v, draft.offerId);
   const stale = q.token !== token;
-  const task = draft.destination.kind === 'task' ? v.market.tasks.find(t => t.id === (draft.destination as { taskId: string }).taskId) : undefined;
-  const destination = draft.destination.kind === 'department' ? `Department · ${draft.destination.department}` : task ? `${taskCode(task)} ${task.title}` : 'Shared supply';
+  const { task, crit } = needOf(v, draft);
   if (!offer) return <><h2 id="pr-dialog-title">Offer no longer available</h2><button type="button" class="pr-btn" onClick={close}>Close</button></>;
-  return <><h2 id="pr-dialog-title">{offer.resource.name}</h2>
-    {stale ? <div class="pr-callout warn" role="alert">Terms changed. Refresh quote.</div> : null}
-    <p class="muted">{offer.supplierName} · {fmtStats(offer.resource.partKind, offer.resource.variant, offer.resource.stats)} · {fmtPct(offer.reliability)} reliability</p>
-    {offer.source !== 'catalogue' ? <label class="pr-field"><span>Quantity · {offer.remainingQuantity ?? offer.quantity} remaining{offer.wholeOfferOnly ? ' · whole Offer only' : ''}</span><input type="number" min="1" max={offer.remainingQuantity ?? offer.quantity} value={draft.quantity} onInput={e => { const next = { ...draft, quantity: Number((e.target as HTMLInputElement).value) }; setDraft(next); setToken(quoteOrder(v, next).token); }} /></label> : null}
-    {offer.source !== 'catalogue' ? <><label class="pr-field"><span>Destination</span><select value={draft.destination.kind === 'department' ? `department:${draft.destination.department}` : draft.destination.kind === 'task' ? 'task' : 'shared'} onChange={e => { const value = (e.target as HTMLSelectElement).value; const destination = value === 'task' ? initial.destination : value.startsWith('department:') ? { kind: 'department' as const, department: value.slice(11) as 'science' | 'planner' | 'comms' | 'procurement' } : { kind: 'shared' as const }; const next = { ...draft, destination }; setDraft(next); setToken(quoteOrder(v, next).token); }}><option value="shared">Shared supply</option><option value="department:science">Science</option><option value="department:planner">Planner</option><option value="department:comms">Comms</option><option value="department:procurement">Procurement</option>{initial.destination.kind === 'task' ? <option value="task">Original Task</option> : null}</select></label>
-      <label class="pr-field"><span>Delivery</span><select value={draft.delivery} onChange={e => { const next = { ...draft, delivery: (e.target as HTMLSelectElement).value as OrderDraft['delivery'] }; setDraft(next); setToken(quoteOrder(v, next).token); }}>{(['priority', 'standard', 'flexible'] as const).map(delivery => { const candidate = quoteOrder(v, { ...draft, delivery }); return <option key={delivery} value={delivery} disabled={!!candidate.unavailable}>{delivery} · {candidate.unavailable || `${fmtDate(candidate.expectedAt)} · ${fmtM(candidate.totalM)}`}</option>; })}</select></label></> : null}
-    <dl class="pr-facts"><dt>Destination</dt><dd>{destination}</dd><dt>Quantity</dt><dd>{q.quantity}</dd><dt>Delivery</dt><dd>{draft.delivery} · {fmtDate(q.expectedAt)}{draft.neededAt !== undefined ? ` · needed ${fmtDate(draft.neededAt)}` : ''}</dd>{task ? <><dt>Current Task deadline</dt><dd class={q.expectedAt > task.neededAt ? 'warn' : ''}>{fmtDate(task.neededAt)}{q.expectedAt > task.neededAt ? ' · late' : ''}</dd></> : null}<dt>Commitment</dt><dd class="strong">{fmtM(q.totalM)}</dd><dt>Available afterwards</dt><dd>{fmtM(budgetAvailableM(v.budget) - q.totalM)}</dd><dt>Cancellation</dt><dd>{Math.round(offer.cancellationPct * 100)}% at signing, rising to 100% by delivery</dd></dl>
-    {q.failures.length ? <div class="pr-callout bad">{q.failures.join(' · ')}</div> : null}{q.late ? <div class="pr-callout warn">Arrival is after the needed date.</div> : null}{q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}<div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setToken(q.token)}>Refresh quote</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.signOrder(draft, token); setUi({ dialog: null, status: 'Order submitted.' }); }}>Confirm order · {fmtM(q.totalM)}</button>}</div>
+  return <>
+    <span class="pr-eyebrow">{task ? `Order for ${taskCode(task)} · ${task.title}` : 'Order'}</span>
+    <h2 id="pr-dialog-title">{q.quantity > 1 ? `${q.quantity} × ` : ''}{offer.resource.name}</h2>
+    <p class="muted">{fmtStats(offer.resource.partKind, offer.resource.variant, offer.resource.stats)}{offer.source === 'comms' ? ' · partner offer from Comms' : offer.source === 'call' ? ' · tender' : ''}</p>
+    <Tradeoff draft={draft} totalM={q.totalM} expectedAt={q.expectedAt} />
+    <BudgetAfter costM={q.totalM} task={task} crit={crit} />
+    {stale ? <div class="pr-callout warn" role="alert">The terms changed while the dialog was open. Review them again.</div> : null}
+    {q.failures.length ? <div class="pr-callout bad">{q.failures.join(' · ')}</div> : null}{q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}
+    <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { type: 'order', draft, token: q.token } })}>Use the new terms</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable || !!q.failures.length} onClick={() => { procurementActions.signOrder(draft, token); setUi({ dialog: null, status: 'Order submitted.' }); }}>Confirm order · {fmtM(q.totalM)}</button>}</div>
+  </>;
+}
+
+function ReplaceReview({ contractId, draft, token, close }: { contractId: string; draft: OrderDraft; token: string; close: () => void }) {
+  const v = useP();
+  const q = quoteReplacement(v, contractId, draft);
+  const offer = findOffer(v, draft.offerId);
+  const stale = q.token !== token;
+  const { task } = needOf(v, draft);
+  const old = q.old;
+  if (!offer || !old) return <><h2 id="pr-dialog-title">Switch no longer possible</h2><p class="muted">{q.unavailable}</p><button type="button" class="pr-btn" onClick={close}>Close</button></>;
+  return <>
+    <span class="pr-eyebrow">Switch {task ? `${taskCode(task)} · ${task.title}` : 'contract'}</span>
+    <h2 id="pr-dialog-title">{offer.resource.name} · {offer.supplierName}</h2>
+    <dl class="pr-facts">
+      <dt>Now</dt><dd>{old.offerSnapshot.supplierName} · {fmtPct(contractReliability(old))} · arrives {fmtDate(old.expectedAt)}</dd>
+      <dt>Lost on cancelling</dt><dd class="bad">{fmtM(q.feeM)} of {fmtM(old.offerSnapshot.priceM)}</dd>
+    </dl>
+    <Tradeoff draft={draft} totalM={q.order.totalM} expectedAt={q.order.expectedAt} />
+    <BudgetAfter costM={q.netM} />
+    {stale ? <div class="pr-callout warn" role="alert">The terms changed while the dialog was open. Review them again.</div> : null}
+    {q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}
+    <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { type: 'replace', contractId, draft, token: q.token } })}>Use the new terms</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.replaceContract(contractId, draft, token); setUi({ dialog: null, status: 'Switch submitted.' }); }}>Confirm switch · {fmtM(q.order.totalM)}</button>}</div>
   </>;
 }

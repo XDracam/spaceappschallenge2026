@@ -1,51 +1,65 @@
 // Right column: the active decision — a selected Resource with its Offers and the
 // fit check against a need, or the focused need with ranked suggestions.
-import type { Criterion, Offer, Task, Destination } from '../../../core/model';
-import { RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
+import type { Contract, Criterion, DeliveryOptionId, Offer, OrderDraft, Task } from '../../../core/model';
+import { contractReliability } from '../../../core/model';
+import { RESOURCES, RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
 import { SUPPLIER_BY_ID } from '../data/suppliers';
+import { procurementActions } from '../logic';
 import {
-  assessOffer, beyondKeys, budgetAvailableM, criterionCoverage, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
-  offersForCriterion, openTasks, partLabel, rankAssessments, sameKind, statInfo, suggestion, taskCode, quoteOrder,
+  DAYS_PER_MONTH, assessOffer, beyondKeys, bestDelivery, budgetAvailableM, callEstimate, criterionCoverage, deliveryOptions, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
+  isDraftTask, leadTimeDays, offersForCriterion, openTasks, partLabel, quoteAmendment, quoteOrder, quoteReplacement, rankAssessments, refundM, sameKind, statInfo, suggestion, orderedOption, stillToBuy, taskCode,
   type OfferAssessment, type PView,
 } from '../rules';
 import { statDefs } from '../../planner/data/parts';
 import { researchEta } from '../../science/model/tree';
 import { testCounts, testDays } from '../../science/model/tests';
 import { Art } from './Art';
-import { focusedNeed, summarize, toggleCompare } from './Catalogue';
+import { focusedNeed, summarize } from './Catalogue';
 import { coverageText, criterionSummary } from './Needs';
-import { parseTarget, setUi, targetKey, useP, useUi } from './uiState';
+import { CATEGORIES, parseTarget, setUi, targetKey, useP, useUi } from './uiState';
 import { ContractInspector } from './ContractsView';
-import { CallInspector } from './CallsView';
+
+/** Arrives early enough for Science to test the part before launch (a test halves its risk of failure). */
+export function testable(v: PView, arrival: number): boolean {
+  return testCounts(arrival + testDays(), v.planner.plan.launchDay);
+}
 
 export function OfferRow({ a, selected, suggested, onClick, showName }: {
   a: OfferAssessment; selected?: boolean; suggested?: boolean; onClick: () => void; showName?: boolean;
 }) {
   const v = useP();
   const sup = SUPPLIER_BY_ID[a.offer.supplierId];
-  const tone = a.unavailable || !a.fits ? 'bad' : a.late || !a.affordable ? 'warn' : 'good';
-  // Arrives early enough for Science to test the part before launch (a test halves its risk of failure).
-  const testable = !a.unavailable && testCounts(a.expectedAt + testDays(), v.planner.plan.launchDay);
+  // A catalogue offer waiting for Science's research: it cannot be signed yet, but its terms are real.
+  const afterResearch = a.unavailable.startsWith('Sold once');
+  const tone = afterResearch ? 'warn' : a.unavailable || !a.fits ? 'bad' : a.lateAtBest || !a.affordable ? 'warn' : 'good';
+  // Date and price of the option the offer would be ordered with (the one preselected when it is picked).
+  const opt = orderedOption(a);
+  const arrival = opt.expectedAt;
   return (
     <button type="button" class={`pr-offer ${tone}`} aria-pressed={!!selected} onClick={onClick}>
       <span class="pr-offer-head">
         <strong>{showName ? a.offer.resource.name : a.offer.supplierName}</strong>
-        <span class="pr-offer-price num">{fmtM(a.totalPriceM)}</span>
+        <span class="pr-offer-price num">{fmtM(opt.totalPriceM)}</span>
       </span>
       <span class="pr-offer-meta">
         {showName ? a.offer.supplierName : sup?.trait ?? ''}
-        {a.offer.source !== 'catalogue' ? <span class="pr-chip">{a.offer.source === 'call' ? 'Call' : 'Comms'}</span> : null}
+        {a.offer.source !== 'catalogue' ? <span class="pr-chip">{a.offer.source === 'call' ? 'Tender' : 'Partner'}</span> : null}
         {suggested ? <span class="pr-chip good">Suggested</span> : null}
       </span>
       <span class="pr-offer-facts">
-        <span class={a.late ? 'warn' : ''}>Arrives {fmtDate(a.expectedAt)}</span>
+        {afterResearch
+          ? <span>{Math.round(leadTimeDays(v, a.offer) / DAYS_PER_MONTH * 10) / 10} mo delivery after research</span>
+          : a.rescue
+          ? <span class="warn">Priority {fmtDate(a.rescue.expectedAt).slice(0, -5)} · standard late</span>
+          : opt.delivery !== 'standard'
+          ? <span class="warn">Priority {fmtDate(opt.expectedAt).slice(0, -5)} · late</span>
+          : <span class={a.late ? 'warn' : ''}>Arrives {fmtDate(a.expectedAt)}{a.late ? ' · late' : ''}</span>}
         <span>{fmtPct(a.offer.reliability)} reliable</span>
-        {testable ? <span class="good" title="Arrives early enough for Science to test it before launch. A test halves its risk of failure.">time to test</span> : null}
-        {a.quantity > 1 ? <span>{a.quantity} × {fmtM(a.unitPriceM)}</span> : null}
+        {!a.unavailable && !a.lateAtBest && testable(v, arrival) ? <span class="good" title="Arrives early enough for Science to test it before launch. A test halves its risk of failure.">time to test</span> : null}
       </span>
-      {a.unavailable ? <span class="pr-offer-why bad">{a.unavailable}</span>
+      {afterResearch ? null : a.unavailable ? <span class="pr-offer-why bad">{a.unavailable}</span>
         : a.failures.length ? <span class="pr-offer-why bad">{a.failures.join(' · ')}</span>
-        : !a.affordable ? <span class="pr-offer-why warn">Over available budget</span> : null}
+        : !a.affordable ? <span class="pr-offer-why warn">Over the free budget</span> : null}
     </button>
   );
 }
@@ -75,47 +89,75 @@ function StatTable({ res, crit }: { res: Offer['resource']; crit?: Criterion }) 
   );
 }
 
-function openSign(a: OfferAssessment, task?: Task, crit?: Criterion) {
-  setUi({ dialog: { type: 'sign', offerId: a.offer.id, taskId: task?.id, criterionId: crit?.id, qty: a.quantity } });
+/** The active contract that covers a need, if a switch is possible (one contract, still on its way). */
+export function switchableContract(v: PView, task: Task, crit: Criterion): Contract | undefined {
+  const cov = criterionCoverage(v, task, crit);
+  if (cov.missing > 0 || cov.contracts.length !== 1) return undefined;
+  const k = cov.contracts[0];
+  return k.status === 'active' ? k : undefined;
 }
 
-/** Why the Sign button is disabled ('' = can sign). */
-export function blockReason(v: PView, a: OfferAssessment, task?: Task, crit?: Criterion): string {
-  if (a.unavailable) return a.unavailable;
-  if (!a.affordable) return `Exceeds available budget by ${fmtM(a.totalPriceM - budgetAvailableM(v.budget))}. Choose a cheaper Offer or discuss funding.`;
-  if (task && crit && criterionCoverage(v, task, crit).missing === 0) return 'Already covered. Choose “Unallocated” to buy a spare, or cancel the existing Contract first.';
-  return '';
+/** Open the right confirmation for an offer and a need: a new order, or a switch from the contract that covers it. */
+export function reviewOffer(v: PView, a: OfferAssessment, task: Task, crit: Criterion, delivery: DeliveryOptionId = bestDelivery(a)) {
+  const draft: OrderDraft = { offerId: a.offer.id, quantity: a.quantity, destination: { kind: 'task', taskId: task.id, criterionId: crit.id }, delivery, neededAt: task.neededAt };
+  const old = switchableContract(v, task, crit);
+  if (old) setUi({ dialog: { type: 'replace', contractId: old.id, draft, token: quoteReplacement(v, old.id, draft).token } });
+  else setUi({ dialog: { type: 'order', draft, token: quoteOrder(v, draft).token } });
+}
+
+/** The shared budget at the moment of signing: what stays free, and what is spare once every part is bought. */
+export function BudgetAfter({ costM, task, crit }: { costM: number; task?: Task; crit?: Criterion }) {
+  const v = useP();
+  const free = budgetAvailableM(v.budget) - costM;
+  const buy = stillToBuy(v);
+  // This need's own share of "still to buy" is the order being signed now.
+  const own = task && crit && criterionCoverage(v, task, crit).missing > 0 ? (() => { const s = suggestion(offersForCriterion(v, task, crit)); return s ? orderedOption(s).totalPriceM : 0; })() : 0;
+  const spare = free - (buy.cost - own);
+  return (
+    <p class={`pr-note center ${free < 0 || spare < 0 ? 'warn' : 'muted'}`}>
+      Shared budget after: {fmtM(free)} free{buy.count ? ` · ${spare < 0 ? `${fmtM(-spare)} short` : `≈ ${fmtM(spare)} spare`} once all parts are bought` : ''}
+    </p>
+  );
 }
 
 function ResourceInspector() {
   const v = useP();
   const u = useUi((x) => x);
-  const r = RESOURCE_BY_ID[u.resourceId ?? ''] ?? RESOURCE_BY_ID['e-ker-2000'];
+  const kinds = CATEGORIES.find((c) => c.id === u.category)?.kinds ?? [];
+  const r = RESOURCE_BY_ID[u.resourceId ?? ''] ?? RESOURCES.find((x) => !kinds.length || kinds.includes(x.partKind)) ?? RESOURCES[0];
   const sum = summarize(v, r);
-  const tasks = openTasks(v);
-  const candidates = tasks.flatMap((t) => t.criteria.filter((c) => sameKind(r, c)).map((c) => ({ t, c })));
-  // Allocation target: explicit choice, else the focused need, else the first uncovered fitting need.
+  const candidates = openTasks(v).flatMap((t) => t.criteria.filter((c) => sameKind(r, c)).map((c) => ({ t, c })));
+  // Need: explicit choice, else the focused need, else the first uncovered fitting need.
   const { task: fTask, crit: fCrit } = focusedNeed(v, u.focus);
-  let target = u.target === 'none' || u.target.startsWith('department:') ? null : parseTarget(u.target);
+  let target = parseTarget(u.target);
   if (target && !candidates.some((x) => x.t.id === target!.taskId && x.c.id === target!.criterionId)) target = null;
-  if (!target && u.target !== 'none' && !u.target.startsWith('department:')) {
-    const pick = (fTask && fCrit && sameKind(r, fCrit) ? { t: fTask, c: fCrit } : undefined)
-      ?? candidates.find((x) => !fitFailures(r, x.c).length && criterionCoverage(v, x.t, x.c).missing > 0);
+  if (!target) {
+    const pick = (fTask && fCrit && !isDraftTask(fTask) && sameKind(r, fCrit) ? { t: fTask, c: fCrit } : undefined)
+      ?? candidates.find((x) => !fitFailures(r, x.c).length && criterionCoverage(v, x.t, x.c).missing > 0)
+      ?? candidates.find((x) => !fitFailures(r, x.c).length);
     if (pick) target = { taskId: pick.t.id, criterionId: pick.c.id };
   }
   const tc = target ? candidates.find((x) => x.t.id === target!.taskId && x.c.id === target!.criterionId) : undefined;
   const task = tc?.t;
   const crit = tc?.c;
+  const draftFocus = !task && fTask && isDraftTask(fTask) && fCrit && sameKind(r, fCrit) ? fTask : undefined;
   const cov = task && crit ? criterionCoverage(v, task, crit) : undefined;
-  const qty = u.qty > 0 ? u.qty : Math.max(1, cov?.missing ?? 1);
-  const assessed = offersForResource(r.id).map((o) => assessOffer(v, o, task, crit, qty)).sort(rankAssessments);
+  const qty = Math.max(1, cov?.missing || crit?.quantity || draftFocus?.criteria[0].quantity || 1);
+  const assessed = offersForResource(r.id).map((o) => assessOffer(v, o, task ?? draftFocus, crit ?? draftFocus?.criteria[0], qty)).sort(rankAssessments);
   const selected = assessed.find((a) => a.offer.id === u.offerId) ?? assessed[0];
   const suggested = suggestion(assessed);
-  const destination: Destination = target ? { kind: 'task', ...target } : u.target.startsWith('department:') ? { kind: 'department', department: u.target.slice(11) as 'science' | 'planner' | 'comms' | 'procurement' } : { kind: 'shared' };
-  const draft = { offerId: selected.offer.id, quantity: qty, destination, delivery: u.delivery, neededAt: u.neededAt ?? task?.neededAt };
+  const options = deliveryOptions(selected.offer).filter((o) => o.id !== 'flexible');
+  const delivery: DeliveryOptionId = u.delivery && options.some((o) => o.id === u.delivery) ? u.delivery : bestDelivery(selected);
+  const old = task && crit ? switchableContract(v, task, crit) : undefined;
+  const delivered = !!cov && cov.missing === 0 && !old;
+  const draft: OrderDraft = { offerId: selected.offer.id, quantity: qty, destination: task && crit ? { kind: 'task', taskId: task.id, criterionId: crit.id } : { kind: 'shared' }, delivery, neededAt: task?.neededAt };
   const quote = quoteOrder(v, draft);
-  const block = quote.unavailable || (quote.totalM > budgetAvailableM(v.budget) ? 'Exceeds available budget.' : '');
-  const available = budgetAvailableM(v.budget);
+  const switchQ = old ? quoteReplacement(v, old.id, draft) : undefined;
+  const sameAsOld = !!old && old.offerSnapshot.id === selected.offer.id;
+  const block = !task ? (draftFocus ? 'The Planner has not ordered this part yet.' : 'No ordered mission need uses this part.')
+    : delivered ? 'This need is covered.'
+    : sameAsOld ? 'This is the contracted offer.'
+    : switchQ ? switchQ.unavailable : quote.unavailable || quote.failures[0] || '';
 
   return (
     <>
@@ -126,85 +168,108 @@ function ResourceInspector() {
       </div>
       <div class="pr-ctx-body">
         <div class="pr-insp-art"><Art kind={r.partKind} variant={r.variant} label={`${r.name} illustration`} /></div>
-        <StatTable res={r} crit={crit} />
+        <StatTable res={r} crit={crit ?? draftFocus?.criteria[0]} />
         {sum.locked.length ? (
           <div class="pr-callout warn">
-            <strong>Beyond current research — tender only.</strong>
+            <strong>Beyond current research.</strong> Suppliers sell it once Science has researched:
             <ul>{sum.locked.map((k) => <li key={k}>{describeBeyond(k, r.stats, v.research)}</li>)}</ul>
-            Domestic suppliers can sell it once science raises the limit. Until then, open a Call for the need: tender Offers cost 1.5–3× and are less reliable.
-            {task && crit ? (
-              <div class="pr-row"><button type="button" class="pr-btn" disabled={!!cov?.openCall} onClick={() => setUi({ view: 'calls', callTarget: targetKey(task.id, crit.id), callResourceId: null, callSnapshot: null })}>
-                {cov?.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : `Open Call for ${taskCode(task)}`}
-              </button></div>
-            ) : null}
           </div>
         ) : null}
         <h3>Offers</h3>
         <div class="pr-offer-list">
           {assessed.map((a) => (
-            <OfferRow key={a.offer.id} a={a} selected={a.offer.id === selected.offer.id} suggested={suggested?.offer.id === a.offer.id && assessed.length > 1}
-              onClick={() => setUi({ offerId: a.offer.id })} />
+            <OfferRow key={a.offer.id} a={a} selected={a.offer.id === selected.offer.id} suggested={(draftFocus ? true : !!cov && cov.missing > 0) && suggested?.offer.id === a.offer.id && assessed.length > 1}
+              onClick={() => setUi({ offerId: a.offer.id, delivery: null })} />
           ))}
         </div>
-        {selected ? (
-          <p class="pr-terms">
-            Cancellation starts at {Math.round(selected.offer.cancellationPct * 100)}% and rises to 100% by delivery.
-          </p>
-        ) : null}
+        <p class="pr-terms">Cancelling costs {Math.round(selected.offer.cancellationPct * 100)} % of the price at signing, rising to 100 % by delivery.</p>
       </div>
       <div class="pr-actions">
-        <label class="pr-field">
-          <span>For</span>
-          <select value={target ? targetKey(target.taskId, target.criterionId) : u.target.startsWith('department:') ? u.target : 'none'} onChange={(e) => setUi({ target: (e.target as HTMLSelectElement).value, qty: 0 })}>
-            <option value="none">Shared supply</option>
-            <option value="department:science">Department · Science</option>
-            <option value="department:planner">Department · Planner</option>
-            <option value="department:comms">Department · Comms</option>
-            <option value="department:procurement">Department · Procurement</option>
-            {candidates.map(({ t, c }) => {
-              const f = fitFailures(r, c);
-              const cv = criterionCoverage(v, t, c);
+        {candidates.length > 1 ? (
+          <label class="pr-field">
+            <span>For</span>
+            <select value={target ? targetKey(target.taskId, target.criterionId) : ''} onChange={(e) => setUi({ target: (e.target as HTMLSelectElement).value })}>
+              {candidates.map(({ t, c }) => {
+                const f = fitFailures(r, c);
+                const cv = criterionCoverage(v, t, c);
+                return <option key={t.id + c.id} value={targetKey(t.id, c.id)}>{taskCode(t)} · {t.title}{f.length ? ` — ✗ ${f[0]}` : cv.missing === 0 ? ' — covered' : ''}</option>;
+              })}
+            </select>
+          </label>
+        ) : task ? <p class="pr-note muted">For {taskCode(task)} · {task.title}</p> : null}
+        {task && options.length > 1 ? (
+          <div class="pr-schedules" aria-label="Delivery">
+            {options.map((o) => {
+              const q = quoteOrder(v, { ...draft, delivery: o.id });
               return (
-                <option key={t.id + c.id} value={targetKey(t.id, c.id)}>
-                  {taskCode(t)} · {t.title}{f.length ? ` — ✗ ${f[0]}` : cv.missing === 0 ? ' — covered' : ''}
-                </option>
+                <button type="button" key={o.id} class={`pr-schedule${delivery === o.id ? ' selected' : ''}`} aria-pressed={delivery === o.id} onClick={() => setUi({ delivery: o.id })}>
+                  <strong>{o.id === 'priority' ? 'Priority' : 'Standard'}</strong><strong class="num">{fmtM(q.totalM)}</strong>
+                  <span class="pr-schedule-line">{fmtDate(q.expectedAt).slice(0, -5)} · <span class={q.late ? 'warn' : 'good'}>{q.late ? `${Math.round(q.expectedAt - task.neededAt)} d late` : testable(v, q.expectedAt) ? 'time to test' : 'on time'}</span></span>
+                </button>
               );
             })}
-          </select>
-        </label>
-        <label class="pr-field"><span>Needed by (day)</span>
-          <input type="number" min="0" value={u.neededAt ?? task?.neededAt ?? ''} onInput={(e) => { const value = (e.target as HTMLInputElement).value; setUi({ neededAt: value === '' ? null : Number(value) }); }} />
-        </label>
-        <div class="pr-buy-row">
-          <div class="pr-stepper" aria-label="Quantity">
-            <button type="button" aria-label="Reduce quantity" disabled={qty <= 1} onClick={() => setUi({ qty: qty - 1 })}>−</button>
-            <output>{qty}</output>
-            <button type="button" aria-label="Increase quantity" disabled={qty >= 100} onClick={() => setUi({ qty: qty + 1 })}>+</button>
-          </div><span class="muted small">units</span>
-        </div>
-        <div class="pr-schedules" aria-label="Delivery option">
-          {(['priority', 'standard', 'flexible'] as const).map((delivery) => {
-            const q = quoteOrder(v, { ...draft, delivery });
-            const standard = quoteOrder(v, { ...draft, delivery: 'standard' });
-            const diff = q.totalM - standard.totalM;
-            return <button type="button" key={delivery} class={`pr-schedule${u.delivery === delivery ? ' selected' : ''}`} aria-pressed={u.delivery === delivery} disabled={!!q.unavailable} onClick={() => setUi({ delivery })}>
-              <strong>{delivery[0].toUpperCase() + delivery.slice(1)}</strong><strong>{q.unavailable ? 'Unavailable' : fmtM(q.totalM)}</strong>
-              <span>{q.unavailable ? '' : `Arrives ${fmtDate(q.expectedAt)}`}</span><span>{q.unavailable ? '' : delivery === 'standard' ? '' : standard.unavailable ? 'No Standard quote' : `${diff >= 0 ? '+' : '−'}${fmtM(Math.abs(diff))}`}</span>
-              {!q.unavailable && draft.neededAt !== undefined ? <span class={q.late ? 'warn' : 'good'}>{Math.abs(q.expectedAt - draft.neededAt)} days {q.late ? 'late' : 'early'}</span> : null}
-            </button>;
-          })}
-        </div>
-        {quote.failures.length ? <p class="pr-note bad">{quote.failures.join(' · ')}</p> : null}
-        <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => setUi({ dialog: { type: 'order', draft, token: quote.token } })}>
-          Review order · {fmtM(quote.totalM)}
-        </button>
-        <p class={`pr-note center ${block ? 'warn' : 'muted'}`}>{block || `${fmtM(available - quote.totalM)} remains for other needs`}</p>
-        <button type="button" class="pr-text-btn" onClick={() => setUi({ view: 'calls', callResourceId: r.id, callSnapshot: null, callTarget: '' })}>Open Call</button>
-        <div class="pr-row">
-          <button type="button" class="pr-btn small" aria-pressed={u.compare.includes(r.id)} onClick={() => toggleCompare(r.id)}>{u.compare.includes(r.id) ? 'In comparison' : 'Add to compare'}</button>
-          {task && crit ? <button type="button" class="pr-text-btn" onClick={() => setUi({ focus: { taskId: task.id, criterionId: crit.id }, inspect: 'need' })}>Need overview</button> : null}
-        </div>
+          </div>
+        ) : null}
+        {!task ? null : old && !sameAsOld && !delivered ? (
+          <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
+            Review switch · {fmtM(switchQ!.order.totalM)}
+          </button>
+        ) : (
+          <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
+            Review order · {fmtM(quote.totalM)}
+          </button>
+        )}
+        {block ? <p class="pr-note center warn">{block}</p> : <BudgetAfter costM={switchQ ? switchQ.netM : quote.totalM} task={task} crit={crit} />}
       </div>
+    </>
+  );
+}
+
+/** A need still beyond research: wait for Science, or tender now. Both routes with their dates, prices and odds. */
+function BuyOrDevelop({ task, crit }: { task: Task; crit: Criterion }) {
+  const v = useP();
+  const keys = beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research);
+  if (!keys.length) return null;
+  const etas = keys.map((k) => { const stat = k.split('.')[2]; return researchEta(v.research.projects, k, stat ? crit.minimums[stat] : undefined); });
+  const researched = etas.every((e) => e !== undefined) ? Math.max(...(etas as number[])) : undefined;
+  // After research: the fastest fitting catalogue offer, ordered the day research ends.
+  const catalogue = offersForCriterion(v, task, crit).filter((a) => a.fits && a.offer.source === 'catalogue');
+  const fastest = catalogue.sort((a, b) => leadTimeDays(v, a.offer) - leadTimeDays(v, b.offer))[0];
+  const afterResearch = researched !== undefined && fastest ? researched + leadTimeDays(v, fastest.offer) : undefined;
+  const call = callEstimate(v, crit);
+  const tender = [...call.offers].sort((a, b) => a.expectedAt - b.expectedAt)[0];
+  const cov = criterionCoverage(v, task, crit);
+  const draft = isDraftTask(task);
+  return (
+    <div class="pr-callout warn pr-route">
+      <p><strong>Beyond research.</strong> Suppliers sell it once Science has researched {keys.map((k) => describeBeyond(k, crit.minimums, v.research)).join(', ')}.</p>
+      <dl class="pr-facts">
+        <dt>Wait for Science</dt>
+        <dd>{researched === undefined ? 'Science has not started it' : `research ends ${fmtDate(researched)}`}{afterResearch !== undefined ? <> · arrives ≈ {fmtDate(afterResearch)}{afterResearch > task.neededAt ? <span class="bad"> · late</span> : null} · {fmtM(fastest!.totalPriceM)} · {fmtPct(fastest!.offer.reliability)}</> : null}</dd>
+        {tender ? <><dt>Tender now</dt><dd>offers {fmtDate(call.closesAt)} · arrives ≈ {fmtDate(tender.expectedAt)}{tender.expectedAt > task.neededAt ? <span class="bad"> · late</span> : null} · ≈ {fmtM(tender.priceM)} · {fmtPct(tender.offer.reliability)}</dd></> : null}
+      </dl>
+      {tender && !draft ? (
+        <button type="button" class="pr-btn small" disabled={!!cov.openCall} onClick={() => procurementActions.openCall(task.id, crit.id)}>
+          {cov.openCall ? `Call open — offers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+/** A late contract on the need: the one recovery the contract itself offers, priority delivery. */
+function SpeedUp({ k, task }: { k: Contract; task: Task }) {
+  const v = useP();
+  if (!deliveryOptions(k.offerSnapshot).some((o) => o.id === 'priority') || k.delivery === 'priority') return <p class="pr-note warn">This supplier cannot deliver faster. Switch to an offer that is on time, or ask the Planner to move the launch.</p>;
+  const q = quoteAmendment(v, k.id, 'priority');
+  if (q.unavailable) return <p class="pr-note warn">Priority delivery: {q.unavailable}. Switch to an offer that is on time, or ask the Planner to move the launch.</p>;
+  const onTime = q.expectedAt <= task.neededAt;
+  return (
+    <>
+      <button type="button" class="pr-btn primary wide" onClick={() => setUi({ dialog: { type: 'amend', contractId: k.id, delivery: 'priority', token: q.token } })}>
+        Speed up · arrives {fmtDate(q.expectedAt).slice(0, -5)} · fee {fmtM(q.feeM)}
+      </button>
+      {!onTime ? <p class="pr-note warn center">Still {Math.round(q.expectedAt - task.neededAt)} d late with priority.</p> : null}
     </>
   );
 }
@@ -214,88 +279,69 @@ function NeedInspector() {
   const focus = useUi((u) => u.focus);
   const { task, crit } = focusedNeed(v, focus);
   if (!task || !crit) return <ResourceInspector />;
+  const draft = isDraftTask(task);
   const cov = criterionCoverage(v, task, crit);
   const st = coverageText(cov);
   const ranked = offersForCriterion(v, task, crit);
   const best = suggestion(ranked);
-  const shown = ranked.filter((a) => !a.unavailable).slice(0, 7);
-  const tenderOnly = ranked.filter((a) => a.unavailable && a.offer.source === 'catalogue' && !a.failures.length).length;
-  const calls = v.market.calls.filter((k) => k.taskId === task.id && k.criterionId === crit.id);
+  const old = switchableContract(v, task, crit);
+  // Offers that fit: signable ones, and catalogue ones still waiting for research (their price and supplier matter now).
+  const shown = ranked.filter((a) => a.fits && (!a.unavailable || (!old && a.offer.source === 'catalogue')) && (!old || a.offer.id !== old.offerSnapshot.id)).slice(0, 6);
+  const late = cov.late ? cov.contracts.find((k) => k.status === 'active' && k.expectedAt > task.neededAt) : undefined;
+  const signable = (a: OfferAssessment) => !draft && a.fits && !a.unavailable;
   const pick = (a: OfferAssessment) => {
     if (a.offer.source === 'catalogue' && a.offer.resourceId) {
-      setUi({ inspect: 'resource', resourceId: a.offer.resourceId, offerId: a.offer.id, target: targetKey(task.id, crit.id), qty: 0 });
-    } else openSign(a, task, crit);
+      setUi({ inspect: 'resource', resourceId: a.offer.resourceId, offerId: a.offer.id, delivery: null, target: draft ? '' : targetKey(task.id, crit.id) });
+    } else if (signable(a)) reviewOffer(v, a, task, crit);
   };
   return (
     <>
       <div class="pr-ctx-head">
-        <span class="pr-eyebrow">{taskCode(task)} · from {task.authorRole} · rev {task.revision}</span>
+        <span class="pr-eyebrow">{draft ? 'Draft · not ordered yet' : `${taskCode(task)} · from the Planner`}</span>
         <h2>{task.title}</h2>
-        <p>{crit.label} · {criterionSummary(crit)} · needed {fmtDate(task.neededAt)}</p>
+        <p>{criterionSummary(crit)} · needed {fmtDate(task.neededAt)}</p>
       </div>
       <div class="pr-ctx-body">
-        <p class={`pr-cov ${st.tone}`}>{st.text}</p>
-        {cov.mismatch.length ? <div class="pr-callout warn">The Task was revised after contracting. Contracted supply no longer meets: {cov.mismatch.join(' · ')}. Discuss with the planner, or cancel and replace.</div> : null}
-        {cov.contracts.length ? (
-          <>
-            <h3>Contracted supply</h3>
-            {cov.contracts.map((k) => (
-              <button key={k.id} type="button" class="pr-ctx-option" onClick={() => setUi({ view: 'contracts', contractId: k.id })}>
-                <strong>{k.offerSnapshot.resource.name}</strong>
-                <span>{k.offerSnapshot.supplierName} · {k.status === 'delivered' ? `delivered ${fmtDate(k.deliveredAt ?? k.expectedAt)}` : `arrives ${fmtDate(k.expectedAt)}`} · {fmtM(k.offerSnapshot.priceM)}</span>
-              </button>
-            ))}
-          </>
-        ) : null}
-        {cov.missing > 0 ? <BeyondResearch crit={crit} /> : null}
-        <h3>Offers for this need</h3>
-        <div class="pr-offer-list">
-          {shown.map((a) => (
-            <OfferRow key={a.offer.id} a={a} showName suggested={best?.offer.id === a.offer.id} onClick={() => pick(a)} />
-          ))}
-          {!shown.length ? <p class="muted">No signable Offer of this part type.{tenderOnly ? ` ${tenderOnly} catalogue Offers are beyond research.` : ''}</p> : null}
-        </div>
-        <h3>Calls</h3>
-        {calls.map((k) => (
-          <button key={k.id} type="button" class="pr-ctx-option" onClick={() => setUi({ view: 'calls', callId: k.id })}>
-            <strong>{k.status === 'open' ? 'Awaiting Offers' : k.status === 'closed' ? `${k.offerIds.length} Offers received` : 'Withdrawn'}</strong>
-            <span>Opened {fmtDate(k.openedAt)} · {k.status === 'open' ? 'answers' : 'closed'} {fmtDate(k.closesAt)}</span>
+        {draft ? <p class="pr-cov">The Planner can still change it. You can sign once it is ordered.</p> : <p class={`pr-cov ${st.tone}`}>{st.text}</p>}
+        {cov.mismatch.length ? <div class="pr-callout warn">The Planner revised the need after contracting. The contracted part no longer meets: {cov.mismatch.join(' · ')}. Switch to an offer that fits.</div> : null}
+        {cov.contracts.map((k) => (
+          <button key={k.id} type="button" class="pr-ctx-option" onClick={() => setUi({ view: 'contracts', contractId: k.id })}>
+            <strong>{k.offerSnapshot.resource.name} · {k.offerSnapshot.supplierName}</strong>
+            <span>{k.status === 'delivered' ? `delivered ${fmtDate(k.deliveredAt ?? k.expectedAt)}` : `arrives ${fmtDate(k.expectedAt)}`} · {fmtPct(contractReliability(k))} reliable{k.tested ? ' (tested)' : ''} · {fmtM(k.offerSnapshot.priceM)}</span>
           </button>
         ))}
-        {!calls.length ? <p class="muted small">A Call invites tenders built to these minimums. Answers arrive after about a month; beyond research they cost 1.5–3× and are less reliable.</p> : null}
+        {cov.missing > 0 ? <BuyOrDevelop task={task} crit={crit} /> : null}
+        {cov.status !== 'delivered' && (cov.missing > 0 || old) ? (
+          <>
+            <h3>{old ? 'Switch to another offer' : 'Offers for this need'}</h3>
+            {old ? <p class="pr-note muted">A switch cancels the current contract: {fmtM(refundM(old, v.clock.day))} of its {fmtM(old.offerSnapshot.priceM)} come back today.</p> : null}
+            <div class="pr-offer-list">
+              {shown.map((a) => (
+                <OfferRow key={a.offer.id} a={a} showName suggested={!old && best?.offer.id === a.offer.id} onClick={() => pick(a)} />
+              ))}
+              {!shown.length ? <p class="muted small">No other offer fits this need.</p> : null}
+            </div>
+          </>
+        ) : null}
       </div>
       <div class="pr-actions">
-        {best ? (
+        {late ? <SpeedUp k={late} task={task} /> : null}
+        {!late && cov.missing > 0 && best ? (
           <button type="button" class="pr-btn primary wide" onClick={() => pick(best)}>
-            Review suggestion · {best.offer.resource.name} · {fmtM(best.totalPriceM)}
+            {draft ? 'Look at the suggestion' : 'Review suggestion'} · {best.offer.resource.name} · {fmtM(orderedOption(best).totalPriceM)}
           </button>
         ) : null}
-        <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => setUi({ view: 'calls', callTarget: targetKey(task.id, crit.id), callResourceId: null, callSnapshot: null })}>
-          {cov.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
-        </button>
-        <p class="pr-note center muted">{fmtM(budgetAvailableM(v.budget))} available · suggestions rank fit, delivery, budget, lightest part, then reliability.</p>
+        {cov.missing > 0 && best ? <p class={`pr-note center ${best.lateAtBest ? 'warn' : 'muted'}`}>{best.lateAtBest
+          ? `No offer arrives on time: suggested is the earliest arrival${best.affordable ? '' : ', over the free budget'}.`
+          : `Suggested: on time${best.rescue ? ' only with priority delivery' : ''}, ${best.affordable ? 'within budget' : 'over the free budget'}, then the lightest fitting part from its most reliable supplier.`}</p> : null}
+        {cov.missing > 0 && !best && !draft && !beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research).length ? (
+          <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => procurementActions.openCall(task.id, crit.id)}>
+            {cov.openCall ? `Call open — offers ${fmtDate(cov.openCall.closesAt)}` : `No catalogue part fits · open a Call (offers ${fmtDate(callEstimate(v, crit).closesAt)})`}
+          </button>
+        ) : null}
+        {cov.missing === 0 && !late ? <BudgetAfter costM={0} /> : null}
       </div>
     </>
-  );
-}
-
-/** A need beyond research: what Science has to research first, and how far Science is with it. */
-function BeyondResearch({ crit }: { crit: Criterion }) {
-  const v = useP();
-  const keys = beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research);
-  if (!keys.length) return null;
-  return (
-    <div class="pr-callout warn">
-      <p><strong>Beyond research.</strong> The catalogue sells it once Science has researched:</p>
-      <ul>
-        {keys.map((k) => {
-          const stat = k.split('.')[2];
-          const eta = researchEta(v.research.projects, k, stat ? crit.minimums[stat] : undefined);
-          return <li key={k}>{describeBeyond(k, crit.minimums, v.research)} — {eta === undefined ? 'Science has not started it' : `Science is on it until ${fmtDate(eta)}`}</li>;
-        })}
-      </ul>
-      <p>Or buy it now through a Call.</p>
-    </div>
   );
 }
 
@@ -304,7 +350,7 @@ export function Inspector() {
   const view = useUi((u) => u.view);
   return (
     <aside class="pr-panel pr-inspector" aria-label="Active decision">
-      {view === 'contracts' ? <ContractInspector /> : view === 'calls' ? <CallInspector /> : inspect === 'need' ? <NeedInspector /> : <ResourceInspector />}
+      {view === 'contracts' ? <ContractInspector /> : inspect === 'need' ? <NeedInspector /> : <ResourceInspector />}
     </aside>
   );
 }

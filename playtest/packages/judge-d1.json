@@ -1,0 +1,138 @@
+{
+  "package": "d1",
+  "verdict": "accept-without",
+  "items": [
+    {
+      "item": "Suggestion ranking over every delivery option, priority preselected, earliest when all late",
+      "finding": "R1115m-r01-06",
+      "accept": true,
+      "needed": "When standard delivery turns late, the suggestion must point at the supplier that can still arrive on time (with priority), not at the cheapest and slowest one.",
+      "sawRunning": "Weather mission, launch moved to 23 Apr. T-09 storable engine: Swiftworks Pip HT-0.6 'Suggested · on time with priority', row 'Priority 21 Apr · standard late', the cheaper Orbital Commons (18 Jul, late) below it. Review suggestion opened the part with the Priority box preselected (23 Apr, on time). T-03 kerosene tank with nothing on time: the earliest offer (Orbital Commons, priority 19 May) suggested as 'earliest, still late', the cheapest-latest Brightline (Oct) last. Before: the cheapest late supplier was suggested and selected (1115m shots/p2/0121).",
+      "added": ["chip reason on the suggested offer", "'Priority <date> · standard late' line on offer rows", "Standard/Priority boxes with 'time to test' / 'N d late'"],
+      "removed": ["Flexible box in the resource inspector"],
+      "reason": "The case the player hit is gone: the on-time supplier is suggested and its fast option is preselected. The row wording is short and readable. Accepted only as the ranking and preselection; the reason text on the chip is judged separately below."
+    },
+    {
+      "item": "Suggestion reason chip ('most reliable on time' / 'lightest on time') and footer text",
+      "finding": "R1115m-r01-06",
+      "accept": false,
+      "needed": "A suggestion a player can trust at a glance.",
+      "sawRunning": "Weather T-01, the very first order: chip 'Suggested · most reliable on time' on Taiga KL-2000 (97.5 %), and the order dialog right after says 'More reliable on time: Boreal KL-2000H from Helix with priority, 99.5 %'. Mars T-01: the need inspector says 'lightest on time', the resource inspector one click later says 'most reliable on time' for the same offer, and the dialog lists Boreal KL-2000H as both cheaper (73.6 M) and more reliable (98 %). Weather T-03: chip 'earliest, still late' with the footer under it still saying 'Suggested: on time and within budget, then the lightest fitting part…'.",
+      "added": ["reason words on the Suggested chip"],
+      "removed": [],
+      "reason": "The chip claims something the same screen contradicts, on the first order a new player places. The resource inspector computes the reason against its own resource only, and the 'surer' check ignores offers that are on time with priority. That is a new thing a player has to ask about.",
+      "toBeAcceptable": "Compute the reason against the need's full fitting list (all resources, priority-rescued offers included) everywhere the chip appears, so chip and dialog agree; make the footer sentence follow the reason (or drop it)."
+    },
+    {
+      "item": "Shared budget split on the Procurement header",
+      "finding": "R1115d-r01-06",
+      "accept": false,
+      "needed": "Every player (the reports came from Planner, Science and Comms) must see that the budget is the agency's one shared budget, who just spent from it, and Comms needs to know what the parts will still cost.",
+      "sawRunning": "Procurement header 'SHARED BUDGET 263 M free of 350 M' with 'Parts · you 63.2 M / Science 19 M / Comms 5 M', correct after Science started two researches and Comms a 5 M gala, and correct after a speed-up fee and a switch (93.9 M parts). The Planner chip still reads 'BUDGET 232 M available · ≈ 32 M to buy', Science 'Budget available 287 M', Comms 'BUDGET 263 M of 350 M': unchanged. The 8-second glow could not be seen in one-player mode.",
+      "added": ["'Shared budget' label", "three-line split Parts · you / Science / Comms", "8 s glow on another station's line (not seen)", "'funding ±N M' note"],
+      "removed": ["Committed / Spent / Funding lines"],
+      "reason": "The players who reported the finding would see exactly what they saw before: their station headers are untouched, and Comms still cannot read what the parts will cost (the condition rejected.md set for the next attempt). Only the Procurement player, who did not report this, gets the split. Not a plain no.",
+      "toBeAcceptable": "Show the same 'Shared budget' label and split on all four stations and give Comms a 'parts ≈ X M still to buy' figure (one number shared with the Planner's '≈ N M to buy', not two that disagree: 87 M vs 98.5 M at the start of the weather mission)."
+    },
+    {
+      "item": "Calls tab removed; 'Beyond research' block with Wait for Science vs Tender now; tender/partner offers in the need's list",
+      "finding": "R1115d-r01-11",
+      "accept": true,
+      "needed": "Stop advertising a Call as the route for a part beyond research when waiting for Science is faster and cheaper; show partner offers where the other offers are.",
+      "sawRunning": "Camera need: 'Beyond research' callout with 'Wait for Science: research ends 6 Mar · arrives ≈ 5 Jun · 23 M · 96.5 %' against 'Tender now: offers 4 Feb · arrives ≈ 5 Sep · late · ≈ 62.6 M · 94 %', and a small 'Open a Call for tenders' button. Catalogue cards say 'Science must research it' instead of 'via Call'. Only two tabs. Before: 'Tender only · via Call', 'Until then, open a Call for the need' and an unexplained Calls tab (1115d shots/p2/0019, 0031).",
+      "added": ["two-route block with dates, prices, reliability", "'Partner offer' / 'Tender offer' chip on need rows (not seen)"],
+      "removed": ["Calls tab and view (new-Call form, call cards, Withdraw Call, Call inspector)", "'via Call' / 'Tender only' wording", "Call explanatory texts"],
+      "reason": "A player reading the block sees at once that a Call is late and dearer here; nobody would plan around it. A Call can still be opened from the need. One fewer tab. A partner offer that fits no need is no longer listed anywhere, but it could not be used for a need anyway."
+    },
+    {
+      "item": "Removed unused controls: Compare, tender filter, catalogue sort, Flexible delivery, Release, Department supply and its fields, quantity/needed-by fields, All-contracts table, contract-history and re-order buttons",
+      "finding": "R1115d-r01-12",
+      "accept": true,
+      "needed": "Fewer controls with no occasion, keeping Priority and Cancel as the tools for a late or weak part.",
+      "sawRunning": "Catalogue toolbar is only the category tabs and search; resource inspector has the For line, Standard/Priority boxes and one button; contract inspector has Arrives/Reliability/Price/Signed, Speed up, 'Switch to another offer' and 'Cancel contract'. Weather and Mars both ordered and signed (Mars '2 × Taiga KL-2000') without the removed fields.",
+      "added": [],
+      "removed": ["Compare view and buttons", "Hide tender-only", "sort select", "Flexible delivery", "Release", "Department supply rail, targets and block", "quantity stepper, Needed-by field, order-dialog quantity/destination", "All-contracts tab", "Order again / Order remaining / Source replacement / Find replacement", "Contract history"],
+      "reason": "Checked each: no other station creates or reads department allocations (persist.ts strips projectId), no other station dispatches the removed reducers, the Planner locks the stats of a contracted part so Release was not needed to replace a revised part, an active contract that no longer fits can be switched, a failed or cancelled one leaves the need uncovered and orderable from the need. Late recovery remains (Speed up, switch, Planner moves the launch). Flexible removes a cost lever nobody used in three rounds; acceptable given the finding."
+    },
+    {
+      "item": "Catalogue card figures labelled as ranges",
+      "finding": "Rr001-09",
+      "accept": true,
+      "needed": "Card price and delivery must not read as one offer's terms.",
+      "sawRunning": "Cards read '25.3 M from' and 'Earliest Mar 2030' with a reliability range; 'Earliest' is over all suppliers and priority (Silo KT-120 'Earliest May 2030' = Orbital Commons priority 19 May, seen in its offer list).",
+      "added": ["'Earliest' prefix"],
+      "removed": ["'Delivery <month>'"],
+      "reason": "Exactly the remedy proposed; no extra elements."
+    },
+    {
+      "item": "Draft needs before the Planner orders",
+      "finding": "Procurement empty until the Planner orders (1115d-r01 triage, p2 report #4)",
+      "accept": true,
+      "needed": "Something to study before the Planner presses Order, and a word that the list comes from the Planner.",
+      "sawRunning": "Cold landing: 9 'Draft' rows with Order-by dates and research chips under 'The Planner's design · 9 parts, not ordered yet. Study the offers now; you can sign once they are ordered.' A draft shows its offers and a 'Look at the suggestion' button; Review stays blocked with 'The Planner has not ordered this part yet.' After 'Order 9 parts' the focused draft became T-01 with 'Review suggestion'. Before: empty list (1115d shots/p2/0017).",
+      "added": ["draft rows", "one explanatory paragraph", "'Still to buy ≈ X M · Y M spare' line"],
+      "removed": ["'From Planner' on every row", "'Cheapest fitting cover …' line"],
+      "reason": "The first minutes now show what to buy and why, with no new control. The 'Still to buy' figure differs from the Planner's '≈ to buy' (98.5 vs 87 M), as the old figure did."
+    },
+    {
+      "item": "Speed up for a late or untestable contract",
+      "finding": "R1115d-r01-12 / idle after contracting",
+      "accept": true,
+      "needed": "Priority delivery visible as the tool for a late part (it was used by nobody because it sat in the contract detail).",
+      "sawRunning": "Late T-01 need: primary button 'Speed up · arrives 31 Mar · fee 1.7 M'. Contract inspector: 'Speed up · Priority · arrives 6 May · fee 0.7 M · arrives in time for a Science test'; confirm dialog showed arrival change, fee, budget after; the timeline row moved to '55d early · time to test'.",
+      "added": ["Speed up button on the need and in the contract", "speed-up dialog"],
+      "removed": ["three-option Change delivery list"],
+      "reason": "Same rule and fee as before (the old detail offered 'Priority · Fee 1.7 M'), now where a late part is. The fee is small, but that is the existing balance, not something this package added."
+    },
+    {
+      "item": "Switch a contract on its way to another offer",
+      "finding": "idle after contracting (1115d triage; p2 'only a speculative reliability swap')",
+      "accept": true,
+      "needed": "A real use for spare budget and time once everything is contracted, e.g. buying reliability.",
+      "sawRunning": "Contract 'Switch to another offer' opened the need with a switch list and 'A switch cancels the current contract: 11.8 M of its 25 M come back today'. Switch dialog: Now, 'Lost on cancelling 13.5 M of 25 M', new arrival 12 Jun · priority · 'too late for a Science test', 98.5 %, 41.4 M, budget after 232 M. Confirmed: news 'Contract switched … 97 % → … 98.5 %', header Parts 63.9 → 93.9 M, free 262 → 232 M, need shows the new contract.",
+      "added": ["switch list in the need inspector", "switch dialog", "replaceContract reducer"],
+      "removed": ["separate cancel-then-reorder path as the only way"],
+      "reason": "Works, prices the loss honestly and stays a trade-off (half the old price lost, and the switch I made cost the Science test window)."
+    },
+    {
+      "item": "Contracts view: one timeline with supplier, reliability and test window",
+      "finding": "R1115d-r01-12 (All contracts table) / p2 note t=581",
+      "accept": true,
+      "needed": "Per-part reliability and the remaining decision visible without clicking each row.",
+      "sawRunning": "Rows show 'Swiftworks Orbital · 97.5 % reliable · T-01' and margin with 'time to test' / 'no time to test'; late rows red with 'Speed up' in the detail. One defect: margin '32.4d late' (fractional) on the Pip HT-0.6 row after a Comms delivery slip.",
+      "added": ["supplier/reliability line per row", "test-window line"],
+      "removed": ["All contracts tab and table", "timeline/table sub-tabs"],
+      "reason": "What p2 missed in the table (reliability) is on the row he was already reading. The fractional day is cosmetic."
+    },
+    {
+      "item": "Order dialog with arrival, test window, reliability, price and alternatives",
+      "finding": "R1115d-r01-01 (launch odds set at signing) – supporting",
+      "accept": true,
+      "needed": "The decision at signing readable in the dialog.",
+      "sawRunning": "'Arrives 6 May 2030 · standard · on time, time for a Science test', 'Reliability 97.5 % · Swiftworks Orbital', 'Price 38.2 M', 'More reliable on time: …', 'Shared budget after: 312 M free · ≈ 252 M spare once all parts are bought'. When time ticked over it showed '1 d after the launch' honestly.",
+      "added": ["Arrives/Reliability/Price block", "cheapest/more reliable alternatives", "budget-after line"],
+      "removed": ["quantity and destination fields"],
+      "reason": "Four short lines replacing form fields; the decision is now in front of the player. The contradiction with the chip is charged to the chip item."
+    }
+  ],
+  "mustRemove": [
+    "Suggestion reason chip: repair so it is computed against the need's full fitting list (all resources, priority-rescued offers) in both inspectors and agrees with the order dialog, and make the footer sentence follow it; or take the reason words out and keep the plain 'Suggested' chip",
+    "Shared budget split on the Procurement header (R1115d-r01-06): take it out of this package, or extend it to all four station headers with a 'parts ≈ X M' figure Comms can read and one 'to buy' number shared with the Planner"
+  ],
+  "broken": [
+    "Suggestion chip contradicts the dialog: weather mission, Planner adds GEO route and orders; Procurement T-01 'Review suggestion' → chip 'Suggested · most reliable on time' on Taiga KL-2000 97.5 %, 'Review order' → dialog 'More reliable on time: Boreal KL-2000H … 99.5 %'.",
+    "Same offer gets two reasons: Mars mission, order 16 parts, Procurement T-01: need inspector 'lightest on time', 'Review suggestion' → resource inspector 'most reliable on time'; the dialog then lists Boreal KL-2000H as cheaper (73.6 M) and more reliable (98 %).",
+    "Footer 'Suggested: on time and within budget, then the lightest…' stays under a chip 'earliest, still late' (weather, launch moved to 23 Apr, T-03 kerosene tank).",
+    "For an all-late need the suggested offer is preselected with priority but its row in the need list shows the standard date (T-03: row 'Arrives 12 Jun · late', Priority box 19 May).",
+    "Contracts timeline margin shows a fraction ('32.4d late') after a Comms 'delivery slips' event (weather, Pip HT-0.6).",
+    "Code only, not reproduced: replaceContract cancels the old contract before commitOrder; if commitOrder then rejects, the need is left with the old contract cancelled and no news of the cancellation (logic.ts replaceContract)."
+  ],
+  "notChecked": [
+    "The 8-second glow on another station's budget line (needs two browsers).",
+    "A partner offer from Comms in the need's list and its chip; a Call answered into the need list.",
+    "A delivered contract row on the timeline; Science part tests after a speed-up.",
+    "A full flight and launch result; four players at once; client browsers; 1920x1080.",
+    "onGameReset of Procurement UI state (no restart button in this checkout).",
+    "tsc was not run separately; the game built and ran for both missions."
+  ]
+}

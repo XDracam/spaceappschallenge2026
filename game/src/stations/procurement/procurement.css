@@ -128,6 +128,8 @@
 .st-procurement .pr-callout { padding: 9px 11px; border: 1px solid rgba(255, 200, 87, .4); border-radius: 10px; background: rgba(255, 200, 87, .07); font-size: 12px; margin: 10px 0; }
 .st-procurement .pr-callout.bad { border-color: rgba(255, 111, 125, .45); background: rgba(255, 111, 125, .07); }
 .st-procurement .pr-callout ul { margin: 4px 0; padding-left: 18px; }
+.st-procurement .pr-route .pr-facts { margin: 8px 0; font-size: 12px; grid-template-columns: 96px 1fr; }
+.st-procurement .pr-route .pr-btn { margin-top: 2px; }
 .st-procurement .pr-empty { padding: 18px 12px; color: var(--muted); font-size: 12.5px; }
 .st-procurement .pr-empty.wide { grid-column: 1 / -1; }
 .st-procurement .pr-empty h3 { font: 600 19px var(--title); color: var(--text); margin-bottom: 6px; }
@@ -152,6 +154,9 @@
 .st-procurement .pr-need-crit { font-size: 11.5px; color: #bdcce0; }
 .st-procurement .pr-need .pr-chip { margin: 0; justify-self: start; }
 .st-procurement .pr-need-status { display: grid; gap: 1px; font-size: 11.5px; }
+.st-procurement .pr-need.draft { border: 1px dashed var(--glass-border); opacity: .9; }
+.st-procurement .pr-need.draft[aria-pressed=true] { border-style: solid; border-color: rgba(63, 199, 255, .5); }
+.st-procurement .pr-need-group { font-size: 11.5px; color: var(--muted); padding: 10px 9px 6px; line-height: 1.4; }
 .st-procurement .pr-dev { border-top: 1px solid var(--line); padding: 8px 8px 0; }
 
 /* ------------------------------------------------------------------ catalogue */
@@ -165,7 +170,9 @@
 .st-procurement .pr-cats button { border: 1px solid transparent; border-radius: 999px; background: transparent; color: var(--muted); padding: 5px 11px; font-size: 12px; }
 .st-procurement .pr-cats button:hover { color: var(--text); }
 .st-procurement .pr-cats button[aria-pressed=true] { background: rgba(6, 22, 38, .85); border-color: var(--accent); box-shadow: var(--glow); color: var(--text); }
-.st-procurement .pr-toolbar { display: flex; gap: 8px; align-items: center; padding: 10px 0 12px; }
+.st-procurement .pr-cat-bar { display: flex; gap: 12px; align-items: center; padding: 10px 0 12px; }
+.st-procurement .pr-cat-bar .pr-cats { padding-top: 0; flex: 1; }
+.st-procurement .pr-cat-bar .pr-search { flex: 0 1 260px; }
 .st-procurement .pr-search { display: flex; align-items: center; gap: 8px; flex: 1; background: var(--field); border: 1px solid var(--glass-border); border-radius: 10px; padding: 0 10px; }
 .st-procurement .pr-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(63, 199, 255, .18); }
 .st-procurement .pr-search svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
@@ -174,7 +181,6 @@
   flex: 1; min-height: 0; overflow-y: auto; display: grid; align-content: start; grid-auto-rows: max-content;
   grid-template-columns: repeat(auto-fill, minmax(214px, 1fr)); gap: 10px; padding: 2px 18px 16px; overscroll-behavior: contain;
 }
-.st-procurement .pr-card-wrap { position: relative; min-width: 0; }
 .st-procurement .pr-card {
   width: 100%; height: 100%; display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden;
   background: rgba(14, 22, 38, .7); border: 1px solid var(--glass-border); border-radius: 13px; transition: border-color 150ms, box-shadow 150ms;
@@ -200,12 +206,6 @@
 .st-procurement .pr-card-price { font: 600 19px var(--title); white-space: nowrap; }
 .st-procurement .pr-card-price small { font: 11px var(--body); color: #9eafc8; }
 .st-procurement .pr-card-eta { font-size: 10.5px; color: #9eafc8; text-align: right; line-height: 1.4; }
-.st-procurement .pr-card-compare {
-  position: absolute; z-index: 2; top: 7px; right: 7px; width: 28px; height: 26px; padding: 4px; display: grid; place-items: center;
-  border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(5, 8, 15, .9); color: var(--muted);
-}
-.st-procurement .pr-card-compare svg { width: 17px; height: 17px; }
-.st-procurement .pr-card-compare[aria-pressed=true] { color: var(--accent); border-color: var(--accent); box-shadow: var(--glow); }
 
 /* ------------------------------------------------------------------ inspector */
 .st-procurement .pr-inspector { display: flex; flex-direction: column; overflow: hidden; background-color: var(--glass-strong); }
@@ -245,9 +245,6 @@
 .st-procurement .pr-note { font-size: 11.5px; }
 .st-procurement .pr-buy-row { display: flex; justify-content: space-between; align-items: center; }
 .st-procurement .pr-buy-price { font: 600 22px var(--title); color: var(--accent); }
-.st-procurement .pr-stepper { display: flex; align-items: center; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--field); }
-.st-procurement .pr-stepper button { background: transparent; border: 0; width: 28px; height: 28px; }
-.st-procurement .pr-stepper output { min-width: 22px; text-align: center; font-size: 12.5px; }
 .st-procurement .pr-facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 6px 0; font-size: 12.5px; }
 .st-procurement .pr-facts dt { color: var(--muted); }
 .st-procurement .pr-facts dd { margin: 0; }
@@ -269,19 +266,7 @@
 .st-procurement .pr-table.compact th { position: static; background: none; padding: 6px; }
 .st-procurement .pr-table.compact td { padding: 6px; }
 .st-procurement .pr-table .pr-chip { margin-left: 0; }
-.st-procurement .pr-new-call { display: grid; gap: 8px; max-width: 620px; padding: 12px; border: 1px solid var(--glass-border); border-radius: 14px; background: rgba(140, 190, 255, .04); margin-bottom: 12px; }
-.st-procurement .pr-new-call .pr-btn { justify-self: start; }
-.st-procurement .pr-call-card { padding: 12px 14px; border: 1px solid var(--glass-border); border-radius: 14px; background: rgba(140, 190, 255, .03); margin-bottom: 10px; display: grid; gap: 4px; }
-.st-procurement .pr-call-card.active { border-color: rgba(63, 199, 255, .55); }
-.st-procurement .pr-call-card h3 { font: 600 16px var(--title); }
-.st-procurement .pr-call-facts { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
 .st-procurement .pr-sub { font: 600 16px var(--title); margin: 16px 0 8px; }
-.st-procurement .pr-compare th { width: 28%; vertical-align: top; text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--text); position: static; background: none; }
-.st-procurement .pr-compare th:first-child { width: 16%; }
-.st-procurement .pr-compare th strong { font: 600 16px var(--title); }
-.st-procurement .pr-compare-art { height: 72px; border-radius: 10px; overflow: hidden; position: relative; margin-bottom: 6px;
-  background: radial-gradient(ellipse at 60% 60%, rgba(63, 199, 255, .16), transparent 75%), linear-gradient(135deg, #142238, #0b1423); }
-.st-procurement .pr-compare-art svg { position: absolute; left: 50%; transform: translateX(-50%); bottom: -8px; width: 150px; height: 90px; }
 
 /* ------------------------------------------------------------------ news strip */
 .st-procurement .pr-news { position: relative; display: flex; align-items: center; gap: 12px; padding: 0 16px 0 300px; border-top: 1px solid var(--line); background: rgba(5, 8, 15, .6); font-size: 12px; min-width: 0; }
@@ -321,28 +306,17 @@
 /* Order terms, supply and tender previews */
 .st-procurement .pr-actions { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .st-procurement .pr-field input { width: 100%; min-width: 0; background: rgba(5, 16, 29, .85); border: 1px solid var(--glass-border); border-radius: 4px; color: inherit; padding: 7px 9px; font: inherit; }
-.st-procurement .pr-schedules, .st-procurement .pr-call-windows { display: grid; gap: 5px; }
+.st-procurement .pr-schedules { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .st-procurement .pr-schedule { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; width: 100%; text-align: left; padding: 8px 10px; color: inherit; background: rgba(8, 23, 39, .72); border: 1px solid var(--glass-border); border-radius: 4px; cursor: pointer; font: inherit; }
 .st-procurement .pr-schedule span { font-size: 11px; color: var(--muted); }
 .st-procurement .pr-schedule.selected { border-color: var(--accent, #55c6d8); background: rgba(27, 95, 112, .25); }
 .st-procurement .pr-schedule:disabled { opacity: .55; cursor: not-allowed; }
-.st-procurement .pr-call-windows .pr-schedule span { grid-column: 1 / -1; }
-.st-procurement .pr-call-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.st-procurement .pr-stock-rail { border-top: 1px solid var(--glass-border); padding: 10px 6px; flex: none; }
-.st-procurement .pr-stock-rail h3 { margin: 0 0 7px; font-size: 12px; }
-.st-procurement .pr-stock-row { display: flex; justify-content: space-between; gap: 5px; padding: 3px 0; font-size: 11px; }
-.st-procurement .pr-stock-row span { color: var(--muted); }
 
 .st-procurement .pr-history { margin-block: 10px; }
 .st-procurement .pr-history summary { color: var(--muted); cursor: pointer; font-size: 12px; }
 .st-procurement .pr-history summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* Contract timing: markers compare dates, not work completed. */
-.st-procurement .pr-contract-tabs { display:flex; gap:24px; padding:0 20px; border-bottom:1px solid var(--line); }
-.st-procurement .pr-contract-tabs [role="tab"] { padding:14px 2px 11px; border:0; border-bottom:3px solid transparent; background:transparent; color:var(--muted); font-size:14px; font-weight:600; }
-.st-procurement .pr-contract-tabs [role="tab"]:hover { color:var(--text); }
-.st-procurement .pr-contract-tabs [aria-selected="true"] { border-bottom-color:var(--accent); color:var(--text); }
-.st-procurement .pr-contract-tabs [role="tab"]:focus-visible { outline-offset:-3px; }
 .st-procurement .pr-contract-panel { display:flex; flex-direction:column; flex:1; min-height:0; min-width:0; }
 .st-procurement .pr-contract-head-actions { display:flex; align-items:center; justify-content:flex-end; gap:16px; flex-wrap:wrap; }
 .st-procurement .pr-contract-needs { position:relative; z-index:5; }
@@ -418,3 +392,14 @@
 
 .st-procurement .pr-key-buffer, .st-procurement .pr-key-late { display: inline-block; width: 22px; height: 4px; background: #759eaf; }
 .st-procurement .pr-key-late { background: #e46e72; }
+
+.st-procurement .pr-timeline-row.delivered { opacity: .72; }
+.st-procurement .pr-timeline-row.delivered:hover, .st-procurement .pr-timeline-row.delivered.selected { opacity: 1; }
+.st-procurement .pr-timeline-result small.good { color: var(--good); }
+.st-procurement .pr-timeline-result small.muted { color: var(--muted); }
+.st-procurement .pr-note.center { text-align: center; }
+.st-procurement .pr-schedule .pr-schedule-line { grid-column: 1 / -1; }
+.st-procurement .pr-schedule .pr-schedule-line .good { color: var(--good); }
+.st-procurement .pr-schedule .pr-schedule-line .warn { color: var(--warn); }
+.st-procurement .pr-dialog .pr-note.center { text-align: left; }
+.st-procurement .pr-offer-why.warn { color: var(--warn); }

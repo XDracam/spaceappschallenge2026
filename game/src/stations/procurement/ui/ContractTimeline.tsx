@@ -1,18 +1,20 @@
 import { useState } from 'preact/hooks';
 import { contractTiming } from '../timing';
-import { fmtDate, fmtM, quoteAmendment, taskCode } from '../rules';
+import { contractReliability } from '../../../core/model';
+import { fmtDate, fmtM, fmtPct, quoteAmendment, taskCode } from '../rules';
 import { setUi, useP, useUi } from './uiState';
+import { testable } from './Inspector';
 
 export function marginText(margin: number | undefined): string {
   if (margin === undefined) return 'No need date';
   if (Math.abs(margin) < 1) return margin === 0 ? 'Same time' : margin > 0 ? 'Less than 1 day early' : 'Less than 1 day late';
-  const days = Math.round(Math.abs(margin) * 10) / 10;
+  const days = Math.round(Math.abs(margin));
   return `${days} ${days === 1 ? 'day' : 'days'} ${margin > 0 ? 'early' : 'late'}`;
 }
 function shortMargin(margin: number | undefined): string {
   if (margin === undefined) return 'No date';
   if (margin === 0) return 'Same time';
-  const d = Math.round(Math.abs(margin) * 10) / 10;
+  const d = Math.round(Math.abs(margin));
   return `${d < 1 ? '<1' : d}d ${margin < 0 ? 'late' : 'early'}`;
 }
 
@@ -21,14 +23,15 @@ export function ContractTimeline() {
   const selected = useUi(u => u.contractId);
   const preview = useUi(u => u.amendmentPreview);
   const [comparisonRange, setComparisonRange] = useState<{ contractId: string; start: number; span: number } | null>(null);
-  const active = v.market.contracts.filter(k => k.status === 'active');
+  // Every contract that will fly, on its way or delivered, in signing order (rows do not jump when one arrives).
+  const live = v.market.contracts.filter(k => k.status === 'active' || k.status === 'delivered');
   const state = { market: v.market, research: { projects: v.research.projects ?? [] } };
-  const rows = active.flatMap(k => contractTiming(state, k).needs.map(need => ({ k, need })));
-  const dates = rows.flatMap(({ k, need }) => [k.expectedAt, ...(need.neededAt === undefined ? [] : [need.neededAt])]);
+  const rows = live.flatMap(k => contractTiming(state, k).needs.map(need => ({ k, need })));
+  const dates = rows.flatMap(({ k, need }) => [k.deliveredAt ?? k.expectedAt, ...(need.neededAt === undefined ? [] : [need.neededAt])]);
   const start = Math.floor(Math.min(v.clock.day, ...dates) / 7) * 7;
   const end = Math.max(v.clock.day + 30, ...dates);
   const baseRange = { start, span: Math.max(35, Math.ceil((end - start + 14) / 7) * 7) };
-  const comparing = preview?.contractId === selected && active.some(k => k.id === selected);
+  const comparing = preview?.contractId === selected && live.some(k => k.id === selected && k.status === 'active');
   let range = baseRange;
   if (comparing && preview) {
     range = comparisonRange?.contractId === selected ? comparisonRange : baseRange;
@@ -53,7 +56,8 @@ export function ContractTimeline() {
     {rows.length ? <div class="pr-timeline-scroll">
       <div class="pr-timeline-axis"><span>Incoming</span><div class="pr-axis-scale">{ticks.map((day, i) => <span key={i} style={{ left: `${i * 25}%`, transform: i === 0 ? 'none' : i === 4 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{fmtDate(day).replace(/ \d{4}$/, '')}</span>)}{within(v.clock.day) ? <span class="pr-axis-reference" style={{ left: `${pos(v.clock.day)}%` }}>Today</span> : null}{within(v.planner.plan.launchDay) ? <span class="pr-axis-reference launch" style={{ left: `${pos(v.planner.plan.launchDay)}%` }}>Launch</span> : null}</div><span>Margin</span></div>
       {rows.map(({ k, need }) => {
-        const arrival = k.expectedAt;
+        const arrival = k.deliveredAt ?? k.expectedAt;
+        const delivered = k.status === 'delivered';
         const isSelected = selected === k.id;
         const q = isSelected && preview?.contractId === k.id ? quoteAmendment(v, k.id, preview.delivery) : undefined;
         const proposal = q && !q.unavailable ? q.expectedAt : undefined;
@@ -61,9 +65,9 @@ export function ContractTimeline() {
         const task = v.market.tasks.find(t => t.id === allocation?.taskId);
         const recipient = allocation?.department ? allocation.department[0].toUpperCase() + allocation.department.slice(1) : task ? taskCode(task) : allocation?.taskId ? 'Task' : 'Shared';
         const namedNeed = need.source === 'task' || need.source === 'research-bonus';
-        const context = [k.id, ...(namedNeed ? [recipient] : []), ...(need.source === 'research-bonus' ? ['Research bonus'] : need.source === 'requested' ? ['Order request'] : [])].join(' · ');
+        const context = [k.offerSnapshot.supplierName, `${fmtPct(contractReliability(k))} reliable${k.tested ? ', tested' : ''}`, ...(namedNeed ? [recipient] : [])].join(' · ');
         const gapStyle = (a: number, b: number) => ({ left: `${Math.max(0, Math.min(100, pos(Math.min(a, b))))}%`, width: `${Math.max(0, Math.min(100, pos(Math.max(a, b))) - Math.max(0, pos(Math.min(a, b))))}%` });
-        return <button type="button" key={`${k.id}-${need.id}`} class={`pr-timeline-row${isSelected ? ' selected' : ''}`} aria-pressed={isSelected} aria-label={`${k.id}, ${k.offerSnapshot.resource.name}, ${need.quantity}, ${recipient}${namedNeed ? `, ${need.label}` : ''}${need.source === 'research-bonus' ? ', research bonus' : ''}, arrival ${fmtDate(arrival)}, ${need.neededAt === undefined ? 'no need date' : `${need.source === 'requested' ? 'order requested' : need.source === 'research-bonus' ? 'bonus by' : 'needed'} ${fmtDate(need.neededAt)}, ${marginText(need.margin)}`}${proposal !== undefined ? `, proposed ${fmtDate(proposal)}, ${marginText(need.neededAt === undefined ? undefined : need.neededAt - proposal)}, fee ${fmtM(q!.feeM)}` : ''}`} onClick={() => setUi({ contractId: k.id, amendmentPreview: preview?.contractId === k.id ? preview : null })}>
+        return <button type="button" key={`${k.id}-${need.id}`} class={`pr-timeline-row${isSelected ? ' selected' : ''}${delivered ? ' delivered' : ''}`} aria-pressed={isSelected} aria-label={`${k.id}, ${k.offerSnapshot.resource.name}, ${need.quantity}, ${recipient}${namedNeed ? `, ${need.label}` : ''}${need.source === 'research-bonus' ? ', research bonus' : ''}, arrival ${fmtDate(arrival)}, ${need.neededAt === undefined ? 'no need date' : `${need.source === 'requested' ? 'order requested' : need.source === 'research-bonus' ? 'bonus by' : 'needed'} ${fmtDate(need.neededAt)}, ${marginText(need.margin)}`}${proposal !== undefined ? `, proposed ${fmtDate(proposal)}, ${marginText(need.neededAt === undefined ? undefined : need.neededAt - proposal)}, fee ${fmtM(q!.feeM)}` : ''}`} onClick={() => setUi({ contractId: k.id, amendmentPreview: preview?.contractId === k.id ? preview : null })}>
           <span class="pr-timeline-label"><strong>{k.offerSnapshot.resource.name} ×{need.quantity}</strong><span>{namedNeed ? need.label : recipient}</span><small>{context}</small></span>
           <span class="pr-timeline-track" aria-hidden="true">
             {within(v.clock.day) ? <i class="pr-time-reference today" style={{ left: `${pos(v.clock.day)}%` }} /> : null}
@@ -73,12 +77,12 @@ export function ContractTimeline() {
             {within(arrival) ? <i class="pr-time-arrival" style={{ left: `${pos(arrival)}%` }} /> : <b class="pr-time-edge" style={{ left: arrival < range.start ? '0%' : '100%' }}>{arrival < range.start ? '‹' : '›'}</b>}
             {need.neededAt !== undefined ? within(need.neededAt) ? <i class="pr-time-need" style={{ left: `${pos(need.neededAt)}%` }} /> : <b class="pr-time-edge need" style={{ left: need.neededAt < range.start ? '0%' : '100%' }}>{need.neededAt < range.start ? '‹' : '›'}</b> : null}
             {proposal !== undefined ? within(proposal) ? <i class="pr-time-proposal" style={{ left: `${pos(proposal)}%` }} /> : <b class="pr-time-edge proposal" style={{ left: proposal < range.start ? '0%' : '100%' }}>{proposal < range.start ? '‹' : '›'}</b> : null}
-            {within(arrival) ? <small class="pr-marker-date arrival" style={{ left: `${pos(arrival)}%` }}>Arrives {fmtDate(arrival).replace(/ \d{4}$/, '')}</small> : null}
+            {within(arrival) ? <small class="pr-marker-date arrival" style={{ left: `${pos(arrival)}%` }}>{delivered ? 'Delivered' : 'Arrives'} {fmtDate(arrival).replace(/ \d{4}$/, '')}</small> : null}
             {need.neededAt !== undefined && within(need.neededAt) ? <small class="pr-marker-date need" style={{ left: `${pos(need.neededAt)}%` }}>{need.source === 'research-bonus' ? 'Bonus by' : need.source === 'requested' ? 'Requested' : 'Needed'} {fmtDate(need.neededAt).replace(/ \d{4}$/, '')}</small> : null}
           </span>
-          <span class="pr-timeline-result"><strong class={need.margin !== undefined && need.margin < 0 ? 'late' : ''}>{shortMargin(need.margin)}</strong>{proposal !== undefined ? <small>→ {shortMargin(need.neededAt === undefined ? undefined : need.neededAt - proposal)} · {fmtM(q!.feeM)}</small> : null}</span>
+          <span class="pr-timeline-result"><strong class={need.margin !== undefined && need.margin < 0 ? 'late' : ''}>{delivered ? 'Delivered' : shortMargin(need.margin)}</strong>{proposal !== undefined ? <small>→ {shortMargin(need.neededAt === undefined ? undefined : need.neededAt - proposal)} · {fmtM(q!.feeM)}</small> : delivered ? <small class="muted">{shortMargin(need.margin)}{k.tested ? '' : ' · Science can test'}</small> : <small class={testable(v, arrival) ? 'good' : 'muted'}>{testable(v, arrival) ? 'time to test' : 'no time to test'}</small>}</span>
         </button>;
       })}
-    </div> : <div class="pr-empty"><h3>No incoming contracts</h3><p>View delivered and cancelled contracts in All contracts.</p></div>}
+    </div> : <div class="pr-empty"><h3>No contracts yet</h3><p>Sign an offer for a mission need and it appears here with its arrival against the launch.</p></div>}
   </div>;
 }

@@ -13,12 +13,12 @@
 //    Offers built to the criterion's minimums; beyond research: 1.5–3× cost, less reliable.
 import { defineActions, onTick, type ActionCtx } from '../../core/actions';
 import { pushNews, setFlag } from '../../core/coreActions';
-import type { Call, Contract, Criterion, StationId, Task, OrderDraft, DeliveryOptionId, Destination } from '../../core/model';
+import type { Call, Contract, Criterion, StationId, Task, OrderDraft, DeliveryOptionId } from '../../core/model';
 import type { GameState } from '../../core/state';
 import type { Part } from '../planner/model/types';
 import { beyondResearch } from '../planner/data/parts';
 import { CALL_DURATION_DAYS, CALL_OFFER_VALID_DAYS } from './data/calls';
-import { criterionCoverage, findOffer, fmtDate, fmtM, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, previewCall, freeContractQuantity, sameHardware, fitFailures, cancellationToken, deliveryOptions } from './rules';
+import { criterionCoverage, findOffer, fmtDate, fmtM, fmtPct, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, quoteReplacement, afterCancel, type OrderQuote, previewCall, sameHardware, fitFailures, cancellationToken, deliveryOptions } from './rules';
 import { contractTiming } from './timing';
 
 const money = (v: number) => Math.round(v * 1000) / 1000;
@@ -110,11 +110,44 @@ function partTask(s: GameState, ctx: ActionCtx, part: Part, quantity: number, ow
 function reject(s: GameState, ctx: ActionCtx, reason: string): void {
   news(s, ctx, `Action not completed: ${reason}. Review the refreshed terms.`, ['procurement']);
 }
-function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: string): void {
-  const q = quoteOrder(s, draft);
-  if (s.meta.phase !== 'planning' || !q.offer || q.unavailable || q.failures.length || q.token !== token) {
-    reject(s, ctx, q.unavailable || q.failures[0] || 'The quote changed'); return;
+/** Cancel an active contract: book the refund, release its allocations. No news (the caller says what happened). */
+function cancel(s: GameState, ctx: ActionCtx, k: Contract): { refund: number; affected: StationId[]; projects: string[] } {
+  const refund = refundM(k, Math.floor(ctx.day));
+  const price = k.offerSnapshot.priceM;
+  s.budget.committedM = money(s.budget.committedM - price);
+  s.budget.spentM = money(s.budget.spentM + price - refund);
+  k.status = 'cancelled';
+  k.refundM = refund;
+  k.revision++;
+  const affected: StationId[] = ['procurement'];
+  const projects: string[] = [];
+  for (const a of s.market.allocations) {
+    if (a.contractId === k.id && a.status !== 'released') {
+      const station = a.department ?? (a.taskId ? 'planner' : undefined);
+      if (station && !affected.includes(station)) affected.push(station);
+      if (a.projectId) projects.push(s.research.projects.find(p => p.id === a.projectId)?.title ?? a.projectId);
+      a.status = 'released'; a.revision++;
+    }
   }
+  setFlag(s, 'contract.cancelled', true);
+  return { refund, affected, projects };
+}
+
+/** Can this quote be signed as it stands? '' = yes, else the reason. */
+function orderBlock(s: GameState, q: OrderQuote, token: string): string {
+  if (s.meta.phase !== 'planning' || !q.offer || q.unavailable || q.failures.length || q.token !== token) return q.unavailable || q.failures[0] || 'The quote changed';
+  return '';
+}
+
+/**
+ * Sign an order. `quiet` leaves the news line to the caller (a switch says both halves in one line). `checked` is a
+ * quote the caller has already validated against exactly this state (the switch checks it before cancelling).
+ */
+function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: string, quiet = false, checked?: OrderQuote): Contract | undefined {
+  const q = checked ?? quoteOrder(s, draft);
+  const block = checked ? '' : orderBlock(s, q, token);
+  if (block) { reject(s, ctx, block); return undefined; }
+  if (!q.offer) return undefined;
   const offer = q.offer;
   const id = ctx.newId('contract');
   s.market.contracts.push({ id, revision: 1, offerSnapshot: {...structuredClone(offer), deliveryOptions:structuredClone(deliveryOptions(offer)), quantity:q.quantity, priceM:q.totalM, status:'accepted'}, signedAt:ctx.day, expectedAt:q.expectedAt, baselineExpectedAt:q.expectedAt, ...(draft.destination.kind !== 'task' && draft.neededAt !== undefined ? {requestedNeededAt:draft.neededAt} : {}), amendmentCutoff:ctx.day + Math.max(1, (q.expectedAt - ctx.day) * 0.75), delivery:draft.delivery, initialDelivery:draft.delivery, amendments:[], status:'active' });
@@ -132,8 +165,9 @@ function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: str
   const affects: StationId[] = ['procurement'];
   if (draft.destination.kind === 'department') affects.push(draft.destination.department);
   if (draft.destination.kind === 'task') affects.push('planner');
-  news(s, ctx, `Contract signed: ${q.quantity}× ${offer.resource.name} from ${offer.supplierName}, ${fmtM(q.totalM)}, arriving ${fmtDate(q.expectedAt)}.`, affects);
+  if (!quiet) news(s, ctx, `Contract signed: ${q.quantity}× ${offer.resource.name} from ${offer.supplierName}, ${fmtM(q.totalM)}, arriving ${fmtDate(q.expectedAt)}.`, affects);
   refreshLate(s, ctx);
+  return s.market.contracts.find(k => k.id === id);
 }
 
 export const procurementActions = defineActions('procurement', {
@@ -164,20 +198,6 @@ export const procurementActions = defineActions('procurement', {
     news(s,ctx,`Delivery amended: ${k.offerSnapshot.resource.name}, ${fmtDate(from)} → ${fmtDate(q.expectedAt)}, fee ${fmtM(q.feeM)}.`,affects);
     refreshLate(s,ctx);
   },
-  openRequestCall(s, ctx, criterion: Criterion, quantity: number, destination: Destination, neededAt: number, window: 7 | 14 | 30, taskId?: string, criterionId?: string) {
-    if (s.meta.phase !== 'planning' || !Number.isInteger(quantity) || quantity < 1 || ![7,14,30].includes(window)) { reject(s,ctx,'Invalid Call'); return; }
-    if (taskId && !findCriterion(s,taskId,criterionId).crit) { reject(s,ctx,'Task criterion changed'); return; }
-    const task = s.market.tasks.find(t => t.id === taskId);
-    const call: Call = {id:ctx.newId('call'), revision:1, taskId:taskId ?? '', criterionId:criterionId ?? '', openedAt:ctx.day, closesAt:ctx.day+window, status:'open', offerIds:[], requirement:{...structuredClone(criterion),quantity}, destination:structuredClone(destination), neededAt, windowDays:window, taskRevision:task?.revision};
-    s.market.calls.push(call); news(s,ctx,`Call opened for ${criterion.label}: responses by ${fmtDate(call.closesAt)}.`,['procurement']);
-  },
-  allocateDepartment(s, ctx, contractId: string, department: StationId, quantity: number) {
-    const k = s.market.contracts.find(x => x.id === contractId);
-    if (!k || !Number.isInteger(quantity) || quantity < 1 || freeContractQuantity(s,contractId) < quantity) { reject(s,ctx,'Supply is no longer free'); return; }
-    s.market.allocations.push({id:ctx.newId('alloc'),revision:1,contractId,taskId:'',criterionId:'',department,quantity,status:k.status === 'delivered' ? 'available' : 'reserved'});
-    refreshLate(s, ctx);
-  },
-
   /** Invite tenders for a Task criterion; Offers arrive when the Call closes (~1 month). */
   openCall(s, ctx, taskId: string, criterionId: string) {
     if (s.meta.phase !== 'planning') return;
@@ -192,38 +212,31 @@ export const procurementActions = defineActions('procurement', {
     news(s, ctx, `Call opened for ${taskCode(task)} ${crit.label}: supplier responses by ${fmtDate(call.closesAt)}.`, ['procurement', 'planner']);
   },
 
-  /** Withdraw an open Call (no Offers will arrive). */
-  closeCall(s, _ctx, callId: string) {
-    const call = s.market.calls.find((k) => k.id === callId);
-    if (!call || call.status !== 'open') return;
-    call.status = 'withdrawn';
-    call.revision++;
-  },
-
   /** Cancel an active Contract: refund by the time-remaining rule, release its allocations. */
   cancelContract(s, ctx, contractId: string, token: string) {
     const k = s.market.contracts.find((x) => x.id === contractId);
     if (!k || k.status !== 'active' || token !== cancellationToken(s,contractId)) { reject(s,ctx,'Cancellation terms changed'); return; }
-    const refund = refundM(k, ctx.day);
-    const price = k.offerSnapshot.priceM;
-    s.budget.committedM = money(s.budget.committedM - price);
-    s.budget.spentM = money(s.budget.spentM + price - refund);
-    k.status = 'cancelled';
-    k.refundM = refund;
-    k.revision++;
-    const affected: StationId[] = ['procurement'];
-    const projects: string[] = [];
-    for (const a of s.market.allocations) {
-      if (a.contractId === k.id && a.status !== 'released') {
-        const station = a.department ?? (a.taskId ? 'planner' : undefined);
-        if (station && !affected.includes(station)) affected.push(station);
-        if (a.projectId) projects.push(s.research.projects.find(p => p.id === a.projectId)?.title ?? a.projectId);
-        a.status = 'released'; a.revision++;
-      }
-    }
-    setFlag(s, 'contract.cancelled', true);
-    news(s, ctx, `Contract cancelled: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}). Refund ${fmtM(refund)}, fee ${fmtM(price - refund)}.${projects.length ? ` Equipment missing for ${projects.join(', ')}.` : ''}`, affected);
+    const { refund, affected, projects } = cancel(s, ctx, k);
+    news(s, ctx, `Contract cancelled: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}). Refund ${fmtM(refund)}, fee ${fmtM(k.offerSnapshot.priceM - refund)}.${projects.length ? ` Equipment missing for ${projects.join(', ')}.` : ''}`, affected);
     refreshLate(s, ctx);
+  },
+
+  /**
+   * Switch a need to another offer in one step: cancel the active contract that covers it (refund by the usual
+   * rule) and sign the new order for the same need. Both are checked before anything changes.
+   */
+  replaceContract(s, ctx, contractId: string, draft: OrderDraft, token: string) {
+    const q = quoteReplacement(s, contractId, draft);
+    if (s.meta.phase !== 'planning' || !q.old || q.unavailable || q.token !== token) { reject(s, ctx, q.unavailable || 'The switch terms changed'); return; }
+    const old = q.old;
+    // All or nothing: the new order is checked on the state as it will be after the cancellation, before anything changes.
+    const after = quoteOrder(afterCancel(s, old, Math.floor(ctx.day)), draft);
+    const block = orderBlock(s, after, after.token);
+    if (block) { reject(s, ctx, block); return; }
+    cancel(s, ctx, old);
+    const signed = commitOrder(s, ctx, draft, after.token, true, after);
+    if (!signed) return;
+    news(s, ctx, `Contract switched: ${old.offerSnapshot.resource.name} (${old.offerSnapshot.supplierName}, ${fmtPct(old.offerSnapshot.reliability)}) → ${signed.offerSnapshot.resource.name} (${signed.offerSnapshot.supplierName}, ${fmtPct(signed.offerSnapshot.reliability)}), arriving ${fmtDate(signed.expectedAt)}. ${fmtM(signed.offerSnapshot.priceM)}, cancellation fee ${fmtM(q.feeM)}.`, ['procurement', 'planner']);
   },
 
   /** Reserve free contracted quantity for a Task criterion. */
@@ -243,15 +256,6 @@ export const procurementActions = defineActions('procurement', {
       id: ctx.newId('alloc'), revision: 1, contractId, taskId, criterionId: crit.id, quantity: qty,
       status: k.status === 'delivered' ? 'available' : 'reserved',
     });
-    refreshLate(s, ctx);
-  },
-
-  /** Release an allocation (the contracted supply stays in inventory). */
-  release(s, ctx, allocationId: string) {
-    const a = s.market.allocations.find((x) => x.id === allocationId);
-    if (!a || a.status === 'released' || a.projectId) return;
-    a.status = 'released';
-    a.revision++;
     refreshLate(s, ctx);
   },
 

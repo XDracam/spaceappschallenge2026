@@ -1,0 +1,70 @@
+{
+  "package": "D1 Procurement cleanup",
+  "status": "done",
+  "what": "Procurement has two views instead of four (Needs & catalogue, Contracts) and fewer controls. The suggestion now judges 'late' on every delivery option. When standard delivery is late but priority is on time, it suggests that offer with priority preselected. When nothing is on time, it suggests the earliest arrival instead of the cheapest and slowest one. The suggested offer carries a plain 'Suggested' chip. Its footer says what it is: 'Suggested: on time[ only with priority delivery], within budget, then the lightest fitting part from its most reliable supplier', or 'No offer arrives on time: suggested is the earliest arrival'. Every offer row shows the date and price of the option it would be ordered with, which is the option preselected when it is picked. The decision at signing (price, arrival, Science-test window, reliability, budget left) sits in the order dialog and the inspector footer: 'Cheapest on time: …', 'More reliable on time: …', and 'Shared budget after: X M free · ≈ Y M spare once all parts are bought'. The header keeps its single budget figure (Available budget with Committed / Spent / Funding). The per-station split is not shown anywhere: `spendByStation` and `stillToBuy` are exported from rules.ts for a later cross-station step. Calls for Offers is gone as a tab. A need that is beyond research shows its two routes with dates, prices and reliability ('Wait for Science …' vs 'Tender now …'), and a Call is opened from there. Partner and tender offers appear in the need's own offer list, with a chip on the need row. Before the Planner orders, the Planner's draft parts are listed as read-only 'Draft' needs with Order-by dates, offers and the suggested price. After everything is contracted, every timeline row says 'time to test' or 'no time to test', with margins in whole days. A late or untestable contract offers one 'Speed up · priority' action. A contract on its way can be switched to another offer in one all-or-nothing step: the new order is checked on the post-cancellation state before anything is cancelled. Procurement's UI state resets on a new attempt.",
+  "added": [
+    "Needs list: read-only 'Draft' rows for the Planner's unordered parts, with Order-by date and research chip, under 'The Planner's design · N parts, not ordered yet. Study the offers now; you can sign once they are ordered.'",
+    "Needs list: chip 'Partner offer · N M' / 'Tender offer · N M' on a need with such an offer",
+    "Needs summary line: 'Still to buy ≈ X M · Y M spare' (or 'short'), drafts included (replaces 'Cheapest fitting cover ≈ … · … available')",
+    "Need inspector: 'Beyond research' block with two routes, 'Wait for Science' and 'Tender now', each with dates, price and reliability, plus the 'Open a Call for tenders' button",
+    "Need inspector, late need: primary button 'Speed up · arrives <date> · fee <M>' (priority amendment), or a line saying priority cannot make it",
+    "Need inspector, covered need still on its way: 'Switch to another offer' list with the refund that comes back",
+    "Offer rows: plain 'Suggested' chip; date and price of the option the offer would be ordered with ('Priority <date> · standard late' when only priority is on time, 'Priority <date> · late' when priority is preselected but still late); 'N mo delivery after research' on research-locked offers; 'Tender' / 'Partner' chips (were 'Call' / 'Comms')",
+    "Resource inspector: Standard / Priority boxes each with price, arrival and 'time to test' / 'N d late'; 'Review switch' when the need is covered by a contract on its way",
+    "Order dialog: Arrives (on time / after the launch, time for a Science test or not), Reliability, Price, 'Cheapest on time: …' and 'More reliable on time: …', shared budget after",
+    "Switch dialog (new): current contract, 'Lost on cancelling', the new terms, shared budget after; reducer procurement/replaceContract (cancel + sign atomically)",
+    "Contracts timeline: delivered contracts stay as rows (signing order, rows do not jump); each row shows supplier and reliability ('tested') and 'time to test' / 'no time to test' / 'Science can test'",
+    "Contract inspector: one 'Speed up' option (priority) when it makes the part on time or testable; 'Switch to another offer' button that opens the need",
+    "Need inspector footer for the suggestion: 'Suggested: on time[ only with priority delivery], within budget / over the free budget, then the lightest fitting part from its most reliable supplier' or, when nothing is on time, 'No offer arrives on time: suggested is the earliest arrival' (replaces 'suggestions rank fit, delivery, budget, lightest part, then reliability')"
+  ],
+  "removed": [
+    "Calls tab and the whole Calls for Offers view (new-Call form with destination, quantity, needed-by day, 7/14/30-day window, call cards, Withdraw Call, Call inspector)",
+    "Compare view, per-card compare buttons, 'Add to compare', toolbar 'Compare' button",
+    "'Hide tender-only' filter",
+    "Catalogue sort select (Catalogue order / Lowest price / Soonest delivery / Most reliable)",
+    "Flexible delivery (orders and amendments); the three-option 'Change delivery' list in the contract inspector",
+    "Release button on allocations",
+    "Department supply: rail in the needs column, 'Shared supply' and 'Department · …' targets in the For select, 'Assign shared supply' block, department destination in the order dialog",
+    "Quantity stepper and 'Needed by (day)' field in the resource inspector; quantity and destination fields in the order dialog",
+    "'All contracts' tab and its table (reliability moved onto the timeline rows)",
+    "'Order again', 'Order remaining Offer', 'Source replacement · open Call', 'Find replacement' in the contract inspector",
+    "'Contract history' disclosure",
+    "Inspector texts 'Until then, open a Call for the need: tender Offers cost 1.5–3×…', 'Or buy it now through a Call.', 'A Call invites tenders…'",
+    "Card text 'via Call' / 'Tender only' (now 'after research' / 'Beyond research' / 'Science must research it'); card 'Delivery <month>' (now 'Earliest <month>', over all suppliers and priority)",
+    "'From Planner' on every need row (all needs come from the Planner)",
+    "'Refresh quote' on cancellation: the cancel token no longer goes stale every game day"
+  ],
+  "findings": [
+    "R1115m-r01-06",
+    "R1115d-r01-11",
+    "R1115d-r01-12",
+    "R1115-r01-16",
+    "R1115d-r01-01",
+    "Rr001-09",
+    "R1115d-r01-08"
+  ],
+  "files": [
+    "game/src/stations/procurement/Station.tsx",
+    "game/src/stations/procurement/logic.ts",
+    "game/src/stations/procurement/rules.ts",
+    "game/src/stations/procurement/procurement.css",
+    "game/src/stations/procurement/ui/uiState.ts",
+    "game/src/stations/procurement/ui/Header.tsx",
+    "game/src/stations/procurement/ui/Needs.tsx",
+    "game/src/stations/procurement/ui/Catalogue.tsx",
+    "game/src/stations/procurement/ui/Inspector.tsx",
+    "game/src/stations/procurement/ui/Dialog.tsx",
+    "game/src/stations/procurement/ui/ContractsView.tsx",
+    "game/src/stations/procurement/ui/ContractTimeline.tsx",
+    "game/src/stations/procurement/ui/CallsView.tsx (deleted)",
+    "game/src/stations/procurement/ui/CompareView.tsx (deleted)"
+  ],
+  "verified": "Repair round (after the judge): npx tsc --noEmit in game/ passes. Weather session on port 4760 (round d1-repair), launch moved to 19 Mar so every tank offer is late. T-03's suggested row read 'Priority 15 Apr · late · 2.1 M' with a plain 'Suggested' chip and the footer 'No offer arrives on time: suggested is the earliest arrival.' After Review suggestion, the Priority box was preselected with the same date and price (15 Apr, 2.1 M, 27 d late). The header showed the single 'Available budget 350 M' with Committed / Spent / Funding. Earlier rounds (before the repair, unchanged since): weather and Mars ordering through the suggestion, draft needs before the order, priority rescue preselected, Speed up from the need and from the contract, the switch dialog, the Beyond-research block, a 2× engine cluster on Mars.",
+  "notVerified": "In the repair round: the all-or-nothing switch was only checked in code. It needs a case where the new order is rejected after cancelling, which I could not produce by clicking, and no switch was confirmed in any session. Whole-day margins after a Comms delivery slip: the rounding is in the code, but no slip happened in the repair session. onGameReset: this checkout has no restart button (package A). Not seen at all: a partner (Comms) offer in a need's list, a Call's answers arriving, a delivered contract row, four players, 1920x1080, client browsers.",
+  "risk": "The switch is a new lever: it trades the cancellation loss (30-70 % at signing, rising to 100 %) for reliability or speed. It is priced by the existing refund rule and only works on contracts still on their way, but it gives spare budget a use. With 200+ M unspent it may make reliability cheap to buy; balance is unchecked. Priority delivery, also as a speed-up, is cheap (0.1-0.7 M fees seen), so 'time to test' is easy to reach for parts with a priority option. That makes Science's part tests more available than edf688e assumed. Flexible delivery is hidden, not deleted (data and reducers still accept it). The mass-first ranking from edf688e is kept: on Mars the order dialog showed a heavier part that was both cheaper and more reliable than the suggestion, and the dialog names it. 'Still to buy' (Procurement, suggested offers) and the Planner's '≈ N M to buy' (planner estimate) differ: on Mars 243 M against 195 M. Removed reducers: openRequestCall, allocateDepartment, release, closeCall. An old save with department allocations still loads and they still count, but they can no longer be created or released. The cancel token no longer includes the refund: the refund shown is live and the reducer books the refund of the floored game day. A player who confirms on a day boundary gets about 0.1 M less than displayed. usePView now floors the calendar day (fewer re-renders); arrivals are whole days as before.",
+  "coreRequests": [],
+  "foreignRequests": [
+    "Cross-station budget step (A/B for the Planner, D2 for Comms, Science unowned): put one shared figure on all four stations. Procurement exports two pure functions from stations/procurement/rules.ts, both unused by the Procurement header for now. `spendByStation(state, scienceInfo)` splits spending into parts / science / comms from each station's own records. `stillToBuy(view)` gives the suggested price of every need not yet contracted, drafts included. The Planner's TopBar chip (`toBuy = ev.uncontractedCostM`) currently disagrees with Procurement's 'Still to buy' (Mars: 195 M against 243 M)."
+  ],
+  "next": ""
+}
