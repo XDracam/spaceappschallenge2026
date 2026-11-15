@@ -74,6 +74,7 @@
 | [Integration questions](notes/2026-11-14-integration-questions.md) | User answers on connection, code layout, hosting, fewer players and terminology (D-015) |
 | [Science module note](notes/2026-11-14-science-module.md) | Verbatim science station input |
 | [Agent playtest, round r001](playtests/2026-11-14-agent-playtest-r001.md) | Four AI players with no knowledge of the game complete the weather-satellite mission; 16 findings, limits of the method ([harness](../playtest/README.md)) |
+| [Agent playtest loop, run 1115d](playtests/2026-11-15-agent-playtest-loop.md) | Unattended loop: rounds 1115m-r01 and 1115d-r01, both 0 of 2 goals; four game commits by the loop, none an accepted decision; what to keep or drop is in [the morning list](../playtest/morning.md) |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |
 | [Setup record](setup.md) | What was actually established in this checkout |
 | [Mission-planner integration review](reviews/2026-11-14-mission-planner-integration.md) | Incoming concept tensions and newly resolved direction |
