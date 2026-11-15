@@ -65,7 +65,7 @@ export function Briefing() {
         <ol class="briefing-steps">
           <li>Plan the route on the map.</li>
           <li>Fix problems until the Issues card is clear.</li>
-          <li>Order every part before launch (Rocket → Order all parts).</li>
+          <li>Order every part before launch (Rocket → Order parts).</li>
           <li>At the launch date the mission flies once — watch what happens.</li>
         </ol>
         <p class="briefing-clock">

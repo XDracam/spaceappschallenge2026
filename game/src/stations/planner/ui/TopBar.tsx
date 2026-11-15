@@ -6,6 +6,7 @@ import {
 } from './common';
 import { Slider } from './Slider';
 import { openBriefing } from './Briefing';
+import { useAdvanced } from './advanced';
 
 // The planner station has no Procurement panel (D-006: procurement is another station's job).
 const NAV: { id: 'rocket' | 'versions'; label: string }[] = [
@@ -36,10 +37,12 @@ export function TopBar() {
 function NavPills() {
   const tab = useUi((u) => u.sideTab);
   const open = useLocalUi((s) => s.panelOpen);
+  // Versions is an advanced tool (Rocket panel → Advanced switch).
+  const advanced = useAdvanced();
   return (
     <nav class="nav-pills">
-      {NAV.map((n) => {
-        const active = open && (tab === 'versions' ? 'versions' : 'rocket') === n.id;
+      {NAV.filter((n) => advanced || n.id !== 'versions').map((n) => {
+        const active = open && (tab === 'versions' && advanced ? 'versions' : 'rocket') === n.id;
         return (
           <button key={n.id} class={`nav-pill${active ? ' active' : ''}`}
             title={active ? `${n.label} is open (× on the panel closes it)` : `Open ${n.label}`} onClick={() => openTab(n.id)}>

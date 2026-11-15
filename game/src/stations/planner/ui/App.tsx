@@ -13,6 +13,7 @@ import { backToEdit } from './Heatmap';
 import { PlaythroughOverlay } from './Playthrough';
 import { Briefing } from './Briefing';
 import { NextStep } from './NextStep';
+import { useAdvanced } from './advanced';
 import {
   CARDS_H, CloseIcon, EDGE, HEADER_H, PANEL_W, PLAYBACK_W, closePopup, localUi, setMapContainer, useLocalUi,
 } from './common';
@@ -115,7 +116,9 @@ function SidePanel() {
   const phase = usePlanner((g) => g.phase);
   const locked = phase !== 'planning';
   // No Procurement panel on the planner station (D-006); 'tasks' and 'dev' fall back to Rocket.
-  const shown = tab === 'versions' ? 'versions' : 'rocket';
+  // Versions only while the Advanced switch is on.
+  const advanced = useAdvanced();
+  const shown = tab === 'versions' && advanced ? 'versions' : 'rocket';
   return (
     <aside class={`side glass${open ? '' : ' closed'}`} aria-hidden={!open}>
       <div class="side-head">

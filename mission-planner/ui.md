@@ -25,7 +25,8 @@ Cross-module clarification in [D-008](../docs/decisions.md#d-008--procurement-al
 ```
 
 - **User direction (2026-11-14):** no Procurement panel on the planner station — that is the procurement player's station (D-012). Navigation is Rocket · Versions; each part row in the Rocket panel shows its order status and arrival date versus the launch date.
-- Details appear on demand: rocket parts are compact rows that expand one at a time to show their sliders; procurement rows expand for contract details; the version comparison is behind a toggle.
+- **User direction (2026-11-14/15, [notes](notes/2026-11-14-weather-mission.md)):** the Rocket panel is mostly sliders. Every slider is visible at once (one line per stat, grouped by spacecraft, upper stage, booster); one Δv line on top; one problem line with a fix button (smallest tank that removes the shortfall); a status dot per part; "Order N parts". Expert controls (fuel type, engine count, stage order, add/remove menus, per-stage numbers, Versions) sit behind an Advanced switch that can be flipped any time. No guided or linear flow.
+- Earlier design, superseded for the Rocket panel: compact rows that expand one at a time to show their sliders; the version comparison behind a toggle.
 - The calendar date runs on its own (pulsing dot); pause and speed live only in the Dev drawer (gear icon).
 - While planning, the map shows positions on the planned launch day ("Launch day" in the map title line); editing a transfer shows its departure day; the playthrough shows its own date.
 - The launch chip opens a popover with the launch-date control, the mission's launch deadline, and "Launch now".
