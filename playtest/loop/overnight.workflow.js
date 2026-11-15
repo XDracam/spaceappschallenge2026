@@ -41,6 +41,8 @@ const SPEED = A.speed ?? 0.5
 const MANUAL_EVERY = A.manualLobbyEvery ?? 3
 const MAX_FIXES = A.maxFixes ?? 4
 const PLAYER_MODEL = A.playerModel ?? 'sonnet'
+// pushToMain: true = every judge-accepted, gated commit is rebased onto origin/main and pushed there (deploys the site)
+const PUSH = A.pushToMain === true
 const PT = `${REPO}/playtest`
 const PT_CLI = `${PT}/harness/pt.mjs`
 const TRAILER = 'Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>'
@@ -48,7 +50,7 @@ const TRAILER = 'Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>'
 const WHERE =
   `You work only in the git checkout at "${REPO}" (branch "${BRANCH}"). Use absolute paths, and "git -C "${REPO}" …" for git. ` +
   (A.avoid ? `A second checkout of the same project exists at "${A.avoid}": it belongs to the team. Never read from it, write to it or run a command in it. ` : '') +
-  `Never push. Never switch branches.`
+  `Never switch branches. Never push, except where a step tells you to.`
 
 const OK = { type: 'object', properties: { ok: { type: 'boolean' }, head: { type: 'string', description: 'short hash of HEAD' }, detail: { type: 'string' } }, required: ['ok', 'head', 'detail'] }
 const TRIAGE = {
@@ -100,6 +102,10 @@ const gate = (round, kind, subjectHint) => agent(
   `4. If all pass: git -C "${REPO}" add game/src playtest/harness/server.mjs playtest/changes.md   and commit with two -m flags. ` +
   `A judge has already accepted these changes; if "${PT}/runs/${round}/judge-${kind}.json" exists, mention only accepted findings in the message. ` +
   `Subject: "Playtest ${round} ${kind}: " plus a short summary (${subjectHint}), under 72 characters in total. Body: one line per change taken from "${PT}/runs/${round}/${kind === 'rework' ? 'rework.json' : 'fixes.json'}", a blank line, then exactly: ${TRAILER}\n` +
+  (PUSH
+    ? `   Then publish it to the team's main branch: git -C "${REPO}" fetch origin, git -C "${REPO}" rebase origin/main. If the rebase conflicts: git -C "${REPO}" rebase --abort, keep the commit only here and say "not pushed: conflict" in detail. ` +
+      `Otherwise run npx tsc --noEmit in "${REPO}/game" again; if it passes, git -C "${REPO}" push origin HEAD:main (never --force; if the push is rejected, fetch, rebase and try once more, then give up and say so). If tsc fails after the rebase, do not push; say so in detail.\n`
+    : '') +
   `   Answer ok true, committed true, and the short hash.\n` +
   `5. If any fails: do not repair the code. Put the tree back: git -C "${REPO}" checkout -- game/src playtest/harness playtest/changes.md   and   git -C "${REPO}" clean -fd game/src. ` +
   `Answer ok false, reverted true, with the first error lines in detail, and append those lines to "${PT}/runs/${round}/gate-failures.txt".`,
