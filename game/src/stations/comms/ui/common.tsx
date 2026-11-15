@@ -100,6 +100,7 @@ export function effectText(e: Effect): string {
     case 'priceModifier': return `prices ${signed(e.pct, ' %')} for ${e.months} mo`;
     case 'offer': return `offer: ${e.variant} ${e.partKind} from ${e.supplier}, ${formatMoney(e.priceM)}, ${e.deliveryMonths} mo`;
     case 'researchPace': return `research pace ${signed(e.pct, ' %')} for ${e.months} mo`;
+    case 'techAccess': return `${e.access === 'block' ? 'blocks' : 'enables'} tech: ${e.note}`;
     case 'researchLimit': return `research limit ${e.key} → ${e.value}`;
     case 'unlock': return `unlocks ${e.key}`;
     case 'service': return `service: ${e.note}`;

@@ -182,6 +182,22 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 - Evidence and limits: the cited acquisition sources support delivery schedules, solicitation deadlines and modifications; numerical curves, research reuse and reliability aggregation are game choices. Fixtures require balancing. Approval is not evidence of implemented behavior or multiplayer enjoyment. Optional slot reservations and deferred supplier events remain outside this selection.
 - Related: I-079, I-080, D-004, D-005, D-017, Q-005, Q-008, Q-014, Q-023–Q-028, Q-031.
 
+## D-019 — Science is an engineering tech tree
+
+- Date: 2026-11-14
+- Status: accepted user direction; implemented on branch `science-tech-tree`, not yet merged to `main`
+- Decision:
+  - Science researches engineering upgrades for Mission Planning (propulsion, instruments, power, antenna, protection), shown as a tech tree with prerequisites. It replaces the knowledge graph, combination bench and recipes of the earlier science design.
+  - Science's goals are requests from Procurement. Science must find a route through the tree to a tech that delivers the requested limit or unlock. Several routes can lead to the same goal.
+  - Procurement (resource planning) chooses per beyond-research part whether to buy it or to develop it. Developing posts a research request to science.
+  - Comms effects can block or enable techs. Some techs need an approval from comms before they can start.
+  - Results reach the planner as before, through the shared research limits and unlocks.
+- Source / approval: [science module note, eighth message](notes/2026-11-14-science-module.md)
+- Rationale and evidence: user direction. The tree gives science its own goal-driven puzzle and ties it to Procurement and Comms.
+- Alternatives considered: keep the knowledge graph with the tree as a second layer (not chosen by the user).
+- Consequences and limitations: the old graph content (fields, descriptions, recipes) is dropped on the branch and kept on `main`. The pure-science findings that fed comms news are gone unless re-added. Tech content is placeholders (D-005).
+- Related: D-005, D-015, I-078 to I-081, Q-036 to Q-038, [science module](../science/README.md).
+
 ## Future decision template
 
 ```markdown

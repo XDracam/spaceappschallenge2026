@@ -31,6 +31,8 @@ export type Effect =
   | { kind: 'researchLimit'; key: string; value: number }
   /** Science + planner: a locked part variant becomes available (key `${kind}.${variant}`). */
   | { kind: 'unlock'; key: string }
+  /** Science: a tech can (not) be researched. 'block' stops it (a running project pauses); 'enable' lifts a block or grants a required approval. */
+  | { kind: 'techAccess'; tech: string; access: 'block' | 'enable'; note: string }
   /** Planner: a service that changes mission numbers (e.g. a partner ground station halves needed antenna rate). */
   | { kind: 'service'; service: 'groundStation' | 'launchSlot' | 'testFacility'; note: string }
   /** Planner: a new or changed mission requirement (extra payload, extra goal, flag on board). */
@@ -53,6 +55,7 @@ export function effectStations(e: Effect): StationId[] {
     case 'offer':
       return ['procurement'];
     case 'researchPace':
+    case 'techAccess':
       return ['science'];
     case 'researchLimit':
     case 'unlock':

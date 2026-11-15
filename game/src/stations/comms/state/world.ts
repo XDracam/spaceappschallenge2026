@@ -261,6 +261,9 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
     case 'researchPace':
       s.research.modifiers.push({ effect: e, untilDay: day + e.months * DAYS_PER_MONTH });
       break;
+    case 'techAccess':
+      (s.research.access ??= {})[e.tech] = e.access === 'block' ? 'blocked' : 'enabled';
+      break;
     case 'researchLimit':
       s.research.limits[e.key] = Math.max(s.research.limits[e.key] ?? 0, e.value);
       break;

@@ -88,3 +88,26 @@ Source: user message in the project conversation. The original wording is preser
 
 - The frontier list in the left rail is removed. Frontier fields stay visible on the map and in the top bar count.
 - The discipline list (it also works as the show/hide filter) is now an overlay on the map, shown only in Overview zoom. The overlay covers part of the map in the top left; its placement is a first guess.
+
+## Follow-up — November 14, 2026 (eighth message, rebuild as a tech tree)
+
+Source: user messages in the project conversation (the first was interrupted and resent). The original wording is preserved below.
+
+> Okay, the requirements for Science Module are updated:
+>
+> * We research upgrades for Tech for Mission Planning, such as e.g. more propulsion or better camera modules for less weight, more like engineering tech
+> * resource planning selects whether we buy that part or develop it
+> * comms may enable or block certain upgrades
+>
+> The thing is tech tree like - science must find ways to the goal
+>
+> Rebuild the science module please, on a different branch
+
+### Interpretation boundaries
+
+- "Rebuild" was read as replacing the knowledge-graph, bench and recipe design in the integrated game with an engineering tech tree. The old design stays on `main` until a merge is agreed. The rebuild lives on branch `science-tech-tree`.
+- "Resource planning" was read as the Procurement station. Procurement decides, per part that exceeds current research, between buying it (a tender, dearer and less reliable) and developing it (a request to science). Both may run together.
+- "The goal" was read as a part stat or part unlock that Procurement asks science for. Science must find a route through the tree to a tech that delivers it. Several routes can lead to the same goal.
+- "Comms may enable or block" was read as new comms effects that block a tech (it cannot be researched while blocked) or enable one. Some techs start blocked and need comms to approve them.
+- "Better camera modules for less weight": the planner derives mass from stats, so the first version expresses better modules as higher performance limits. Lower mass for the same stats is not modelled. See Q-037.
+- All tech names, costs, durations, odds and prerequisites are authored placeholders (D-005).

@@ -2,7 +2,7 @@
 // calendar time, and sometimes trust (startTrust, applied at start). Bigger
 // deals need trust (`requires`). Negotiated parts arrive as offers to procurement.
 import type { ProjectDef } from '../../model/types';
-import { FLAG_GROUND_STATION, budget, limit, odds, offer, price, service, setFlag, trust } from '../helpers';
+import { FLAG_GROUND_STATION, budget, limit, odds, offer, price, service, setFlag, techAccess, trust } from '../helpers';
 
 export const PROJECTS: ProjectDef[] = [
   // ------------------------------------------------------------- galas
@@ -25,6 +25,51 @@ export const PROJECTS: ProjectDef[] = [
     startTrust: [],
     effects: [trust('public', 10), trust('partners', 5)],
     result: 'The Mars exhibit opens in six cities. Children now ask about landing legs at dinner.',
+  },
+
+  // --------------------------------------------- approvals for science techs (D-017)
+  {
+    id: 'plutonium-licence',
+    name: 'Plutonium licence',
+    kind: 'lobbying',
+    description: 'Win the government licence to qualify a radioisotope heat source. Science cannot start the RTG techs without it.',
+    costM: 8, months: 3,
+    startTrust: [{ stakeholder: 'public', delta: -5 }],
+    requires: { stakeholder: 'government', min: 35 },
+    effects: [techAccess('rtg-heat-source', 'enable', 'Radioisotope heat source approved')],
+    result: 'The licence is signed. Science may qualify a radioisotope heat source.',
+  },
+  {
+    id: 'laser-licence',
+    name: 'Laser link licence',
+    kind: 'negotiation',
+    description: 'Agree frequencies and ground sites with partner agencies for an optical link. Science cannot start the laser terminal without it.',
+    costM: 6, months: 2,
+    startTrust: [],
+    requires: { stakeholder: 'partners', min: 35 },
+    effects: [techAccess('optical-terminal', 'enable', 'Optical link licence granted')],
+    result: 'The partners grant the laser link licence. Science may start the optical terminal.',
+    partnerCharacterId: 'moreau',
+  },
+  {
+    id: 'export-licence',
+    name: 'Ion export licence',
+    kind: 'lobbying',
+    description: 'Clear the export review of ion engine technology so science can resume work on it.',
+    costM: 7, months: 2,
+    startTrust: [{ stakeholder: 'government', delta: -3 }],
+    effects: [techAccess('ion-grid', 'enable', 'Ion engine export review cleared')],
+    result: 'The export review closes. Science may work on the ion engine again.',
+  },
+  {
+    id: 'nuclear-hearing',
+    name: 'Public hearing on nuclear power',
+    kind: 'campaign',
+    description: 'An open hearing about the safety of a radioisotope power source. Lifts a public hold on that research.',
+    costM: 6, months: 2,
+    startTrust: [],
+    effects: [trust('public', 5), techAccess('thermoelectric', 'enable', 'Public hold on nuclear power research lifted')],
+    result: 'The hearing is long and calm. The hold on nuclear power research is lifted.',
   },
 
   // --------------------------------------------------------- campaigns

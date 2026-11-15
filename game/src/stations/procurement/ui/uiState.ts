@@ -116,7 +116,7 @@ export function usePView(): PView {
   const json = useGame((s) => JSON.stringify({
     market: s.market,
     budget: s.budget,
-    research: { limits: s.research.limits, unlocked: s.research.unlocked },
+    research: { limits: s.research.limits, unlocked: s.research.unlocked, requests: s.research.requests ?? [] },
     clock: { day: Math.floor(s.clock.day) },
     planner: { plan: { launchDay: s.planner.plan.launchDay } },
     comms: { trust: { industry: s.comms.trust.industry } },

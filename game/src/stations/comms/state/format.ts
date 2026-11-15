@@ -78,6 +78,8 @@ export function describeEffect(e: Effect): string {
       return `Offer to procurement: ${e.variant} ${e.partKind} from ${e.supplier}, ${formatMoney(e.priceM)}, ${months(e.deliveryMonths)}`;
     case 'researchPace':
       return `Research pace ${formatSigned(e.pct)} % for ${months(e.months)}`;
+    case 'techAccess':
+      return `Science: ${e.note}`;
     case 'researchLimit':
       return `Research limit ${e.key} raised to ${e.value}`;
     case 'unlock':

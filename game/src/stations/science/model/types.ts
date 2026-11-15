@@ -1,75 +1,52 @@
-export type Discipline = 'geo' | 'bio' | 'atm' | 'ins' | 'rad' | 'mat' | 'orb';
+// Types for the engineering tech tree (D-019). Pure data, no framework imports.
 
-/** established: known. frontier: open questions. hint: partly seen. fog: unknown, nobody looked. */
-export type FieldState = 'est' | 'fr' | 'hint' | 'fog';
+export type Branch = 'propulsion' | 'power' | 'instruments' | 'antenna' | 'protection';
 
-export type Odds = 'Good' | 'Medium' | 'Long shot';
-
-/** What a successful project gives. Limit gains are deltas on the planner's research limit. */
-export type Gain =
-  /** Raise a research limit (key `${kind}.${variant}.${stat}`) by delta at Balanced scope. */
-  | { kind: 'limit'; key: string; delta: number }
-  /** Unlock a part variant (key `${kind}.${variant}`). Not reachable with a Safe scope. */
+/** What a finished tech gives the planner: a higher research limit, or an unlocked part type. */
+export type Grant =
+  | { kind: 'limit'; key: string; value: number }
   | { kind: 'unlock'; key: string };
 
-/** A part science can ask Procurement for when it takes its own measurements. */
-export interface TestPart {
-  label: string;
-  partKind: 'instrument' | 'power' | 'antenna';
-  variant: string;
-  minimums: Record<string, number>;
+/** A tech that needs comms to approve it before research can start (comms enables it with a techAccess effect). */
+export interface Gate {
+  by: 'government' | 'industry' | 'public' | 'partners';
+  why: string;
 }
 
-export interface Recipe {
-  ids: string[];
-  title: string;
-  pitch: string;
-  method: string;
-  needs: string;
-  /** Base duration at Balanced scope with new measurements. */
-  months: number;
-  /** Base cost in M. */
-  costM: number;
-  odds: Odds;
-  /** Engineering payoff: raises planner research limits or unlocks parts. Empty = pure science. */
-  gains: Gain[];
-  /** Pure science: what success means (news line). */
-  finding?: string;
-  /** Flags raised on success (shared events.flags). */
-  flags?: string[];
-  /** Optional: a test unit science can request from Procurement (method 'new'). */
-  testPart?: TestPart;
-}
-
-export interface GraphNode {
+export interface Tech {
   id: string;
-  label: string;
-  discipline: Discipline;
-  /** Position inside the discipline list. */
-  index: number;
-  state: FieldState;
-  /** Layout size in graph units. */
-  w: number;
-  h: number;
-  x: number;
-  y: number;
+  name: string;
+  branch: Branch;
+  /** One or two sentences: what the technology is. */
+  blurb: string;
+  /** All of these must be researched first. Alternatives are separate techs with the same grant. */
+  requires: string[];
+  /** Empty for pure stepping stones. */
+  gives: Grant[];
+  costM: number;
+  months: number;
+  /** Chance of success 0..1. A failed project leaves the tech available to retry; its cost is lost. */
+  chance: number;
+  /** Already known at the start of the game. */
+  start?: boolean;
+  gate?: Gate;
 }
 
-/** 0: inside a discipline. 1: between disciplines. 2: to an unknown field. */
-export type EdgeKind = 0 | 1 | 2;
-export type Edge = [from: string, to: string, kind: EdgeKind];
+/** Derived state of a tech for the current game. */
+export type TechStatus =
+  | 'researched'
+  | 'running'
+  | 'available'
+  | 'blocked'
+  | 'covered'
+  | 'locked'
+  | 'fog';
 
-export interface Graph {
+export interface TreeLayout {
+  /** Node centre in tree units. */
+  pos: Record<string, { x: number; y: number }>;
   width: number;
   height: number;
-  nodes: GraphNode[];
-  byId: Record<string, GraphNode>;
-  edges: Edge[];
-  adjacency: Record<string, string[]>;
-  titles: { discipline: Discipline; name: string; color: string; x: number; y: number }[];
+  lanes: { branch: Branch; y: number; h: number }[];
+  depth: Record<string, number>;
 }
-
-export type CombineResult =
-  | { kind: 'recipe'; names: string; recipe: Recipe }
-  | { kind: 'known'; names: string }
-  | { kind: 'none'; names: string };

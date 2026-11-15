@@ -1,8 +1,7 @@
 // Host saves the authoritative state to localStorage (resume after a reload).
 import { onHostState } from './store';
 import { STATE_VERSION, type GameState } from './state';
-import { recipeByKey } from '../stations/science/data/recipes';
-import { fitFailures } from '../stations/procurement/rules';
+import { initialScienceSlice } from '../stations/science/slice';
 
 const KEY = 'mission-control.save.v1';
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -34,6 +33,7 @@ export function loadSaved(): GameState | null {
     if (!raw) return null;
     const s = JSON.parse(raw) as GameState;
     if (s?.version === 1) migrateV1(s);
+    if (s?.version === 2) migrateV2(s);
     if (s?.version !== STATE_VERSION) return null;
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';
@@ -66,25 +66,15 @@ function migrateV1(s: GameState): void {
     if (crit) { call.requirement ??= structuredClone(crit); call.destination ??= {kind:'task',taskId:call.taskId,criterionId:call.criterionId}; call.neededAt ??= task?.neededAt; call.taskRevision ??= task?.revision; }
     call.windowDays ??= 30;
   }
-  for (const [projectId, info] of Object.entries(s.science.info ?? {})) {
-    if (!info.testTaskId) continue;
-    const task = s.market.tasks.find(t => t.id === info.testTaskId);
-    const criterion = task?.criteria[0];
-    const recipe = recipeByKey(info.recipeKey);
-    const requirement = recipe?.testPart ?? (criterion && ['instrument','power','antenna'].includes(criterion.partKind) ? {label:criterion.label, partKind:criterion.partKind as 'instrument'|'power'|'antenna', variant:criterion.variant, minimums:{...criterion.minimums}} : undefined);
-    if (requirement) info.equipmentRequirement = structuredClone(requirement);
-    const project = s.research.projects.find(p => p.id === projectId);
-    for (const a of s.market.allocations.filter(a => a.taskId === info.testTaskId && a.status !== 'released')) {
-      a.department = 'science'; a.taskId = ''; a.criterionId = ''; a.revision++;
-      const k = s.market.contracts.find(k => k.id === a.contractId);
-      if (!info.equipmentAllocationId && project?.status === 'running' && k && requirement && fitFailures(k.offerSnapshot.resource, {...requirement,id:'migration',quantity:1}).length === 0) {
-        if (a.quantity > 1) {
-          a.quantity--; const unit = {...a,id:`alloc-${s.meta.nextId++}`,revision:1,quantity:1,projectId}; s.market.allocations.push(unit); info.equipmentAllocationId = unit.id;
-        } else { a.projectId = projectId; info.equipmentAllocationId = a.id; }
-      }
-    }
-    if (task && task.status === 'open') { task.status='withdrawn'; task.revision++; }
-    delete info.testTaskId;
-  }
+  s.version = 2;
+}
+
+/** Science became an engineering tech tree (D-019): the old research projects, slice and test-unit links are dropped. */
+function migrateV2(s: GameState): void {
+  for (const a of s.market.allocations) delete (a as { projectId?: string }).projectId;
+  s.research.projects = s.research.projects.filter((p) => p.techId);
+  s.research.requests ??= [];
+  s.research.access ??= {};
+  s.science = initialScienceSlice();
   s.version = STATE_VERSION;
 }

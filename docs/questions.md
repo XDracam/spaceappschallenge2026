@@ -154,3 +154,15 @@ How are internal events routed to stations, and who decides on them when they to
 ## Q-035 — Hierarchical cluster naming and details tabs
 
 How many nodes does the graph need, and how are clusters named at each zoom level (fixed hierarchy, or labels derived from the visible nodes)? What do the details-pane tabs (datasets, observation methods, related papers or analyses) contain, are they hand-authored per field (D-005), and how do they connect to the deferred data analysis (I-070)? The mockup shows one description per field and three fixed zoom levels. See I-075 and I-076.
+
+## Q-036 — Comms gating of techs
+
+Which techs start blocked and need comms approval, and what can comms do to a running project (block it, slow it, refund it)? Does a block lift by itself after some time? Who is told? The first version blocks and enables whole techs and shows the reason in the tree. See I-080.
+
+## Q-037 — Mass and cost effects of upgrades
+
+The user's example was "better camera modules for less weight". The planner derives mass from stats, so research only raises limits and unlocks parts. Should upgrades also change mass, cost or reliability of parts (the planner and procurement would need to read them)? See I-078.
+
+## Q-038 — Hidden parts of the tree
+
+How much of the tree does the player see at the start, and how do they find routes (fog by distance, scouting projects, hints from partners)? How many routes should a goal have, and can all of them be blocked? See I-081.

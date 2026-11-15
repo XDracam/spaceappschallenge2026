@@ -4,10 +4,11 @@ import type { Criterion, Offer, Task, Destination } from '../../../core/model';
 import { RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
 import { SUPPLIER_BY_ID } from '../data/suppliers';
 import {
-  assessOffer, budgetAvailableM, criterionCoverage, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
+  assessOffer, beyondKeys, budgetAvailableM, criterionCoverage, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
   offersForCriterion, openTasks, partLabel, rankAssessments, sameKind, statInfo, suggestion, taskCode, quoteOrder,
   type OfferAssessment, type PView,
 } from '../rules';
+import { procurementActions } from '../logic';
 import { statDefs } from '../../planner/data/parts';
 import { Art } from './Art';
 import { focusedNeed, summarize, toggleCompare } from './Catalogue';
@@ -242,6 +243,7 @@ function NeedInspector() {
           </>
         ) : null}
         {task.beyondResearch.length ? <div class="pr-callout warn">Created beyond research: {task.beyondResearch.join(', ')}. Catalogue suppliers can't build it yet — open a Call, wait for science, or ask comms for a partner offer.</div> : null}
+        <BuyOrDevelop task={task} crit={crit} />
         <h3>Offers for this need</h3>
         <div class="pr-offer-list">
           {shown.map((a) => (
@@ -268,6 +270,37 @@ function NeedInspector() {
           {cov.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
         </button>
         <p class="pr-note center muted">{fmtM(budgetAvailableM(v.budget))} available · suggestions rank fit, delivery, budget, then price.</p>
+      </div>
+    </>
+  );
+}
+
+/** Resource planning's choice for a part beyond research: buy it (tender) or have science develop it. */
+function BuyOrDevelop({ task, crit }: { task: Task; crit: Criterion }) {
+  const v = useP();
+  const keys = beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research);
+  const reqs = (v.research.requests ?? []).filter((q) => q.taskId === task.id && q.criterionId === crit.id && q.status !== 'withdrawn');
+  const openReqs = reqs.filter((q) => q.status === 'open');
+  if (!keys.length && !reqs.length) return null;
+  return (
+    <>
+      <h3>Buy or develop</h3>
+      <div class="pr-callout">
+        <p><strong>Buy:</strong> a tender beyond research costs 1.5–3× and is less reliable.</p>
+        <p><strong>Develop:</strong> science researches what is missing. Afterwards the part is bought at normal price. Research takes months and can fail.</p>
+        {reqs.length ? (
+          <ul>
+            {reqs.map((q) => <li key={q.id}>{describeBeyond(q.key, crit.minimums, v.research)} — {q.status === 'done' ? 'developed' : 'science is working on it'}</li>)}
+          </ul>
+        ) : null}
+        {keys.length ? (
+          <div class="pr-row">
+            <button type="button" class="pr-btn" disabled={openReqs.length === keys.length} onClick={() => { procurementActions.requestDevelopment(task.id, crit.id); setUi({ status: `Asked science to develop ${crit.label}.` }); }}>
+              {openReqs.length === keys.length ? 'Development requested' : 'Ask science to develop it'}
+            </button>
+            {openReqs.length ? <button type="button" class="pr-btn small" onClick={() => procurementActions.withdrawDevelopment(task.id, crit.id)}>Withdraw</button> : null}
+          </div>
+        ) : null}
       </div>
     </>
   );

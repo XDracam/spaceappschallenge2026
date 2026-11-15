@@ -3,10 +3,30 @@
 // trust and budget). Each fires once, the first time its `when` holds.
 import type { EventDef } from '../../model/types';
 import {
-  FLAG_RTG_STORY, allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, trust, trustAbove, trustBelow,
+  FLAG_RTG_STORY, allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, techAccess, trust, trustAbove, trustBelow,
 } from '../helpers';
 
 export const PLAYER_EVENTS: EventDef[] = [
+  {
+    id: 'ion-export-review',
+    source: 'player', when: hasFlag('design.ion'), deadlineDays: 21,
+    characterId: 'duarte',
+    title: 'Export review for ion engines',
+    message: "Your orbiter design uses an ion engine. That technology is on the export watch list, so the ministry wants to review your research before it goes further. It takes weeks, unless someone pushes.",
+    options: [
+      option('wait', 'Let the review run (science pauses the ion engine).',
+        [trust('government', 5), techAccess('ion-grid', 'block', 'Ion engine work paused for an export review')],
+        'The ministry is pleased. Science pauses the ion engine until a licence is won. The "Ion export licence" project lifts the pause.'),
+      option('fast-track', 'Lobby to fast-track the review.',
+        [trust('government', -5)],
+        'The review closes within days. Duarte notes who owes whom.', 6),
+    ],
+    ignored: {
+      effects: [trust('government', -5), techAccess('ion-grid', 'block', 'Ion engine work paused for an export review')],
+      outcome: 'The ministry starts the review without you. Science pauses the ion engine until a licence is won.',
+    },
+    tags: ['government', 'bad'],
+  },
   {
     id: 'rtg-plutonium-story',
     source: 'player', when: hasFlag('design.rtg'), deadlineDays: 21,
@@ -194,6 +214,26 @@ export const PLAYER_EVENTS: EventDef[] = [
 ];
 
 export const TRIGGER_EVENTS: EventDef[] = [
+  {
+    id: 'nuclear-research-hold',
+    source: 'trigger', when: trustBelow('public', 40), deadlineDays: 21,
+    characterId: 'okafor',
+    title: 'Hold on nuclear power research?',
+    message: "Readers are asking why the agency researches plutonium power while trust in the mission is low. A hold would calm things down. A refusal would make the next headline.",
+    options: [
+      option('pause', 'Put nuclear power research on hold (science waits).',
+        [trust('public', 5), techAccess('thermoelectric', 'block', 'Public hold on nuclear power research')],
+        'The hold calms the story. Science cannot start the thermoelectric converters until a public hearing lifts it.'),
+      option('defend', 'Defend the research in an interview.',
+        [trust('public', -5)],
+        'The interview is accurate and dull. The comments are not.'),
+    ],
+    ignored: {
+      effects: [trust('public', -5), techAccess('thermoelectric', 'block', 'Public hold on nuclear power research')],
+      outcome: 'Without an answer the hold is announced for you. Science cannot start the thermoelectric converters.',
+    },
+    tags: ['public', 'bad'],
+  },
   {
     id: 'public-protest',
     source: 'trigger',

@@ -29,6 +29,8 @@ export const pace = (pct: number, months: number): Effect => ({ kind: 'researchP
 export const limit = (key: string, value: number): Effect => ({ kind: 'researchLimit', key, value });
 /** Science + planner: a locked variant becomes available. */
 export const unlock = (key: string): Effect => ({ kind: 'unlock', key });
+/** Science: block a tech (a running project pauses) or enable it (lifts a block, or grants a required approval). */
+export const techAccess = (tech: string, access: 'block' | 'enable', note: string): Effect => ({ kind: 'techAccess', tech, access, note });
 /** Planner: a partner service. */
 export const service = (s: 'groundStation' | 'launchSlot' | 'testFacility', note: string): Effect => ({ kind: 'service', service: s, note });
 /** Planner: a new mission requirement. */

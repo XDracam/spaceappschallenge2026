@@ -189,7 +189,8 @@ export type ResearchStatus = 'running' | 'succeeded' | 'failed';
 export interface ResearchProject {
   id: string;
   title: string;
-  fieldIds: string[];
+  /** Tech tree node this project researches (science/data/techs.ts). */
+  techId?: string;
   /** Shared task this project answers, if any. */
   taskId?: string;
   costM: number;
@@ -202,6 +203,26 @@ export interface ResearchProject {
   effects: Effect[];
 }
 
+/**
+ * Procurement (resource planning) chose to develop a part beyond research instead of buying it:
+ * science is asked to raise one research key. Done when the key is covered, by any route.
+ */
+export interface ResearchRequest {
+  id: string;
+  taskId: string;
+  criterionId: string;
+  /** Planner research key: `kind.variant.stat` (a limit) or `kind.variant` (an unlock). */
+  key: string;
+  /** Needed value for a limit key; undefined for an unlock key. */
+  value?: number;
+  requestedAt: number;
+  status: 'open' | 'done' | 'withdrawn';
+  doneAt?: number;
+}
+
+/** Comms can block or enable a tech by id (science/data/techs.ts). Absent = the tech's default. */
+export type TechAccess = 'blocked' | 'enabled';
+
 export interface ResearchState {
   /** `${kind}.${variant}.${stat}` → max value currently researched. */
   limits: Record<string, number>;
@@ -210,6 +231,10 @@ export interface ResearchState {
   projects: ResearchProject[];
   /** Active pace modifiers (comms researchPace effects). */
   modifiers: { effect: Extract<Effect, { kind: 'researchPace' }>; untilDay: number }[];
+  /** Requests from Procurement: "develop this part instead of buying it". */
+  requests: ResearchRequest[];
+  /** Comms decisions on techs. A tech with an approval gate starts blocked until comms enables it. */
+  access: Record<string, TechAccess>;
 }
 
 // ----------------------------------------------------------------- events
