@@ -22,6 +22,10 @@ export const meta = {
 //   stamp:      prefix for round ids, e.g. "1115"
 //   seed:       optional { round, reworkPick }: a round already played and triaged; its findings are worked on before round 1.
 //               { round, triage: true }: the round was played but the session died before triage; triage it from the evidence first.
+//   plan:       optional array, one entry per round, overriding that round's settings:
+//               { mission: 'Mars' (name part, auto lobby only), speed, minutes, lobby: 'auto' | 'manual' }
+//   seed.polish: false = skip the polish step for the seed round (its small findings were already worked on)
+//   seed.note:  extra direction for the seed rework, from the user
 //   maxRounds:  hard cap on rounds (default 8)
 //   improveLastRound: false = after the last round only triage, no further changes (default true)
 //   stopHour:   local hour (0-23) from which no new round starts (default 7); morning only
@@ -122,8 +126,9 @@ const polish = (round) => agent(
   `${WHERE}\nPolish step after playtest round ${round}. Follow "${PT}/briefs/fixer.md" exactly, with {{ROUND}} = ${round} and {{MAX_FIXES}} = ${MAX_FIXES}. Do not commit; a later step does.`,
   { label: `polish ${round}`, phase: 'Polish', schema: WORK })
 
-const rework = (round, finding) => agent(
+const rework = (round, finding, note) => agent(
   `${WHERE}\nRework step after playtest round ${round}. Follow "${PT}/briefs/rework.md" exactly, with {{ROUND}} = ${round} and {{FINDING}} = ${finding}. Do not commit; a later step does. ` +
+  (note ? `\nDirection from the user for this rework: ${note}\n` : '') +
   `If you start a check session, stop it before you answer.`,
   { label: `rework ${finding}`, phase: 'Rework', schema: WORK })
 
@@ -178,29 +183,29 @@ async function step(round, kind, finding, author, hint) {
 }
 
 /** Polish, then one rework, each as its own commit so either can be dropped alone. */
-async function improve(round, fixable, pick) {
+async function improve(round, fixable, pick, note) {
   const p = fixable > 0 ? await step(round, 'polish', '', () => polish(round), 'the accepted fixes') : null
-  const r = pick ? await step(round, 'rework', pick, () => rework(round, pick), `finding ${pick}`) : null
+  const r = pick ? await step(round, 'rework', pick, () => rework(round, pick, note), `finding ${pick}`) : null
   return { polish: p?.work ?? null, polishJudge: p?.judge ?? null, polishGate: p?.gate ?? null, rework: r?.work ?? null, reworkJudge: r?.judge ?? null, reworkGate: r?.gate ?? null }
 }
 
-const startRound = (round, lobby) => agent(
+const startRound = (round, lobby, o) => agent(
   `${WHERE}\nFirst bring the branch up to date with the team's latest work, so the round plays the current game: ` +
   `git -C "${REPO}" fetch origin   then   git -C "${REPO}" merge --no-edit origin/main. ` +
   `If the merge conflicts: git -C "${REPO}" merge --abort, answer ok false and list the conflicting files in detail — do not start the round. ` +
   `If game/package-lock.json changed in the merge, run npm ci in "${REPO}/game".\n` +
   `Then start one playtest round and report whether it is ready. Run exactly this, and wait for it (up to 4 minutes):\n` +
-  `node "${PT}/harness/start.mjs" --round ${round} --lobby ${lobby} --minutes ${MINUTES} --speed ${SPEED}\n` +
+  `node "${PT}/harness/start.mjs" --round ${round} --lobby ${lobby} --minutes ${o.minutes} --speed ${o.speed}${o.mission && lobby === 'auto' ? ` --mission "${o.mission}"` : ''}\n` +
   `ok is true only if the output contains a line starting with READY; otherwise put the output in detail. ` +
   `If the output says a harness is already running, run: node "${PT}/harness/ptadmin.mjs" stop "stale"   wait 5 seconds, and run the start command once more. ` +
   `Also run: git -C "${REPO}" rev-parse --short HEAD   and give its output as head. Do nothing else.`,
   { label: `start ${round}`, phase: 'Start', schema: OK, model: 'haiku', effort: 'low' })
 
-const playerPrompt = (n) =>
+const playerPrompt = (n, minutes) =>
   `You are a player in a playtest. Your complete instructions are in the file "${PT}/briefs/player.md". ` +
   `Read that one file now, with the Read tool. In it, {{N}} is ${n} and {{PT}} is ${PT_CLI}. ` +
   `It is the only file you may open apart from the screenshots your own command prints. ` +
-  `The session lasts at most ${MINUTES} minutes. Follow the brief until the command says SESSION OVER, then answer with the final report it asks for, in normal full sentences.`
+  `The session lasts at most ${minutes} minutes. Follow the brief until the command says SESSION OVER, then answer with the final report it asks for, in normal full sentences.`
 
 // ------------------------------------------------------------------ preflight
 
@@ -240,7 +245,8 @@ if (A.seed?.round) {
     seedPick = t.reworkPick
     log(`${A.seed.round}: ${t.progress} | fixable ${t.fixable}, design ${t.design} | rework pick ${t.reworkPick || 'none'}`)
   }
-  const s = await improve(A.seed.round, seedFixable, seedPick)
+  if (A.seed.polish === false) seedFixable = 0
+  const s = await improve(A.seed.round, seedFixable, seedPick, A.seed.note)
   rounds.push({ round: A.seed.round, seed: true, improve: s })
   log(`${A.seed.round}: polish ${s.polishGate?.committed ? s.polishGate.commit : 'no commit'}, rework ${s.reworkGate?.committed ? s.reworkGate.commit : 'no commit'}`)
 }
@@ -249,7 +255,8 @@ if (A.seed?.round) {
 
 for (let i = 1; i <= MAX_ROUNDS; i++) {
   const round = `${A.stamp}-r${String(i).padStart(2, '0')}`
-  const lobby = MANUAL_EVERY > 0 && i % MANUAL_EVERY === 1 ? 'manual' : 'auto'
+  const o = { minutes: MINUTES, speed: SPEED, mission: '', ...((A.plan ?? [])[i - 1] ?? {}) }
+  const lobby = o.lobby ?? (MANUAL_EVERY > 0 && i % MANUAL_EVERY === 1 ? 'manual' : 'auto')
 
   // Stop when morning has come. Afternoon and evening hours never count as morning.
   const clock = await agent(
@@ -260,7 +267,7 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
 
   // ---- start; if the game no longer starts, take back the changes since it last did
   let runId = round
-  let start = await startRound(round, lobby)
+  let start = await startRound(round, lobby, o)
   if (!start?.ok) {
     log(`${round}: did not start (${(start?.detail ?? 'no answer').slice(0, 160)}) — reverting changes since ${goodHead}`)
     const undo = await agent(
@@ -274,7 +281,7 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
       { label: `recover ${round}`, phase: 'Start', schema: OK, model: 'sonnet' })
     if (undo?.ok) {
       runId = `${round}b`
-      start = await startRound(runId, lobby)
+      start = await startRound(runId, lobby, o)
     }
     if (!start?.ok) {
       rounds.push({ round, lobby, started: false, detail: `${start?.detail ?? ''} | recovery: ${undo?.detail ?? 'none'}` })
@@ -286,7 +293,7 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
 
   // ---- play (barrier: triage needs all four reports)
   const reports = await parallel([1, 2, 3, 4].map((n) => () =>
-    agent(playerPrompt(n), { label: `${runId} player ${n}`, phase: 'Play', model: PLAYER_MODEL, agentType: 'general-purpose' })))
+    agent(playerPrompt(n, o.minutes), { label: `${runId} player ${n}`, phase: 'Play', model: PLAYER_MODEL, agentType: 'general-purpose' })))
   const got = reports.filter(Boolean).length
   log(`${runId}: ${got}/4 player reports`)
   if (got === 0) {
@@ -300,7 +307,7 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
     `${WHERE}\nTriage playtest round ${runId}.\n` +
     `First: run   node "${PT}/harness/ptadmin.mjs" stop "players done"   (it may answer "harness not running"; fine), wait until "${PT}/runs/${runId}/summary.json" exists (up to 30 seconds), ` +
     `and save the four player reports below as "${PT}/runs/${runId}/reports/p1.md" … "p4.md", unchanged.\n` +
-    `Then follow "${PT}/briefs/triage.md" exactly, with {{ROUND}} = ${runId}. The calendar ran at ${SPEED}x speed and the lobby was "${lobby}" ` +
+    `Then follow "${PT}/briefs/triage.md" exactly, with {{ROUND}} = ${runId}. The calendar ran at ${o.speed}x speed, the mission was ${o.mission && lobby === 'auto' ? `"${o.mission}"` : 'the one the host picked (see state.jsonl)'} and the lobby was "${lobby}" ` +
     `(with "auto" the harness seated the players, so this round says nothing about the lobby).\n` +
     `Finally append one entry for this round to "${PT}/ledger.json" (a JSON array): ` +
     `{ "round", "lobby", "speedScale", "progress", "verdicts", "reverted": [hashes], "reworkPick", "findings": [{ "id", "title", "class", "severity", "symptomOf", "repeatOf" }] } ` +
