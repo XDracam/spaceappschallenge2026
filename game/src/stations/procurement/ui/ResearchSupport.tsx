@@ -10,6 +10,7 @@ import { TECH_BY_ID } from '../../science/data/techs';
 import { INITIAL_SLOTS } from '../../science/slice';
 import { procurementActions } from '../logic';
 import { fmtDate, fmtM } from '../rules';
+import { FacilityIcon } from '../../../shell/FacilityIcon';
 
 function Status({ f, now }: { f: Facility; now: ReturnType<typeof useRes> }) {
   const day = now.day;
@@ -68,7 +69,7 @@ export function ResearchSupport() {
           <div class="pr-rs-grid">
             {TEAM_OFFERS.map((o) => (
               <div class="pr-rs-card" key={o.id}>
-                <strong>{o.label}</strong>
+                <FacilityIcon id={o.id} /><strong>{o.label}</strong>
                 <span class="muted small">{o.blurb} At work after {o.leadDays} days.</span>
                 <button type="button" class="pr-btn" disabled={!planning || hired.length >= MAX_HIRED_TEAMS || o.feeM > available + 1e-9}
                   title={hired.length >= MAX_HIRED_TEAMS ? 'The most teams are hired.' : o.feeM > available ? 'Not enough budget available.' : undefined}
@@ -85,7 +86,7 @@ export function ResearchSupport() {
               const wanted = open.some((q) => q.kind === 'facility' && q.facilityId === f.id);
               return (
                 <div class={`pr-rs-card${wanted ? ' wanted' : ''}`} key={f.id}>
-                  <strong>{f.name}</strong>
+                  <FacilityIcon id={f.id} /><strong>{f.name}</strong>
                   <span class="muted small">{KIND_LABEL[f.kind]} · {f.blurb}</span>
                   <Status f={f} now={now} />
                   <div class="pr-rs-actions">
