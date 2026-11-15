@@ -26,6 +26,14 @@ export function allParts(rocket: Rocket): PartLocation[] {
   return out;
 }
 
+/** How every station names a part of the design: "Booster engine", "Upper stage tank", "Orbital camera". */
+export function partPlaceName(loc: PartLocation): string {
+  if (loc.role === 'equipment' || !loc.stage) return loc.part.name;
+  const stage = loc.stage.name;
+  if (loc.role === 'tank') return `${stage} tank`;
+  return /engine$/i.test(stage) ? stage : `${stage} engine`;
+}
+
 export function findPart(rocket: Rocket, partId: string): PartLocation | undefined {
   return allParts(rocket).find((l) => l.part.id === partId);
 }

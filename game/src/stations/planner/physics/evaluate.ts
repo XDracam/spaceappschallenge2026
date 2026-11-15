@@ -517,6 +517,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
     const gBody = BODIES[goal.body];
     const stay = goal.stayDays ?? 365;
     let pick: (GoalPick & { chance: number }) | undefined;
+    let pickFactors: Factor[] = [];
     let failReason: string | undefined;
     let reachedBlocked = false;
     let reachedNoInstrument = false;
@@ -530,6 +531,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
       }
       if (!pick || chance > pick.chance + 1e-12) {
         pick = { goalId: goal.id, branchId: bi.branchId, maneuverId: step.result.maneuverId, day: step.result.endDay, extra, chance };
+        pickFactors = [...bi.factors.slice(0, step.factorCount), ...extra];
       }
     };
     for (const bi of orderedInternals) {
@@ -602,7 +604,10 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
     if (pick) {
       const { chance, ...rest } = pick;
       picks.set(goal.id, rest);
-      return { goalId: goal.id, achievable: true, successChance: chance, branchId: pick.branchId };
+      return {
+        goalId: goal.id, achievable: true, successChance: chance, branchId: pick.branchId,
+        factors: pickFactors.map((f) => ({ partId: f.partId, p: f.p })),
+      };
     }
     let reason = failReason;
     if (!reason && reachedLate) {

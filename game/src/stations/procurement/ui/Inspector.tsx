@@ -10,6 +10,7 @@ import {
 } from '../rules';
 import { statDefs } from '../../planner/data/parts';
 import { researchEta } from '../../science/model/tree';
+import { testCounts, testDays } from '../../science/model/tests';
 import { Art } from './Art';
 import { focusedNeed, summarize, toggleCompare } from './Catalogue';
 import { coverageText, criterionSummary } from './Needs';
@@ -20,8 +21,11 @@ import { CallInspector } from './CallsView';
 export function OfferRow({ a, selected, suggested, onClick, showName }: {
   a: OfferAssessment; selected?: boolean; suggested?: boolean; onClick: () => void; showName?: boolean;
 }) {
+  const v = useP();
   const sup = SUPPLIER_BY_ID[a.offer.supplierId];
   const tone = a.unavailable || !a.fits ? 'bad' : a.late || !a.affordable ? 'warn' : 'good';
+  // Arrives early enough for Science to test the part before launch (a test halves its risk of failure).
+  const testable = !a.unavailable && testCounts(a.expectedAt + testDays(), v.planner.plan.launchDay);
   return (
     <button type="button" class={`pr-offer ${tone}`} aria-pressed={!!selected} onClick={onClick}>
       <span class="pr-offer-head">
@@ -35,7 +39,8 @@ export function OfferRow({ a, selected, suggested, onClick, showName }: {
       </span>
       <span class="pr-offer-facts">
         <span class={a.late ? 'warn' : ''}>Arrives {fmtDate(a.expectedAt)}</span>
-        <span>{fmtPct(a.offer.reliability)}</span>
+        <span>{fmtPct(a.offer.reliability)} reliable</span>
+        {testable ? <span class="good" title="Arrives early enough for Science to test it before launch. A test halves its risk of failure.">time to test</span> : null}
         {a.quantity > 1 ? <span>{a.quantity} × {fmtM(a.unitPriceM)}</span> : null}
       </span>
       {a.unavailable ? <span class="pr-offer-why bad">{a.unavailable}</span>
@@ -268,7 +273,7 @@ function NeedInspector() {
         <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => setUi({ view: 'calls', callTarget: targetKey(task.id, crit.id), callResourceId: null, callSnapshot: null })}>
           {cov.openCall ? `Call open — answers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
         </button>
-        <p class="pr-note center muted">{fmtM(budgetAvailableM(v.budget))} available · suggestions rank fit, delivery, budget, then price.</p>
+        <p class="pr-note center muted">{fmtM(budgetAvailableM(v.budget))} available · suggestions rank fit, delivery, budget, lightest part, then reliability.</p>
       </div>
     </>
   );

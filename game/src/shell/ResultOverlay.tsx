@@ -21,7 +21,7 @@ export function ResultOverlay() {
   const planned = evaluationOf(cachedPlannerGame(s)).goals;
   const budget = s.budget;
   const delivered = s.market.contracts.filter((c) => c.status === 'delivered').length;
-  const research = s.research.projects.filter((p) => p.status === 'succeeded').length;
+  const research = s.research.projects.filter((p) => p.status === 'succeeded' && p.techId).length;
 
   if (hidden) {
     return (

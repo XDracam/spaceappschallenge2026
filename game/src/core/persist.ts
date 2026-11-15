@@ -35,6 +35,8 @@ export function loadSaved(): GameState | null {
     if (s?.version === 1) migrateV1(s);
     if (s?.version === 2) migrateV2(s);
     if (s?.version === 3) migrateV3(s);
+    // Version 5 added optional fields only (Contract.tested, ResearchProject.partId).
+    if (s?.version === 4) s.version = 5;
     if (s?.version !== STATE_VERSION) return null;
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';
@@ -82,5 +84,5 @@ function migrateV2(s: GameState): void {
 /** Research requests from Procurement are gone: science reads what the design needs straight from the planner's rocket. */
 function migrateV3(s: GameState): void {
   delete (s.research as { requests?: unknown }).requests;
-  s.version = STATE_VERSION;
+  s.version = 4;
 }

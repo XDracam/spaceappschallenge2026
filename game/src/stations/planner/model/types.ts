@@ -251,7 +251,9 @@ export interface PartContract {
   signedDay: number;
   /** Delivered day, or the expected delivery day while active. */
   deliveryDay: number;
-  reliability: number;               // 0..1
+  reliability: number;               // 0..1, as it will fly (a part test by Science halves the risk)
+  /** Science has tested the delivered part. */
+  tested?: boolean;
   actualStats: Record<string, number>;
   actualMassT: number;
   cancellationPct: number;
@@ -359,6 +361,8 @@ export interface GoalResult {
   goalId: string;
   achievable: boolean;       // plan reaches it with no blocking error
   successChance: number;     // 0..1, product of reliabilities of parts used up to the goal (0 if not achievable)
+  /** The parts behind successChance, each once (p = reliability; a cluster of engines counts as one). */
+  factors?: { partId: string; p: number }[];
   branchId?: string;
   reason?: string;           // why not achievable
 }

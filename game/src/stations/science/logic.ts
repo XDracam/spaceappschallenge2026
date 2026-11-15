@@ -7,6 +7,10 @@
 // comms block pauses it. At its end it is rolled with the shared seeded rng: success makes the tech
 // researched and raises the planner's research limits or unlocks parts; failure leaves the tech
 // available to retry.
+//
+// Part tests (playtest 1115d-r01): a team can also test a delivered part of the design (model/tests.ts).
+// A test is a project with a partId; it always works and halves the part's risk of failure, if it ends
+// before the launch.
 import { defineActions, onTick, type ActionCtx } from '../../core/actions';
 import { pushNews, setFlag } from '../../core/coreActions';
 import type { Effect, ResearchProject } from '../../core/model';
@@ -18,6 +22,7 @@ import { TECH_BY_ID } from './data/techs';
 import { FAILURE_LINES } from './data/flavour';
 import { covered, describeGrant, describeNeed, designNeeds, running } from './model/research';
 import { blockInfo, startCheck, techMonths } from './model/tree';
+import { partTests, testCheck, testContracts, testDays } from './model/tests';
 
 /** Fill slice and shared research fields missing from older saves. */
 function ensure(s: GameState): ScienceSlice {
@@ -43,7 +48,25 @@ function pick<T>(list: T[], ctx: ActionCtx): T {
   return list[Math.floor(ctx.rng() * list.length) % list.length];
 }
 
+const fmtPct = (v: number) => `${Math.round(v * 1000) / 10} %`;
+
+/** A part test ends: the part's contracts are marked as tested (half the risk of failure). */
+function resolveTest(s: GameState, ctx: ActionCtx, p: ResearchProject): void {
+  const before = partTests(s).find((t) => t.partId === p.partId);
+  const lots = testContracts(s, p.partId!);
+  // The part left the design or its contract was cancelled while the team was testing.
+  if (!before || !lots.length) { p.status = 'failed'; return; }
+  for (const c of lots) c.tested = true;
+  p.status = 'succeeded';
+  pushNews(s, {
+    from: 'science',
+    text: `Science tested the ${before.name}${before.product ? ` (${before.product})` : ''}: reliability ${fmtPct(before.reliability)} → ${fmtPct(before.after)}.`,
+    affects: ['planner', 'procurement'], internal: true,
+  }, ctx.newId);
+}
+
 function resolve(s: GameState, ctx: ActionCtx, p: ResearchProject): void {
+  if (p.partId) { resolveTest(s, ctx, p); return; }
   const sl = ensure(s);
   const info = sl.info[p.id];
   const tech = p.techId ? TECH_BY_ID[p.techId] : undefined;
@@ -97,6 +120,20 @@ export const scienceActions = defineActions('science', {
     sl.info[projectId] = { techId };
   },
 
+  /** Start testing a delivered part of the design. projectId is made by the UI. Spends the cost at once. */
+  startTest(s, ctx, projectId: string, partId: string) {
+    ensure(s);
+    if (s.research.projects.some((p) => p.id === projectId)) return;
+    if (!testCheck(s, partId).ok) return;
+    const t = partTests(s).find((x) => x.partId === partId)!;
+    s.budget.spentM = Math.round((s.budget.spentM + t.costM) * 100) / 100;
+    s.research.projects.push({
+      id: projectId, title: `Test: ${t.name}`, partId, costM: t.costM,
+      startedAt: ctx.day, endsAt: ctx.day + testDays(),
+      status: 'running', successChance: 1, effects: [],
+    });
+  },
+
   /** Stop a running project. Half of the unspent share of its cost comes back. */
   cancelProject(s, ctx, projectId: string) {
     const sl = ensure(s);
@@ -134,6 +171,8 @@ onTick('science', (s, ctx, fromDay, toDay) => {
       if (tech) pushNews(s, { from: 'science', text: `Science resumed "${tech.name}".`, affects: [], internal: false }, ctx.newId);
     }
     if (pct !== 0) p.endsAt -= dt * (pct / 100);
+    // A test has to be finished before the launch (the planner's handler runs first and may have launched).
+    if (p.partId && s.meta.phase !== 'planning') continue;
     if (p.endsAt <= toDay) resolve(s, ctx, p);
   }
   if (s.research.modifiers.length) s.research.modifiers = s.research.modifiers.filter((m) => m.untilDay > toDay);

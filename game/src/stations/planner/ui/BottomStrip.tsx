@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import type { Issue, ManeuverType, Severity } from '../model/types';
 import { uiStore, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
 import { DAYS_PER_MONTH, formatDv } from '../model/units';
+import { allParts, partPlaceName } from '../model/rocketUtils';
 import {
   SeverityIcon, branchColor, branchDisplayName, chanceClass, highlightPart, openManeuverEdit, openTab, partReadiness, pct, plural,
 } from './common';
@@ -103,7 +104,7 @@ function GoalsCard() {
       <div class="card-top">
         <span class="label">Goals</span>
         <div class="spacer" />
-        <span class="goal-hint" title="Each goal's chance is the combined reliability of the parts used up to that goal. More reliable parts raise it.">chance of success, from part reliability</span>
+        <span class="goal-hint">chance of success</span>
       </div>
       <ul class="goal-list thin-scroll">
         {goals.map((g) => {
@@ -132,7 +133,33 @@ function GoalsCard() {
           );
         })}
       </ul>
+      <WeakestParts />
     </section>
+  );
+}
+
+/**
+ * The parts behind the goal chances, least reliable first (a chance is the product of its parts'
+ * reliabilities). Science can test a delivered part, which halves its risk; Procurement chooses the supplier.
+ */
+function WeakestParts() {
+  const game = usePlanner((g) => g);
+  const ev = useEvaluation();
+  const p = new Map<string, number>();
+  for (const r of ev.goals) for (const f of r.factors ?? []) p.set(f.partId, f.p);
+  if (!p.size) return null;
+  const locs = new Map(allParts(game.rocket).map((l) => [l.part.id, l]));
+  const tested = new Set(game.contracts.filter((c) => c.tested && c.status !== 'cancelled').map((c) => c.partId));
+  const weakest = [...p].filter(([id]) => locs.has(id)).sort((a, b) => a[1] - b[1]).slice(0, 3);
+  return (
+    <div class="goal-weak">
+      <span class="muted">Weakest parts (Science can test delivered parts):</span>
+      {weakest.map(([id, rel]) => (
+        <button key={id} class="text-btn" title="Show this part in the Rocket panel" onClick={() => highlightPart(id)}>
+          {partPlaceName(locs.get(id)!)} <span class="num">{Math.round(rel * 1000) / 10}%</span>{tested.has(id) ? ' tested' : ''}
+        </button>
+      ))}
+    </div>
   );
 }
 

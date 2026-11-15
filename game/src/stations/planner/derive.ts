@@ -3,7 +3,7 @@
 //   open Task → Ordered; allocation with an active contract → Contracted
 //   (Late when it is expected after the launch day); delivered contract → Delivered.
 // Contracted parts use the contract's real stats, mass and reliability.
-import type { Contract, Task } from '../../core/model';
+import { contractReliability, type Contract, type Task } from '../../core/model';
 import type { GameState } from '../../core/state';
 import { MISSION } from '../../core/mission';
 import type { Evaluation, Part, PartContract, PartState, PlannerGame, Rocket } from './model/types';
@@ -88,7 +88,7 @@ export function actualPart(s: GameState, part: Part, proc: PartProcurement = par
     if (Number.isFinite(o.resource?.massT) && o.resource.massT > 0) p.actualMassT = o.resource.massT;
     if (proc.lots?.length) {
       const count = proc.lots.reduce((sum, lot) => sum + lot.quantity, 0);
-      p.reliability = proc.lots.some(lot => lot.contract.offerSnapshot.reliability <= 0) ? 0 : Math.exp(proc.lots.reduce((sum, lot) => sum + lot.quantity * Math.log(Math.min(1, lot.contract.offerSnapshot.reliability)), 0) / count);
+      p.reliability = proc.lots.some(lot => contractReliability(lot.contract) <= 0) ? 0 : Math.exp(proc.lots.reduce((sum, lot) => sum + lot.quantity * Math.log(Math.min(1, contractReliability(lot.contract))), 0) / count);
     }
   }
   return p;
@@ -129,7 +129,8 @@ export function partContracts(s: GameState): PartContract[] {
       priceM: o.priceM,
       signedDay: c.signedAt,
       deliveryDay: c.status === 'delivered' && c.deliveredAt !== undefined ? c.deliveredAt : c.expectedAt,
-      reliability: o.reliability,
+      reliability: contractReliability(c),
+      ...(c.tested ? { tested: true } : {}),
       actualStats: { ...(o.resource?.stats ?? {}) },
       actualMassT: o.resource?.massT ?? 0,
       cancellationPct: o.cancellationPct,

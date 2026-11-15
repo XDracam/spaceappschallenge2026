@@ -151,6 +151,14 @@ export interface Contract {
   requestedNeededAt?: number;
   amendmentCutoff?: number;
   amendments?: Amendment[];
+  /** Science has tested the delivered hardware (science/startTest): its risk of failure is halved. */
+  tested?: boolean;
+}
+
+/** Reliability of a contract's hardware as it will fly: a part test by Science halves the risk of failure. */
+export function contractReliability(c: Pick<Contract, 'offerSnapshot' | 'tested'>): number {
+  const r = c.offerSnapshot.reliability;
+  return c.tested ? 1 - (1 - r) / 2 : r;
 }
 
 
@@ -193,6 +201,8 @@ export interface ResearchProject {
   title: string;
   /** Tech tree node this project researches (science/data/techs.ts). */
   techId?: string;
+  /** Design part this project tests instead (a part test has no techId; science/model/tests.ts). */
+  partId?: string;
   /** Shared task this project answers, if any. */
   taskId?: string;
   costM: number;

@@ -570,6 +570,8 @@
 .st-planner .band-fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(63, 199, 255, 0.5); }
 
 .st-planner .goal-hint { min-width: 0; font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-planner .goal-weak { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 10px; font-size: 11px; line-height: 1.35; min-width: 0; }
+.st-planner .goal-weak .text-btn { font-size: 11px; padding: 0; white-space: nowrap; }
 .st-planner .goal-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
 .st-planner .goal-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) 38px; align-items: center; column-gap: 10px; font-size: 12px; cursor: default; }
 .st-planner .goal-list li.na { grid-template-columns: minmax(0, 1fr) auto; row-gap: 0; }

@@ -8,7 +8,7 @@ import { initialCommsSlice, type CommsSlice } from '../stations/comms/slice';
 import { initialScienceSlice, type ScienceSlice } from '../stations/science/slice';
 import { initialProcurementSlice, type ProcurementSlice } from '../stations/procurement/slice';
 
-export const STATE_VERSION = 4;
+export const STATE_VERSION = 5;
 
 export interface GameState {
   version: number;

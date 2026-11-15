@@ -4,7 +4,7 @@ import { affectedStations, effectStations } from '../../../shared/events/types';
 import type { StakeholderHint } from '../../../shared/events/types';
 import type { Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId } from '../model/types';
 import { getState } from '../../../core/store';
-import type { Contract, PartKind } from '../../../core/model';
+import { contractReliability, type Contract, type PartKind } from '../../../core/model';
 import { statDefs } from '../../planner/data/parts';
 import { allParts } from '../../planner/model/rocketUtils';
 import type { Rocket } from '../../planner/model/types';
@@ -133,7 +133,7 @@ export function offerTerms(effects: Effect[], contracts: Contract[], design: Roc
     const have = [...contracts].reverse().find((c) => (c.status === 'active' || c.status === 'delivered')
       && c.offerSnapshot.resource.partKind === e.partKind && c.offerSnapshot.resource.variant === e.variant);
     const now = have
-      ? `Contracted now: ${[statsText(e.partKind, e.variant, have.offerSnapshot.resource.stats), pct(have.offerSnapshot.reliability)].filter(Boolean).join(' · ')}`
+      ? `Contracted now: ${[statsText(e.partKind, e.variant, have.offerSnapshot.resource.stats), pct(contractReliability(have))].filter(Boolean).join(' · ')}`
       : allParts(design).some((l) => l.part.kind === e.partKind && l.part.variant === e.variant) ? 'Not contracted yet' : 'Not in the design';
     return [`${terms.filter(Boolean).join(' · ')}. ${now}.`];
   });

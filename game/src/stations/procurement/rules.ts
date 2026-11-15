@@ -283,10 +283,16 @@ export function offersForCriterion(s: PView, task: Task, c: Criterion): OfferAss
   return pool.map((o) => assessOffer(s, o, task, c)).sort(rankAssessments);
 }
 
-/** Auto-suggest order: signable, fits, on time, affordable, then cheapest, then most reliable. */
+/**
+ * Auto-suggest order: signable, fits, on time, affordable, then the lightest part, its most reliable supplier, then cheapest.
+ * (Playtest 1115d-r01: cheapest-first set the launch odds with the first nine orders while most of the budget stayed
+ * unused. Lightest comes before reliable so the suggestion stays with the part the Planner sized: an oversized
+ * part from a better supplier would cost the plan its delta-v margin.)
+ */
 export function rankAssessments(a: OfferAssessment, b: OfferAssessment): number {
   const score = (x: OfferAssessment) => (x.unavailable ? 8 : 0) + (x.fits ? 0 : 4) + (x.late ? 2 : 0) + (x.affordable ? 0 : 1);
-  return score(a) - score(b) || a.totalPriceM - b.totalPriceM || b.offer.reliability - a.offer.reliability;
+  return score(a) - score(b) || a.offer.resource.massT - b.offer.resource.massT
+    || b.offer.reliability - a.offer.reliability || a.totalPriceM - b.totalPriceM;
 }
 
 export function suggestion(list: OfferAssessment[]): OfferAssessment | undefined {

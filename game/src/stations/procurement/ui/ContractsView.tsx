@@ -1,7 +1,7 @@
 // Contracts: the inventory (active / delivered / cancelled), arrival vs launch, allocations.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
-import type { Contract } from '../../../core/model';
+import { contractReliability, type Contract } from '../../../core/model';
 import { procurementActions } from '../logic';
 import { RESOURCES } from '../data/catalogue';
 import {
@@ -88,7 +88,7 @@ export function ContractsView() {
       {contractView === 'timeline' ? <ContractTimeline /> : list.length ? (
         <div class="pr-table-wrap">
           <table class="pr-table">
-            <thead><tr><th>Contract</th><th>For</th><th>Qty</th><th>Status</th><th>Arrival</th><th>Value</th></tr></thead>
+            <thead><tr><th>Contract</th><th>For</th><th>Qty</th><th>Status</th><th>Arrival</th><th>Reliability</th><th>Value</th></tr></thead>
             <tbody>
               {list.map((k) => {
                 const st = statusLabel(k);
@@ -114,6 +114,7 @@ export function ContractsView() {
                       <span>{fmtDate(arrival)}</span>
                       {k.status === 'active' ? <div class="muted small">{`in ${fmtDuration(k.expectedAt - v.clock.day)}`}</div> : null}
                     </td>
+                    <td class="num">{fmtPct(contractReliability(k))}{k.tested ? <div class="good small">tested by Science</div> : null}</td>
                     <td class="num">{fmtM(k.offerSnapshot.priceM)}{k.status === 'cancelled' ? <div class="muted small">refund {fmtM(k.refundM ?? 0)}</div> : null}</td>
                   </tr>
                 );
@@ -168,7 +169,7 @@ export function ContractInspector() {
           <dd>{fmtDate(k.deliveredAt ?? k.expectedAt)}</dd>
           {timing.sinceSigning ? <><dt>Since signing</dt><dd>{timing.sinceSigning > 0 ? '+' : ''}{Math.round(timing.sinceSigning * 10) / 10} days</dd></> : null}
           <dt>Value</dt><dd>{fmtM(o.priceM)}{k.status === 'cancelled' ? ` · refunded ${fmtM(k.refundM ?? 0)}` : ''}</dd>
-          <dt>Reliability</dt><dd>{fmtPct(o.reliability)}</dd>
+          <dt>Reliability</dt><dd>{fmtPct(contractReliability(k))}{k.tested ? ` · tested by Science (was ${fmtPct(o.reliability)})` : ''}</dd>
           <dt>Source</dt><dd>{o.source === 'catalogue' ? 'Catalogue' : o.source === 'call' ? 'Call (tender)' : 'Comms partner offer'}</dd>
         </dl>
         <h3>Assigned to</h3>

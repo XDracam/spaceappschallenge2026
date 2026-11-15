@@ -1,4 +1,5 @@
-// Science station: engineering tech tree. Left: what the planner's design needs beyond research, and the lab.
+// Science station: engineering tech tree. Left: what the planner's design needs beyond research, the lab,
+// and the tests of delivered parts.
 // Middle: the tree. Right: details of the selected tech with Start button. Bottom: news.
 import { useMemo, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
@@ -7,7 +8,9 @@ import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
 import { describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci } from '../model/research';
 import { LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
+import { partTests, testCheck, testCounts, testDays, testDurationText } from '../model/tests';
 import type { TechStatus } from '../model/types';
+import type { GameState } from '../../../core/state';
 
 const STATUS_TEXT: Record<TechStatus, string> = {
   researched: 'Researched', running: 'In progress', available: 'Ready to start', blocked: 'Blocked by Comms',
@@ -62,11 +65,14 @@ export function App() {
               <div class="sc-card" key={p.id}>
                 <button type="button" class="sc-link" onClick={() => p.techId && setSel(p.techId)}><strong>{p.title}</strong></button>
                 <div class="sc-bar"><i style={{ width: `${pct}%` }} /></div>
-                <span class="muted">{paused ? 'Paused by Comms · ' : ''}ends {formatDate(p.endsAt)} · {Math.round(p.successChance * 100)} % success</span>
+                {p.partId
+                  ? <span class={testCounts(p.endsAt, g.planner.plan.launchDay) ? 'muted' : 'sc-warn'}>ends {formatDate(p.endsAt)}{testCounts(p.endsAt, g.planner.plan.launchDay) ? '' : ': not before the launch, it will not count'}</span>
+                  : <span class="muted">{paused ? 'Paused by Comms · ' : ''}ends {formatDate(p.endsAt)} · {Math.round(p.successChance * 100)} % success</span>}
                 <button type="button" class="sc-btn small" onClick={() => scienceActions.cancelProject(p.id)}>Cancel (half refund of unspent)</button>
               </div>
             );
           })}
+          <PartTests g={g} />
         </aside>
         <main class="sc-tree" onClick={() => setSel(null)}>
           <div class="sc-canvas" style={{ width: `${LAYOUT.width}px`, height: `${LAYOUT.height}px` }}>
@@ -106,6 +112,64 @@ export function App() {
         {g.events.news.filter((n) => n.from === 'science' || n.affects.includes('science')).slice(0, 3).map((n) => <span key={n.id}>• {n.text}</span>)}
       </footer>
     </div>
+  );
+}
+
+const pct = (v: number) => `${Math.round(v * 1000) / 10}\u00a0%`;
+
+/**
+ * Tests of the design's parts: a free team can test a delivered part and halve its risk of failure.
+ * Weakest part first; parts still on their way show when they arrive and whether a test still fits before launch.
+ */
+function PartTests({ g }: { g: GameState }) {
+  const tests = useMemo(() => partTests(g), [g.planner, g.market, g.research.projects]);
+  if (g.meta.phase !== 'planning') return null;
+  const launch = g.planner.plan.launchDay;
+  const days = testDays();
+  const byRisk = (a: { reliability: number }, b: { reliability: number }) => a.reliability - b.reliability;
+  const ready = tests.filter((t) => t.state === 'ready').sort(byRisk);
+  const arriving = tests.filter((t) => t.state === 'arriving').sort((a, b) => (a.arrivesAt ?? 0) - (b.arrivesAt ?? 0));
+  const open = tests.filter((t) => t.state === 'open').length;
+  const tested = tests.filter((t) => t.state === 'tested');
+  const tooLate = !testCounts(g.clock.day + days, launch);
+  return (
+    <>
+      <h2>Part tests</h2>
+      <p class="muted">A team tests a delivered part for {testDurationText()} and halves its risk of failure. A test counts if it ends before the launch on {formatDate(launch)}.</p>
+      {ready.map((t) => {
+        const chk = testCheck(g, t.partId);
+        return (
+          <div class="sc-card" key={t.partId}>
+            <strong>{t.name}</strong>
+            <span class="muted">{t.product} · {pct(t.reliability)} reliable</span>
+            <button type="button" class="sc-btn sc-test" disabled={!chk.ok}
+              onClick={() => scienceActions.startTest(`st-${Date.now().toString(36)}-${t.partId}`, t.partId)}>
+              Test · {t.costM} M · {testDurationText()} → {pct(t.after)}
+            </button>
+            {!chk.ok ? <span class="muted small">{chk.reason}</span>
+              : tooLate ? <span class="sc-warn">Would not end before the launch. Ask the Planner to move it.</span> : null}
+          </div>
+        );
+      })}
+      {arriving.length ? (
+        <div class="sc-card">
+          <strong>On their way</strong>
+          {arriving.map((t) => {
+            const late = !testCounts((t.arrivesAt ?? 0) + days, launch);
+            return (
+              <span class={`sc-row ${late ? 'sc-warn' : 'muted'}`} key={t.partId}>
+                <span>{t.name} · {pct(t.reliability)}</span>
+                <span>{formatDate(t.arrivesAt ?? 0).slice(0, -5)}</span>
+              </span>
+            );
+          })}
+          {arriving.some((t) => !testCounts((t.arrivesAt ?? 0) + days, launch))
+            ? <span class="muted"><span class="sc-warn">Red: too late to test before the launch.</span> Procurement can speed up a delivery, the Planner can move the launch.</span> : null}
+        </div>
+      ) : null}
+      {open ? <p class="muted">{open} {open === 1 ? 'part is' : 'parts are'} not under contract yet.</p> : null}
+      {tested.length ? <p class="muted">Tested: {tested.map((t) => `${t.name} ${pct(t.reliability)}`).join(', ')}.</p> : null}
+    </>
   );
 }
 
