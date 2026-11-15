@@ -7,8 +7,9 @@ material is [Apache-2.0](LICENSE); upstream components retain their own terms.
 ## Game, fonts and prototype assets
 
 [Full third-party notices](game/public/THIRD_PARTY_NOTICES.txt) include Preact's
-MIT notice, all three fonts' copyrights and SIL OFL 1.1 terms, the existing Lucide
-notice, build-tool credits and caniuse-lite attribution/license terms. Vite copies
+MIT notice, PeerJS's and its bundled dependencies' MIT/BSD-3-Clause notices, all
+three fonts' copyrights and SIL OFL 1.1 terms, the existing Lucide notice,
+build-tool credits and caniuse-lite attribution/license terms. Vite copies
 this file to `THIRD_PARTY_NOTICES.txt` at the deployed site's root. `LICENSE.txt`
 contains the project's Apache-2.0 terms. The fonts are loaded from Google Fonts;
 no font files are checked in. Lucide and IBM Plex Mono are used in the earlier
@@ -28,12 +29,13 @@ not licensed by this project and no endorsement is implied.
 
 ## Locked dependency inventory
 
-Preact is the integrated game's only direct runtime package. Other game entries
+Preact and PeerJS (D-027) are the integrated game's direct runtime packages. Other game entries
 are build/development dependencies and their transitives, including optional
 platform binaries; the playtest harness is separate. This inventory records package
 license declarations, not a claim that all these packages ship in the game bundle.
 Upstream installed packages contain their own notices. Regenerate/review this list
 when the lockfiles change. No dependencies were installed or updated for this work.
+PeerJS and its four bundled dependencies were added later for D-027.
 
 | Area | Package | Locked version | Declared license |
 | --- | --- | --- | --- |
@@ -137,6 +139,7 @@ when the lockfiles change. No dependencies were installed or updated for this wo
 | game | [esbuild](https://www.npmjs.com/package/esbuild) | 0.21.5 | MIT |
 | game | [escalade](https://www.npmjs.com/package/escalade) | 3.2.0 | MIT |
 | game | [estree-walker](https://www.npmjs.com/package/estree-walker) | 2.0.2 | MIT |
+| game | [eventemitter3](https://www.npmjs.com/package/eventemitter3) | 4.0.7 | MIT |
 | game | [fsevents](https://www.npmjs.com/package/fsevents) | 2.3.3 | MIT |
 | game | [gensync](https://www.npmjs.com/package/gensync) | 1.0.0-beta.2 | MIT |
 | game | [he](https://www.npmjs.com/package/he) | 1.2.0 | MIT |
@@ -151,11 +154,14 @@ when the lockfiles change. No dependencies were installed or updated for this wo
 | game | [node-html-parser](https://www.npmjs.com/package/node-html-parser) | 6.1.13 | MIT |
 | game | [node-releases](https://www.npmjs.com/package/node-releases) | 2.0.64 | MIT |
 | game | [nth-check](https://www.npmjs.com/package/nth-check) | 2.1.1 | BSD-2-Clause |
+| game | [peerjs](https://www.npmjs.com/package/peerjs) | 1.5.5 | MIT |
+| game | [peerjs-js-binarypack](https://www.npmjs.com/package/peerjs-js-binarypack) | 2.1.0 | MIT |
 | game | [picocolors](https://www.npmjs.com/package/picocolors) | 1.1.1 | ISC |
 | game | [picomatch](https://www.npmjs.com/package/picomatch) | 2.3.2 | MIT |
 | game | [postcss](https://www.npmjs.com/package/postcss) | 8.5.33 | MIT |
 | game | [preact](https://www.npmjs.com/package/preact) | 10.24.3 | MIT |
 | game | [rollup](https://www.npmjs.com/package/rollup) | 4.68.3 | MIT |
+| game | [sdp](https://www.npmjs.com/package/sdp) | 3.2.3 | MIT |
 | game | [semver](https://www.npmjs.com/package/semver) | 6.3.2 | ISC |
 | game | [source-map](https://www.npmjs.com/package/source-map) | 0.7.6 | BSD-3-Clause |
 | game | [source-map-js](https://www.npmjs.com/package/source-map-js) | 1.2.2 | BSD-3-Clause |
@@ -163,5 +169,6 @@ when the lockfiles change. No dependencies were installed or updated for this wo
 | game | [typescript](https://www.npmjs.com/package/typescript) | 5.6.3 | Apache-2.0 |
 | game | [update-browserslist-db](https://www.npmjs.com/package/update-browserslist-db) | 1.3.4 | MIT |
 | game | [vite](https://www.npmjs.com/package/vite) | 5.4.10 | MIT |
+| game | [webrtc-adapter](https://www.npmjs.com/package/webrtc-adapter) | 9.0.6 | BSD-3-Clause |
 | game | [yallist](https://www.npmjs.com/package/yallist) | 3.1.1 | ISC |
 | playtest | [playwright-core](https://www.npmjs.com/package/playwright-core) | 1.65.1 | Apache-2.0 |

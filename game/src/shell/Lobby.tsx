@@ -1,16 +1,19 @@
-// Lobby (D-015): host a game, resume it, or join with copy-paste connection codes;
-// then pick a station. Shown whenever this browser is not at a station.
+// Lobby (D-015, D-027): host a game, resume it, or join with a room code (manual
+// copy-paste codes as fallback); then pick a station. Shown whenever this browser is
+// not at a station.
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { STATIONS, type Seat, type StationId } from '../core/model';
 import { DEFAULT_MISSION_ID, MISSIONS, missionById } from '../core/mission';
 import { setLocalStation, useGame, useSync } from '../core/store';
 import type { InviteInfo } from '../net/webrtc';
+import { formatRoomCode, roomLink, type RoomPlayer } from '../net/peerjs';
 import { STATION_INFO } from './stations';
 import { requestConfirmation } from '../shared/confirmation';
 import {
-  acceptReply, backToStart, cancelInvite, cancelJoin, createInvite, hasSavedGame, hostEnterMission,
-  hostNewGame, hostTakeSeat, joinWithInvite, playerTakeSeat, resumeHostedGame, setName, setScreen, useSession,
+  acceptReply, backToStart, cancelInvite, cancelJoin, connectedPlayerCount, createInvite, hasSavedGame,
+  hostEnterMission, hostNewGame, hostTakeSeat, isManualCode, joinGame, kickRoomPlayer, playerTakeSeat,
+  rejoinRoom, resumeHostedGame, retryRoom, setName, setScreen, useSession,
 } from './session';
 
 export function Lobby() {
@@ -54,16 +57,35 @@ function Step({ n, title, children, done }: { n: number | string; title: string;
   );
 }
 
+async function copyText(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+}
+
+/** A button that copies `text` and says so for two seconds. */
+function CopyButton({ text, label, primary }: { text: string; label: string; primary?: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    await copyText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return <button class={`shell-btn${primary ? ' shell-btn-primary' : ''}`} onClick={copy}>{copied ? 'Copied ✓' : label}</button>;
+}
+
 function CodeBox({ code, label }: { code: string; label: string }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [copied, setCopied] = useState(false);
   const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-    } catch {
-      ref.current?.select();
-      document.execCommand('copy');
-    }
+    await copyText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -88,7 +110,8 @@ function NetHelp() {
     <div class="shell-help">
       <b>Connection trouble?</b> Some networks block direct connections between browsers (company, school or hotel
       Wi-Fi, some VPNs). Try another network, such as a phone hotspot — or play on one computer: host in this tab,
-      then open the game in more tabs or windows and join from there.
+      then open the game in more tabs or windows and join from there. If room codes don't work at all, the host can
+      use <i>manual codes</i> instead (under the room code).
     </div>
   );
 }
@@ -234,26 +257,28 @@ function StartScreen() {
             <span class="shell-choice-title">Resume hosted game</span>
             <span class="shell-choice-text">
               Continue the {saved.missionName} game saved in this browser ({saved.phase === 'lobby' ? 'not started yet' : dayLabel(saved.day)}).
-              Players join again with new codes.
+              Players rejoin with the same room code.
             </span>
           </button>
         )}
         <button class="shell-choice" onClick={() => setScreen('join')}>
           <span class="shell-choice-title">Join a game</span>
-          <span class="shell-choice-text">Someone else is hosting and sent you an invite code.</span>
+          <span class="shell-choice-text">Someone else is hosting and gave you a room code.</span>
         </button>
       </div>
       <details class="shell-howto">
         <summary>How does connecting work?</summary>
         <p>
-          There is no game server. The host's browser holds the game and each player connects to it directly. To connect,
-          the host and the player swap two codes once — through chat, e-mail or anything else you can copy and paste into:
+          There is no game server. The host's browser holds the game and each player's browser connects to it directly.
         </p>
         <ol>
-          <li>The host makes an <b>invite code</b> and sends it to the player.</li>
-          <li>The player pastes it here and gets a <b>reply code</b>, which they send back.</li>
-          <li>The host pastes the reply code. Connected — the player picks a station.</li>
+          <li>The host gets a short <b>room code</b>, such as K7Q-4XM, and tells the players (say it, or send the link).</li>
+          <li>Players choose “Join a game” and type the code. Connected — they pick a station.</li>
         </ol>
+        <p>
+          A public matchmaking service (PeerJS) only introduces the browsers to each other; it never sees the game. If it
+          is unreachable, the host can fall back to <i>manual codes</i> swapped by copy and paste.
+        </p>
         <p>Trying it alone? Host in this tab, then open this page in another tab or window and join from there.</p>
       </details>
     </>
@@ -268,9 +293,11 @@ function HostScreen() {
   const day = useGame((s) => s.clock.day);
   const invites = useSession((s) => s.invites);
   const names = useSession((s) => s.peerNames);
+  const room = useSession((s) => s.room);
+  const roomPlayers = useSession((s) => s.roomPlayers);
+  const connected = useSession(connectedPlayerCount);
   const [busy, setBusy] = useState(false);
   const mine = STATIONS.find((st) => seats[st].claimedBy === 'host');
-  const connected = invites.filter((i) => i.status === 'connected').length;
   const started = phase !== 'lobby';
 
   const invite = async () => {
@@ -309,19 +336,30 @@ function HostScreen() {
           </Step>
         </div>
         <div>
-          <Step n={2} title="Invite players" done={connected > 0 && invites.every((i) => i.status === 'connected')}>
-            <p class="shell-muted">
-              Make one invite per player. Send them the invite code (chat, e-mail…), they send a reply code back, you paste
-              it below.
-            </p>
-            <div class="shell-invites">
-              {invites.map((inv, i) => (
-                <InviteCard key={inv.peerId} inv={inv} index={i + 1} name={names[inv.peerId]} seats={seats} />
-              ))}
-            </div>
-            <button class="shell-btn" disabled={busy || invites.length >= 12} onClick={invite}>
-              {busy ? 'Making invite code…' : invites.length ? '+ Invite another player' : '+ Invite a player'}
-            </button>
+          <Step n={2} title="Invite players" done={connected > 0}>
+            <RoomPanel room={room} />
+            {roomPlayers.length > 0 && (
+              <div class="shell-invites">
+                {roomPlayers.map((p) => (
+                  <RoomPlayerRow key={p.peerId} p={p} name={names[p.peerId]} seats={seats} />
+                ))}
+              </div>
+            )}
+            <details class="shell-manual" open={room.status === 'error' || invites.length > 0}>
+              <summary>Room code not working? Use manual codes</summary>
+              <p class="shell-muted">
+                Make one invite per player. Send them the invite code (chat, e-mail…), they send a reply code back, you
+                paste it below. Works without the matchmaking service.
+              </p>
+              <div class="shell-invites">
+                {invites.map((inv, i) => (
+                  <InviteCard key={inv.peerId} inv={inv} index={i + 1} name={names[inv.peerId]} seats={seats} />
+                ))}
+              </div>
+              <button class="shell-btn" disabled={busy || invites.length >= 12} onClick={invite}>
+                {busy ? 'Making invite code…' : invites.length ? '+ Manual invite for another player' : '+ Manual invite'}
+              </button>
+            </details>
           </Step>
         </div>
       </div>
@@ -329,6 +367,56 @@ function HostScreen() {
         <button class="shell-link" onClick={leave}>Close game and go back</button>
       </footer>
     </>
+  );
+}
+
+function RoomPanel({ room }: { room: { status: string; code: string; error: string } }) {
+  const shown = formatRoomCode(room.code);
+  return (
+    <div class={`shell-room is-${room.status}`}>
+      <span class="shell-label">Room code</span>
+      <div class="shell-room-code" aria-live="polite">{room.status === 'error' ? '———' : shown || '···'}</div>
+      {room.status === 'open' && (
+        <>
+          <p class="shell-muted">Tell your players this code, or send them the link. They choose “Join a game” and type it.</p>
+          <div class="shell-room-actions">
+            <CopyButton text={shown} label="Copy code" primary />
+            <CopyButton text={roomLink(room.code)} label="Copy invite link" />
+          </div>
+        </>
+      )}
+      {room.status === 'opening' && <p class="shell-muted"><span class="shell-spin" /> Opening the room…</p>}
+      {room.status === 'reconnecting' && (
+        <p class="shell-muted"><span class="shell-spin" /> Reconnecting to the matchmaking service. Players already in stay connected.</p>
+      )}
+      {room.status === 'error' && (
+        <>
+          <p class="shell-error" role="alert">{room.error} Try again, or use manual codes below.</p>
+          <button class="shell-btn" onClick={retryRoom}>Try again</button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function RoomPlayerRow({ p, name, seats }: { p: RoomPlayer; name?: string; seats: Record<StationId, Seat> }) {
+  const seat = STATIONS.find((st) => seats[st].claimedBy === p.peerId);
+  const STATUS: Record<RoomPlayer['status'], string> = { connecting: 'Connecting…', connected: 'Connected', left: 'Left' };
+  const where = p.status === 'connected' ? (seat ? `at ${STATION_INFO[seat].label}` : 'choosing a station…') : p.status === 'left' ? 'station free again' : '';
+  return (
+    <div class={`shell-invite is-${p.status}`}>
+      <div class="shell-invite-head">
+        <b>{name || (p.status === 'connecting' ? 'New player' : 'Player')}</b>
+        <span class={`shell-chip is-${p.status}`}>{STATUS[p.status]}</span>
+        <span class="shell-muted">{where}</span>
+        <span class="shell-spacer" />
+        {p.status !== 'connecting' && (
+          <button class="shell-link" onClick={() => kickRoomPlayer(p.peerId)} title={p.status === 'connected' ? 'Disconnect this player' : 'Remove from the list'}>
+            {p.status === 'connected' ? 'Disconnect' : 'Remove'}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -401,11 +489,19 @@ function InviteCard({ inv, index, name, seats }: { inv: InviteInfo; index: numbe
 
 function JoinScreen() {
   const join = useSession((s) => s.join);
+  const name = useSession((s) => s.name);
+  const prefill = useSession((s) => s.joinPrefill);
   const role = useSync((s) => s.role);
   const peerId = useSync((s) => s.peerId);
   const seats = useGame((s) => s.meta.seats);
   const phase = useGame((s) => s.meta.phase);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(prefill);
+  useEffect(() => { if (prefill) setCode(prefill); }, [prefill]);
+  const manual = isManualCode(code);
+  const submit = (e: Event) => {
+    e.preventDefault();
+    if (code.trim()) joinGame(code);
+  };
   const ready = role === 'client' && join.status === 'connected' && join.hasSnapshot;
   const mine = ready ? STATIONS.find((st) => seats[st].claimedBy === peerId) : undefined;
 
@@ -427,32 +523,65 @@ function JoinScreen() {
     <>
       <Brand tag={ready ? 'Connected' : 'Joining'} />
       {ready && <MissionLine />}
-      <Step n={1} title="Paste the invite code from the host" done={join.status !== 'idle'}>
+      <Step n={1} title="Enter the room code from the host" done={join.status !== 'idle'}>
         {join.status === 'idle' ? (
           <>
-            <div class="shell-codebox">
-              <textarea
-                class="shell-code shell-code-input"
-                rows={3}
-                placeholder="Paste invite code (starts with MC1-)"
-                aria-label="Invite code"
-                value={code}
-                onInput={(e) => setCode((e.currentTarget as HTMLTextAreaElement).value)}
-              />
-              <button class="shell-btn shell-btn-primary" disabled={!code.trim()} onClick={() => joinWithInvite(code)}>
-                Next
-              </button>
-            </div>
+            <form class="shell-join" onSubmit={submit}>
+              <label class="shell-field">
+                <span class="shell-label">Your name</span>
+                <input
+                  class="shell-input"
+                  value={name}
+                  maxLength={24}
+                  placeholder="e.g. Alex"
+                  onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)}
+                />
+              </label>
+              <label class="shell-field shell-field-grow">
+                <span class="shell-label">{manual ? 'Invite code' : 'Room code'}</span>
+                {manual ? (
+                  <textarea
+                    class="shell-code shell-code-input"
+                    rows={3}
+                    aria-label="Invite code"
+                    value={code}
+                    onInput={(e) => setCode((e.currentTarget as HTMLTextAreaElement).value)}
+                  />
+                ) : (
+                  <input
+                    class="shell-input shell-room-input"
+                    value={code}
+                    placeholder="K7Q-4XM"
+                    autoFocus
+                    autoComplete="off"
+                    spellcheck={false}
+                    onInput={(e) => setCode((e.currentTarget as HTMLInputElement).value)}
+                  />
+                )}
+              </label>
+              <button type="submit" class="shell-btn shell-btn-primary shell-btn-big" disabled={!code.trim()}>Join</button>
+            </form>
             {join.error && <p class="shell-error" role="alert">{join.error}</p>}
+            <p class="shell-hint">Got a long manual code starting with MC1- instead? Paste it into the same box.</p>
           </>
         ) : (
-          <p class="shell-muted">Invite code accepted.</p>
+          <p class="shell-muted">
+            {join.mode === 'room' ? <>Room <b>{formatRoomCode(join.roomCode)}</b></> : 'Invite code accepted.'}
+          </p>
         )}
       </Step>
 
       {join.status !== 'idle' && (
-        <Step n={2} title="Send your reply code to the host" done={join.status === 'connected'}>
-          {join.status === 'creating' && <p class="shell-muted"><span class="shell-spin" /> Preparing your reply code (a few seconds)…</p>}
+        <Step
+          n={2}
+          title={join.mode === 'room' ? 'Connect to the host' : 'Send your reply code to the host'}
+          done={join.status === 'connected'}
+        >
+          {join.status === 'creating' && (
+            <p class="shell-muted">
+              <span class="shell-spin" /> {join.mode === 'room' ? 'Connecting to the host…' : 'Preparing your reply code (a few seconds)…'}
+            </p>
+          )}
           {join.status === 'waiting' && (
             <>
               <CodeBox code={join.replyCode} label="Your reply code" />
@@ -465,7 +594,11 @@ function JoinScreen() {
           {join.status === 'connected' && <p class="shell-muted">Connected to the host.</p>}
           {join.status === 'failed' && (
             <>
-              <p class="shell-error" role="alert">{join.error || 'The connection failed.'} Ask the host for a new invite code.</p>
+              <p class="shell-error" role="alert">
+                {join.error || 'The connection failed.'}
+                {join.mode === 'code' && ' Ask the host for a new invite code.'}
+              </p>
+              {join.mode === 'room' && <button class="shell-btn" onClick={rejoinRoom}>Try again</button>}
               <NetHelp />
             </>
           )}
@@ -503,6 +636,7 @@ function JoinScreen() {
 }
 
 export function HostLeft({ reason }: { reason: 'bye' | 'lost' | null }) {
+  const roomCode = useSession((s) => (s.join.mode === 'room' ? s.join.roomCode : ''));
   return (
     <div class="shell-hostleft">
       <h2>{reason === 'lost' ? 'Connection to the host lost' : 'Host left the game'}</h2>
@@ -510,9 +644,14 @@ export function HostLeft({ reason }: { reason: 'bye' | 'lost' | null }) {
         {reason === 'lost'
           ? 'The connection to the host dropped. '
           : 'The host closed or reloaded the game. '}
-        The game is saved in the host's browser: once they choose “Resume hosted game”, ask for a new invite code and join again.
+        {roomCode
+          ? `The game is saved in the host's browser. Once they choose “Resume hosted game”, rejoin room ${formatRoomCode(roomCode)}.`
+          : 'The game is saved in the host\'s browser: once they choose “Resume hosted game”, ask for a new invite code and join again.'}
       </p>
-      <button class="shell-btn shell-btn-primary" onClick={backToStart}>Back to lobby</button>
+      <div class="shell-room-actions">
+        {roomCode && <button class="shell-btn shell-btn-primary" onClick={rejoinRoom}>Rejoin {formatRoomCode(roomCode)}</button>}
+        <button class={`shell-btn${roomCode ? '' : ' shell-btn-primary'}`} onClick={backToStart}>Back to lobby</button>
+      </div>
     </div>
   );
 }

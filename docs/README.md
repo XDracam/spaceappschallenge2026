@@ -53,7 +53,7 @@
 | [Science module](../science/README.md) | Science role: engineering tech tree (D-020); earlier research field graph kept as history |
 | [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
 | [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
-| [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015) |
+| [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015, D-027 room codes) |
 
 ## Persistent project memory
 
