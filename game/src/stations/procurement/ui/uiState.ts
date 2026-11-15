@@ -51,6 +51,8 @@ export interface UiState {
   qty: number;
   compare: string[];
   contractId: string | null;
+  contractView: 'timeline' | 'table';
+  amendmentPreview: { contractId: string; delivery: DeliveryOptionId } | null;
   callId: string | null;
   callTarget: string;
   delivery: DeliveryOptionId;
@@ -78,6 +80,8 @@ export const ui = createStore<UiState>({
   qty: 0,
   compare: [],
   contractId: null,
+  contractView: 'timeline',
+  amendmentPreview: null,
   callId: null,
   callTarget: '',
   delivery: 'standard',
@@ -94,7 +98,9 @@ export function useUi<S>(sel: (u: UiState) => S): S {
   return useStore(ui, sel);
 }
 export function setUi(patch: Partial<UiState>): void {
-  ui.set({ ...ui.get(), ...patch });
+  const current = ui.get();
+  const changingContract = patch.contractId !== undefined && patch.contractId !== current.contractId;
+  ui.set({ ...current, ...(changingContract ? { amendmentPreview: null } : {}), ...patch });
 }
 
 /** Encodes a criterion target as one select value. */
@@ -116,8 +122,8 @@ export function usePView(): PView {
   const json = useGame((s) => JSON.stringify({
     market: s.market,
     budget: s.budget,
-    research: { limits: s.research.limits, unlocked: s.research.unlocked, requests: s.research.requests ?? [] },
-    clock: { day: Math.floor(s.clock.day) },
+    research: { limits: s.research.limits, unlocked: s.research.unlocked, projects: s.research.projects, requests: s.research.requests ?? [] },
+    clock: { day: s.clock.day },
     planner: { plan: { launchDay: s.planner.plan.launchDay } },
     comms: { trust: { industry: s.comms.trust.industry } },
   }));

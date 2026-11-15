@@ -19,6 +19,7 @@ import type { Part } from '../planner/model/types';
 import { beyondResearch } from '../planner/data/parts';
 import { CALL_DURATION_DAYS, CALL_OFFER_VALID_DAYS } from './data/calls';
 import { criterionCoverage, findOffer, fmtDate, fmtM, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, previewCall, freeContractQuantity, sameHardware, fitFailures, beyondKeys, cancellationToken, deliveryOptions } from './rules';
+import { contractTiming } from './timing';
 
 const money = (v: number) => Math.round(v * 1000) / 1000;
 
@@ -35,15 +36,17 @@ function findCriterion(s: GameState, taskId?: string, criterionId?: string): { t
 
 /** Keep 'contract.late' in sync and announce newly late contracts once. */
 function refreshLate(s: GameState, ctx: ActionCtx): void {
-  const launch = s.planner.plan.launchDay;
-  const late = s.market.contracts.filter((k) => k.status === 'active' && k.expectedAt > launch + 1e-9);
+  const lateNeed = (k: Contract) => contractTiming(s, k).needs.find(n => n.margin !== undefined && n.margin < 0);
+  const late = s.market.contracts.filter(k => k.status === 'active' && lateNeed(k));
   if (s.events.flags.includes('contract.late') !== late.length > 0) setFlag(s, 'contract.late', late.length > 0);
   const warned = new Set(s.procurement.lateWarned ?? []);
   const next: string[] = [];
   for (const k of late) {
     next.push(k.id);
     if (!warned.has(k.id)) {
-      news(s, ctx, `Late delivery: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}) arrives ${fmtDate(k.expectedAt)}, after the planned launch ${fmtDate(launch)}.`, ['planner', 'procurement']);
+      const need = lateNeed(k)!;
+      const description = need.source === 'requested' ? `the original order request on ${fmtDate(need.neededAt!)}` : need.source === 'research-bonus' ? `the research bonus deadline for ${need.label} on ${fmtDate(need.neededAt!)}` : `${need.label} needs it on ${fmtDate(need.neededAt!)}`;
+      news(s, ctx, `Late delivery: ${k.offerSnapshot.resource.name} (${k.offerSnapshot.supplierName}) arrives ${fmtDate(k.expectedAt)}, after ${description}.`, need.source === 'task' ? ['planner', 'procurement'] : ['procurement']);
     }
   }
   s.procurement.lateWarned = next;
@@ -114,7 +117,7 @@ function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: str
   }
   const offer = q.offer;
   const id = ctx.newId('contract');
-  s.market.contracts.push({ id, revision: 1, offerSnapshot: {...structuredClone(offer), deliveryOptions:structuredClone(deliveryOptions(offer)), quantity:q.quantity, priceM:q.totalM, status:'accepted'}, signedAt:ctx.day, expectedAt:q.expectedAt, baselineExpectedAt:q.expectedAt, amendmentCutoff:ctx.day + Math.max(1, (q.expectedAt - ctx.day) * 0.75), delivery:draft.delivery, initialDelivery:draft.delivery, amendments:[], status:'active' });
+  s.market.contracts.push({ id, revision: 1, offerSnapshot: {...structuredClone(offer), deliveryOptions:structuredClone(deliveryOptions(offer)), quantity:q.quantity, priceM:q.totalM, status:'accepted'}, signedAt:ctx.day, expectedAt:q.expectedAt, baselineExpectedAt:q.expectedAt, ...(draft.destination.kind !== 'task' && draft.neededAt !== undefined ? {requestedNeededAt:draft.neededAt} : {}), amendmentCutoff:ctx.day + Math.max(1, (q.expectedAt - ctx.day) * 0.75), delivery:draft.delivery, initialDelivery:draft.delivery, amendments:[], status:'active' });
   s.budget.committedM = money(s.budget.committedM + q.totalM);
   if (offer.source !== 'catalogue') {
     const o = s.market.offers.find(x => x.id === offer.id)!;
@@ -172,6 +175,7 @@ export const procurementActions = defineActions('procurement', {
     const k = s.market.contracts.find(x => x.id === contractId);
     if (!k || !Number.isInteger(quantity) || quantity < 1 || freeContractQuantity(s,contractId) < quantity) { reject(s,ctx,'Supply is no longer free'); return; }
     s.market.allocations.push({id:ctx.newId('alloc'),revision:1,contractId,taskId:'',criterionId:'',department,quantity,status:k.status === 'delivered' ? 'available' : 'reserved'});
+    refreshLate(s, ctx);
   },
 
   /** Invite tenders for a Task criterion; Offers arrive when the Call closes (~1 month). */
@@ -272,14 +276,16 @@ export const procurementActions = defineActions('procurement', {
       id: ctx.newId('alloc'), revision: 1, contractId, taskId, criterionId: crit.id, quantity: qty,
       status: k.status === 'delivered' ? 'available' : 'reserved',
     });
+    refreshLate(s, ctx);
   },
 
   /** Release an allocation (the contracted supply stays in inventory). */
-  release(s, _ctx, allocationId: string) {
+  release(s, ctx, allocationId: string) {
     const a = s.market.allocations.find((x) => x.id === allocationId);
     if (!a || a.status === 'released' || a.projectId) return;
     a.status = 'released';
     a.revision++;
+    refreshLate(s, ctx);
   },
 
   /**

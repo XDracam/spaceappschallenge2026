@@ -182,10 +182,20 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 - Evidence and limits: the cited acquisition sources support delivery schedules, solicitation deadlines and modifications; numerical curves, research reuse and reliability aggregation are game choices. Fixtures require balancing. Approval is not evidence of implemented behavior or multiplayer enjoyment. Optional slot reservations and deferred supplier events remain outside this selection.
 - Related: I-079, I-080, D-004, D-005, D-017, Q-005, Q-008, Q-014, Q-023–Q-028, Q-031.
 
-## D-019 — Science is an engineering tech tree
+## D-019 — Reduced Contract timeline prototype
+
+- Date: 2026-11-15
+- Status: accepted user direction for implementation; implementation and playtesting require independent verification.
+- Decision: add a Contract timeline showing arrivals against actual needs, with enough identity, recipient and quantity information to distinguish orders and their uses. Retain the Table. On a selected Contract, preview one selected amendment as current versus proposed arrival and fee, and provide concise local delay and cutoff feedback.
+- Scope: no Upcoming area, Call or Offer-expiry integration, replacement comparison, or dependency graph in this iteration. The broader [timeline design study](../procurement/timeline-design.md) remains historical exploration, not an approved specification. The separate budget composition proposal is not selected by this decision.
+- Source: user approval of the reduced implementation scope in the November 15 conversation, following the timeline study.
+- Limitations: approval is not evidence of runtime behavior or multiplayer enjoyment. Preserve unknown need dates rather than inventing them; distinguish research bonuses from mandatory needs.
+- Related: I-081, D-017–D-018, Q-007, Q-024–Q-025, Q-031.
+
+## D-020 — Science is an engineering tech tree
 
 - Date: 2026-11-14
-- Status: accepted user direction; implemented on branch `science-tech-tree`, not yet merged to `main`
+- Status: accepted user direction; implemented and merged to `main` November 15, 2026
 - Decision:
   - Science researches engineering upgrades for Mission Planning (propulsion, instruments, power, antenna, protection), shown as a tech tree with prerequisites. It replaces the knowledge graph, combination bench and recipes of the earlier science design.
   - Science's goals are requests from Procurement. Science must find a route through the tree to a tech that delivers the requested limit or unlock. Several routes can lead to the same goal.
@@ -196,7 +206,7 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 - Rationale and evidence: user direction. The tree gives science its own goal-driven puzzle and ties it to Procurement and Comms.
 - Alternatives considered: keep the knowledge graph with the tree as a second layer (not chosen by the user).
 - Consequences and limitations: the old graph content (fields, descriptions, recipes) is dropped on the branch and kept on `main`. The pure-science findings that fed comms news are gone unless re-added. Tech content is placeholders (D-005).
-- Related: D-005, D-015, I-078 to I-081, Q-036 to Q-038, [science module](../science/README.md).
+- Related: D-005, D-015, I-082 to I-085, Q-036 to Q-038, [science module](../science/README.md).
 
 ## Future decision template
 

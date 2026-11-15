@@ -147,6 +147,8 @@ export interface Contract {
   delivery?: DeliveryOptionId;
   initialDelivery?: DeliveryOptionId;
   baselineExpectedAt?: number;
+  /** Requested standalone delivery date at signing; absent for older contracts. */
+  requestedNeededAt?: number;
   amendmentCutoff?: number;
   amendments?: Amendment[];
 }

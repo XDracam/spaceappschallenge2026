@@ -81,7 +81,7 @@ export function NextStep() {
     const r = partReadiness(game, ev);
     if (r.draft > 0) {
       return {
-        kind: 'button', text: `Next: order ${plural(r.draft, 'part')} (Rocket → Order all parts)`,
+        kind: 'button', text: `Next: order ${plural(r.draft, 'part')} (Rocket → Order ${r.draft === 1 ? 'part' : 'parts'})`,
         onClick: () => openTab('rocket'), title: 'Open the Rocket panel',
       };
     }

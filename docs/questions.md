@@ -157,7 +157,7 @@ How many nodes does the graph need, and how are clusters named at each zoom leve
 
 ## Q-036 — Comms gating of techs
 
-Which techs start blocked and need comms approval, and what can comms do to a running project (block it, slow it, refund it)? Does a block lift by itself after some time? Who is told? The first version blocks and enables whole techs and shows the reason in the tree. See I-080.
+Which techs start blocked and need comms approval, and what can comms do to a running project (block it, slow it, refund it)? Does a block lift by itself after some time? Who is told? The first version blocks and enables whole techs and shows the reason in the tree. See I-084.
 
 ## Q-037 — Mass and cost effects of upgrades
 
@@ -165,4 +165,4 @@ The user's example was "better camera modules for less weight". The planner deri
 
 ## Q-038 — Hidden parts of the tree
 
-How much of the tree does the player see at the start, and how do they find routes (fog by distance, scouting projects, hints from partners)? How many routes should a goal have, and can all of them be blocked? See I-081.
+How much of the tree does the player see at the start, and how do they find routes (fog by distance, scouting projects, hints from partners)? How many routes should a goal have, and can all of them be blocked? See I-085.

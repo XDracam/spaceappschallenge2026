@@ -1,4 +1,4 @@
-// Types for the engineering tech tree (D-019). Pure data, no framework imports.
+// Types for the engineering tech tree (D-020). Pure data, no framework imports.
 
 export type Branch = 'propulsion' | 'power' | 'instruments' | 'antenna' | 'protection';
 

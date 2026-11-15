@@ -22,6 +22,8 @@
 | [Procurement UI audit](playtests/2026-11-14-procurement-ui-audit.md) | Skill-guided findings, implemented refinements and observed keyboard/purchase checks |
 | [Procurement gameplay iteration](playtests/2026-11-14-procurement-gameplay-iteration.md) | Contextual station actions, optional multi-need draft and observed consequence walkthroughs |
 | [Order integration walkthrough](playtests/2026-11-15-order-integration-walkthrough.md) | Limited single-operator observations during implementation; fixes followed |
+| [Contract timeline design study](../procurement/timeline-design.md) | Reduced implementation scope selected in D-019; earlier broader proposals, data gaps and paper scenarios retained for history |
+| [Timeline implementation walkthrough](playtests/2026-11-15-timeline-walkthrough.md) | Observed preview, confirmation and saved-date behavior; single-operator limits |
 | [Procurement gameplay UX audit](reviews/2026-11-14-procurement-gameplay-ux.md) | High-level station requirements: awareness, scrolling, active context, competing plans, interruptions and concurrent gameplay; researched proposals |
 | [Concept Maturity Levels paper review](reviews/2026-11-14-cml-paper.md) | Source findings and proposed gameplay applications for sourcing, development, reserves and concurrent mission design |
 | [Procurement order options](notes/2026-11-14-procurement-order-options.md) | User proposal for configurable orders and candidate gameplay additions with role boundaries |
@@ -38,7 +40,7 @@
 | [Procurement research and design alternatives](../procurement/research-design-alternatives.md) | Detailed mechanics, design principles, competing approaches and a shared scenario |
 | [Procurement UI flows and reference analysis](../procurement/ui-flow-research.md) | Sourced interface patterns, screen priorities, concrete flows and layout alternatives |
 | [Mission planner module](../mission-planner/README.md) | Mission planning role: solar system, maneuvers, rocket configurator |
-| [Science module](../science/README.md) | Science role: research field graph and project drafting (standalone visual prototype) |
+| [Science module](../science/README.md) | Science role: engineering tech tree (D-020); earlier research field graph kept as history |
 | [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
 | [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
 | [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015) |

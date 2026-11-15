@@ -39,22 +39,12 @@ export function groupStatus(statuses: PartStatus[]): PartStatus {
   return ORDER[i];
 }
 
-export function StatusDot({ status }: { status: PartStatus }) {
-  return <span class={`ps-dot ps-${status}`} title={STATUS_HINT[status]} />;
+export function StatusDot({ status, title }: { status: PartStatus; title?: string }) {
+  return <span class={`ps-dot ps-${status}`} title={title ?? STATUS_HINT[status]} />;
 }
 
 export function StatusPill({ status }: { status: PartStatus }) {
   return <span class={`ps-pill ps-${status}`} title={STATUS_HINT[status]}>{STATUS_LABEL[status]}</span>;
-}
-
-export function StatusLegend() {
-  return (
-    <div class="ps-legend">
-      {(['draft', 'ordered', 'contracted', 'delivered', 'late'] as PartStatus[]).map((s) => (
-        <span key={s} title={STATUS_HINT[s]}><StatusDot status={s} />{STATUS_LABEL[s]}</span>
-      ))}
-    </div>
-  );
 }
 
 // ------------------------------------------------------------ plain stat labels

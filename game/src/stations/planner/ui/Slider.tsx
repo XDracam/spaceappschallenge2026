@@ -1,6 +1,6 @@
 import { useRef, useState } from 'preact/hooks';
 import type { StatDef } from '../data/parts';
-import { LockIcon, clamp, fmtNum } from './common';
+import { clamp, fmtNum } from './common';
 import { statLabel } from './partInfo';
 
 const RES = 1000;
@@ -84,8 +84,9 @@ function fmtDisplay(def: StatDef, v: number): string {
 }
 
 /** Editable number in display units; commits on Enter or blur. */
-function NumberField({ value, factor, disabled, onCommit, label, format }: {
+function NumberField({ value, factor, disabled, onCommit, label, format, onNudge }: {
   value: number; factor: number; disabled?: boolean; onCommit: (v: number) => void; label: string; format: (v: number) => string;
+  onNudge?: (dir: 1 | -1) => void;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   const cancelled = useRef(false);
@@ -101,51 +102,48 @@ function NumberField({ value, factor, disabled, onCommit, label, format }: {
       onInput={(e) => setDraft((e.currentTarget as HTMLInputElement).value)}
       onBlur={(e) => { if (!cancelled.current) commit((e.currentTarget as HTMLInputElement).value); cancelled.current = false; setDraft(null); }}
       onKeyDown={(e) => {
+        if (onNudge && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+          e.preventDefault();
+          setDraft(null);
+          onNudge(e.key === 'ArrowUp' ? 1 : -1);
+          return;
+        }
         if (e.key === 'Enter') (e.currentTarget as HTMLInputElement).blur();
         if (e.key === 'Escape') { cancelled.current = true; (e.currentTarget as HTMLInputElement).blur(); }
       }} />
   );
 }
 
-/** A part stat slider from a StatDef: label, − value + controls, research tick and a beyond-research caption. */
-export function StatSlider({ def, value, limit, locked, onChange }: {
+/** Research hint for a stat slider's tooltip (the yellow tick), or undefined without a research limit. */
+export function researchHint(def: StatDef, value: number, limit: number | undefined): string | undefined {
+  if (limit === undefined) return undefined;
+  const f = def.displayFactor ?? 1;
+  const unit = def.displayUnit ?? def.unit;
+  const max = `${fmtDisplay(def, limit * f)}${unit ? ` ${unit}` : ''}`;
+  return value > limit + 1e-9
+    ? `Beyond current research (yellow tick: max researched ${max}). Procurement may pay more or get a less reliable part.`
+    : `Yellow tick: max researched ${max}`;
+}
+
+/**
+ * Compact stat value of a slider line: an editable number (click to type, Enter
+ * to set, Escape to cancel; arrow keys nudge) and its unit.
+ */
+export function StatValue({ def, value, locked, beyond, onChange }: {
   def: StatDef;
   value: number;
-  limit?: number;
   locked?: boolean;
+  beyond?: boolean;
   onChange: (v: number) => void;
 }) {
   const f = def.displayFactor ?? 1;
   const unit = def.displayUnit ?? def.unit;
-  const beyond = limit !== undefined && value > limit + 1e-9;
-  const label = statLabel(def);
   const set = (v: number) => onChange(clamp(roundStep(v, def.step), def.min, def.max));
   return (
-    <div class={`stat ss${beyond ? ' ss-beyond' : ''}`}>
-      <div class="stat-head">
-        <span class="stat-label">
-          {locked && <LockIcon title="Fixed by contract" />} {label}
-        </span>
-        <span class="ss-controls">
-          <button type="button" class="ss-step" disabled={locked || value <= def.min} title="A little less"
-            aria-label={`Decrease ${label}`} onClick={() => set(nudge(def, value, -1))}>−</button>
-          <NumberField value={value} factor={f} disabled={locked} onCommit={set} label={label} format={(v) => fmtDisplay(def, v)} />
-          {unit && <span class="ss-unit">{unit}</span>}
-          <button type="button" class="ss-step" disabled={locked || value >= def.max} title="A little more"
-            aria-label={`Increase ${label}`} onClick={() => set(nudge(def, value, 1))}>+</button>
-        </span>
-      </div>
-      <Slider min={def.min} max={def.max} step={def.step} scale={def.scale} value={value} limit={limit}
-        disabled={locked} onChange={onChange}
-        title={limit !== undefined ? `Yellow tick: max researched ${fmtNum(limit * f)}${unit ? ` ${unit}` : ''}` : undefined} />
-      {limit !== undefined && (
-        <div class="ss-foot">
-          <span class="ss-limit" title="The yellow tick on the slider">max researched {fmtDisplay(def, limit * f)}{unit ? ` ${unit}` : ''}</span>
-        </div>
-      )}
-      {beyond && !locked && (
-        <div class="ss-caption">Beyond current research — procurement may pay more or get a less reliable part</div>
-      )}
-    </div>
+    <span class={`sv${beyond ? ' sv-beyond' : ''}`}>
+      <NumberField value={value} factor={f} disabled={locked} onCommit={set} label={statLabel(def)}
+        format={(v) => fmtDisplay(def, v)} onNudge={(dir) => set(nudge(def, value, dir))} />
+      {unit && <span class="sv-unit">{unit}</span>}
+    </span>
   );
 }

@@ -1,4 +1,4 @@
-# Science station — engineering tech tree (D-019, branch `science-tech-tree`)
+# Science station — engineering tech tree (D-020, merged to main)
 
 Science researches **engineering upgrades** for the planner (higher engine Isp/thrust, better cameras, more power,
 new part types). It is a tech tree: techs have prerequisites, and several routes can reach the same result.

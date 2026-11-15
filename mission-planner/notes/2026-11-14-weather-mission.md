@@ -22,3 +22,10 @@ Follow-up questions (multiple choice):
   > guided flow is a bad idea since adjustments will probably be necessary out of order during gameplay
 
 Decision recorded: a non-linear UI is required — players must be able to change any part of the plan in any order.
+
+## Rocket panel feedback
+
+> i think the main issue is that the right bar has so much more stuff than the sliders
+> like theres so many things there which cannot be interacted with and dont help in any way
+
+The assistant proposed a sliders-first panel (all sliders visible, one Δv line, one problem line with a fix button, status dots, short group names, an Advanced switch for expert controls). The user answered: "Build it".

@@ -1,7 +1,7 @@
 // science station game logic: reducers (defineActions('science', …)) and tick handlers (onTick).
 // Imported eagerly by core/registerStations.ts — must not import UI code.
 //
-// Loop (D-019): Procurement asks science to develop a part (research requests). The science player
+// Loop (D-020): Procurement asks science to develop a part (research requests). The science player
 // finds a route through the tech tree and starts projects. A project spends its cost at once and runs
 // for months on the shared calendar. Comms researchPace modifiers speed it up or slow it down, and a
 // comms block pauses it. At its end it is rolled with the shared seeded rng: success makes the tech

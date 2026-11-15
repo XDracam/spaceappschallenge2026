@@ -108,10 +108,10 @@ Identifier alignment on November 14, 2026 — parallel documentation used I-061 
 | I-075 | Much larger graph (many more nodes) with flexible cluster naming: cluster labels change with zoom level, coarser when zoomed out and finer when zoomed in. | User, [science module note](notes/2026-11-14-science-module.md) | Tentative user idea; not built | Q-035; extends I-066 and Q-032 |
 | I-076 | "Level design" of the details pane: split a field's information into tab-like views for datasets, observation methods, and related papers or analyses. | User, [science module note](notes/2026-11-14-science-module.md) | Tentative user idea; not built; wording interpreted, see note | Q-035; relates to the deferred data analysis (I-070) |
 | I-077 | Science task inbox: tasks posted by Mission Planning (raise a research limit, unlock a part) shown in the science UI; opening one marks its related fields. The search module, the inspect/combine mode switch, and the "tried so far" log were removed, and the bench changes only through an explicit button. | User, [science module note](notes/2026-11-14-science-module.md) | User direction; prototype with placeholder tasks, not connected to the planner | [Science module](../science/README.md); Q-035 |
-| I-081 | Science as an engineering tech tree: upgrades for the planner's parts (more thrust or Isp, better instruments, more power, higher data rate, better shielding, unlocking new part types). Replaces the knowledge graph. | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-019) | Branch `science-tech-tree` |
-| I-082 | Science's goals come from Procurement: a part beyond research can be bought (tender, dearer, riskier) or developed (a research request to science). Both can run in parallel. | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-019) | Branch `science-tech-tree` |
-| I-083 | Comms can enable or block techs. Some techs need comms approval before research can start (for example nuclear power or export-controlled engines). | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-019) | Branch `science-tech-tree`; Q-036 |
-| I-084 | Tech tree with routes: techs have prerequisites, several techs can lead to the same goal, and techs far from the researched frontier are shown as unknown until the player gets closer. The fog is an assistant proposal. | User ("science must find ways to the goal"), assistant for the fog | Route finding is user direction; fog is a proposal | Q-038 |
+| I-082 | Science as an engineering tech tree: upgrades for the planner's parts (more thrust or Isp, better instruments, more power, higher data rate, better shielding, unlocking new part types). Replaces the knowledge graph. | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-020) | Branch `science-tech-tree` |
+| I-083 | Science's goals come from Procurement: a part beyond research can be bought (tender, dearer, riskier) or developed (a research request to science). Both can run in parallel. | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-020) | Branch `science-tech-tree` |
+| I-084 | Comms can enable or block techs. Some techs need comms approval before research can start (for example nuclear power or export-controlled engines). | User, [science module note](notes/2026-11-14-science-module.md) | User direction (D-020) | Branch `science-tech-tree`; Q-036 |
+| I-085 | Tech tree with routes: techs have prerequisites, several techs can lead to the same goal, and techs far from the researched frontier are shown as unknown until the player gets closer. The fog is an assistant proposal. | User ("science must find ways to the goal"), assistant for the fog | Route finding is user direction; fog is a proposal | Q-038 |
 
 Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-047 are retained as I-065–I-077. The duplicate incoming station idea I-034 refers to existing I-056 and D-012. Incoming questions Q-031–Q-034 are retained as Q-032–Q-035. References in the incoming modules were aligned.
 
@@ -142,6 +142,19 @@ Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-
 - Disposition: awaiting user review. Production-slot reservations remain optional; additional supplier-recovery events remain deferred.
 
 **November 14 approval update:** [D-018](decisions.md#d-018--procurement-order-and-department-supply-prototype) selects I-080 as the prototype target. The earlier proposed and awaiting-review statements above are retained as historical status. Implementation and multiplayer observations must be recorded separately.
+
+### I-081 — Contract arrival timeline and budget composition
+
+- Captured: 2026-11-15.
+- Source: user request for intuitive contract/budget visualization followed by a design process without building.
+- Status: assistant design proposal; unselected, unimplemented and not playtested.
+- Idea: shared-calendar arrival and need markers, explicit timing margin and destination, selected-row intervention detail, and a separate labeled Spent / Committed / Available bar.
+- Intended player experience: quickly identify upcoming supply, affected uses and remaining delivery-change opportunities during spoken coordination.
+- Evidence and dependencies: source inspection found standalone needed-by dates are not persisted on Contracts and existing late labels compare all supply to launch. Preserve unknown dates and distinguish research bonuses from mandatory needs.
+- Alternatives and rationale: signing-to-arrival Gantt rejected as the default because it can imply production progress; an agenda/table remains a useful companion.
+- Related: [timeline design study](../procurement/timeline-design.md), D-017–D-018, Q-007, Q-024–Q-025, Q-031.
+- November 15 audit refinement: proposed Upcoming action/milestone lanes, Incoming arrival-versus-use rows, and selected live remedy comparisons. Full inventory and source corrections in the study; excludes hidden events, nonexistent production stages and universal order deadlines. Still unselected and unbuilt.
+- November 15 approval update: [D-019](decisions.md#d-019--reduced-contract-timeline-prototype) selects a reduced implementation scope: arrivals against actual needs with identity, recipient and quantity, the existing Table, one selected amendment preview, and concise local delay/cutoff feedback. Upcoming, Call/expiry integration, replacement comparison and a dependency graph are outside this iteration; the budget composition remains unselected. Earlier proposal and status statements above are retained as history. Implementation and observations must be recorded separately.
 
 ## New entry template
 

@@ -1,5 +1,7 @@
 # Science module
 
+> **Superseded design (D-020, November 15, 2026):** the science station is now an engineering tech tree. Procurement asks it to develop parts beyond research, and Comms can block or enable techs. See [`game/src/stations/science/README.md`](../game/src/stations/science/README.md) and [D-020](../docs/decisions.md#d-020--science-is-an-engineering-tech-tree). The knowledge-graph description below is historical.
+
 Specs and notes for the science role live in this folder. The code now lives in the integrated game app: [`game/src/stations/science/`](../game/src/stations/science/) (D-015, see [integration design](../docs/design/integration.md)). The standalone prototype that used to live in `science/app` was moved there.
 
 Labels: **user direction** = stated by the user. **Proposal** = suggested by the assistant. Source: [science module note](../docs/notes/2026-11-14-science-module.md).

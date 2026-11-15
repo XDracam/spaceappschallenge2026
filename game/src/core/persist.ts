@@ -69,7 +69,7 @@ function migrateV1(s: GameState): void {
   s.version = 2;
 }
 
-/** Science became an engineering tech tree (D-019): the old research projects, slice and test-unit links are dropped. */
+/** Science became an engineering tech tree (D-020): the old research projects, slice and test-unit links are dropped. */
 function migrateV2(s: GameState): void {
   for (const a of s.market.allocations) delete (a as { projectId?: string }).projectId;
   s.research.projects = s.research.projects.filter((p) => p.techId);
