@@ -153,5 +153,136 @@
         "repeatOf": null
       }
     ]
+  },
+  {
+    "round": "1115d-r01",
+    "lobby": "manual",
+    "speedScale": 0.5,
+    "progress": "Lobby in 2:40, plan ordered 39 s after the start, both researches done in March, all 9 parts delivered and the launch flew on day 180; the booster engine failed its reliability roll, 0 of 2 goals with 234 M unspent and no way to continue.",
+    "verdicts": "R1115m-r01-01 stable order quote: helped. R1115m-r01-04 launch chip and move-launch button: helped (panel found; button had no occasion). R1115m-r01-05 order-by dates and sort: helped. R1115m-r01-09 scrub display: no effect (same fault returned for a launch failure). Rework R1115m-r01-03 Science needed by the weather mission: helped (follow-up: Science is done after two clicks).",
+    "reverted": [],
+    "reworkPick": "R1115d-r01-01",
+    "findings": [
+      {
+        "id": "R1115d-r01-01",
+        "title": "No station could see into or change the launch odds: 92 % / 86 % was fixed by the first nine orders, and 234 M and the last 100 game days could not be turned into safety",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-02",
+        "title": "A failed launch ended the game for all four at minute 17 of 30: nothing can be retried, rebuilt or learned afterwards",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-02"
+      },
+      {
+        "id": "R1115d-r01-03",
+        "title": "The result narrates a successful flight after the booster failed on the pad: operations contract, first image downlink, orbit raise on schedule, arrival in the slot",
+        "class": "bug",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-09"
+      },
+      {
+        "id": "R1115d-r01-04",
+        "title": "Planner was finished 39 seconds after the start and had no decision left until launch",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-07"
+      },
+      {
+        "id": "R1115d-r01-05",
+        "title": "Joining took 2 min 40 s again: one invite and one reply code per player, handed over one after another",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-11"
+      },
+      {
+        "id": "R1115d-r01-06",
+        "title": "Players could not tell that the budget is shared, who had just spent from it, or how much of it was theirs to use",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-12"
+      },
+      {
+        "id": "R1115d-r01-07",
+        "title": "Comms passed a partner's part to Procurement blind: the message shows no price, performance, reliability or delivery, and the result reads as 'accepted'",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-08",
+        "title": "Procurement saw a 77-part catalogue and an empty needs list until the Planner pressed 'Order 9 parts'; neither side was told that this button is the hand-over",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-16"
+      },
+      {
+        "id": "R1115d-r01-09",
+        "title": "Science's whole mission was two clicks in the first 26 seconds; after that 'The mission needs: Nothing' and no research that could help",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": "R1115d-r01-01",
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-10",
+        "title": "No screen names the part that drags the success chance down: the Planner sees two totals, Procurement finds reliability only by clicking a contract row",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": "R1115d-r01-01",
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-11",
+        "title": "Calls for Offers went unused for the second round and misled three players into planning around a Call that was never needed",
+        "class": "design",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-12",
+        "title": "Controls nobody touched in two rounds: delivery options, contract changes, Compare, Department supply; Planner 'Launch now', saved versions, Advanced, Solar system view; Comms licences",
+        "class": "design",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-13",
+        "title": "The start of the Comms news line is hidden behind the station badge at the bottom left",
+        "class": "bug",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115d-r01-14",
+        "title": "Produced by the 0.5x calendar: briefing says '1 real minute = 1 month' while the header says '1 min = 0.5 months'; doubled waits for research and between Comms messages",
+        "class": "agent-artifact",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-17"
+      },
+      {
+        "id": "R1115d-r01-15",
+        "title": "Agent handling: three misclicks from fixed coordinates, and three of four players named themselves 'Sam'",
+        "class": "agent-artifact",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": "R1115m-r01-18"
+      }
+    ]
   }
 ]
