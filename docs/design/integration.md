@@ -23,6 +23,14 @@ Station folders at the repo root (`mission-planner/`, `communications/`, `scienc
 
 UI-only state (selection, open panels, popups, hover) stays in each station's local stores and is never shared.
 
+## Shared coordination board
+
+D-021 adds `GameState.coordination` for explicit player-created requests. `core/coordination.ts` registers deterministic create/edit/status actions with revision checks and derives current board entries from procurement, research, planning and communications state. Required cross-role details are available to all stations in `shell/TaskBoard.tsx`. The filtered view uses each entry's current role actions. The all-tasks view includes waiting progress and optional history. Stored requests are included in snapshots, replication and save migration. Older saves initialize an empty request list while retaining procurement records.
+
+Player requests describe their desired outcome and responsible station. Their author or responsible station may update them. Generated work derives completion from source state and changes when requirements or supply change. Science derives research requirements from the live rocket, including unordered parts. The board exposes relevant research routes, prerequisites, approval blockers and delivered-part tests. Contextual funding and launch-timing actions open editable player requests before publication. Department procurement remains available. The earlier graph-based equipment bonus is retired under D-020.
+
+D-022 replaces browser-native confirmations with the UI-local `shared/confirmation.ts` request store and the shell's in-app `ConfirmationPanel`. Confirmations preserve focus, constrain keyboard navigation to their controls and make the game background inert while open. Planning actions continue to use their existing authoritative reducers.
+
 ## Actions and replication
 
 Every change to `GameState` is an action: `{ type: 'ns/name', args, by }`, applied by a reducer registered with `defineActions(ns, { name(s, ctx, ...args) {} })`. Reducers:

@@ -1,5 +1,11 @@
 # Shared tasks, problems, and goals — brainstorm
 
+## Current direction, 2026-11-15
+
+[D-021](../decisions.md#d-021--coordinate-required-cross-role-work-through-shared-tasks) requires sufficient task detail for cross-role coordination through the interface. Every station exposes the same shared board, with a switch between open tasks actionable by that station and all tasks. Players can create, edit, resolve, withdraw and reopen explicit requests with desired outcomes and a responsible station. Live game records supply generated task details and status. Research progress, procurement fulfillment and mission feasibility keep their individual meanings.
+
+The earlier brainstorm below is retained. Its conversation-dependent boundary is superseded by D-021. [Implementation coverage](../reviews/2026-11-15-task-coordination.md) records observed gaps and verification separately.
+
 Source: [personnel and roles notes](../notes/2026-11-14-personnel-tasks-roles.md). This is a proposed heart of the game, not a selected data model or implementation.
 
 ## Idea

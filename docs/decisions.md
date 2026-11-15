@@ -65,6 +65,8 @@ Record fields, ownership, state transitions, payment schedules, and detailed mec
 
 ## D-007 — Direct conversation between roles
 
+**Superseded in part on 2026-11-15 by D-021.** Direct conversation remains available. Required cross-role information and requests now belong in shared tasks so play can proceed through the interface.
+
 User direction on November 14, 2026. Players coordinate by talking directly to one another. This communication is an important part of the gameplay.
 
 Tasks are shared problems whose applicable roles may be unclear, as in the original brainstorm. The assistant's support-Task workflow has been withdrawn. The exact distinction between persistent Tasks and conversational requests remains a design question. Information visibility and automated interface assistance also remain open.
@@ -208,6 +210,28 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 - Alternatives considered: keep the knowledge graph with the tree as a second layer (not chosen by the user).
 - Consequences and limitations: the old graph content (fields, descriptions, recipes) is dropped on the branch and kept on `main`. The pure-science findings that fed comms news are gone unless re-added. Tech content is placeholders (D-005).
 - Related: D-005, D-015, I-082 to I-085, Q-036 to Q-038, [science module](../science/README.md).
+
+## D-021 — Coordinate required cross-role work through shared tasks
+
+- Date: 2026-11-15
+- Status: accepted user direction.
+- Decision: inspect the entire codebase with Terra and Luna and coordinate relevant details between roles through Tasks. Players must have the information needed to act without implicit conversation or chat messages. Allow player-created tasks where useful. Provide a switch between tasks the current role can solve and all tasks.
+- Source: [task coordination request](notes/2026-11-15-task-coordination.md).
+- Relationship to earlier direction: updates D-007 and Q-031. D-017's department supply continues to use Contracts and department Allocations. Players can explicitly create coordination requests for department equipment. The integrated D-020 Science implementation derives research needs from the live design and tests delivered parts. The earlier optional research-equipment bonus belonged to the retired knowledge graph.
+- Implementation choices: retain procurement criteria in the existing market records, derive shared board entries from actual game state, and store player-authored requests separately in replicated state. A player request names a responsible station and describes its desired outcome. Its author or responsible station can edit, resolve, withdraw and reopen it. Generated entries follow their underlying state. The default filtered view includes open entries with a current action for this station. All tasks includes in-progress entries and offers an additional completed/withdrawn history control.
+- Verification and limits: implementation evidence belongs in the [audit](reviews/2026-11-15-task-coordination.md) and dated walkthrough. Acceptance does not establish multiplayer enjoyment or guarantee a feasible solution to every request.
+- Related: I-087, D-004–D-008, D-015, D-017–D-018, Q-021–Q-022, Q-026, Q-031.
+
+## D-022 — Use in-app confirmations
+
+- Date: 2026-11-15
+- Status: accepted user direction.
+- Decision: keep confirmations, choices and feedback inside the game interface. Native browser popup dialogs are prohibited.
+- Source: [later UI correction](notes/2026-11-15-task-coordination.md#later-ui-correction).
+- Implementation: replace existing native confirmations in the Planner and shell with the shared in-app confirmation panel. Preserve the existing decisions and their consequences.
+- Related: I-088, D-014, D-021.
+
+Identifier alignment, November 15, 2026: the published Science decision keeps D-020. The saved coordination decision previously also used D-020 and is now D-021. Its in-app confirmation decision moves from D-021 to D-022. This resolves a branch collision without changing either direction.
 
 ## Future decision template
 

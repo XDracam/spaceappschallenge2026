@@ -2,6 +2,7 @@
 // browsers register the same actions in the same order — required for replay.
 // Station logic files must not import UI code.
 import './coreActions';
+import './coordination';
 import '../stations/planner/logic';
 import '../stations/procurement/logic';
 import '../stations/science/logic';

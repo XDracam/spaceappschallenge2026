@@ -137,6 +137,8 @@ Partly answered 2026-11-14 (I-073): 2–3 concurrent projects costing money, cal
 
 ## Q-031 — Tasks, conversation, and information visibility
 
+**Updated 2026-11-15 by D-021.** Required cross-role details and requests must be available through shared Tasks, with player-created requests and a current-role/all switch. Conversation is optional for completing interface-supported coordination. Exact remaining simulation semantics and feasibility guarantees remain open under their corresponding questions.
+
 Which persistent shared goals should be Tasks, and which requests or negotiations should happen through direct conversation? D-008 accepts planner displays of Budget, delivery status and goal risk. What additional procurement options and assessment details should other roles see? How can the interface help players reference facts while preserving meaningful conversation? See D-007 and the proposed [Task boundary](../procurement/tasks-and-conversation.md).
 
 ## Q-032 — Graph scale and orientation

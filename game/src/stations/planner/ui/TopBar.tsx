@@ -1,4 +1,5 @@
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { requestConfirmation } from '../../../shared/confirmation';
 import { actions, getClock, getPlanner, getEvaluation, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
 import { DAYS_PER_MONTH, formatDay, formatDuration } from '../model/units';
 import {
@@ -138,6 +139,11 @@ function LaunchChip() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useOutsideClose(ref, open, () => setOpen(false));
+  useEffect(() => {
+    const showLaunch = () => setOpen(true);
+    window.addEventListener('coordination-launch', showLaunch);
+    return () => window.removeEventListener('coordination-launch', showLaunch);
+  }, []);
   const planning = phase === 'planning';
   const startISO = mission.startDateISO;
   const deadline = mission.completionDeadlineDay;
@@ -149,14 +155,14 @@ function LaunchChip() {
   const countdown = timed ? `in ${formatRealTime(realSec)}` : `in ${formatDuration(Math.max(0, launchDay - now))} (paused)`;
   const realMin = timed ? Math.max(0, Math.round(realSec / 60)) : 0;
 
-  const launchNow = () => {
+  const launchNow = async () => {
     const g = getPlanner();
     const r = partReadiness(g, getEvaluation());
     const todayStr = formatDay(Math.ceil(getClock().day), startISO);
     const lines = [`Launch today (${todayStr}) instead of ${formatDay(g.plan.launchDay, startISO)}?`];
     if (r.notDelivered > 0) lines.push(`${plural(r.notDelivered, 'part')} ${r.notDelivered === 1 ? 'is' : 'are'} not delivered — the launch will be scrubbed.`);
     lines.push('This ends planning.');
-    if (!confirm(lines.join('\n\n'))) return;
+    if (!await requestConfirmation(lines.join('\n\n'), 'Launch now')) return;
     setOpen(false);
     actions.launchNow();
   };

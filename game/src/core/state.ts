@@ -7,8 +7,9 @@ import { initialPlannerSlice, type PlannerSlice } from '../stations/planner/slic
 import { initialCommsSlice, type CommsSlice } from '../stations/comms/slice';
 import { initialScienceSlice, type ScienceSlice } from '../stations/science/slice';
 import { initialProcurementSlice, type ProcurementSlice } from '../stations/procurement/slice';
+import type { PlayerCoordinationTask } from './coordination';
 
-export const STATE_VERSION = 6;
+export const STATE_VERSION = 7;
 
 export interface GameState {
   version: number;
@@ -18,6 +19,7 @@ export interface GameState {
   market: Market;
   research: ResearchState;
   events: EventsState;
+  coordination: PlayerCoordinationTask[];
   planner: PlannerSlice;
   procurement: ProcurementSlice;
   science: ScienceSlice;
@@ -48,6 +50,7 @@ export function createGame(seed: number, missionId: string = DEFAULT_MISSION_ID)
     market: { tasks: [], offers: [], calls: [], contracts: [], allocations: [], modifiers: [] },
     research: { limits: { ...MISSION.research }, unlocked: [...MISSION.unlocked], projects: [], modifiers: [], access: {} },
     events: { flags: [], news: [] },
+    coordination: [],
     planner: initialPlannerSlice(),
     procurement: initialProcurementSlice(),
     science: initialScienceSlice(),

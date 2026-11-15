@@ -10,6 +10,10 @@ import { CommsStation } from '../stations/comms/Station';
 import { Lobby } from './Lobby';
 import { ResultOverlay } from './ResultOverlay';
 import { StationSwitcher } from './StationSwitcher';
+import { TaskBoard } from './TaskBoard';
+import { ConfirmationPanel } from './ConfirmationPanel';
+import { confirmationStore } from '../shared/confirmation';
+import { useStore } from '../core/createStore';
 
 const VIEWS: Record<StationId, ComponentType> = {
   planner: PlannerStation,
@@ -19,6 +23,14 @@ const VIEWS: Record<StationId, ComponentType> = {
 };
 
 export function App() {
+  const confirmation = useStore(confirmationStore, value => value);
+  return <>
+    <div class="shell-stage" inert={confirmation ? true : undefined}><GameView /></div>
+    <ConfirmationPanel />
+  </>;
+}
+
+function GameView() {
   const station = useSync((s) => s.station);
   if (!station) return <Lobby />;
   const View = VIEWS[station];
@@ -28,6 +40,7 @@ export function App() {
       {/* The planner shows its own animated playthrough and result card. */}
       {station !== 'planner' && <ResultOverlay />}
       <StationSwitcher />
+      <TaskBoard key={station} />
     </div>
   );
 }

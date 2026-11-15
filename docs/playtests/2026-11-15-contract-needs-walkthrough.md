@@ -4,7 +4,7 @@
 - Facilitator and participant: assistant operating Procurement alone.
 - Prototype files: ContractTimeline, ContractsView, Needs, timing helper and procurement.css.
 - Scenario: isolated Weather satellite game at localhost:5191, paused January 11, day 10. Nine planner needs created using the existing development action.
-- Related: I-082, D-019 and the Contract view analysis.
+- Related: I-086, D-019 and the Contract view analysis.
 - Question: can procurement identify the use behind a delivery and reach uncovered needs from Contracts?
 
 ## Hypothesis

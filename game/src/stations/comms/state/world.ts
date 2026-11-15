@@ -275,6 +275,7 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
       break;
     case 'missionConstraint':
       setFlag(s, missionConstraintFlag(e.text), true);
+      (s.coordination ??= []).push({ id: ctx.rules.newId('coord'), revision: 1, origin: 'effect', sourceText: e.text, title: `Mission constraint · ${ctx.source}`.slice(0, 120), description: `${e.text} This direction is not automatically verified by the simulation; mark complete after the team has addressed it.`, authorRole: 'comms', assignee: 'planner', status: 'open', createdAt: day, updatedAt: day });
       break;
     case 'flag':
       setFlag(s, e.flag, e.on);

@@ -1,0 +1,77 @@
+.shell-tasks {
+  --sh-accent: #3fc7ff;
+  --sh-text: #e8f1ff;
+  --sh-muted: #b4c4dc;
+  --sh-border: rgba(110, 190, 255, .3);
+  --sh-t: 150ms;
+  position: fixed;
+  right: 18px;
+  bottom: 12px;
+  z-index: 1001;
+  color: var(--sh-text);
+  font: 13px/1.5 Inter, system-ui, sans-serif;
+}
+.tasks-trigger { background: #101e32; box-shadow: 0 6px 20px #0006; }
+.tasks-review { bottom: 58px; }
+.tasks-review .tasks-board { max-height: calc(100dvh - 134px); }
+.tasks-count { font-variant-numeric: tabular-nums; min-width: 22px; color: #9fe4ff; }
+.tasks-board {
+  position: absolute;
+  bottom: 48px;
+  right: 0;
+  width: min(660px, calc(100vw - 36px));
+  max-height: calc(100dvh - 88px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 19, 33, .98);
+  border: 1px solid var(--sh-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.tasks-header { display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 18px 20px 12px; }
+.tasks-header h2 { font: 600 22px/1.2 'Exo 2', system-ui, sans-serif; margin: 0; text-wrap: balance; }
+.tasks-header p, .tasks-form p { margin: 4px 0 0; color: var(--sh-muted); }
+.tasks-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--sh-border); }
+.tasks-switch, .tasks-history { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.tasks-switch { font-weight: 600; }
+.tasks-switch input { appearance: none; width: 34px; height: 20px; border: 1px solid #6e91b4; border-radius: 12px; background: #263b53; margin: 0; cursor: pointer; position: relative; }
+.tasks-switch input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; background: #e8f1ff; border-radius: 50%; }
+.tasks-switch input:checked { background: #0c6a93; border-color: #66d2ff; }
+.tasks-switch input:checked::after { left: 17px; }
+.tasks-history { width: 100%; color: var(--sh-muted); font-size: 12px; }
+.tasks-scroll { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #526e8f #0c1321; padding: 0 20px 20px; }
+.tasks-notice:empty { display: none; }
+.tasks-notice { color: #84e8bd; }
+.tasks-empty { color: var(--sh-muted); margin: 24px 0 8px; }
+.tasks-list { list-style: none; padding: 0; margin: 0; }
+.tasks-item { padding: 20px 0; border-bottom: 1px solid #2a3b53; overflow-wrap: anywhere; content-visibility: auto; contain-intrinsic-size: auto 220px; }
+.tasks-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.tasks-item-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.tasks-item h3, .tasks-form h3 { font-size: 15px; line-height: 1.4; margin: 0; text-wrap: pretty; }
+.tasks-status { flex-shrink: 0; font-size: 11px; color: #aadfff; }
+.tasks-status.is-completed { color: #84e8bd; }
+.tasks-status.is-withdrawn { color: var(--sh-muted); }
+.tasks-status.is-failed, .tasks-status.is-expired { color: #ffacb5; }
+.tasks-meta { color: var(--sh-muted); font-size: 11px; margin-top: 5px; font-variant-numeric: tabular-nums; }
+.tasks-description { white-space: pre-wrap; margin: 12px 0; max-width: 75ch; }
+.tasks-role-actions { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 8px; }
+.tasks-role-actions li { display: grid; grid-template-columns: 135px 1fr; gap: 10px; }
+.tasks-role-actions strong { color: #9fe4ff; font-weight: 500; }
+.tasks-role-actions span { color: #d2e0f3; }
+.tasks-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tasks-actions:empty { display: none; }
+.tasks-form { padding: 18px 0; border-bottom: 1px solid var(--sh-border); }
+.tasks-form label { display: grid; gap: 5px; margin-top: 12px; }
+.tasks-form input, .tasks-form textarea, .tasks-form select { width: 100%; border: 1px solid #526e8f; border-radius: 8px; padding: 8px 10px; background: #080f1c; color: #e8f1ff; font: inherit; caret-color: var(--sh-accent); }
+.tasks-form textarea { resize: vertical; min-height: 80px; }
+.tasks-form p { font-size: 12px; }
+.shell-tasks :focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }
+.shell-tasks h2:focus { outline: none; }
+.shell-tasks ::selection { color: #05080f; background: #9fe4ff; }
+.shell-tasks button, .shell-tasks input { touch-action: manipulation; }
+@media (max-width: 600px) {
+  .tasks-role-actions li { grid-template-columns: 1fr; gap: 1px; }
+  .tasks-item-head { flex-wrap: wrap; gap: 3px; }
+  .tasks-header, .tasks-toolbar { padding-left: 14px; padding-right: 14px; }
+  .tasks-scroll { padding-left: 14px; padding-right: 14px; }
+}

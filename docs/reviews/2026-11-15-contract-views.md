@@ -30,7 +30,7 @@ Implemented Incoming timeline / All contracts as proper tabs with selected under
 - TypeScript checking, production build and whitespace checks passed. The existing bundle-size warning remains. Reviewed changed UI against Web Design Guidelines, applying the desktop game context to navigation and state.
 - This is a source review and single-operator browser check. Player comprehension and multiplayer usability have not been established. No automated tests were added or run.
 
-Related to I-082 and D-019.
+Related to I-086 and D-019.
 
 ## Needs-context follow-up
 

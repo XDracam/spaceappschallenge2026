@@ -290,6 +290,7 @@ export interface PlannerGame {
   versions: SavedVersion[];
   phase: GamePhase;
   playthroughSeed: number;
+  groundStation: boolean;
   /** Shared agency budget (M). available = total − spent − committed. */
   budget: { totalM: number; spentM: number; committedM: number; availableM: number };
 }

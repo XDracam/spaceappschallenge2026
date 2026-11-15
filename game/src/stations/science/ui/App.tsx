@@ -1,8 +1,9 @@
 // Science station: engineering tech tree. Left: what the planner's design needs beyond research, the lab,
 // and the tests of delivered parts.
 // Middle: the tree. Right: details of the selected tech with Start button. Bottom: news.
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
+import { composeTask } from '../../../shared/taskDraft';
 import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
@@ -20,20 +21,47 @@ const STATUS_TEXT: Record<TechStatus, string> = {
 export function App() {
   const g = useGame((s) => s);
   const [sel, setSel] = useState<string | null>(null);
+  const root = useRef<HTMLDivElement>(null);
   const views = useMemo(() => treeViews(g), [g]);
   const needs = useMemo(() => designNeeds(g).sort((a, b) => (a.researchBy ?? 1e9) - (b.researchBy ?? 1e9)), [g]);
   const slice = sci(g);
   const runs = running(g.research);
 
+  useEffect(() => {
+    const navigate = (event: Event) => {
+      const link = (event as CustomEvent<{ kind: string; techId?: string; partId?: string; projectId?: string }>).detail;
+      const project = link.projectId && g.research.projects.find(p => p.id === link.projectId);
+      const techId = link.techId ?? (project && project.techId);
+      if (techId && TECH_BY_ID[techId]) setSel(techId);
+      // The board closes and restores its trigger focus synchronously; focus the destination afterwards.
+      requestAnimationFrame(() => {
+        const container = root.current;
+        if (!container) return;
+        const find = (attribute: string, value?: string) => value
+          ? Array.from(container.querySelectorAll<HTMLElement>(`[${attribute}]`)).find(el => el.getAttribute(attribute) === value)
+          : undefined;
+        const target = find('data-project', link.projectId)
+          ?? find('data-test', link.partId || (project && project.partId) || undefined)
+          ?? find('data-tech', techId || undefined)
+          ?? (link.kind === 'scienceLab' ? container.querySelector<HTMLElement>('[data-science-lab]') : null)
+          ?? container.querySelector<HTMLElement>('[data-science-home]');
+        target?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        target?.focus({ preventScroll: true });
+      });
+    };
+    window.addEventListener('coordination-science', navigate);
+    return () => window.removeEventListener('coordination-science', navigate);
+  }, [g.research.projects]);
+
   return (
-    <div class="sc-app">
+    <div class="sc-app" ref={root}>
       <header class="sc-head">
         <h1>Science · Engineering tech tree</h1>
         <span>Teams {runs.length}/{slice.slots} · Budget available {budgetAvailableM(g.budget).toFixed(0)} M · {formatDate(g.clock.day)}</span>
       </header>
       <div class="sc-work">
         <aside class="sc-left">
-          <h2>The mission needs</h2>
+          <h2 data-science-home tabIndex={-1}>The mission needs</h2>
           {needs.length === 0 ? <p class="muted">Nothing. Every part in the Planner's design is within research.</p> : null}
           {needs.map((n) => {
             const now = n.value === undefined ? undefined : g.research.limits[n.key];
@@ -55,14 +83,14 @@ export function App() {
               </div>
             );
           })}
-          <h2>Lab</h2>
+          <h2 data-science-lab tabIndex={-1}>Lab</h2>
           {runs.length === 0 ? <p class="muted">No project running.</p> : null}
           {runs.map((p) => {
             const total = Math.max(1, p.endsAt - p.startedAt);
             const pct = Math.min(100, Math.max(0, ((g.clock.day - p.startedAt) / total) * 100));
             const paused = slice.info[p.id]?.paused;
             return (
-              <div class="sc-card" key={p.id}>
+              <div class="sc-card" key={p.id} data-project={p.id} data-test={p.partId} tabIndex={-1}>
                 <button type="button" class="sc-link" onClick={() => p.techId && setSel(p.techId)}><strong>{p.title}</strong></button>
                 <div class="sc-bar"><i style={{ width: `${pct}%` }} /></div>
                 {p.partId
@@ -129,7 +157,7 @@ function PartTests({ g }: { g: GameState }) {
   const byRisk = (a: { reliability: number }, b: { reliability: number }) => a.reliability - b.reliability;
   const ready = tests.filter((t) => t.state === 'ready').sort(byRisk);
   const arriving = tests.filter((t) => t.state === 'arriving').sort((a, b) => (a.arrivesAt ?? 0) - (b.arrivesAt ?? 0));
-  const open = tests.filter((t) => t.state === 'open').length;
+  const open = tests.filter((t) => t.state === 'open');
   const tested = tests.filter((t) => t.state === 'tested');
   const tooLate = !testCounts(g.clock.day + days, launch);
   return (
@@ -139,7 +167,7 @@ function PartTests({ g }: { g: GameState }) {
       {ready.map((t) => {
         const chk = testCheck(g, t.partId);
         return (
-          <div class="sc-card" key={t.partId}>
+          <div class="sc-card" key={t.partId} data-test={t.partId} tabIndex={-1}>
             <strong>{t.name}</strong>
             <span class="muted">{t.product} · {pct(t.reliability)} reliable</span>
             <button type="button" class="sc-btn sc-test" disabled={!chk.ok}
@@ -147,7 +175,8 @@ function PartTests({ g }: { g: GameState }) {
               Test · {t.costM} M · {testDurationText()} → {pct(t.after)}
             </button>
             {!chk.ok ? <span class="muted small">{chk.reason}</span>
-              : tooLate ? <span class="sc-warn">Would not end before the launch. Ask the Planner to move it.</span> : null}
+              : tooLate ? <><span class="sc-warn">Would not end before the launch. Ask the Planner to move it.</span>
+                <button type="button" class="sc-btn small" onClick={() => composeTask({ title: `Launch timing for ${t.name} test`, description: `Science can test ${t.name} in ${testDurationText()}, ending ${formatDate(g.clock.day + days)}. The current launch is ${formatDate(launch)}; the test must finish before launch to count. Please review the launch date.`, assignee: 'planner' })}>Create launch timing task</button></> : null}
           </div>
         );
       })}
@@ -157,7 +186,7 @@ function PartTests({ g }: { g: GameState }) {
           {arriving.map((t) => {
             const late = !testCounts((t.arrivesAt ?? 0) + days, launch);
             return (
-              <span class={`sc-row ${late ? 'sc-warn' : 'muted'}`} key={t.partId}>
+              <span class={`sc-row ${late ? 'sc-warn' : 'muted'}`} key={t.partId} data-test={t.partId} tabIndex={-1}>
                 <span>{t.name} · {pct(t.reliability)}</span>
                 <span>{formatDate(t.arrivesAt ?? 0).slice(0, -5)}</span>
               </span>
@@ -167,8 +196,8 @@ function PartTests({ g }: { g: GameState }) {
             ? <span class="muted"><span class="sc-warn">Red: too late to test before the launch.</span> Procurement can speed up a delivery, the Planner can move the launch.</span> : null}
         </div>
       ) : null}
-      {open ? <p class="muted">{open} {open === 1 ? 'part is' : 'parts are'} not under contract yet.</p> : null}
-      {tested.length ? <p class="muted">Tested: {tested.map((t) => `${t.name} ${pct(t.reliability)}`).join(', ')}.</p> : null}
+      {open.length ? <p class="muted">Not under contract: {open.map((t, i) => <span key={t.partId} data-test={t.partId} tabIndex={-1}>{i ? ', ' : ''}{t.name}</span>)}.</p> : null}
+      {tested.length ? <p class="muted">Tested: {tested.map((t, i) => <span key={t.partId} data-test={t.partId} tabIndex={-1}>{i ? ', ' : ''}{t.name} {pct(t.reliability)}</span>)}.</p> : null}
     </>
   );
 }
@@ -200,6 +229,7 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
           <button type="button" class="sc-btn" disabled={!chk.ok}
             onClick={() => scienceActions.startTech(`sp-${Date.now().toString(36)}-${id}`, id)}>Start research</button>
           {!chk.ok ? <p class="muted small">{chk.reason}</p> : null}
+          {t.costM > budgetAvailableM(g.budget) && g.meta.phase === 'planning' ? <button type="button" class="sc-btn small" onClick={() => composeTask({ title: `Funding for ${t.name}`, description: `Science proposes ${t.name}, costing ${t.costM} M with ${budgetAvailableM(g.budget).toFixed(2)} M currently available. The shortfall is ${(t.costM - budgetAvailableM(g.budget)).toFixed(2)} M. Research takes ${months} months with ${Math.round(t.chance * 100)}% success. Please review funding options.`, assignee: 'comms' })}>Create funding task</button> : null}
         </>
       ) : null}
     </>

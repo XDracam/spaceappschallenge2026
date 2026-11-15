@@ -110,7 +110,7 @@ function hazardProblems(body: Body, kind: 'orbit' | 'surface', scs: Spacecraft[]
   return out;
 }
 
-function dataProblems(sc: Spacecraft, body: BodyId, day: number): { code: IssueCode; msg: string }[] {
+function dataProblems(sc: Spacecraft, body: BodyId, day: number, groundStation: boolean): { code: IssueCode; msg: string }[] {
   const out: { code: IssueCode; msg: string }[] = [];
   const name = BODIES[body].name;
   const instruments = sc.equipment.filter((p) => p.kind === 'instrument');
@@ -119,11 +119,11 @@ function dataProblems(sc: Spacecraft, body: BodyId, day: number): { code: IssueC
   if (haveKW + 1e-9 < needKW) {
     out.push({ code: 'power', msg: `${sc.name}: instruments need ${needKW.toFixed(2)} kW, power at ${name} gives ${haveKW.toFixed(2)} kW` });
   }
-  const needKbps = instruments.reduce((s, p) => s + instrumentDataKbps(p), 0);
+  const needKbps = instruments.reduce((s, p) => s + instrumentDataKbps(p), 0) * (groundStation ? 0.5 : 1);
   const dist = earthDistanceKm(body, day);
   const haveKbps = sc.equipment.filter((p) => p.kind === 'antenna').reduce((s, p) => s + antennaRateKbps(p, dist), 0);
   if (haveKbps + 1e-9 < needKbps) {
-    out.push({ code: 'data', msg: `${sc.name}: instruments produce ${Math.round(needKbps)} kbps, antenna sends ${Math.round(haveKbps)} kbps from ${name}` });
+    out.push({ code: 'data', msg: `${sc.name}: instruments require ${Math.round(needKbps)} kbps${groundStation ? ' with ground station' : ''}, antenna sends ${Math.round(haveKbps)} kbps from ${name}` });
   }
   return out;
 }
@@ -581,7 +581,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
           const dose = step.doseBefore + gBody.radiationPerDay * stay;
           const problems = [
             ...hazardProblems(gBody, kind, [sc], dose, true),
-            ...dataProblems(sc, goal.body, step.result.endDay),
+            ...dataProblems(sc, goal.body, step.result.endDay, game.groundStation),
           ];
           if (problems.length) {
             if (!failReason) {

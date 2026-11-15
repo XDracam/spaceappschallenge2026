@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { requestConfirmation } from '../../../shared/confirmation';
 import type { Goal, GoalKind } from '../model/types';
 import { actions, useEvaluation, usePlanner } from '../state/store';
 import { formatDay, formatMass, formatMoney } from '../model/units';
@@ -118,11 +119,11 @@ export function VersionsTab() {
             </div>
             <div class="pv-actions">
               <button class="pill small" title="Load this version's rocket and plan"
-                onClick={() => confirm('Restore this rocket and plan? Ordered parts keep their contracts.') && actions.restoreVersion(v.id)}>
+                onClick={async () => { if (await requestConfirmation('Restore this rocket and plan? Ordered parts keep their contracts.', 'Restore version')) actions.restoreVersion(v.id); }}>
                 Restore
               </button>
               <button class="pill small ghost danger" title="Delete this saved version"
-                onClick={() => confirm(`Delete version “${v.name}”?`) && actions.deleteVersion(v.id)}>
+                onClick={async () => { if (await requestConfirmation(`Delete version “${v.name}”?`, 'Delete version')) actions.deleteVersion(v.id); }}>
                 Delete
               </button>
             </div>

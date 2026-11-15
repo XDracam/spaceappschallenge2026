@@ -1,5 +1,13 @@
 # Tasks and player conversation
 
+## Current direction, 2026-11-15
+
+[D-021](../docs/decisions.md#d-021--coordinate-required-cross-role-work-through-shared-tasks) supersedes the conversation-dependent proposal below. Relevant requirements, deadlines, supply status, research progress and cross-role effects must be inspectable through the shared task board. Players may explicitly publish a request with a desired outcome and responsible station. The current-role filter shows open entries with a next action for that role. All tasks shows shared work and progress, with completed/withdrawn history available separately.
+
+Department equipment requests are explicit player coordination records. Procurement still buys department supply through Contracts and Allocations, and Science still reserves compatible equipment through its project controls. Creating or completing a manual request alone changes its coordination record. Generated entries follow the underlying game records. Direct conversation remains available during play.
+
+The November 14 proposal below is retained for history.
+
 Working design proposal, November 14, 2026, following the user's clarification that players coordinate by talking to each other. The earlier assistant support-Task workflow is withdrawn. The exact Task boundary and information visibility remain under discussion.
 
 ## Task boundary to explore

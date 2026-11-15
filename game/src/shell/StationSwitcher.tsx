@@ -7,6 +7,7 @@ import { setLocalStation, useGame, useSync } from '../core/store';
 import { HostLeft } from './Lobby';
 import { STATION_INFO } from './stations';
 import { backToStart, playerName, useSession } from './session';
+import { requestConfirmation } from '../shared/confirmation';
 
 export function StationSwitcher() {
   const seats = useGame((s) => s.meta.seats);
@@ -111,8 +112,8 @@ export function StationSwitcher() {
             ) : (
               <button
                 class="shell-btn shell-btn-sm"
-                onClick={() => {
-                  if (role !== 'client' || confirm('Leave the game? Your station becomes free for others.')) backToStart();
+                onClick={async () => {
+                  if (role !== 'client' || await requestConfirmation('Leave the game? Your station becomes free for others.', 'Leave game')) backToStart();
                 }}
               >
                 Leave game

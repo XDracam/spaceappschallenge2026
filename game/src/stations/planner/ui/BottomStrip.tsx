@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import type { Issue, ManeuverType, Severity } from '../model/types';
 import { uiStore, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
 import { DAYS_PER_MONTH, formatDv } from '../model/units';
@@ -194,6 +194,11 @@ function IssuesCard() {
   const ev = useEvaluation();
   const emptyPlan = usePlanner((g) => g.plan.branches.every((b) => b.maneuvers.length === 0));
   const [all, setAll] = useState(false);
+  useEffect(() => {
+    const showIssues = () => setAll(true);
+    window.addEventListener('coordination-plan', showIssues);
+    return () => window.removeEventListener('coordination-plan', showIssues);
+  }, []);
   const list = ev.issues.filter((i) => !isDeliveryItem(i)).sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
   const errors = ev.issues.filter((i) => i.severity === 'error').length;
   const warnings = ev.issues.filter((i) => i.severity === 'warning').length;

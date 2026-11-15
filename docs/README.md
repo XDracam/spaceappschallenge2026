@@ -10,6 +10,9 @@
 | [Challenge](challenge.md) | Verified external brief and research pointers |
 | [Roles](design/roles.md) | Responsibilities, decisions, and dependencies |
 | [Shared tasks](design/shared-tasks.md) | Global goals, solution paths, procurement, and timing questions |
+| [Task coordination request](notes/2026-11-15-task-coordination.md) | Current task-first direction, player-created requests and current-role/all filtering under D-021 |
+| [Task coordination merge walkthrough](playtests/2026-11-15-task-coordination-merge-walkthrough.md) | Current Science integration, legacy save migration, two-station task handoff and live research progress |
+| [Task coordination walkthrough](playtests/2026-11-15-task-coordination-walkthrough.md) | Observed two-browser WebRTC requests, role filtering, procurement handoff, research request and in-app confirmation |
 | [Tasks and conversation](../procurement/tasks-and-conversation.md) | Proposed boundary between tracked goals and spoken coordination |
 | [Personnel](design/personnel.md) | Competing staffing models and cross-role training |
 | [Mission flow](design/mission-flow.md) | Preparation, commitment, simulation, and outcome |
@@ -26,6 +29,7 @@
 | [Timeline implementation walkthrough](playtests/2026-11-15-timeline-walkthrough.md) | Observed preview, confirmation and saved-date behavior; single-operator limits |
 | [Contract view analysis](reviews/2026-11-15-contract-views.md) | Timeline/Table consistency proposals and observed automatic date fitting |
 | [Contract need context walkthrough](playtests/2026-11-15-contract-needs-walkthrough.md) | Related need labels, expandable Mission needs and observed allocation/counter behavior |
+| [Cross-role task coordination audit](reviews/2026-11-15-task-coordination.md) | Code-level map of cross-station dependencies, task projections and unrepresented actions |
 | [Procurement gameplay UX audit](reviews/2026-11-14-procurement-gameplay-ux.md) | High-level station requirements: awareness, scrolling, active context, competing plans, interruptions and concurrent gameplay; researched proposals |
 | [Concept Maturity Levels paper review](reviews/2026-11-14-cml-paper.md) | Source findings and proposed gameplay applications for sourcing, development, reserves and concurrent mission design |
 | [Procurement order options](notes/2026-11-14-procurement-order-options.md) | User proposal for configurable orders and candidate gameplay additions with role boundaries |

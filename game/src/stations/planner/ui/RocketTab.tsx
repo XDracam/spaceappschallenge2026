@@ -1,4 +1,5 @@
 import './panels.css';
+import { requestConfirmation } from '../../../shared/confirmation';
 import type { ComponentChildren } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type {
@@ -325,9 +326,9 @@ export function RocketTab() {
   const liftRatio = rocket.stages.length && padMass > 0 ? stageThrustKN(rocket.stages[0]) / (padMass * G0) : undefined;
 
   const drafts = allParts(rocket).filter((l) => l.part.state === 'draft');
-  const orderAll = () => {
+  const orderAll = async () => {
     if (!drafts.length) return;
-    if (!confirm(`Order ${plural(drafts.length, 'draft part')}? Their slider values become minimums for procurement.`)) return;
+    if (!await requestConfirmation(`Order ${plural(drafts.length, 'draft part')}? Their slider values become minimums for procurement.`, 'Order parts')) return;
     actions.orderAllParts();
   };
 
@@ -419,7 +420,9 @@ function SpacecraftGroup({ sc, ctx }: { sc: Spacecraft; ctx: Ctx }) {
     { header: '' },
     {
       label: 'Remove spacecraft', danger: true,
-      onPick: () => confirm(`Remove ${sc.name} and all its parts? Running contracts are not cancelled.`) && actions.removeSpacecraft(sc.id),
+      onPick: async () => {
+        if (await requestConfirmation(`Remove ${sc.name} and all its parts? Running contracts are not cancelled.`, 'Remove spacecraft')) actions.removeSpacecraft(sc.id);
+      },
     },
   ];
 
@@ -471,7 +474,9 @@ function StageBlock({ stage, ctx, index, count, spacecraft, liftRatio }: {
     { header: '' },
     {
       label: 'Remove stage', danger: true,
-      onPick: () => confirm(`Remove ${name}${sub ? ` (${sub})` : ''}? Running contracts are not cancelled.`) && actions.removeStage(stage.id),
+      onPick: async () => {
+        if (await requestConfirmation(`Remove ${name}${sub ? ` (${sub})` : ''}? Running contracts are not cancelled.`, 'Remove stage')) actions.removeStage(stage.id);
+      },
     },
   ];
 
@@ -551,12 +556,12 @@ function timing(status: PartStatus, contract: PartContract | undefined, ctx: Ctx
 }
 
 /** Replace a contracted/delivered part with a new order (same values; still adjustable while ordered). */
-function orderReplacement(part: Part, contract: PartContract | undefined, startISO: string) {
+async function orderReplacement(part: Part, contract: PartContract | undefined, startISO: string) {
   const when = contract
     ? contract.status === 'delivered' ? `was delivered on ${formatDay(contract.deliveryDay, startISO)}` : `arrives ${formatDay(contract.deliveryDay, startISO)}`
     : 'is already contracted';
   const msg = `Order a replacement for ${part.name}?\n\nThe current part ${when}. Its contract${contract ? ` with ${contract.supplier}` : ''} keeps running (and its money stays spent) unless procurement cancels it.\n\nThe replacement is ordered with the same values; you can still adjust its sliders until procurement signs a supplier.`;
-  if (!confirm(msg)) return;
+  if (!await requestConfirmation(msg, 'Order replacement')) return;
   if (!allParts(getPlanner().rocket).some((l) => l.part.id === part.id)) return;
   highlightPart(actions.replacePart(part.id, true));
 }
@@ -605,8 +610,8 @@ function partMenuEntries(part: Part, ctx: Ctx, removable: boolean, name = part.n
   if (removable) {
     out.push({
       label: `Remove ${name}`, danger: true,
-      onPick: () => {
-        if (hasSupplier(part) && !confirm(`Remove ${part.name}? Its contract keeps running; only procurement can cancel it.`)) return;
+      onPick: async () => {
+        if (hasSupplier(part) && !await requestConfirmation(`Remove ${part.name}? Its contract keeps running; only procurement can cancel it.`, 'Remove part')) return;
         actions.removePart(part.id);
       },
     });

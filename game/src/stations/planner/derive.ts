@@ -154,6 +154,7 @@ export function plannerGame(s: GameState): PlannerGame {
     versions: s.planner.versions,
     phase: s.meta.phase === 'launched' || s.meta.phase === 'finished' ? 'launched' : 'planning',
     playthroughSeed: s.planner.playthroughSeed,
+    groundStation: s.events.flags.includes('service.groundStation'),
     budget: { totalM: b.fundingTotalM, spentM: b.spentM, committedM: b.committedM, availableM: b.fundingTotalM - b.spentM - b.committedM },
   };
 }
@@ -166,7 +167,7 @@ export function plannerKey(s: GameState): string {
   const cids = new Set(allocs.map((a) => a.contractId));
   return JSON.stringify([
     s.planner, s.research.limits, s.research.unlocked, tasks, allocs,
-    s.market.contracts.filter((c) => cids.has(c.id)), s.budget, s.meta.phase,
+    s.market.contracts.filter((c) => cids.has(c.id)), s.budget, s.meta.phase, s.events.flags.includes('service.groundStation'),
   ]);
 }
 

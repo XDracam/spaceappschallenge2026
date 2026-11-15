@@ -7,6 +7,7 @@ import { DEFAULT_MISSION_ID, MISSIONS, missionById } from '../core/mission';
 import { setLocalStation, useGame, useSync } from '../core/store';
 import type { InviteInfo } from '../net/webrtc';
 import { STATION_INFO } from './stations';
+import { requestConfirmation } from '../shared/confirmation';
 import {
   acceptReply, backToStart, cancelInvite, cancelJoin, createInvite, hasSavedGame, hostEnterMission,
   hostNewGame, hostTakeSeat, joinWithInvite, playerTakeSeat, resumeHostedGame, setName, setScreen, useSession,
@@ -277,8 +278,8 @@ function HostScreen() {
     await createInvite();
     setBusy(false);
   };
-  const leave = () => {
-    if (connected > 0 && !confirm('Close this game? Connected players will be disconnected. The game stays saved in this browser.')) return;
+  const leave = async () => {
+    if (connected > 0 && !await requestConfirmation('Close this game? Connected players will be disconnected. The game stays saved in this browser.', 'Close game')) return;
     backToStart();
   };
 

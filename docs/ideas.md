@@ -156,7 +156,7 @@ Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-
 - November 15 audit refinement: proposed Upcoming action/milestone lanes, Incoming arrival-versus-use rows, and selected live remedy comparisons. Full inventory and source corrections in the study; excludes hidden events, nonexistent production stages and universal order deadlines. Still unselected and unbuilt.
 - November 15 approval update: [D-019](decisions.md#d-019--reduced-contract-timeline-prototype) selects a reduced implementation scope: arrivals against actual needs with identity, recipient and quantity, the existing Table, one selected amendment preview, and concise local delay/cutoff feedback. Upcoming, Call/expiry integration, replacement comparison and a dependency graph are outside this iteration; the budget composition remains unselected. Earlier proposal and status statements above are retained as history. Implementation and observations must be recorded separately.
 
-### I-082 — Contract view consistency and automatic date fitting
+### I-086 — Contract view consistency and automatic date fitting
 
 - Captured: 2026-11-15.
 - Source: user feedback on subtle pill controls, Timeline/Table usage discrepancies and “Fit dates”.
@@ -166,6 +166,24 @@ Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-
 - Related: I-081, D-019.
 
 November 15 needs-context follow-up: the user questioned removal of Mission needs and whether related needs were properly displayed. Source review confirmed timing links, but the overview omitted full need/project names and access to uncovered needs. The assistant implemented those names and an expandable reuse of the existing Mission needs panel in both Contract views. This presentation is an assistant implementation choice. [Observed walkthrough and limits](playtests/2026-11-15-contract-needs-walkthrough.md).
+
+### I-087 — Shared cross-role coordination and actionable task filtering
+
+- Date: 2026-11-15
+- Status: accepted user direction under D-021.
+- Source: [original request](notes/2026-11-15-task-coordination.md).
+- Direction: coordinate relevant role dependencies through Tasks with sufficient detail to act through the interface. Permit explicit player-created tasks and switch between current-role actionable tasks and all tasks. Terra and Luna inspect cross-role coverage.
+- Implementation choice: derive live entries for existing game records and keep manual requests in shared replicated state with revision checks. Manual completion records a player decision. Generated completion follows the actual source state.
+- Earlier conversation-dependent proposals remain historical. Q-022's guarantee of feasible solutions remains unresolved.
+
+### I-088 — In-app confirmations throughout the game
+
+- Date: 2026-11-15
+- Status: accepted user direction under D-022.
+- Source: [UI correction](notes/2026-11-15-task-coordination.md#later-ui-correction).
+- Direction: use the game interface for confirmations and feedback. The user's prohibition applies to native browser popup dialogs.
+
+Identifier alignment, November 15, 2026: the Science entries retain I-082–I-085. Contract views previously also used I-082 and now use I-086; saved coordination I-083 becomes I-087; saved in-app confirmations I-084 becomes I-088. Historical sources may retain their original branch-local references.
 
 ## New entry template
 
