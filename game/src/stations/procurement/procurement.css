@@ -408,7 +408,7 @@
 .st-procurement .pr-role-guide > summary:hover { color: var(--accent); }
 .st-procurement .pr-role-guide p { margin: 4px 0 8px; line-height: 1.5; }
 
-/* Research support (D-031) */
+/* Research support (D-032) */
 .st-procurement .pr-rs-body { overflow: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
 .st-procurement .pr-rs h3 { margin: 6px 0 8px; font-size: 13px; }
 .st-procurement .pr-rs-asks { margin: 0 0 8px; padding-left: 18px; font-size: 12.5px; }

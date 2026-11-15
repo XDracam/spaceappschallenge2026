@@ -304,9 +304,9 @@ export interface ResearchState {
   modifiers: { effect: Extract<Effect, { kind: 'researchPace' }>; untilDay: number }[];
   /** Comms decisions on techs. A tech with an approval gate starts blocked until comms enables it. */
   access: Record<string, TechAccess>;
-  /** Facilities Procurement leased or bought for Science (D-031). */
+  /** Facilities Procurement leased or bought for Science (D-032). */
   facilities: FacilityLease[];
-  /** Extra research teams Procurement hired (D-031). */
+  /** Extra research teams Procurement hired (D-032). */
   teams: ResearchTeam[];
   /** Science's open asks to Procurement. */
   supplyRequests: SupplyRequest[];

@@ -33,6 +33,6 @@ decreasing while the calendar runs). These are implementation changes, not evide
 Comms approval projects exist in both comms content sets (`mars/`, `weather/`); the block events exist for Mars only.
 Saves: state version 3 resets the science slice and drops old projects (persist.ts `migrateV2`); version 4 drops `research.requests`; version 5 adds optional fields only.
 
-## Facilities and teams (D-031)
+## Facilities and teams (D-032)
 
 Techs of tier 2 and above need facilities (`data/needs.ts`, catalogue in `core/facilities.ts`). Science asks Procurement (`askFacility`); Procurement rents or buys (`leaseFacility`). A lapsed rental pauses a running project. The agency has `INITIAL_SLOTS` own teams; `askTeam` and Procurement's `hireTeam` add temporary or permanent ones (`teamCapacity`). `STATE_VERSION` 8 adds `research.facilities/teams/supplyRequests`.

@@ -140,7 +140,7 @@ export const scienceActions = defineActions('science', {
   },
 
   /**
-   * Ask Procurement for a facility the tech needs (D-031). One open request per facility; later techs
+   * Ask Procurement for a facility the tech needs (D-032). One open request per facility; later techs
    * waiting for the same facility are added to it.
    */
   askFacility(s, ctx, facilityId: string, techId: string) {

@@ -1,4 +1,4 @@
-// What a tech needs from Procurement (D-031): facilities held on the day. Pure; shared by the reducers and the UI.
+// What a tech needs from Procurement (D-032): facilities held on the day. Pure; shared by the reducers and the UI.
 import { FACILITY_BY_ID, facilityActive, facilityComing, facilityCoveredUntil, type Facility } from '../../../core/facilities';
 import type { GameState } from '../../../core/state';
 import { TECH_NEEDS } from '../data/needs';

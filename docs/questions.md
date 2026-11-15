@@ -175,4 +175,4 @@ Is 210 M the right weather budget, and do the bonus weights (40 and 60 of 100 po
 
 ## Q-040 — Prices of facilities and teams
 
-Are the rent and purchase prices, lead times, the base of 2 own teams and the cap of 3 hired teams right? Should a rental have to cover a whole project, or only its start? Should a bought facility be sellable? All are placeholders (D-031).
+Are the rent and purchase prices, lead times, the base of 2 own teams and the cap of 3 hired teams right? Should a rental have to cover a whole project, or only its start? Should a bought facility be sellable? All are placeholders (D-032).

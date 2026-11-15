@@ -1,5 +1,6 @@
 // Shared bits for the comms UI: stakeholder meta, lookups, avatars, consequence lines.
 
+import { useState } from 'preact/hooks';
 import { effectStations } from '../../../shared/events/types';
 import type { Condition } from '../../../shared/events/types';
 import type { Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId } from '../model/types';
@@ -41,13 +42,28 @@ function initialsOf(name: string): string {
   return name.split(/\s+/).filter((w) => /^[A-Z]/.test(w) && !/\.$/.test(w)).slice(0, 2).map((w) => w[0]).join('') || '?';
 }
 
-/** Stylised initials in a coloured glowing circle (no portrait art). */
+/** Portraits that failed to load this session (fall back to initials without retrying). */
+const brokenPortraits = new Set<string>();
+
+/** Portrait in a glowing ring of the stakeholder colour; initials when there is no portrait. */
 export function Avatar({ character, size = 'md' }: { character?: Character; size?: 'sm' | 'md' | 'lg' }) {
+  const [, setBroken] = useState(0);
   const color = character ? SH[character.stakeholder].color : '#8796b0';
   const initials = character ? character.initials || initialsOf(character.name) : '?';
+  const portrait = character?.portrait && !brokenPortraits.has(character.portrait) ? character.portrait : null;
   return (
-    <div class={`ava ava-${size}`} style={{ '--c': color } as Record<string, string>} aria-hidden="true">
-      <span>{initials}</span>
+    <div class={`ava ava-${size}${portrait ? ' has-img' : ''}`} style={{ '--c': color } as Record<string, string>} aria-hidden="true">
+      {portrait ? (
+        <img
+          src={`${import.meta.env.BASE_URL}portraits/${portrait}`}
+          alt=""
+          title="AI-generated portrait"
+          draggable={false}
+          onError={() => { brokenPortraits.add(portrait); setBroken((n) => n + 1); }}
+        />
+      ) : (
+        <span>{initials}</span>
+      )}
     </div>
   );
 }

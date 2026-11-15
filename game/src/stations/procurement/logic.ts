@@ -174,7 +174,7 @@ function commitOrder(s: GameState, ctx: ActionCtx, draft: OrderDraft, token: str
 
 export const procurementActions = defineActions('procurement', {
   /**
-   * Rent or buy a facility for Science (D-031). Cost is spent at once from the shared budget. A rental
+   * Rent or buy a facility for Science (D-032). Cost is spent at once from the shared budget. A rental
    * covers `months` from the day the facility is ready (or from the end of the current rental, so renewals
    * join up); a purchase is kept for good. Closes Science's open request for it.
    */
@@ -211,7 +211,7 @@ export const procurementActions = defineActions('procurement', {
       : `Procurement rented a ${f.name.toLowerCase()} for Science for ${months} months (${fmtM(costM)}), ready ${fmtDate(from)}.`, ['science']);
   },
 
-  /** Hire a research team for Science (D-031). Cost is spent at once. Closes the oldest open team request. */
+  /** Hire a research team for Science (D-032). Cost is spent at once. Closes the oldest open team request. */
   hireTeam(s, ctx, offerId: string) {
     if (s.meta.phase !== 'planning') return;
     const o = TEAM_OFFER_BY_ID[offerId];

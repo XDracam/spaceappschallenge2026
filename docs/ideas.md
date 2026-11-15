@@ -257,14 +257,22 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
 - Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
 
-### I-097 — Facilities and hired teams link Science and Procurement
+### I-098 — Facilities and hired teams link Science and Procurement
 
 - Date: 2026-11-15.
 - Source: user, [science module note, November 15 follow-up](notes/2026-11-14-science-module.md).
-- Status: accepted direction under D-031; implemented.
+- Status: accepted direction under D-032; implemented.
 - Idea: higher techs need labs, equipment or rented machine time that Procurement supplies, and Science asks for extra research teams that Procurement hires for a time or for good, without assignment or idle costs.
 - Intended player experience: the two tables talk early: Science asks, Procurement weighs the cost against the parts budget.
 - Dependencies and unanswered questions: prices and lead times (Q-040); effect on the weather budget (D-030, Q-039).
+
+### I-097 — Extend the title-screen quality through mission setup
+
+- Captured: 2026-11-15.
+- Source: user praised the initial page's typography/design and requested equally polished, consistent pre-game screens; flagged awkward wrapping in mission text and the name-field helper.
+- Status: accepted direction under D-031; implemented and browser-checked.
+- Idea: reuse the title screen's large Exo 2 headings, restrained Earth backdrop and flat pale-cyan actions throughout mission selection, hosting, joining and connection recovery. Retain existing controls and states; organize mission changes behind a disclosure rather than repeating full mission selection above the host controls.
+- Evidence: [pre-game design extension](notes/2026-11-15-title-screen.md#pre-game-design-extension), including an actual two-tab room connection and narrower-screen inspection. No human multiplayer enjoyment claim.
 
 ## New entry template
 

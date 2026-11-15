@@ -1,4 +1,4 @@
-// Research needs (D-031): what Science asks Procurement for, the facilities (labs, equipment, rented machine
+// Research needs (D-032): what Science asks Procurement for, the facilities (labs, equipment, rented machine
 // time) that higher-tier research needs, and research teams to hire. Spending is immediate from the shared budget.
 import { useGame } from '../../../core/store';
 import { budgetAvailableM } from '../../../core/state';

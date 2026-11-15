@@ -115,7 +115,7 @@ export interface TechView {
   missing: string[];
   /** A tech that is a stepping stone for a goal, or a goal itself. */
   goal: boolean;
-  /** Ready to start except for a facility Procurement has not supplied yet (D-031). */
+  /** Ready to start except for a facility Procurement has not supplied yet (D-032). */
   lacksFacilities: boolean;
 }
 

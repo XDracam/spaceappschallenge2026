@@ -1,4 +1,4 @@
-// Facilities the techs need from Procurement (D-031, user direction 2026-11-15: higher tiers, from tier 2,
+// Facilities the techs need from Procurement (D-032, user direction 2026-11-15: higher tiers, from tier 2,
 // need labs, equipment or rented machine time). Authored, placeholder content (D-005). Facility ids are in
 // core/facilities.ts. A tech without an entry needs nothing; every tier-2 or higher tech has one.
 export const TECH_NEEDS: Record<string, string[]> = {

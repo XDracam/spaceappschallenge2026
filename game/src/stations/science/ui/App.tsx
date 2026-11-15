@@ -215,7 +215,7 @@ function PartTests({ g }: { g: GameState }) {
   );
 }
 
-/** Facilities this tech needs from Procurement, and whether they are in place (D-031). */
+/** Facilities this tech needs from Procurement, and whether they are in place (D-032). */
 function Equipment({ g, techId }: { g: GameState; techId: string }) {
   const facilities = techFacilities(techId);
   return (
@@ -241,7 +241,7 @@ function Equipment({ g, techId }: { g: GameState; techId: string }) {
   );
 }
 
-/** Research teams: the agency's own plus hired ones; Science can ask Procurement for another (D-031). */
+/** Research teams: the agency's own plus hired ones; Science can ask Procurement for another (D-032). */
 function Teams({ g }: { g: GameState }) {
   const hired = hiredTeams(g.research, g.clock.day);
   const asked = g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'team');

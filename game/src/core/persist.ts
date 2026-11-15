@@ -60,7 +60,7 @@ export function loadSaved(): GameState | null {
       s.coordination ??= [];
       s.version = 7;
     }
-    // Version 8 added science facilities, hired teams and supply requests (D-031).
+    // Version 8 added science facilities, hired teams and supply requests (D-032).
     if (s?.version === 7) {
       s.research.facilities ??= [];
       s.research.teams ??= [];

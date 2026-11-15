@@ -321,7 +321,7 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Consequences and limitations: costs are estimates from the catalogue and the tech tree, not a playtest. Comms numbers for the weather set were written for 350 M (a +25 M gift, price events) and may need a second look. Mars has no optional goals.
 - Related: D-005, D-020, I-096, Q-039.
 
-## D-031 — Science needs facilities and hired teams from Procurement
+## D-032 — Science needs facilities and hired teams from Procurement
 
 - Date: 2026-11-15
 - Status: accepted user direction; implemented
@@ -333,7 +333,15 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Rationale and evidence: user direction, to make Science and Procurement depend on each other without adding assignment or idle bookkeeping.
 - Alternatives considered: monthly fees per team and per-project assignment (rejected by the user as too complex).
 - Consequences and limitations: all prices, lead times and the facility list are placeholders (D-005). The weather mission's 210 M budget (D-030) was balanced before facilities existed; routes through tier 2 cost extra. Facilities cannot be sold back.
-- Related: D-005, D-020, D-030, I-097, Q-040.
+- Related: D-005, D-020, D-030, I-098, Q-040.
+
+## D-031 — Carry the title-screen design through pre-game
+
+- Date: 2026-11-15.
+- Status: accepted user direction.
+- Decision: extend D-028's typography, spacing, pale-cyan actions and supplied artwork to New game, host/crew setup, joining and connection recovery. Keep the initial title screen as the visual reference. Retain networking behavior, manual connection controls and station ownership feedback.
+- Layout: separate the New game introduction/name field from mission selection; move the host's repeated mission picker into an explicit Change mission disclosure. Give station selection the same role icons. Use concise single-line mission descriptions and helper copy instead of forced wrapping or width tricks.
+- Source and evidence: [pre-game design and walkthrough](notes/2026-11-15-title-screen.md#pre-game-design-extension). Related: I-097, D-027–D-029.
 
 ## Future decision template
 

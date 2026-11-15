@@ -120,5 +120,5 @@ The user replaced the earlier proposal of research-team contracts with monthly f
 
 ### Interpretation boundaries
 
-- "Higher levels, probably from 2" was read as every tech with tree depth 2 or more. Facility choices per tech are invented placeholders (D-005, D-031).
+- "Higher levels, probably from 2" was read as every tech with tree depth 2 or more. Facility choices per tech are invented placeholders (D-005, D-032).
 - "No assignment and no idle" was read as: teams are plain extra slots, costs are one-off at signing, and nothing is charged while a team or facility waits unused.

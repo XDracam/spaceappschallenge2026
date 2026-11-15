@@ -227,6 +227,9 @@
 }
 .st-comms .ava::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); }
 .st-comms .ava span { letter-spacing: 0.02em; }
+.st-comms .ava.has-img { background: #05080f; box-shadow: 0 0 16px color-mix(in srgb, var(--c) 50%, transparent), 0 0 0 1.5px var(--c); }
+.st-comms .ava.ava-lg.has-img { box-shadow: 0 0 34px color-mix(in srgb, var(--c) 45%, transparent), 0 0 0 2px var(--c); }
+.st-comms .ava img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; user-select: none; }
 .st-comms .ava-sm { width: 38px; height: 38px; font-size: 13.5px; }
 .st-comms .ava-md { width: 48px; height: 48px; font-size: 16px; }
 .st-comms .ava-lg { width: 92px; height: 92px; font-size: 32px; box-shadow: 0 0 34px color-mix(in srgb, var(--c) 45%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.3); }

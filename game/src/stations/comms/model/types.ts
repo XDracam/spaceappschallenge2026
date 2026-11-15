@@ -10,6 +10,8 @@ export interface Character {
   role: string;                 // "Senator, budget committee"
   stakeholder: StakeholderId;
   initials: string;
+  /** File in public/portraits/ (square .webp); without one the avatar shows initials. */
+  portrait?: string;
 }
 
 export type ProjectKind = 'gala' | 'campaign' | 'lobbying' | 'negotiation';

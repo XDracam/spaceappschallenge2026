@@ -1,4 +1,4 @@
-// Equipment and teams Procurement can supply to Science (D-031). Pure hand-authored data (D-005) and
+// Equipment and teams Procurement can supply to Science (D-032). Pure hand-authored data (D-005) and
 // small helpers; no randomness, no UI. Techs from tier 2 on need one or two facilities (science/data/needs.ts).
 import type { FacilityLease, ResearchState, ResearchTeam } from './model';
 
