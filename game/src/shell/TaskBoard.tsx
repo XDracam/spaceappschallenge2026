@@ -98,9 +98,11 @@ export function TaskBoard() {
     } else if (station === 'procurement' && link.kind === 'contracts') {
       setProcurementUi({ view: 'contracts', contractId: null });
     } else if (station === 'procurement' && link.kind === 'offer') {
+      // Tender and partner offers are listed on the need they answer (the Calls view is gone).
       const offer = game.market.offers.find(item => item.id === link.offerId);
       if (!offer) return;
-      setProcurementUi({ view: 'calls', dialog: { type: 'sign', offerId: offer.id, qty: offer.remainingQuantity ?? offer.quantity } });
+      const call = game.market.calls.find(item => item.id === offer.callId);
+      setProcurementUi({ view: 'catalogue', offerId: offer.id, inspect: 'need', ...(call ? { focus: { taskId: call.taskId, criterionId: call.criterionId } } : {}) });
     } else if (station === 'comms' && link.kind === 'comms') {
       commsActions.select(link.instanceId);
     } else if (station === 'comms' && link.kind === 'commsProjects') {
@@ -114,7 +116,9 @@ export function TaskBoard() {
     } else if (station === 'planner' && link.kind === 'launch') {
       window.dispatchEvent(new Event('coordination-launch'));
     } else if (station === 'procurement' && link.kind === 'call') {
-      setProcurementUi({ view: 'calls', callId: link.callId });
+      const call = game.market.calls.find(item => item.id === link.callId);
+      if (!call) return;
+      setProcurementUi({ view: 'catalogue', inspect: 'need', focus: { taskId: call.taskId, criterionId: call.criterionId } });
     } else return;
     close();
   };
