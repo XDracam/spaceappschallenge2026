@@ -1,4 +1,4 @@
-# Mission Control — 29-second submission video
+# T-Minus — 29-second submission video
 
 Prepared November 15, 2026 for the NASA Space Apps “Space Mission Design Game” challenge. This is a recording script, reviewed by an independent sceptical subagent. Footage and the exported video have not been validated.
 
@@ -8,7 +8,7 @@ Your mission: send weather images home from orbit.
 
 Meet the camera requirement. More capability adds weight and cost.
 
-In Mission Control, four players coordinate design, research, procurement, and partnerships within one budget and schedule.
+In T-Minus, four players coordinate design, research, procurement, and partnerships within one budget and schedule.
 
 Launch your mission and inspect which objectives succeed.
 
@@ -18,7 +18,7 @@ Discover how engineering choices shape the whole mission.
 
 | Time | Picture |
 | --- | --- |
-| 0–4 seconds | Weather-imagery objective and Earth/orbit view. Overlay “Mission Control”, the actual team name, and “Space Mission Design Game”. Begin with gameplay, without a separate title-screen introduction. |
+| 0–4 seconds | Weather-imagery objective and Earth/orbit view. Overlay “T-Minus”, the actual team name, and “Space Mission Design Game”. Begin with gameplay, without a separate title-screen introduction. |
 | 4–10 seconds | Prepared camera-performance comparison. Show its readable mass and estimated-cost tooltip before and after the change. Editorial callouts: “More mass” and “Higher estimated cost”. |
 | 10–19 seconds | Three clearly labelled shots: Science selects camera research; Procurement compares supplier price and delivery; Communications selects a partnership such as Northgate test technicians. Keep the shared budget/calendar visible. These illustrate the roles working toward one mission; they are not an instant or mandatory chain of actions. |
 | 19–25 seconds | Actual trajectory playback followed by the actual mission result. Give the goal results enough screen time to distinguish reaching geostationary orbit from returning weather imagery. |

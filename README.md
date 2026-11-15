@@ -1,4 +1,4 @@
-# Space Mission Design Game
+# T-Minus
 
 Prototype workspace for the [2026 NASA Space Apps challenge](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/).
 

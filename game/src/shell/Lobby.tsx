@@ -39,7 +39,7 @@ function Brand({ tag }: { tag?: string }) {
   return (
     <header class="shell-brand">
       <div>
-        <h1>MISSION CONTROL<span class="title-period">.</span></h1>
+        <h1>T-Minus</h1>
       </div>
       {tag && <span class="shell-chip shell-chip-accent">{tag}</span>}
     </header>
@@ -257,7 +257,7 @@ function StartScreen() {
     <main class="title-screen">
       <TitleScene />
       <div class="title-content">
-        <h1 class="title-name">MISSION<br />CONTROL<span class="title-period">.</span></h1>
+        <h1 class="title-name">T-Minus</h1>
         <p class="title-tagline">Four stations. One mission.<br /><strong>Make it fly.</strong></p>
         <nav class="title-menu" aria-label="Game menu">
           <button ref={newGame} class="title-action title-action-primary" onClick={() => setPicking(true)}>

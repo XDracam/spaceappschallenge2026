@@ -44,3 +44,5 @@ Final footer check: browser DOM measured the Planner app ending at1199px and the
 The user then requested consolidating the shared station/player and Tasks controls into the same footer. Moved both components out of the station viewport into the shared 40px footer; standardized their controls with audio and anchored their existing popovers above the footer. Gameplay content no longer carries those floating triggers.
 
 Final requested footer ordering: station/player control at left; audio toward the right; Tasks last, in the far-right corner. Existing station and Tasks panels open upward from these controls.
+
+Before final publication handoff, the user renamed the game to “T-Minus”. Updated the visible title/setup wordmark, browser title, current submission copy and audition title context. Internal save/network identifiers stay compatible. The merge commit had already been pushed when this instruction arrived, so the rename is a follow-up commit.

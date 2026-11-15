@@ -1,20 +1,20 @@
-# Mission Control — submission text
+# T-Minus — submission text
 
 Prepared November 15, 2026. Copy the text beneath each field heading into the corresponding submission field. The final team checklist is internal and should not be pasted into the form.
 
 ## Project Name
 
-Mission Control
+T-Minus
 
 ## High-Level Project Summary
 
-Mission Control is a cooperative browser game about designing and delivering a space mission together. Four players operate Mission Planning, Procurement, Science, and Communications, sharing one budget, schedule, and mission outcome. Players configure spacecraft and trajectories, source equipment, research capabilities, test hardware, and negotiate with stakeholders. Each decision creates consequences for the rest of the team.
+T-Minus is a cooperative browser game about designing and delivering a space mission together. Four players operate Mission Planning, Procurement, Science, and Communications, sharing one budget, schedule, and mission outcome. Players configure spacecraft and trajectories, source equipment, research capabilities, test hardware, and negotiate with stakeholders. Each decision creates consequences for the rest of the team.
 
 Our prototype includes two missions: deploying a geostationary weather satellite and sending an orbiter and lander to Mars. It addresses the Space Mission Design Game challenge by connecting mission design, resource management, and simulation in a shared experience. Our goal is to make the engineering trade-offs and human coordination behind space exploration understandable through play.
 
 ## Detailed Project Description
 
-Space missions depend on many specialties working together. A promising instrument still needs power, a suitable trajectory, funding, and delivery before launch. Mission Control turns these interdependencies into a cooperative game.
+Space missions depend on many specialties working together. A promising instrument still needs power, a suitable trajectory, funding, and delivery before launch. T-Minus turns these interdependencies into a cooperative game.
 
 Players work at four connected stations:
 
@@ -33,9 +33,9 @@ The simulation combines simplified orbital mechanics with checks on fuel, mass, 
 
 We want players to experience why a technically attractive design can become difficult to deliver, and how collaboration can reveal alternatives. The intended educational value is learning to connect scientific objectives with engineering, acquisition, risk, and stakeholder decisions. Further human multiplayer playtesting is needed to assess learning outcomes, balance, and how consistently every role remains engaged.
 
-Mission Control is built with TypeScript, Preact, HTML Canvas, and Vite. Browsers share the session through WebRTC using PeerJS for room connections, and the application is hosted on GitHub Pages. Original project material is released under Apache 2.0, with separate notices for third-party components.
+T-Minus is built with TypeScript, Preact, HTML Canvas, and Vite. Browsers share the session through WebRTC using PeerJS for room connections, and the application is hosted on GitHub Pages. Original project material is released under Apache 2.0, with separate notices for third-party components.
 
-Mission Control’s concept and gameplay were designed by the human team. All original project code was written by OpenAI Codex and Anthropic Claude under the team’s direction. All project images, including the Earth-and-satellite title artwork, were generated with ChatGPT Images. Supporting project text was also AI-generated. Third-party materials are credited separately.
+T-Minus’s concept and gameplay were designed by the human team. All original project code was written by OpenAI Codex and Anthropic Claude under the team’s direction. All project images, including the Earth-and-satellite title artwork, were generated with ChatGPT Images. Supporting project text was also AI-generated. Third-party materials are credited separately.
 
 ## Use of Super Intelligence / AI
 
@@ -73,7 +73,7 @@ Challenge: https://www.spaceappschallenge.org/2026/challenges/space-mission-desi
 
 ## Public AI acknowledgement — reusable for credits
 
-Mission Control’s concept and gameplay were designed by the human team. All original project code was written by OpenAI Codex and Anthropic Claude under the team’s direction. All project images, including the Earth-and-satellite title artwork, were generated with ChatGPT Images. Supporting project text was also AI-generated. Third-party materials are credited separately.
+T-Minus’s concept and gameplay were designed by the human team. All original project code was written by OpenAI Codex and Anthropic Claude under the team’s direction. All project images, including the Earth-and-satellite title artwork, were generated with ChatGPT Images. Supporting project text was also AI-generated. Third-party materials are credited separately.
 
 ## Internal team checklist — do not paste into the form
 
