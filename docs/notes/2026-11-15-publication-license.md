@@ -18,4 +18,4 @@ The user subsequently requested: "then do necessary attribution". Added `THIRD_P
 
 ## Publication cleanup follow-up — November 15, 2026
 
-The [publication cleanup record](2026-11-15-publication-cleanup.md) documents marked note redactions and a verified isolated history rewrite removing the reference image from both published branches. This is local preparation only; the remote history still requires an authorized replacement. The earlier implementation record above describes the state at that time.
+The [publication cleanup record](2026-11-15-publication-cleanup.md) documents marked note redactions and a verified isolated history rewrite removing the reference image from both published branches. That initial preparation was local only; the user subsequently authorized replacement of the remote history after verification, recorded in the cleanup follow-up. The earlier implementation record above describes the state at that time.

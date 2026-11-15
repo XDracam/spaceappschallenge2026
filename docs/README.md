@@ -77,9 +77,9 @@
 
 ## Persistent project memory
 
-[Publication cleanup](notes/2026-11-15-publication-cleanup.md) records the marked redactions, explicit title-art disclosure and verified local history-scrub preparation; public history replacement remains pending.
+[Publication cleanup](notes/2026-11-15-publication-cleanup.md) records the marked redactions, explicit title-art disclosure, authorized history rewrite and verification before publication.
 
-[Publication license and reference image](notes/2026-11-15-publication-license.md) records the Apache 2.0 selection, official licensing guidance and the remaining historical image copy under D-025.
+[Publication license and reference image](notes/2026-11-15-publication-license.md) records the Apache 2.0 selection, official licensing guidance and reference-image history cleanup under D-025.
 
 [Third-party credits](../THIRD_PARTY.md) list dependency licenses, font/icon credits, submission source references and the notices shipped with the game.
 
