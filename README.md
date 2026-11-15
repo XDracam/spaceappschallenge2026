@@ -17,7 +17,7 @@ AI generation happened during development. Missions, dialogue and other game con
 ### Models and tools used
 
 - **Anthropic Claude:** Opus 5.5, Fable 5.2 and Sonnet 5.5 for code, docs and design (see `Co-Authored-By` commit trailers); Sonnet and Haiku as agent players and helpers in the [playtest loop](playtest/README.md).
-- **OpenAI Codex**, including Sol, Terra and Luna subagents: implementation, source review and walkthroughs recorded in [`docs/playtests/`](docs/playtests/).
+- **OpenAI Codex**, including GPT-6 Astra, Terra and Luna and GPT-6.1 Sol: concept work, documentation, implementation, SVG icon generation, source review and walkthroughs recorded in [`docs/playtests/`](docs/playtests/).
 - **ChatGPT Images (OpenAI):** Communications character portraits and title-screen artwork, watermarked "AI-generated" (see [third-party credits](THIRD_PARTY.md)).
 
 ### Submission disclosures still to complete or verify
