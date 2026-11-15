@@ -4,6 +4,7 @@ import { STATIONS, type StationId } from '../core/model';
 import { getState, useConfirmedGame, useGame, useSync } from '../core/store';
 import type { TaskDraft } from '../shared/taskDraft';
 import { confirmationStore } from '../shared/confirmation';
+import { uuid } from '../shared/uuid';
 import { dayToDate, fmtDate } from '../stations/procurement/rules';
 import { categoryOf, setUi as setProcurementUi } from '../stations/procurement/ui/uiState';
 import { actions as commsActions, uiStore as commsUi } from '../stations/comms/ui/store';
@@ -250,7 +251,7 @@ function TaskForm({ task, draft, station, onCancel, onSaved }: { task?: Coordina
   const neededAt = neededDate ? Math.round((Date.parse(`${neededDate}T00:00:00Z`) - dayToDate(0).getTime()) / 86400000) : undefined;
   const invalidDate = !!neededDate && (!/^\d{4}-\d{2}-\d{2}$/.test(neededDate) || !Number.isFinite(neededAt) || neededAt! < 0 || dayToDate(neededAt!).toISOString().slice(0, 10) !== neededDate);
   const invalidParent = !!parentNeedId && !needs.some(need => need.id === parentNeedId && need.status === 'open') && parentNeedId !== task?.parentNeedId;
-  const [requestId] = useState(() => crypto.randomUUID());
+  const [requestId] = useState(() => uuid());
   const [expectedRevision] = useState(() => draft?.requestKey ? getState().coordination?.find(item => item.requestKey === draft.requestKey && item.authorRole === station)?.revision : undefined);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
