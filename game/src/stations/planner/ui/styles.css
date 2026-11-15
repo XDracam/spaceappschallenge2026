@@ -225,6 +225,7 @@
 .st-planner .chip-btn-box:hover, .st-planner .chip-btn-box.active { border-color: rgba(63, 199, 255, 0.5); }
 .st-planner .chip-btn-box.active { box-shadow: var(--glow); }
 .st-planner .chip-btn-box.late { border-color: rgba(255, 95, 109, 0.55); }
+.st-planner .chip-change { color: var(--accent); }
 .st-planner .chip-stack { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .st-planner .chip-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); line-height: 1.15; }
 .st-planner .chip-value { font-family: var(--font-display); font-weight: 600; font-size: 14px; line-height: 1.2; }
@@ -242,6 +243,8 @@
 .st-planner .budget-bar.err .bb-est { background: var(--err); }
 .st-planner .launched-chip { border-color: rgba(63, 224, 160, 0.45); }
 .st-planner .launched-chip .chip-value { color: var(--ok); letter-spacing: 0.08em; }
+.st-planner .launched-chip.scrubbed { border-color: rgba(255, 95, 109, 0.55); }
+.st-planner .launched-chip.scrubbed .chip-value { color: var(--err); }
 .st-planner .dev-pill { height: 36px; padding: 0 14px 0 11px; background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--violet); }
 .st-planner .dev-pill.active { border-color: var(--violet); box-shadow: 0 0 14px rgba(185, 140, 255, 0.45); color: #efe6ff; background: rgba(20, 12, 38, 0.85); }
 .st-planner .hairline { position: relative; height: 2px; margin-top: 3px; background: rgba(140, 180, 230, 0.15); border-radius: 1px; overflow: hidden; }

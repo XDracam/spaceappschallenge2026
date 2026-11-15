@@ -4,6 +4,7 @@ import {
   altitudeOk, availableManeuvers, branchEndState, createManeuver, goalOrbitChangeLabel, hasAltitudeWindow,
 } from '../physics';
 import { formatDay } from '../model/units';
+import { allParts } from '../model/rocketUtils';
 import { bodyName, newId, openTab, partReadiness, plural, useLocalUi } from './common';
 
 // One-line hint at the top-left of the free map area: what to do next, driven by plan state.
@@ -77,15 +78,28 @@ export function NextStep() {
     const route = routeHint(game, ev);
     if (route) return { kind: 'text', text: route };
     const errors = ev.issues.filter((i) => i.severity === 'error').length;
-    if (errors > 0) return { kind: 'text', text: `Next: fix ${plural(errors, 'problem')} — see Issues`, tone: 'warn' };
     const r = partReadiness(game, ev);
+    // Only late deliveries are wrong: offer the launch date that waits for the last one.
+    if (r.late > 0 && errors === r.late) {
+      const inDesign = new Set(allParts(game.rocket).map((l) => l.part.id));
+      const arrival = Math.ceil(Math.max(...game.contracts
+        .filter((c) => c.status === 'running' && inDesign.has(c.partId) && c.deliveryDay > game.plan.launchDay)
+        .map((c) => c.deliveryDay)));
+      if (arrival <= game.mission.completionDeadlineDay) {
+        return {
+          kind: 'button', text: `Next: move launch to ${formatDay(arrival, start)}`,
+          onClick: () => actions.setLaunchDay(arrival), title: 'The last part arrives that day. Change it again on the Launch chip.',
+        };
+      }
+    }
+    if (errors > 0) return { kind: 'text', text: `Next: fix ${plural(errors, 'problem')} — see Issues`, tone: 'warn' };
     if (r.draft > 0) {
       return {
         kind: 'button', text: `Next: order ${plural(r.draft, 'part')} (Rocket → Order ${r.draft === 1 ? 'part' : 'parts'})`,
         onClick: () => openTab('rocket'), title: 'Open the Rocket panel',
       };
     }
-    if (r.ordered > 0) return { kind: 'text', text: `Waiting for ${plural(r.ordered, 'delivery', 'deliveries')} — launch ${launch}` };
+    if (r.ordered > 0) return { kind: 'text', text: `Waiting for ${plural(r.ordered, 'delivery', 'deliveries')}` };
     return { kind: 'text', text: `Ready: launches ${launch}`, tone: 'ok' };
   }
 

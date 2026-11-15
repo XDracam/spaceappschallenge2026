@@ -7,6 +7,10 @@ import {
 import { Slider } from './Slider';
 import { openBriefing } from './Briefing';
 import { useAdvanced } from './advanced';
+import { isScrubbed } from '../result';
+
+/** The launch was scrubbed (a part was missing): nothing flew. */
+const useScrubbed = () => useUi((u) => !!u.playthrough && isScrubbed(u.playthrough.result));
 
 // The planner station has no Procurement panel (D-006: procurement is another station's job).
 const NAV: { id: 'rocket' | 'versions'; label: string }[] = [
@@ -60,6 +64,7 @@ function CalendarChip() {
   const running = useClock((c) => c.running);
   const dps = useClock((c) => c.daysPerSecond);
   const planning = usePlanner((g) => g.phase === 'planning');
+  const scrubbed = useScrubbed();
   const flowing = running && planning;
   const months = +((dps * 60) / DAYS_PER_MONTH).toFixed(1);
   const rate = `1 min = ${months} month${months === 1 ? '' : 's'}`;
@@ -69,7 +74,7 @@ function CalendarChip() {
       <div class="chip-stack">
         <span class="chip-label">Today</span>
         <span class="chip-value num">{formatDay(day, startISO)}</span>
-        <span class="chip-sub">{!planning ? 'launched' : running ? rate : 'paused'}</span>
+        <span class="chip-sub">{!planning ? (scrubbed ? 'launch scrubbed' : 'launched') : running ? rate : 'paused'}</span>
       </div>
     </div>
   );
@@ -109,10 +114,11 @@ function BudgetChip() {
 function LaunchedChip() {
   const launchDay = usePlanner((g) => g.plan.launchDay);
   const tDays = useUi((u) => (u.playthrough ? Math.max(0, Math.floor(u.playthrough.day - launchDay)) : 0));
+  const scrubbed = useScrubbed();
   return (
-    <div class="chip-box launched-chip">
+    <div class={`chip-box launched-chip${scrubbed ? ' scrubbed' : ''}`}>
       <div class="chip-stack">
-        <span class="chip-value num">LAUNCHED · T+{tDays} d</span>
+        <span class="chip-value num">{scrubbed ? 'LAUNCH SCRUBBED' : `LAUNCHED · T+${tDays} d`}</span>
       </div>
     </div>
   );
@@ -137,7 +143,7 @@ function LaunchChip() {
   const deadline = mission.completionDeadlineDay;
   const sliderMin = Math.min(today, deadline);
   const problem = ready.draft > 0 ? `${plural(ready.draft, 'part')} not ordered`
-    : ready.late > 0 ? `${plural(ready.late, 'delivery', 'deliveries')} after launch` : '';
+    : ready.late > 0 ? `${plural(ready.late, 'delivery', 'deliveries')} late` : '';
   const soon = running && realSec < 60;
   const timed = running && Number.isFinite(realSec);
   const countdown = timed ? `in ${formatRealTime(realSec)}` : `in ${formatDuration(Math.max(0, launchDay - now))} (paused)`;
@@ -160,7 +166,7 @@ function LaunchChip() {
       <button class={`chip-box chip-btn-box${problem ? ' late' : ''}${open ? ' active' : ''}`}
         title="Launch date: click to change it" onClick={() => setOpen(!open)}>
         <div class="chip-stack">
-          <span class="chip-label">Launch</span>
+          <span class="chip-label">Launch · <span class="chip-change">change ▾</span></span>
           <span class="chip-value num">
             {formatDay(launchDay, startISO)}
             <span class={soon ? 'warn-text' : 'muted'}> · {countdown}</span>

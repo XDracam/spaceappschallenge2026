@@ -368,10 +368,14 @@ export function quoteOrder(s: PView, draft: OrderDraft): OrderQuote {
     }
   }
   const totalM = offer && option ? round1((offer.source === 'catalogue' ? offer.priceM * priceMultiplier(s) : offer.priceM / Math.max(1, offer.quantity)) * qty * option.priceFactor) : 0;
-  const expectedAt = offer && option ? Math.floor(s.clock.day) + Math.round(leadTimeDays(s, offer) * option.daysFactor) + deliveryShiftDays(s) : 0;
+  const leadDays = offer && option ? Math.round(leadTimeDays(s, offer) * option.daysFactor) + deliveryShiftDays(s) : 0;
+  const expectedAt = offer && option ? Math.floor(s.clock.day) + leadDays : 0;
   if (totalM > budgetAvailableM(s.budget) + 1e-9) unavailable = 'Insufficient available funds';
-  const token = JSON.stringify([draft, offer?.revision, offer?.remainingQuantity, totalM, expectedAt, unavailable, failures, taskState, budgetAvailableM(s.budget)]);
-  return { draft, offer, quantity: qty, totalM, expectedAt, unavailable, failures, late: neededAt !== undefined && expectedAt > neededAt, token };
+  const late = neededAt !== undefined && expectedAt > neededAt;
+  // The quote is the lead time, not the calendar date: it stays valid while the days pass and
+  // while other stations spend, and changes only with the terms (price, lead, fit, on time, funds).
+  const token = JSON.stringify([draft, offer?.revision, offer?.remainingQuantity, totalM, leadDays, late, unavailable, failures, taskState]);
+  return { draft, offer, quantity: qty, totalM, expectedAt, unavailable, failures, late, token };
 }
 export function sameHardware(a: Offer['resource'], b: Offer['resource']): boolean {
   return a.partKind === b.partKind && a.variant === b.variant && a.massT === b.massT && JSON.stringify(Object.entries(a.stats).sort()) === JSON.stringify(Object.entries(b.stats).sort());

@@ -153,6 +153,8 @@
 .st-comms .bb-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); box-shadow: 0 0 6px rgba(63, 199, 255, 0.6); transition: width 400ms ease; }
 .st-comms .launched-chip { border-color: rgba(63, 224, 160, 0.45); }
 .st-comms .launched-chip .chip-value { color: var(--ok); letter-spacing: 0.1em; }
+.st-comms .launched-chip.scrubbed { border-color: rgba(255, 95, 109, 0.55); }
+.st-comms .launched-chip.scrubbed .chip-value { color: var(--err); }
 .st-comms .dev-pill { height: 36px; background: var(--glass); color: var(--violet); backdrop-filter: blur(12px); }
 .st-comms .dev-pill.active { border-color: var(--violet); box-shadow: 0 0 14px rgba(185, 140, 255, 0.45); color: #efe6ff; background: rgba(20, 12, 38, 0.85); }
 
@@ -399,6 +401,7 @@
 .st-comms .launched-backdrop { z-index: 20; }
 .st-comms .launched-card { width: 540px; overflow-y: auto; }
 .st-comms .launched-card .tb-label { color: var(--ok); }
+.st-comms .launched-card.scrubbed .tb-label { color: var(--err); }
 .st-comms .launch-trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 14px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .st-comms .launch-trust > div { display: flex; flex-direction: column; gap: 2px; }
 .st-comms .launch-trust b { font: 700 20px var(--font-display); }

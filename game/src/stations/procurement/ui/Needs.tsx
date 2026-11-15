@@ -2,7 +2,7 @@
 import type { Criterion, Task } from '../../../core/model';
 import { procurementActions } from '../logic';
 import {
-  budgetAvailableM, criterionCoverage, fmtDate, fmtM, fmtStatValue, offersForCriterion, openTasks, suggestion, taskCode,
+  budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, suggestion, taskCode,
   type Coverage, type PView,
 } from '../rules';
 import { categoryOf, setUi, useP, useUi } from './uiState';
@@ -46,11 +46,26 @@ function uncoveredCost(v: PView): { cost: number; unsolvable: number } {
   return { cost, unsolvable };
 }
 
+/** Last day a standard order still arrives by the needed date, from the fastest fitting Offer that can be signed. */
+function orderByDay(v: PView, t: Task, c: Criterion): number | undefined {
+  const leads = offersForCriterion(v, t, c).filter((a) => a.fits && !a.unavailable).map((a) => leadTimeDays(v, a.offer));
+  return leads.length ? Math.floor(t.neededAt - Math.min(...leads) - deliveryShiftDays(v)) : undefined;
+}
+
 export function Needs({ onClose }: { onClose?: () => void } = {}) {
   const v = useP();
   const focus = useUi((u) => u.focus);
   const tasks = openTasks(v);
-  const rows = tasks.flatMap((t) => t.criteria.map((c) => ({ t, c, cov: criterionCoverage(v, t, c) })));
+  const today = Math.floor(v.clock.day);
+  const all = tasks.flatMap((t) => t.criteria.map((c) => {
+    const cov = criterionCoverage(v, t, c);
+    return { t, c, cov, orderBy: cov.missing > 0 ? orderByDay(v, t, c) : undefined };
+  }));
+  // Still to order on top, the one that must be ordered first leading; covered needs keep their order below.
+  const rows = [
+    ...all.filter((r) => r.cov.missing > 0).sort((a, b) => (a.orderBy ?? 1e9) - (b.orderBy ?? 1e9)),
+    ...all.filter((r) => r.cov.missing === 0),
+  ];
   const uncovered = rows.filter((r) => r.cov.missing > 0).length;
   const issues = rows.filter((r) => r.cov.late || r.cov.mismatch.length).length;
   const { cost, unsolvable } = uncoveredCost(v);
@@ -67,7 +82,7 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
         ) : null}
       </div>
       <div class="pr-need-list">
-        {rows.map(({ t, c, cov }) => {
+        {rows.map(({ t, c, cov, orderBy }) => {
           const st = coverageText(cov);
           const pressed = focus?.taskId === t.id && focus.criterionId === c.id;
           return (
@@ -81,7 +96,9 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
               {t.beyondResearch.length ? <span class="pr-chip warn">Beyond research</span> : null}
               <span class="pr-need-status">
                 <span class={st.tone}>{st.text}</span>
-                <span class="muted">Needed {fmtDate(t.neededAt)}</span>
+                {orderBy === undefined
+                  ? <span class="muted">Needed {fmtDate(t.neededAt)}</span>
+                  : <span class={orderBy < today ? 'bad' : orderBy - today < 30 ? 'warn' : 'muted'}>Order by {fmtDate(orderBy).slice(0, -5)}</span>}
               </span>
             </button>
           );

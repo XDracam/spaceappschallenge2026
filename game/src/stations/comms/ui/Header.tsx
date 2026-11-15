@@ -1,5 +1,5 @@
 import { useGame } from '../../../core/store';
-import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useLaunched, useMission, useStartISO, useToday, useUi } from './store';
+import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useLaunched, useMission, useScrubbed, useStartISO, useToday, useUi } from './store';
 import { GearIcon } from './common';
 import { formatDay, formatDuration, formatMoney, formatRealTime } from './format';
 
@@ -31,6 +31,7 @@ export function Header() {
 
 function TodayChip() {
   const launched = useLaunched();
+  const scrubbed = useScrubbed();
   const day = useToday();
   const running = useGame((s) => s.clock.running);
   const startISO = useStartISO();
@@ -43,7 +44,7 @@ function TodayChip() {
       <div class="chip-stack">
         <span class="chip-label">Today</span>
         <span class="chip-value num">{formatDay(day, startISO)}</span>
-        <span class="chip-sub">{launched ? 'launched' : running ? `1 min = ${months} month${months === 1 ? '' : 's'}` : 'calendar stopped'}</span>
+        <span class="chip-sub">{launched ? (scrubbed ? 'launch scrubbed' : 'launched') : running ? `1 min = ${months} month${months === 1 ? '' : 's'}` : 'calendar stopped'}</span>
       </div>
     </div>
   );
@@ -71,16 +72,17 @@ function BudgetChip() {
 function LaunchChip() {
   const launchDay = useGame((s) => s.planner.plan.launchDay);
   const launched = useLaunched();
+  const scrubbed = useScrubbed();
   const running = useGame((s) => s.clock.running);
   const now = useToday();
   const startISO = useStartISO();
   const realSec = useGame((s) => Math.ceil(Math.max(0, launchDay - s.clock.day) / Math.max(1e-9, s.clock.daysPerSecond)));
   if (launched) {
     return (
-      <div class="chip-box launched-chip">
+      <div class={`chip-box launched-chip${scrubbed ? ' scrubbed' : ''}`}>
         <div class="chip-stack">
           <span class="chip-label">Launch</span>
-          <span class="chip-value">LAUNCHED</span>
+          <span class="chip-value">{scrubbed ? 'SCRUBBED' : 'LAUNCHED'}</span>
           <span class="chip-sub num">{formatDay(launchDay, startISO)}</span>
         </div>
       </div>

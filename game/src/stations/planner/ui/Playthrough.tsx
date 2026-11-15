@@ -162,10 +162,10 @@ function ResultCard({ onHide }: { onHide: () => void }) {
         </ul>
         <div class="result-summary">
           <div class="kv"><span>Launch</span><span class="num">{formatDay(game.plan.launchDay, start)}</span></div>
-          <div class="kv"><span>Mission end</span><span class="num">{formatDay(pt.result.endDay, start)} ({formatDuration(pt.result.endDay - game.plan.launchDay)})</span></div>
+          {!scrubbed && <div class="kv"><span>Mission end</span><span class="num">{formatDay(pt.result.endDay, start)} ({formatDuration(pt.result.endDay - game.plan.launchDay)})</span></div>}
           <div class="kv"><span>Launch mass</span><span class="num">{formatMass(ev.totalMassT)}</span></div>
           <div class="kv"><span>Agency spend</span><span class="num">{formatMoney(game.budget.spentM + game.budget.committedM)} of {formatMoney(game.budget.totalM)}</span></div>
-          <div class="kv"><span>Part failures</span><span class={`num${failures ? ' err-text' : ''}`}>{failures}</span></div>
+          {!scrubbed && <div class="kv"><span>Part failures</span><span class={`num${failures ? ' err-text' : ''}`}>{failures}</span></div>}
         </div>
         <div class="popup-foot">
           <div class="spacer" />

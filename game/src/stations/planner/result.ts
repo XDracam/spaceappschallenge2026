@@ -28,15 +28,15 @@ export function computeMissionResult(state: GameState): PlaythroughResult {
 }
 
 function applyInFlight(base: PlaythroughResult, inFlight: InFlightResult[], seed: number): PlaythroughResult {
-  if (!inFlight.length) return base;
-  const scrubbed = isScrubbed(base);
+  // A scrubbed launch never flew: no in-flight events.
+  if (!inFlight.length || isScrubbed(base)) return base;
   const delta = inFlight.reduce((sum, e) => sum + e.goalChanceDelta, 0);
   const roll = rng((seed ^ 0x5bd1e995) >>> 0);
   const day = Math.round(base.endDay - 10);
   const events = [...base.events];
   const goalOutcomes = base.goalOutcomes.map((o) => {
     const r = roll();
-    if (scrubbed || delta === 0) return o;
+    if (delta === 0) return o;
     if (o.success && delta < 0 && r < -delta) return { ...o, success: false };
     if (!o.success && delta > 0 && r < delta) return { ...o, success: true };
     return o;
@@ -60,7 +60,7 @@ function goalName(id: string): string {
   return MISSION.goals.find((g) => g.id === id)?.name ?? id;
 }
 
-function isScrubbed(result: PlaythroughResult): boolean {
+export function isScrubbed(result: PlaythroughResult): boolean {
   return result.events.some((e) => e.kind === 'failure' && e.text.startsWith('Launch scrubbed'));
 }
 
