@@ -4,6 +4,8 @@
 
 ## Current design
 
+[Procurement part geometry](notes/2026-11-15-procurement-artwork.md) records the parallel artwork corrections and rendered/browser checks across all catalogue families.
+
 [Title-screen implementation and artwork correction](notes/2026-11-15-title-screen.md) records the opening menu, setup flow, browser checks and outstanding finished artwork.
 
 [Two-level hackathon release audit](reviews/2026-11-15-two-level-release-audit.md) records five expert audit packets, evaluated feasible routes, observed openings and the prioritized release gate for Weather and Mars.

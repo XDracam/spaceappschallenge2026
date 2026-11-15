@@ -282,3 +282,10 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 ```
 
 Keep deferred and rejected ideas. Add a dated explanation instead of deleting them. Do not turn possible effects or illustrative examples into accepted mechanics without a decision record.
+
+### I-100 — Believable procurement part geometry
+
+- Date: 2026-11-15.
+- Status: accepted user direction; implemented visual refinement.
+- Direction: review and improve all procurement part drawings in parallel for consistency, believability and obvious geometric/logical flaws.
+- Implementation and observed limits: [geometry record](notes/2026-11-15-procurement-artwork.md). Shared family artwork remains schematic, with distinct relevant part variants.
