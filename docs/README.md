@@ -1,10 +1,20 @@
 # Documentation index
 
+[Submission video script](submission-video-script.md) contains the 29-second narration, shot list and independent sceptical review, prepared November 15, 2026.
+
 [Submission text](submission-text.md) provides copy-ready project descriptions, AI disclosure, NASA resource text and an internal submission checklist, prepared November 15, 2026.
 
 ## Current design
 
+[Selected game audio](notes/2026-11-15-audio-integration.md) records D-032's seven chosen sounds, local music/mute/volume, accepted-action feedback and station/result routing.
+
 [Procurement part geometry](notes/2026-11-15-procurement-artwork.md) records the parallel artwork corrections and rendered/browser checks across all catalogue families.
+
+[In-game style audit](reviews/2026-11-15-in-game-style-audit.md) records the live four-station Weather walkthrough and a proposed restrained visual pass that preserves gameplay geometry and information density.
+
+[Hackathon audio shortlist](reviews/2026-11-15-audio-plan.md) records three Terra source reviews and a proposed minimal atmosphere, attention and mission-payoff sound set; no audio implementation or listening validation yet.
+
+[Audio audition tool](notes/2026-11-15-audio-audition.md) records the requested licensed candidate search and local contextual comparison page, with 38 previews and exportable picks; the achievement shortlist was replaced with six independent creators after user rejection.
 
 [Title-screen implementation and artwork correction](notes/2026-11-15-title-screen.md) records the opening menu, setup flow, browser checks and outstanding finished artwork.
 
@@ -67,6 +77,8 @@
 
 ## Persistent project memory
 
+[Publication cleanup](notes/2026-11-15-publication-cleanup.md) records the marked redactions, explicit title-art disclosure and verified local history-scrub preparation; public history replacement remains pending.
+
 [Publication license and reference image](notes/2026-11-15-publication-license.md) records the Apache 2.0 selection, official licensing guidance and the remaining historical image copy under D-025.
 
 [Third-party credits](../THIRD_PARTY.md) list dependency licenses, font/icon credits, submission source references and the notices shipped with the game.
@@ -78,7 +90,7 @@
 | [Ideas](ideas.md) | All substantive ideas, including tentative and deferred ones |
 | [Decisions](decisions.md) | Accepted choices, sources, and rationale |
 | [Questions](questions.md) | Missing choices and what they block |
-| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), and [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md) | Verbatim user input from November 14, 2026 |
+| [Kickoff notes](notes/2026-11-14-kickoff.md), [brainstorm notes](notes/2026-11-14-brainstorm.md), and [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md) | User input from November 14, 2026, with marked publication redactions |
 | [Procurement prototype request](notes/2026-11-14-procurement-prototype.md) | Source for the standalone procurement slice |
 | [Procurement interface discussion](notes/2026-11-14-procurement-interfaces.md) | User request for precise terminology and boundaries |
 | [Procurement scenario request](notes/2026-11-14-procurement-scenarios.md) | User request for concrete gameplay validation scenarios |
@@ -96,7 +108,7 @@
 | [Full HD mockup request](notes/2026-11-14-full-hd-mockup.md) | User request for a standalone desktop design |
 | [Player stations note](notes/2026-11-14-player-stations.md) | User decision for four separate stations and seats |
 | [Integration questions](notes/2026-11-14-integration-questions.md) | User answers on connection, code layout, hosting, fewer players and terminology (D-015) |
-| [Science module note](notes/2026-11-14-science-module.md) | Verbatim science station input |
+| [Science module note](notes/2026-11-14-science-module.md) | Science station input, with a marked publication redaction |
 | [Agent playtest, round r001](playtests/2026-11-14-agent-playtest-r001.md) | Four AI players with no knowledge of the game complete the weather-satellite mission; 16 findings, limits of the method ([harness](../playtest/README.md)) |
 | [Agent playtest loop, run 1115d](playtests/2026-11-15-agent-playtest-loop.md) | Unattended loop: rounds 1115m-r01 and 1115d-r01, both 0 of 2 goals; four game commits by the loop, none an accepted decision; what to keep or drop is in [the morning list](../playtest/morning.md) |
 | [Playtest template](playtests/TEMPLATE.md) | Reusable record for future experiments |

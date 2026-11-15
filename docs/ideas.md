@@ -257,6 +257,17 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
 - Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
 
+### I-098 — High-value hackathon audio
+
+- Captured: 2026-11-15.
+- Source: user requested Terra subagents to identify where and what audio to add, then emphasized limited hackathon time and high-value additions over small details.
+- Status: the user selected seven audition sounds and requested integration under D-032; earlier shortlists remain historical proposals.
+- Idea: use one quiet atmospheric loop and a small reusable set of attention, completion, launch and outcome sounds. Focus on new actionable work and mission payoff; defer routine interface sounds and voice/radio chatter.
+- Evidence: three Terra source reviews; no assets auditioned, implementation or audible/multiplayer validation. See [audio shortlist](reviews/2026-11-15-audio-plan.md) for actual trigger points, priorities, cut list and limitations.
+- Related: D-004, D-005, D-012, D-021, D-025, D-028.
+
+- Follow-up: user requested at least five freely reusable candidates per sound and a contextual audition page, including the subtle confirmation cue. [Audition record](notes/2026-11-15-audio-audition.md) documents the licensed previews and selection tool, rejection of the original achievement family, and replacement candidates. The user then chose cinematic fanfare 5 and requested integration; see [selected game audio](notes/2026-11-15-audio-integration.md).
+
 ### I-097 — Extend the title-screen quality through mission setup
 
 - Captured: 2026-11-15.
@@ -264,6 +275,15 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Status: accepted direction under D-031; implemented and browser-checked.
 - Idea: reuse the title screen's large Exo 2 headings, restrained Earth backdrop and flat pale-cyan actions throughout mission selection, hosting, joining and connection recovery. Retain existing controls and states; organize mission changes behind a disclosure rather than repeating full mission selection above the host controls.
 - Evidence: [pre-game design extension](notes/2026-11-15-title-screen.md#pre-game-design-extension), including an actual two-tab room connection and narrower-screen inspection. No human multiplayer enjoyment claim.
+
+### I-099 — A restrained in-game style pass after the pre-game redesign
+
+- Captured: 2026-11-15.
+- Source: user requested a careful audit of the actual running game and recommendations for matching the launch pages without excessive changes or worse gameplay.
+- Status: the broad CSS-only pass (D-033) was implemented and then rejected by the user. Only less-rounded corners remain accepted and implemented under D-034; retain the original station style otherwise.
+- Idea: unify compact headings, pale-cyan primary actions, quieter surfaces and shared shell controls; prioritize Science's distinct typography and palette. Keep station layouts, graph/canvas geometry, timeline semantics, status colors and information density.
+- Evidence: [live in-game style audit](reviews/2026-11-15-in-game-style-audit.md), including published needs, offer/order/contract views, active research, an authored Communications message and shared Tasks at Full HD. No full mission or four-player enjoyment claim.
+- Related: D-013, D-014, D-028, D-031; I-095, I-097.
 
 ## New entry template
 

@@ -1,6 +1,6 @@
 # Title screen — November 15, 2026
 
-The user approved building I-095, asking for a ChatGPT image-generation prompt if artwork was needed. The user then rejected the procedural artwork, especially its orbit lines. Those lines, the spacecraft and the cloud texture were removed. The user subsequently supplied the finished Earth-and-satellite image. It now replaces the placeholder, bundled as a 116,862-byte WebP in `game/src/shell/assets/title-earth.webp`.
+The user approved building I-095, asking for a ChatGPT image-generation prompt if artwork was needed. The user then rejected the procedural artwork, especially its orbit lines. Those lines, the spacecraft and the cloud texture were removed. The user subsequently supplied the finished Earth-and-satellite image, generated with ChatGPT Images using the prompt below. It now replaces the placeholder, bundled as a 116,862-byte WebP in `game/src/shell/assets/title-earth.webp`.
 
 ## Direction contract
 

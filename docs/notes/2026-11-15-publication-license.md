@@ -15,3 +15,7 @@ Deleted `mission-planner/notes/reference/ui-style-reference.webp` from the worki
 ## Attribution follow-up
 
 The user subsequently requested: "then do necessary attribution". Added `THIRD_PARTY.md` with submission source credits and all 128 locked package entries, plus `game/public/THIRD_PARTY_NOTICES.txt` containing the runtime Preact MIT notice, font copyrights/OFL terms, existing Lucide notice, tool credits and caniuse-lite attribution/CC-BY-4.0 terms. `game/public/LICENSE.txt` copies the project's Apache terms. Vite copies both public text files into each production build; README links explain their location and preservation. No dependency versions changed. Fonts are served externally; Lucide and IBM Plex Mono belong to the earlier procurement mockup. Portal references and resources used outside this checkout still require the team's review.
+
+## Publication cleanup follow-up — November 15, 2026
+
+The [publication cleanup record](2026-11-15-publication-cleanup.md) documents marked note redactions and a verified isolated history rewrite removing the reference image from both published branches. This is local preparation only; the remote history still requires an authorized replacement. The earlier implementation record above describes the state at that time.

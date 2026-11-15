@@ -1,0 +1,24 @@
+.shell-with-audio { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+/* A containing block keeps each station's fixed canvas/panels inside the playable row. */
+.shell-play-area { position: relative; min-height: 0; overflow: hidden; contain: layout paint; }
+.shell-footer { position: relative; z-index: 1002; min-height: 40px; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 3px 12px; border-top: 1px solid #253547; background: #080f19; color: #dce9ee; font: 12px/1.5 Inter, system-ui, sans-serif; }
+.shell-footer-station, .shell-footer-actions { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.shell-footer .shell-switcher, .shell-footer .shell-tasks { position: relative; inset: auto; z-index: auto; }
+.shell-footer .shell-switcher { display: block; }
+.shell-footer .shell-pop { position: absolute; left: 0; bottom: calc(100% + 8px); max-height: calc(100dvh - 64px); overflow-y: auto; }
+.shell-footer .tasks-board { bottom: calc(100% + 8px); max-height: calc(100dvh - 64px); }
+.shell-footer .shell-pill, .shell-footer .tasks-trigger { height: 32px; padding: 0 10px; border: 0; border-radius: 5px; background: transparent; box-shadow: none; backdrop-filter: none; font: inherit; }
+.shell-footer .shell-pill:hover, .shell-footer .shell-pill.is-open, .shell-footer .tasks-trigger:hover { background: #1b2c3d; box-shadow: none; }
+.shell-footer .shell-tasks { padding-left: 12px; border-left: 1px solid #253547; }
+.shell-footer .shell-pill-name { font: inherit; font-weight: 600; letter-spacing: normal; }
+.sound-settings { display: flex; align-items: center; gap: 14px; color: #dce9ee; font: 12px/1.5 Inter, system-ui, sans-serif; }
+.sound-mute { display: grid; place-items: center; width: 32px; height: 32px; padding: 6px; flex: none; border: 0; border-radius: 5px; background: transparent; color: #dce9ee; cursor: pointer; }
+.sound-mute:hover { background: #263d52; }
+.sound-mute[aria-pressed=true] { color: #a8b6c8; }
+.sound-mute svg { width: 20px; height: 20px; }
+.sound-mute:focus-visible, .sound-settings input:focus-visible { outline: 2px solid #9fe4ff; outline-offset: 3px; }
+.sound-volume { display: grid; grid-template-columns: auto 80px 30px; gap: 7px; align-items: center; }
+.sound-volume input { width: 100%; min-width: 0; accent-color: #9fe4ff; }
+.sound-volume span { text-align: right; font-variant-numeric: tabular-nums; color: #b4c4dc; }
+.sound-error { margin: 0; color: #ffd082; font-size: 12px; }
+@media(max-width:700px) { .sound-settings { gap: 8px; } .sound-volume { grid-template-columns: auto 54px; } .sound-volume span { display: none; } }

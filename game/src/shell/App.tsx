@@ -19,6 +19,7 @@ import { TaskBoard } from './TaskBoard';
 import { ConfirmationPanel } from './ConfirmationPanel';
 import { confirmationStore } from '../shared/confirmation';
 import { useStore } from '../core/createStore';
+import { SoundSettings } from '../audio/SoundSettings';
 
 const VIEWS: Record<StationId, ComponentType> = {
   planner: PlannerStation,
@@ -29,8 +30,19 @@ const VIEWS: Record<StationId, ComponentType> = {
 
 export function App() {
   const confirmation = useStore(confirmationStore, value => value);
+  const station = useSync(s => s.station);
   return <>
-    <div class="shell-stage" inert={confirmation ? true : undefined}><GameView /><SaveStatus /><AttemptRecorder /></div>
+    <div class="shell-stage shell-with-audio" inert={confirmation ? true : undefined}>
+      <div class="shell-play-area"><GameView /><SaveStatus /></div>
+      <footer class="shell-footer">
+        <div class="shell-footer-station">{station && <StationSwitcher />}</div>
+        <div class="shell-footer-actions">
+          <SoundSettings />
+          {station && <TaskBoard key={station} />}
+        </div>
+      </footer>
+      <AttemptRecorder />
+    </div>
     <ConfirmationPanel />
   </>;
 }
@@ -45,8 +57,6 @@ function GameView() {
       <View />
       {/* The planner shows its own animated playthrough and result card. */}
       {station !== 'planner' && <ResultOverlay key={attempt} />}
-      <StationSwitcher />
-      <TaskBoard key={station} />
     </div>
   );
 }

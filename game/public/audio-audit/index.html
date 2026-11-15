@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e19">
+  <title>Sound audition · Mission Control</title>
+  <link rel="stylesheet" href="audit.css">
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to audition</a>
+  <header class="header">
+    <div><a class="back" href="../">Mission Control</a><h1>Find the sound of your mission.</h1><p>Try a sound in a game scene. Keep your favorites. Hear how they fit together.</p></div>
+    <div class="export-group"><span id="pick-count">0 of 7 chosen</span><button id="export" class="primary">Export picks</button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar"><nav id="categories" aria-label="Sound categories"></nav><p class="side-note">Local audition sandbox.<br>Scenes are illustrative; no live mission or multiplayer state changes.</p><a href="CREDITS.md" target="_blank" rel="noopener">Sources & licensing</a></aside>
+    <main id="workspace">
+      <div class="mixbar">
+        <label class="volume">Effects <input id="fx-volume" type="range" min="0" max="100" value="40"><output id="fx-value" for="fx-volume">40%</output></label>
+        <label class="volume">Music <input id="music-volume" type="range" min="0" max="100" value="15"><output id="music-value" for="music-volume">15%</output></label>
+        <label class="toggle"><input id="mix-music" type="checkbox"> Mix with favorite music</label>
+        <button id="stop">Stop all <kbd>Esc</kbd></button>
+      </div>
+      <div class="section-head"><div><h2 id="category-title"></h2><p id="category-purpose"></p></div><button id="silent" aria-pressed="false">Keep this silent</button></div>
+      <div class="workbench">
+        <section class="candidates" aria-label="Audio candidates"><div class="list-head"><span>Candidate</span><span>Try, then choose</span></div><div id="candidate-list"></div><p class="keys">Keys <kbd>1</kbd>–<kbd>6</kbd> try candidates · <kbd>Space</kbd> repeats the scene</p></section>
+        <section class="context" aria-labelledby="scene-heading"><div class="context-heading"><h3 id="scene-heading">In the game</h3><span id="scene-role"></span></div><div id="scene" class="scene"></div><div class="scene-controls"><button class="primary" id="trigger">Play scene</button><span id="scene-instruction"></span></div><p id="now-playing" class="now-playing" role="status">Choose “Try in scene” to begin. Nothing plays automatically.</p><div class="seek-row"><label for="seek">Position</label><input id="seek" type="range" min="0" max="1000" value="0" disabled><output id="time" for="seek">0:00 / 0:00</output></div></section>
+      </div>
+      <div class="notes-row"><label for="notes">Your notes for <span id="notes-category"></span><textarea id="notes" rows="2" placeholder="What fits? What feels too sharp or distracting?…" maxlength="2000"></textarea></label><div><h3>Try the whole sound set</h3><p>Confirmation → attention → completion → launch → result, under your chosen music. Unchosen categories stay silent.</p><button id="sequence">Play chosen set</button><p id="save-state" role="status">Picks stay in this browser. Export to share them.</p></div></div>
+      <details class="license-help"><summary>What can we use in the game?</summary><p>All candidates permit free reuse, including commercial use. CC0 needs no attribution. CC BY 3.0 requires creator credit, a source link, a license link, and disclosure of edits. NASA public-domain material has its own source notice. Every candidate includes its specific source and terms; exported picks retain the credits. These assets retain their own terms, separate from the game’s Apache 2.0 license.</p><p>Previews are local files. Music previews may be excerpts, so their repeat boundary does not establish whether the full track loops cleanly. Playback levels are adjustable; suitability under player conversation is yours to judge.</p></details>
+    </main>
+  </div>
+  <script type="module" src="audit.js"></script>
+</body>
+</html>

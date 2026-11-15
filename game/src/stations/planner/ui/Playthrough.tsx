@@ -5,6 +5,7 @@ import { formatDay, formatDuration, formatMass, formatMoney } from '../model/uni
 import type { Evaluation, PlannerGame, PlaythroughResult } from '../model/types';
 import { allParts } from '../model/rocketUtils';
 import { CheckIcon, CloseIcon, PauseIcon, PlayIcon, branchColor, plural } from './common';
+import { playMissionResult } from '../../../audio/gameAudio';
 
 const SPEEDS = [
   { dps: 30, label: '1×' },
@@ -36,6 +37,7 @@ export function PlaythroughOverlay() {
   const [resultHidden, setResultHidden] = useState(false);
   useEffect(() => {
     if (!finished) setResultHidden(false);
+    else playMissionResult();
   }, [finished]);
   if (!pt) return null;
   return (

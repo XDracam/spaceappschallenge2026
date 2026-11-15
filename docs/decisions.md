@@ -329,6 +329,34 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Layout: separate the New game introduction/name field from mission selection; move the host's repeated mission picker into an explicit Change mission disclosure. Give station selection the same role icons. Use concise single-line mission descriptions and helper copy instead of forced wrapping or width tricks.
 - Source and evidence: [pre-game design and walkthrough](notes/2026-11-15-title-screen.md#pre-game-design-extension). Related: I-097, D-027–D-029.
 
+## D-033 — Apply the station style pass through CSS only
+
+- Date: 2026-11-15.
+- Status: implemented, then rejected by the user; superseded by D-034.
+- Decision: apply I-099's restrained visual pass to the four stations and shared controls. The user explicitly required styling only, with no added product text. Keep all existing markup, content, station layout, graph geometry and gameplay logic.
+- Implementation: shared `game/src/shell/station-theme.css`, loaded from `shell.css`, defines the palette, compact typography, quieter surfaces, primary actions, selected/focus states and Science styling. No station component or gameplay code was edited for this pass.
+- Evidence and limits: [implementation checks](reviews/2026-11-15-in-game-style-audit.md#css-only-implementation-follow-up), including four-station inspection at Full HD and 1440×900. No automated tests or full mission replay.
+- Related: D-013–D-014, D-028, D-031; I-099.
+
+## D-032 — Integrate the user-selected hackathon audio set
+
+- Date: 2026-11-15.
+- Status: accepted user direction, implementation recorded separately from verification.
+- Decision: use the user's seven audition choices, with replacement achievement candidate 5 (cynicmusic's cinematic fanfare), for music, station attention, accepted commitments, completion, launch and outcomes. Keep audio local, quiet under conversation, optional through mute/volume, and limited to meaningful events.
+- Source: user: “I pick 5 for cinematic fanfare. work it all in”; remaining selected controls verified in the audition browser. See [selection and integration record](notes/2026-11-15-audio-integration.md), I-098.
+- Constraints: no routine hover/tab/slider sounds, voice acting or new content/network systems. Preserve third-party terms; audio supports existing visual information. Confirm actions only after host acceptance; suppress snapshot/rejoin and result-reopening replays.
+- Related: D-004, D-005, D-014–D-015, D-021–D-022, D-025, D-028.
+
+## D-034 — Restore the original station style, retain smaller corners
+
+- Date: 2026-11-15.
+- Status: accepted user direction, implemented; supersedes D-033.
+- Decision: the team preferred the original station appearance and liked only the less-rounded corners. Remove the broad station theme and retain only border-radius overrides: 6px panels/cards, 3px rectangular controls/fields, 4px Science nodes. Keep circular avatars, slider thumbs, switches and data marks circular. Keep the accepted title/pre-game pages unchanged.
+- Preservation: do not revert parallel audio, artwork or other work. Remove only this assistant's station theme; replace it with `game/src/shell/station-corners.css`, loaded by `shell.css`.
+- Evidence: TypeScript/build passed. Browser measurements confirmed Science's original system font, 16px heading, original background and blue action, and Planner/Comms' original tracking, panel gradients and glows alongside the smaller corner radii. See the [audit follow-up](reviews/2026-11-15-in-game-style-audit.md#user-rejection-and-corner-only-replacement).
+- Identifier alignment: audio retains D-032. The unpublished conflicting station-theme entry is retained as D-033 and superseded here.
+- Related: I-099, D-028, D-031–D-033.
+
 ## Future decision template
 
 ```markdown

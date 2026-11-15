@@ -78,6 +78,22 @@ let pendingCounter = 0;
 let host: HostTransport | null = null;
 let client: ClientTransport | null = null;
 
+export interface ConfirmedActionEvent {
+  previous: GameState;
+  state: GameState;
+  action: Action;
+  local: boolean;
+}
+const confirmedActionListeners = new Set<(event: ConfirmedActionEvent) => void>();
+/** Local feedback for actual host-accepted actions; never optimistic updates or snapshots. */
+export function onConfirmedAction(cb: (event: ConfirmedActionEvent) => void): () => void {
+  confirmedActionListeners.add(cb);
+  return () => confirmedActionListeners.delete(cb);
+}
+function notifyConfirmed(previous: GameState, action: Action, local: boolean): void {
+  for (const cb of confirmedActionListeners) cb({ previous, state: confirmed, action, local });
+}
+
 function by(): Action['by'] {
   return syncStore.get().station ?? 'host';
 }
@@ -103,11 +119,13 @@ function dispatch(type: string, args: unknown[]): void {
 }
 
 function applyAsHost(action: Action, origin: string, id?: string): void {
+  const previous = confirmed;
   confirmed = applyAction(confirmed, action);
   confirmedGameStore.set(confirmed);
   seq++;
   gameStore.set(confirmed);
   host?.broadcast({ t: 'applied', seq, action, origin, ...(id ? { id } : {}) });
+  notifyConfirmed(previous, action, origin === syncStore.get().peerId);
   for (const l of hostListeners) l(confirmed);
 }
 
@@ -181,10 +199,12 @@ export function startClient(transport: ClientTransport): void {
         return;
       }
       seq = msg.seq;
+      const previous = confirmed;
       confirmed = applyAction(confirmed, msg.action);
       confirmedGameStore.set(confirmed);
       if (msg.origin === syncStore.get().peerId && msg.id) pending = pending.filter((p) => p.id !== msg.id);
       rebuildView();
+      notifyConfirmed(previous, msg.action, msg.origin === syncStore.get().peerId);
     }
   });
   transport.onClose(() => {

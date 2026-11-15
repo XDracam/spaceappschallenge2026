@@ -10,7 +10,7 @@ A multiplayer game about making mission planning and communication fun. Four pla
 
 **The human team created the concept and designed the gameplay. All original project code was AI-generated.** The team supplied the cooperative premise, role responsibilities, intended decisions, requirements and feedback, and chose which proposed changes to accept.
 
-All original project code was written by OpenAI Codex and Anthropic Claude under the human team’s direction. All project images, including the title-screen artwork, were generated with ChatGPT Images. Supporting project content, documentation and submission copy were also AI-generated. AI assistance also included implementation suggestions and agent-operated reviews and walkthroughs. Those checks are not independent human validation. Original human notes are preserved in `docs/notes/`; third-party libraries, fonts, research sources and audio candidates retain their own authorship and licenses.
+All original project code was written by OpenAI Codex and Anthropic Claude under the human team’s direction. All project images, including the title-screen artwork, were generated with ChatGPT Images. Supporting project content, documentation and submission copy were also AI-generated. AI assistance also included implementation suggestions and agent-operated reviews and walkthroughs. Those checks are not independent human validation. Original human notes are preserved in `docs/notes/`, with explicit publication redactions; third-party libraries, fonts, research sources and audio candidates retain their own authorship and licenses.
 
 AI generation happened during development. Missions, dialogue and other game content are prepared in advance; the game does not use generative AI to create content during play.
 
@@ -41,7 +41,7 @@ The team reviewed the JPL paper [*Space Mission Concept Development Using Concep
 - [Prototype plan](docs/prototype.md) — proposed first experiment and evidence to collect.
 - [Open questions](docs/questions.md) — unresolved design choices.
 - [Brainstorm](docs/brainstorm.md) — organized ideas, alternatives, and open tensions.
-- [Original notes](docs/notes/2026-11-14-kickoff.md) and [follow-up](docs/notes/2026-11-14-brainstorm.md) — source material preserved verbatim.
+- [Original notes](docs/notes/2026-11-14-kickoff.md) and [follow-up](docs/notes/2026-11-14-brainstorm.md) — source material preserved with explicit publication redactions.
 
 ## Running the game
 

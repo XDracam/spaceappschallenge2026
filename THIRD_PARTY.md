@@ -186,3 +186,8 @@ PeerJS and its four bundled dependencies were added later for D-027.
 | game | [webrtc-adapter](https://www.npmjs.com/package/webrtc-adapter) | 9.0.6 | BSD-3-Clause |
 | game | [yallist](https://www.npmjs.com/package/yallist) | 3.1.1 | ISC |
 | playtest | [playwright-core](https://www.npmjs.com/package/playwright-core) | 1.65.1 | Apache-2.0 |
+# Audio audition candidates
+
+The user-selected runtime sounds and full music track are documented in [selected audio credits](game/public/audio/CREDITS.txt) and [source/license metadata](game/public/audio/selected.json). They retain CC0 1.0 or NASA public-domain terms, separately from the original game's Apache 2.0 license.
+
+The comparison tool also retains candidate previews under CC0 1.0, CC BY 3.0, and NASA public-domain terms. See the [per-file credits and preview edits](game/public/audio-audit/CREDITS.md), [candidate metadata](game/public/audio-audit/candidates.json), and source/license evidence in `game/public/audio-audit/licenses/`. CC BY candidates require retaining creator credit, source/license links and edit disclosure if selected later.

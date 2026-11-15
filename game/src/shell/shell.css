@@ -1,3 +1,5 @@
+@import './station-corners.css';
+
 /* Shell-level styles only. Station styles must be scoped under .st-<id>. */
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; color: #e8f1ff;

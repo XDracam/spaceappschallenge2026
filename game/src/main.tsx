@@ -5,9 +5,11 @@ import { App } from './shell/App';
 import { startHostClock } from './core/clock';
 import { startPersistence } from './core/persist';
 import { installPlaytestHook } from './core/playtestHook';
+import { installGameAudio } from './audio/gameAudio';
 import './shell/shell.css';
 
 installPlaytestHook();
+installGameAudio();
 startHostClock();
 startPersistence();
 render(<App />, document.getElementById('app')!);

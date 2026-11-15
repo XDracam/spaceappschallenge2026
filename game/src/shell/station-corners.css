@@ -1,0 +1,28 @@
+/* Corner treatment only. All other station styling comes from its original CSS. */
+.st-planner :is(.glass, .popup, .modal, .playback, .issues-card),
+.st-planner .cards-row .card,
+.st-procurement :is(.pr-panel, .pr-card, .pr-offer, .pr-need, .pr-insp-art, .pr-dialog, .pr-news-pop),
+.st-comms :is(.glass, .modal, .msg, .opt, .outcome, .pick, .empty-box, .proj, .slot-empty),
+.st-science .sc-card,
+.shell-switcher :is(.shell-pill, .shell-pop),
+:root :is(.tasks-board, .shell-confirmation-panel, .shell-result-card),
+.shell-overlay .shell-hostleft {
+  border-radius: 6px;
+}
+
+.st-planner :is(.btn, .pill, .nav-pill, .nav-pills, .next-pill, .chip-box),
+.st-comms :is(.btn, .pill, .chip-box, .chg, .kind-pill, .status-pill),
+.st-procurement :is(.pr-btn, .pr-nav, .pr-nav button, .pr-cats button, .pr-toggle, .pr-search, .pr-active-filter, .pr-news-toggle, .pr-chip, .pr-card-lock),
+.st-science .sc-btn,
+.shell-switcher .shell-btn,
+.shell-overlay .shell-btn,
+.shell-tasks .shell-btn,
+.tasks-tabs button,
+.tasks-form :is(input, textarea, select),
+.st-planner input:not([type]), .st-planner input[type=text], .st-planner input[type=number], .st-planner select,
+.st-comms input[type=number], .st-comms select,
+.st-procurement .pr-input, .st-procurement .pr-select {
+  border-radius: 3px;
+}
+
+.st-science .sc-node { border-radius: 4px; }
