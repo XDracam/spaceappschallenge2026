@@ -5,14 +5,14 @@
 //
 // In-flight events (I-044, docs/design/events.md): resolved from the state at launch
 // (comms' trust levels and flags). They are few and mild: their goalChanceDelta can
-// rescue a goal that just failed (+) or lose one that just succeeded (−), each with
+// rescue a physically achievable goal lost to reliability (+) or lose one that just succeeded (−), each with
 // that probability, rolled from the same seed. They need a spacecraft that is still
 // flying: a scrubbed launch or a flight that lost every goal gets none and no rescue.
 import type { GameState } from '../../core/state';
 import { MISSION } from '../../core/mission';
 import { rng } from '../../shared/events/engine';
 import { commsInFlightResults, type InFlightResult } from '../comms/logic';
-import type { PlaythroughResult } from './model/types';
+import type { Evaluation, PlaythroughResult } from './model/types';
 import { cachedPlannerGame, evaluationOf } from './derive';
 import { playthrough } from './physics';
 
@@ -21,10 +21,11 @@ let last: { game: unknown; inFlight: unknown; result: PlaythroughResult; flying:
 function compute(state: GameState): NonNullable<typeof last> {
   const game = cachedPlannerGame(state);
   if (last && last.game === game && last.inFlight === state.comms.inFlight) return last;
-  const base = playthrough(game, evaluationOf(game), game.playthroughSeed);
+  const evaluation = evaluationOf(game);
+  const base = playthrough(game, evaluation, game.playthroughSeed);
   // Scrubbed, or every goal lost to failures: nothing is flying when the in-flight events would happen.
   const flying = base.goalOutcomes.some((o) => o.success);
-  const result = flying ? applyInFlight(base, commsInFlightResults(state), game.playthroughSeed) : base;
+  const result = flying ? applyInFlight(base, evaluation, commsInFlightResults(state), game.playthroughSeed) : base;
   last = { game, inFlight: state.comms.inFlight, result, flying };
   return last;
 }
@@ -39,17 +40,23 @@ export function inFlightCounted(state: GameState): boolean {
   return compute(state).flying;
 }
 
-function applyInFlight(base: PlaythroughResult, inFlight: InFlightResult[], seed: number): PlaythroughResult {
+function applyInFlight(base: PlaythroughResult, evaluation: Evaluation, inFlight: InFlightResult[], seed: number): PlaythroughResult {
   if (!inFlight.length) return base;
   const delta = inFlight.reduce((sum, e) => sum + e.goalChanceDelta, 0);
   const roll = rng((seed ^ 0x5bd1e995) >>> 0);
   const day = Math.round(base.endDay - 10);
   const events = [...base.events];
+  // An achievable goal on a non-scrubbed flight can fail only its seeded part
+  // reliability rolls. Never rescue absent routes/instruments, inadequate data
+  // links, fuel/equipment errors or missed deadlines, all rejected by evaluate.
+  const rescueEligible = new Set(evaluation.goals
+    .filter((g) => g.achievable && g.factors?.some((f) => f.p < 1))
+    .map((g) => g.goalId));
   const goalOutcomes = base.goalOutcomes.map((o) => {
     const r = roll();
     if (delta === 0) return o;
     if (o.success && delta < 0 && r < -delta) return { ...o, success: false };
-    if (!o.success && delta > 0 && r < delta) return { ...o, success: true };
+    if (!o.success && rescueEligible.has(o.goalId) && delta > 0 && r < delta) return { ...o, success: true };
     return o;
   });
   for (const e of inFlight) {

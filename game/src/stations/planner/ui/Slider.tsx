@@ -48,6 +48,8 @@ function nudge(s: SliderScale, v: number, dir: 1 | -1): number {
 
 /** Range slider with linear or log scale, an optional research-limit tick and shading beyond it. */
 export function Slider(props: SliderScale & {
+  label: string;
+  valueText?: string;
   value: number;
   onChange: (v: number) => void;
   limit?: number;
@@ -69,6 +71,7 @@ export function Slider(props: SliderScale & {
         {limitPos !== undefined && <div class="slider-tick" style={{ left: `${limitPos * 100}%` }} />}
       </div>
       <input
+        aria-label={props.label} aria-valuetext={props.valueText ?? fmtNum(value)}
         type="range" min={0} max={RES} step={1}
         value={Math.round(pos * RES)}
         disabled={disabled}

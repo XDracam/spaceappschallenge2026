@@ -3,7 +3,7 @@
 // (stations/planner/derive.ts) plus the UI-local stores (selection, popups,
 // map day, playthrough animation) that are never shared.
 import type { Clock } from '../../../core/model';
-import { gameStore, getState, useGame } from '../../../core/store';
+import { gameStore, getState, onGameReset, useGame } from '../../../core/store';
 import type { BodyId, Evaluation, Maneuver, PlannerGame, PlaythroughResult, Vec2 } from '../model/types';
 import { findBranch } from '../model/rocketUtils';
 import { cachedPlannerGame, evaluationOf } from '../derive';
@@ -37,7 +37,7 @@ export interface UiState {
   playthrough: { result: PlaythroughResult; day: number; playing: boolean; daysPerSecond: number; finished: boolean } | null;
 }
 
-export const uiStore = createStore<UiState>({
+const initialUi = (): UiState => ({
   viewCenter: 'sun',
   selectedBranchId: 'branch-root',
   selectedManeuverId: null,
@@ -46,6 +46,14 @@ export const uiStore = createStore<UiState>({
   popup: null,
   mapDay: null,
   playthrough: null,
+});
+export const uiStore = createStore<UiState>(initialUi());
+onGameReset((state) => {
+  const initial = initialUi();
+  const game = cachedPlannerGame(state);
+  initial.selectedBranchId = game.plan.branches[0]?.id ?? 'branch-root';
+  initial.viewCenter = game.mission.goals.every((goal) => goal.body === 'earth') ? 'earth' : 'sun';
+  uiStore.set(initial);
 });
 
 export function useUi<S>(selector: (u: UiState) => S): S {

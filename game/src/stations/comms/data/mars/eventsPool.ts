@@ -350,7 +350,7 @@ export const POOL_EVENTS: EventDef[] = [
     options: [
       option('book', "Book the chamber for Science's lab (tests run faster).",
         [trust('partners', 5), pace(20, 2)],
-        "The lander parts get a cold, airless spa week. Science's research and part tests run faster for two months.", 10),
+        "Northgate reserves the chamber. Science's research and part tests run 20% faster for two months. Science still needs to start each part test.", 10),
       option('decline', "Thanks, but we'll test in-house.",
         [trust('partners', -5)],
         'Salo rents the slot to a cubesat team within the hour.'),

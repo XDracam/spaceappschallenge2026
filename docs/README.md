@@ -2,6 +2,12 @@
 
 ## Current design
 
+[Title-screen implementation and artwork correction](notes/2026-11-15-title-screen.md) records the opening menu, setup flow, browser checks and outstanding finished artwork.
+
+[Two-level hackathon release audit](reviews/2026-11-15-two-level-release-audit.md) records five expert audit packets, evaluated feasible routes, observed openings and the prioritized release gate for Weather and Mars.
+
+[Release fixes approval](notes/2026-11-15-release-fixes-approval.md) · [implementation walkthrough](playtests/2026-11-15-release-fixes-walkthrough.md) records D-029, Sol implementation/review, current route calculations and the checks actually performed.
+
 | Document | Purpose |
 | --- | --- |
 | [Concept](concept.md) | Design focus and open brainstorming |
@@ -53,7 +59,7 @@
 | [Science module](../science/README.md) | Science role: engineering tech tree (D-020); earlier research field graph kept as history |
 | [Communications module](../communications/README.md) | Communications role: stakeholders, trust, events, projects |
 | [Event system](design/events.md) | Shared events for all stations: external vs internal, news feed, in-flight events |
-| [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015, D-027 room codes) |
+| [Integration design](design/integration.md) | One app, shared game state, actions and replication, cross-station contracts, network (D-015, D-029 room codes) |
 
 ## Persistent project memory
 

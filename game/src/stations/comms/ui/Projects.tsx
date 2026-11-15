@@ -56,6 +56,8 @@ function ProjectCard({ p }: { p: ActiveProject }) {
   const def = projectById(p.defId);
   const state = useGame((s) => s);
   const day = Math.floor(state.clock.day * 4) / 4;
+  const launchDay = state.planner.plan.launchDay;
+  const launched = useLaunched();
   const span = Math.max(1e-6, p.endDay - p.startDay);
   const frac = Math.max(0, Math.min(1, (day - p.startDay) / span));
   const partner = characterById(def?.partnerCharacterId);
@@ -70,6 +72,7 @@ function ProjectCard({ p }: { p: ActiveProject }) {
         {def ? KIND_LABEL[def.kind] : 'Project'}{partner ? ` · with ${partner.name}` : ''}
       </div>
       {def && <ChangeList lines={previewLines(state, def.effects, { shield: false, at: p.endDay })} />}
+      {(launched || p.endDay >= launchDay) && <p class="project-timing-warning small">{launched ? 'Unfinished at launch — completion effects were not applied.' : 'Finishes on or after the planned launch. Completion effects need a later actual launch; this slot stays occupied until completion.'}</p>}
       <div class="pbar"><i style={{ width: `${frac * 100}%` }} /></div>
     </div>
   );
@@ -211,6 +214,7 @@ export function ProjectPicker() {
                   <div class="pick-row"><span class="tiny muted pick-when">When done</span>
                     <ChangeList lines={previewLines(state, def.effects, { shield: false, at: state.clock.day + def.months * DAYS_PER_MONTH })} />
                   </div>
+                  {state.clock.day + def.months * DAYS_PER_MONTH >= state.planner.plan.launchDay && <p class="project-timing-warning small">Finishes on or after the planned launch. Starting spends the cost and occupies a slot; completion effects need a later actual launch.</p>}
                   {req && (
                     <div class={`pick-req${reqUnmet ? ' unmet' : ''}`}>
                       Needs {SH[req.stakeholder].label} trust {req.min}{reqUnmet ? ` (now ${Math.round(state.comms.trust[req.stakeholder] ?? 0)})` : ' ✓'}

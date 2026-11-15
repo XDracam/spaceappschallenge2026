@@ -2,6 +2,7 @@
 import type { ComponentChildren, RefObject } from 'preact';
 import { useEffect } from 'preact/hooks';
 import type { BodyId, Branch, Evaluation, FlightState, PlannerGame, ManeuverResult, PartState, Vec2 } from '../model/types';
+import { onGameReset } from '../../../core/store';
 import { createStore, useStore } from '../../../core/createStore';
 import { getPlanner, uiId, uiStore } from '../state/store';
 import { bodyById } from '../data/bodies';
@@ -41,11 +42,13 @@ interface LocalUi {
   insets: Insets;
 }
 
-export const localUi = createStore<LocalUi>({
+const initialLocalUi = (): LocalUi => ({
   highlightPartId: null, highlightNonce: 0, lastEditScreen: null,
   panelOpen: true, openStageId: null, openPartId: null, openSpacecraftId: null,
-  insets: { top: HEADER_H, right: 0, bottom: CARDS_H + EDGE, left: 0 },
+  insets: { top: HEADER_H, right: PANEL_W + EDGE * 2, bottom: CARDS_H + EDGE * 2, left: 0 },
 });
+export const localUi = createStore<LocalUi>(initialLocalUi());
+onGameReset(() => localUi.set(initialLocalUi()));
 
 export function useLocalUi<S>(selector: (s: LocalUi) => S): S {
   return useStore(localUi, selector);
@@ -127,7 +130,25 @@ export function mapCentre(): Vec2 {
   };
 }
 
+let popupReturnTarget: HTMLElement | null = null;
+/** Capture the originating DOM control before a store update replaces focused menu content. */
+export function rememberPopupFocus() {
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && active !== document.body && !active.closest('.popup')) popupReturnTarget = active;
+}
+export function restorePopupFocus() {
+  if (uiStore.get().popup) return;
+  const branch = uiStore.get().selectedBranchId;
+  const continuation = [...document.querySelectorAll<HTMLButtonElement>('.st-planner .route-actions button')]
+    .find((button) => button.dataset.branchId === branch);
+  const target = popupReturnTarget?.isConnected ? popupReturnTarget
+    : continuation ?? document.querySelector<HTMLElement>('.st-planner .route-actions button, .st-planner .route-editor summary');
+  target?.focus({ preventScroll: true });
+  popupReturnTarget = null;
+}
+
 export function openManeuverEdit(maneuverId: string, branchId?: string, screen?: Vec2) {
+  rememberPopupFocus();
   uiStore.update((u) => {
     u.selectedManeuverId = maneuverId;
     if (branchId) u.selectedBranchId = branchId;

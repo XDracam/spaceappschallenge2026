@@ -779,3 +779,15 @@
   animation: pl-next-glow 2.2s ease-in-out infinite;
 }
 @keyframes pl-next-glow { 0%, 100% { box-shadow: 0 0 10px rgba(63, 199, 255, 0.35); } 50% { box-shadow: 0 0 22px rgba(63, 199, 255, 0.7); } }
+
+/* DOM route controls mirror the canvas options, including every separated branch. */
+.st-planner .route-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.st-planner .route-editor { pointer-events: auto; margin-bottom: 6px; padding: 8px 12px; max-height: 40vh; overflow: auto; }
+.st-planner .route-editor summary { cursor: pointer; }
+.st-planner .route-editor p { max-width: 60ch; line-height: 1.5; }
+.st-planner .route-edit-branch { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 8px; }
+.st-planner .route-editor :focus-visible, .st-planner .route-actions :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .st-planner .next-pill.glow, .st-planner .pulse::after { animation: none; }
+  .st-planner .row.highlight, .st-planner .rt-part.highlight, .st-planner .row-detail, .st-planner .ev { animation: none; }
+}

@@ -157,6 +157,12 @@ export function isCovered(t: Tech, r: Pick<ResearchState, 'limits' | 'unlocked'>
   return t.gives.length > 0 && t.gives.every((g) => (g.kind === 'unlock' ? covered(r, g.key) : covered(r, g.key, g.value)));
 }
 
+/** Covered grants can still be prerequisites for an unresearched descendant. */
+export function neededAsPrerequisite(g: GameState, id: string): boolean {
+  const researched = new Set(sci(g).researched);
+  return DEPENDENTS[id].some(dependent => !researched.has(dependent));
+}
+
 /** Goal techs: the shortest routes to something the design needs. */
 export function goalTechIds(needs: Need[]): Set<string> {
   const out = new Set<string>();
@@ -206,7 +212,7 @@ export function treeViews(g: GameState): Record<string, TechView> {
     else if (runningIds.has(t.id)) status = 'running';
     else if (!isGoal && dist[t.id] > REVEAL_STEPS) status = 'fog';
     else if (missing.length > 0) status = 'locked';
-    else if (isCovered(t, g.research)) status = 'covered';
+    else if (isCovered(t, g.research) && !neededAsPrerequisite(g, t.id)) status = 'covered';
     else if (blocked) status = 'blocked';
     else status = 'available';
     out[t.id] = { status, blocked, blockedWhy: why, missing, goal: isGoal, unavailable: reach(t.id) && status !== 'fog' };
@@ -229,7 +235,7 @@ export function startCheck(s: GameState, techId: string): StartCheck {
   if (running(s.research).some((p) => p.techId === techId)) return no('A team is already working on it.');
   const missing = t.requires.filter((r) => !researched.has(r));
   if (missing.length) return no(`Needs ${missing.map((m) => TECH_BY_ID[m].name).join(' and ')} first.`);
-  if (isCovered(t, s.research)) return no('Nothing left to gain: its results are already available.');
+  if (isCovered(t, s.research) && !neededAsPrerequisite(s, techId)) return no('Nothing left to gain: its results are already available.');
   const b = blockInfo(t, s.research.access, s.meta.missionId);
   if (b.blocked) return no(b.why ?? 'Blocked.');
   if (running(s.research).length >= sci(s).slots) return no(`All ${sci(s).slots} research teams are busy.`);

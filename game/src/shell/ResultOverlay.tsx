@@ -1,6 +1,7 @@
 // Mission result for every station after launch (the planner shows its own
 // animated playthrough; this card is for procurement, science and comms).
 // Same result on every browser: computeMissionResult is deterministic.
+import { ResultRecoveryActions } from './ResultRecoveryActions';
 import { useState } from 'preact/hooks';
 import { MISSION } from '../core/mission';
 import { getState, useGame } from '../core/store';
@@ -66,6 +67,7 @@ export function ResultOverlay() {
           <span><b>{research}</b> research successes</span>
         </div>
         <div class="shell-result-foot">
+          <ResultRecoveryActions />
           <button class="shell-btn" onClick={() => setHidden(true)}>Close</button>
         </div>
       </div>

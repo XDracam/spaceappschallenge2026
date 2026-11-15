@@ -528,21 +528,25 @@ async function autoLobby() {
     await hp.getByRole('button', { name: /^Host “/ }).click();
   }
   await hp.locator('.shell-seat').nth(0).click();
+  // Guests join with the host's short room code (D-027). The code needs the signalling
+  // service; if it does not come up, the lobby failure is reported with screenshots.
+  const isCode = (t) => /^[A-Z0-9]{3}-?[A-Z0-9]{3,4}$/.test(t);
+  let roomCode = '';
+  if (players.length > 1) {
+    const codeEl = hp.locator('.shell-room-code');
+    await codeEl.waitFor({ timeout: 20_000 });
+    for (let t = 0; t < 60 && !isCode(roomCode); t++) {
+      roomCode = ((await codeEl.textContent()) ?? '').trim();
+      if (!isCode(roomCode)) await sleep(500);
+    }
+    if (!isCode(roomCode)) throw new Error(`no room code (lobby shows "${roomCode}")`);
+  }
   for (let i = 1; i < players.length; i++) {
     const pp = players[i].page;
-    await hp.getByRole('button', { name: /\+ Invite/ }).click();
-    const inviteBox = hp.getByLabel(`Invite code ${i}`, { exact: true });
-    await inviteBox.waitFor({ timeout: 20_000 });
-    const invite = await inviteBox.inputValue();
     await pp.getByPlaceholder('e.g. Alex').fill(names[i]);
     await pp.getByRole('button', { name: /Join a game/ }).click();
-    await pp.getByLabel('Invite code', { exact: true }).fill(invite);
-    await pp.getByRole('button', { name: 'Next' }).click();
-    const replyBox = pp.getByLabel('Your reply code', { exact: true });
-    await replyBox.waitFor({ timeout: 20_000 });
-    const reply = await replyBox.inputValue();
-    await hp.getByLabel(`Reply code for invite ${i}`, { exact: true }).fill(reply);
-    await hp.getByRole('button', { name: 'Connect', exact: true }).click();
+    await pp.locator('.shell-room-input').fill(roomCode);
+    await pp.getByRole('button', { name: 'Join', exact: true }).click();
     await pp.locator('.shell-seat').first().waitFor({ timeout: 40_000 });
     await pp.locator('.shell-seat').nth(i).click();
   }

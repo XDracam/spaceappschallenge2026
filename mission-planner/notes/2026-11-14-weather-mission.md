@@ -34,5 +34,5 @@ The assistant proposed a sliders-first panel (all sliders visible, one Δv line,
 
 User message, verbatim: "can you rework the first mission, the space satellite to include optional objectives, which give bonus points and where full completion can be solved "just so" by the budget?"
 
-Interpretation (assistant): "the first mission, the space satellite" is the weather satellite (the first mission in this note). An optional objective is a goal that is not needed for the mission to count as complete, never blocks the launch, and earns bonus points. "Just so by the budget" means the budget is sized so that a careful plan can afford all four goals, while the two main goals alone leave most of the budget unspent. All content is hand-authored placeholder (D-005). Implemented as D-028.
+Interpretation (assistant): "the first mission, the space satellite" is the weather satellite (the first mission in this note). An optional objective is a goal that is not needed for the mission to count as complete, never blocks the launch, and earns bonus points. "Just so by the budget" means the budget is sized so that a careful plan can afford all four goals, while the two main goals alone leave most of the budget unspent. All content is hand-authored placeholder (D-005). Implemented as D-030.
 

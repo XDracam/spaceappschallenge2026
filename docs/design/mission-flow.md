@@ -2,6 +2,12 @@
 
 **Status:** brainstorming. The relationship between preparation, real-time play, in-mission events, and the earlier one-shot simulation idea has not been decided.
 
+## Current two-level prototype under D-029
+
+The implementation currently prepares in real time, launches automatically at the planned date, and shows one seeded goal-by-goal playthrough. This observed implementation does not settle the broader campaign brainstorm below. Positive Comms rescue applies only to physically achievable goals with a fallible reliability factor; it cannot supply a missing route, instrument, data capacity or missed deadline. `stayDays` remains the hazard-assessment horizon, not mandatory elapsed science collection.
+
+The host can retry or return the connected group to mission selection after a result. Seats, connections and bounded attempt history survive; the new attempt resets gameplay, starts a new seed, and clears planner UI state. Choosing a mission returns the group through the lobby before starting. See [release audit](../reviews/2026-11-15-two-level-release-audit.md) and [implementation observations](../playtests/2026-11-15-release-fixes-walkthrough.md).
+
 ## Earlier mission idea — I-005
 
 Plan and prepare a mission, then simulate it once and either win or fail. Everyone can fail. This is an idea, not an established rule; see the correction to [D-002](../decisions.md#d-002--prepare-then-simulate-once).

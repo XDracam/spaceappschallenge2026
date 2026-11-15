@@ -652,7 +652,7 @@ function PartLines({ part, ctx, engineCount, label }: {
               {i === 0 && engineCount !== undefined && engineCount > 1 && <span class="rt-jargon"> ×{engineCount}</span>}
               {!editable && <span class="rt-lock"><LockIcon title="Fixed by contract" /></span>}
             </span>
-            <Slider min={def.min} max={def.max} step={def.step} scale={def.scale} value={value} limit={limit}
+            <Slider label={`${part.name ?? part.variant}: ${statLabel(def)}`} min={def.min} max={def.max} step={def.step} scale={def.scale} value={value} limit={limit}
               disabled={!editable} title={sliderTitle} onChange={(v) => actions.setPartStat(part.id, def.key, v)} />
             <StatValue def={def} value={value} locked={!editable} beyond={beyond}
               onChange={(v) => actions.setPartStat(part.id, def.key, v)} />
