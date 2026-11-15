@@ -20,10 +20,13 @@ export const meta = {
 //   branch:     branch that worktree is on; the loop commits there and never pushes
 //   avoid:      absolute path of the team's own checkout, which no agent may touch
 //   stamp:      prefix for round ids, e.g. "1115"
-//   seed:       optional { round, reworkPick }: a round already played and triaged; its findings are worked on before round 1
+//   seed:       optional { round, reworkPick }: a round already played and triaged; its findings are worked on before round 1.
+//               { round, triage: true }: the round was played but the session died before triage; triage it from the evidence first.
 //   maxRounds:  hard cap on rounds (default 8)
 //   improveLastRound: false = after the last round only triage, no further changes (default true)
-//   stopHour:   local hour (0-23) from which no new round starts (default 7)
+//   stopHour:   local hour (0-23) from which no new round starts (default 7); morning only
+//   stopAt:     instead of stopHour: local time as a number HHMM (1310 = 13:10) from which no new round starts.
+//               With startAt (HHMM when the run began) it also works across midnight.
 //   minutes:    session length per round (default 30)
 //   speed:      calendar speed relative to the game's default (default 0.5)
 //   manualLobbyEvery: every Nth round the players do the lobby themselves (default 3; 0 = never)
@@ -36,6 +39,10 @@ const BRANCH = A.branch
 if (!REPO || !BRANCH || !A.stamp) throw new Error('args.repo, args.branch and args.stamp are required')
 const MAX_ROUNDS = A.maxRounds ?? 8
 const STOP_HOUR = A.stopHour ?? 7
+/** No new round from this time on. t = local time as HHMM number. */
+const pastStop = (t) => A.stopAt == null
+  ? t >= STOP_HOUR * 100 && t < 1200
+  : A.startAt == null || A.stopAt > A.startAt ? t >= A.stopAt || (A.startAt != null && t < A.startAt) : t >= A.stopAt && t < A.startAt
 const MINUTES = A.minutes ?? 30
 const SPEED = A.speed ?? 0.5
 const MANUAL_EVERY = A.manualLobbyEvery ?? 3
@@ -216,7 +223,24 @@ let idle = 0
 
 if (A.seed?.round) {
   log(`Working on the findings of ${A.seed.round} before the first round.`)
-  const s = await improve(A.seed.round, 1, A.seed.reworkPick ?? '')
+  let seedFixable = 1
+  let seedPick = A.seed.reworkPick ?? ''
+  if (A.seed.triage) {
+    const t = await agent(
+      `${WHERE}\nTriage playtest round ${A.seed.round}. It was cut short: the computer restarted right after the four players finished, so there are no player reports and no summary.json. ` +
+      `Work from notes.jsonl, chat.jsonl, events.jsonl, state.jsonl, state/ and shots/ in "${PT}/runs/${A.seed.round}/"; the last lines of events.jsonl carry each player's reason for finishing.\n` +
+      `Follow "${PT}/briefs/triage.md" exactly, with {{ROUND}} = ${A.seed.round}. The calendar ran at ${SPEED}x speed and the players did the lobby themselves. ` +
+      `It is the first round on the current game: the ledger is empty and there are no earlier changes to judge (verdicts: "none", revertCommits: []).\n` +
+      `Finally append one entry for this round to "${PT}/ledger.json" (a JSON array): ` +
+      `{ "round", "lobby", "speedScale", "progress", "verdicts", "reverted": [], "reworkPick", "findings": [{ "id", "title", "class", "severity", "symptomOf", "repeatOf" }] } ` +
+      `and commit only that file: subject "Playtest ${A.seed.round}: ledger", body ending with: ${TRAILER}`,
+      { label: `triage ${A.seed.round}`, phase: 'Triage', schema: TRIAGE })
+    if (!t) return { stopped: 'seed triage gave no answer' }
+    seedFixable = t.fixable
+    seedPick = t.reworkPick
+    log(`${A.seed.round}: ${t.progress} | fixable ${t.fixable}, design ${t.design} | rework pick ${t.reworkPick || 'none'}`)
+  }
+  const s = await improve(A.seed.round, seedFixable, seedPick)
   rounds.push({ round: A.seed.round, seed: true, improve: s })
   log(`${A.seed.round}: polish ${s.polishGate?.committed ? s.polishGate.commit : 'no commit'}, rework ${s.reworkGate?.committed ? s.reworkGate.commit : 'no commit'}`)
 }
@@ -229,10 +253,10 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
 
   // Stop when morning has come. Afternoon and evening hours never count as morning.
   const clock = await agent(
-    `Run: date +%H   and answer with that hour as a number (0-23). Round marker: ${round}.`,
+    `Run: date +%H%M   and answer with those four digits as a number (0931 -> 931, 1405 -> 1405). Round marker: ${round}.`,
     { label: `clock ${round}`, phase: 'Start', model: 'haiku', effort: 'low',
-      schema: { type: 'object', properties: { hour: { type: 'number' } }, required: ['hour'] } })
-  if (clock && clock.hour >= STOP_HOUR && clock.hour < 12) { log(`It is ${clock.hour}:00 — no new round.`); break }
+      schema: { type: 'object', properties: { hhmm: { type: 'number' } }, required: ['hhmm'] } })
+  if (clock && pastStop(clock.hhmm)) { log(`It is ${String(clock.hhmm).padStart(4, '0')} — no new round.`); break }
 
   // ---- start; if the game no longer starts, take back the changes since it last did
   let runId = round
