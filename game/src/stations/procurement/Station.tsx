@@ -18,16 +18,17 @@ export function ProcurementStation() {
   const v = usePView();
   const view = useUi((u) => u.view);
   const contractView = useUi((u) => u.contractView);
-  const wideTimeline = view === 'contracts' && contractView === 'timeline';
+  const contractsOpen = view === 'contracts';
   const contractId = useUi(u => u.contractId);
-  const showInspector = !wideTimeline || !!contractId;
+  const selectedContract = v.market.contracts.find(k => k.id === contractId);
+  const showInspector = !contractsOpen || !!selectedContract && (contractView === 'table' || selectedContract.status === 'active');
   return (
     <PCtx.Provider value={v}>
       <div class="pr-app">
         <ArtDefs />
         <Header />
-        <div class={`pr-work${wideTimeline ? ' pr-work-timeline' : ''}${!showInspector ? ' pr-work-timeline-unselected' : ''}`}>
-          {!wideTimeline ? <Needs /> : null}
+        <div class={`pr-work${contractsOpen ? ' pr-work-contracts' : ''}${!showInspector ? ' pr-work-contracts-unselected' : ''}`}>
+          {!contractsOpen ? <Needs /> : null}
           {view === 'calls' ? <CallsView /> : view === 'contracts' ? <ContractsView /> : view === 'compare' ? <CompareView /> : <Catalogue />}
           {showInspector ? <Inspector /> : null}
         </div>

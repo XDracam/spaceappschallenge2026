@@ -46,7 +46,7 @@ function uncoveredCost(v: PView): { cost: number; unsolvable: number } {
   return { cost, unsolvable };
 }
 
-export function Needs() {
+export function Needs({ onClose }: { onClose?: () => void } = {}) {
   const v = useP();
   const focus = useUi((u) => u.focus);
   const tasks = openTasks(v);
@@ -57,7 +57,7 @@ export function Needs() {
   const available = budgetAvailableM(v.budget);
   return (
     <aside class="pr-panel pr-needs" aria-label="Shared needs">
-      <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length}</span></div>
+      <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>
       <div class="pr-situation">
         <div><strong>{uncovered}</strong> <span class="muted">not fully covered</span>{issues ? <> · <strong class="warn">{issues}</strong> <span class="muted">to review</span></> : null}</div>
         {uncovered ? (
@@ -71,7 +71,7 @@ export function Needs() {
           const st = coverageText(cov);
           const pressed = focus?.taskId === t.id && focus.criterionId === c.id;
           return (
-            <button key={`${t.id}:${c.id}`} type="button" class={`pr-need${st.tone === 'warn' ? ' review' : ''}`} aria-pressed={pressed} onClick={() => (pressed ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c))}>
+            <button key={`${t.id}:${c.id}`} type="button" class={`pr-need${st.tone === 'warn' ? ' review' : ''}`} aria-pressed={pressed} onClick={() => (pressed && !onClose ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c))}>
               <span class="pr-need-top">
                 <span>{taskCode(t)}{t.revision > 1 ? ` · rev ${t.revision}` : ''}</span>
                 <span>From {ROLE[t.authorRole] ?? t.authorRole}{t.priority === 'high' ? ' · high' : ''}</span>

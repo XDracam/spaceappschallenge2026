@@ -23,7 +23,10 @@ export function contractTiming(s: { market: GameState['market']; research: Pick<
     const task = s.market.tasks.find(t => t.id === allocation.taskId && t.status === 'open');
     const criterion = task?.criteria.find(c => c.id === allocation.criterionId);
     const project = allocation.projectId && s.research.projects.find(p => p.id === allocation.projectId && p.status === 'running');
-    if (task && criterion) add(allocation.id, `${task.title} · ${criterion.label}`, allocation.quantity, task.neededAt, 'task');
+    if (task && criterion) {
+      const label = task.title === criterion.label || task.title.endsWith(` · ${criterion.label}`) ? task.title : `${task.title} · ${criterion.label}`;
+      add(allocation.id, label, allocation.quantity, task.neededAt, 'task');
+    }
     else if (project) add(allocation.id, project.title, allocation.quantity, project.endsAt, 'research-bonus');
     else if (contract.requestedNeededAt !== undefined) add(allocation.id, allocation.department ? `${allocation.department[0].toUpperCase()}${allocation.department.slice(1)} supply` : 'Allocated supply', allocation.quantity, contract.requestedNeededAt, 'requested');
     else add(allocation.id, allocation.department ? `${allocation.department[0].toUpperCase()}${allocation.department.slice(1)} supply` : 'Allocated supply', allocation.quantity, undefined, 'unknown');

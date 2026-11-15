@@ -1,5 +1,5 @@
 // Contracts: the inventory (active / delivered / cancelled), arrival vs launch, allocations.
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
 import type { Contract } from '../../../core/model';
 import { procurementActions } from '../logic';
@@ -11,6 +11,7 @@ import {
 import { setUi, targetKey, useP, useUi } from './uiState';
 import { ContractTimeline, marginText } from './ContractTimeline';
 import { contractTiming } from '../timing';
+import { Needs } from './Needs';
 
 function allocationsOf(v: PView, k: Contract) {
   return v.market.allocations.filter((a) => a.contractId === k.id);
@@ -28,22 +29,66 @@ function statusLabel(k: Contract): { text: string; tone: string } {
 
 export function ContractsView() {
   const v = useP();
+  const [needsOpen, setNeedsOpen] = useState(false);
+  const needsDisclosure = useRef<HTMLDetailsElement>(null);
   const sel = useUi((u) => u.contractId);
   const list = [...v.market.contracts].reverse();
   const active = list.filter((k) => k.status === 'active');
   const contractView = useUi(u => u.contractView);
+  const selectedContract = list.find(k => k.id === sel);
+  const selectedVisible = !!selectedContract && (contractView === 'table' || selectedContract.status === 'active');
+  useEffect(() => {
+    if (sel && !selectedVisible) setUi({ contractId: null });
+  }, [sel, selectedVisible]);
+  const changeView = (next: 'timeline' | 'table') => {
+    setUi({ contractView: next, ...(next === 'timeline' && selectedContract?.status !== 'active' ? { contractId: null } : {}) });
+  };
   const lateCount = active.filter(k => contractTiming({ market: v.market, research: { projects: v.research.projects ?? [] } }, k).needs.some(n => n.margin !== undefined && n.margin < 0)).length;
+  const needCoverage = openTasks(v).flatMap(t => t.criteria.map(c => criterionCoverage(v, t, c)));
+  const uncovered = needCoverage.filter(c => c.missing > 0).length;
+  const issues = needCoverage.filter(c => c.late || c.mismatch.length > 0).length;
+  const closeNeeds = () => {
+    setNeedsOpen(false);
+    needsDisclosure.current?.querySelector('summary')?.focus();
+  };
   return (
     <main class="pr-panel pr-overlay" aria-label="Contracts">
       <div class="pr-overlay-head">
         <h2>Contracts & deliveries</h2>
-        <span class="muted small">{contractView === 'timeline' ? `${active.length} incoming${lateCount ? ` · ${lateCount} late` : ''}` : `${active.length} active · ${fmtM(v.budget.committedM)} committed · ${list.filter(k => k.status === 'delivered').length} delivered · ${list.filter(k => k.status === 'cancelled').length} cancelled`}</span>
+        <div class="pr-contract-head-actions">
+          <span class="muted small">{contractView === 'timeline' ? `${active.length} incoming${lateCount ? ` · ${lateCount} late` : ''}` : `${active.length} active · ${fmtM(v.budget.committedM)} committed · ${list.filter(k => k.status === 'delivered').length} delivered · ${list.filter(k => k.status === 'cancelled').length} cancelled`}</span>
+          <details ref={needsDisclosure} class="pr-contract-needs" open={needsOpen} onToggle={e => setNeedsOpen(e.currentTarget.open)} onKeyDown={e => {
+            if (e.key === 'Escape' && needsOpen) { e.preventDefault(); e.stopPropagation(); closeNeeds(); }
+          }}>
+            <summary class={`pr-btn${uncovered || issues ? ' warn' : ''}`}>Mission needs{uncovered ? ` · ${uncovered} uncovered` : issues ? ` · ${issues} to review` : ''}</summary>
+            {needsOpen ? <div class="pr-contract-needs-content"><Needs onClose={closeNeeds} /></div> : null}
+          </details>
+        </div>
       </div>
-      <div class="pr-contract-toggle" aria-label="Contracts view"><button type="button" class="pr-btn small" aria-pressed={contractView === 'timeline'} onClick={() => setUi({ contractView: 'timeline' })}>Timeline</button><button type="button" class="pr-btn small" aria-pressed={contractView === 'table'} onClick={() => setUi({ contractView: 'table' })}>Table</button></div>
+      <div class="pr-contract-tabs" role="tablist" aria-label="Contracts view">
+        {(['timeline', 'table'] as const).map(mode => <button
+          key={mode}
+          type="button"
+          role="tab"
+          id={`pr-contract-tab-${mode}`}
+          aria-selected={contractView === mode}
+          aria-controls="pr-contract-panel"
+          tabIndex={contractView === mode ? 0 : -1}
+          onClick={() => changeView(mode)}
+          onKeyDown={e => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            e.preventDefault();
+            const next = e.key === 'Home' ? 'timeline' : e.key === 'End' ? 'table' : mode === 'timeline' ? 'table' : 'timeline';
+            changeView(next);
+            e.currentTarget.parentElement?.querySelector<HTMLButtonElement>(`#pr-contract-tab-${next}`)?.focus();
+          }}
+        >{mode === 'timeline' ? 'Incoming timeline' : 'All contracts'}</button>)}
+      </div>
+      <div class="pr-contract-panel" id="pr-contract-panel" role="tabpanel" aria-labelledby={`pr-contract-tab-${contractView}`} tabIndex={0}>
       {contractView === 'timeline' ? <ContractTimeline /> : list.length ? (
         <div class="pr-table-wrap">
           <table class="pr-table">
-            <thead><tr><th>Contract</th><th>For</th><th>Qty</th><th>Status</th><th>Arrival</th><th>Value</th><th /></tr></thead>
+            <thead><tr><th>Contract</th><th>For</th><th>Qty</th><th>Status</th><th>Arrival</th><th>Value</th></tr></thead>
             <tbody>
               {list.map((k) => {
                 const st = statusLabel(k);
@@ -51,9 +96,9 @@ export function ContractsView() {
                 const live = allocs.filter((a) => a.status !== 'released');
                 const arrival = k.deliveredAt ?? k.expectedAt;
                 return (
-                  <tr key={k.id} class={sel === k.id ? 'active-row' : ''} onClick={() => setUi({ contractId: k.id, amendmentPreview: null })}>
+                  <tr key={k.id} class={sel === k.id ? 'active-row' : ''} onClick={() => setUi({ contractId: k.id })}>
                     <td>
-                      <button type="button" class="pr-text-btn strong" onClick={() => setUi({ contractId: k.id, amendmentPreview: null })}>{k.offerSnapshot.resource.name}</button>
+                      <button type="button" class="pr-text-btn strong" aria-pressed={sel === k.id} aria-label={`${k.offerSnapshot.resource.name} · ${k.id}`} onClick={() => setUi({ contractId: k.id })}>{k.offerSnapshot.resource.name}</button>
                       <div class="muted small">{k.offerSnapshot.supplierName} · {k.id}</div>
                     </td>
                     <td class="small">
@@ -70,13 +115,6 @@ export function ContractsView() {
                       {k.status === 'active' ? <div class="muted small">{`in ${fmtDuration(k.expectedAt - v.clock.day)}`}</div> : null}
                     </td>
                     <td class="num">{fmtM(k.offerSnapshot.priceM)}{k.status === 'cancelled' ? <div class="muted small">refund {fmtM(k.refundM ?? 0)}</div> : null}</td>
-                    <td>
-                      {k.status === 'active' ? (
-                        <button type="button" class="pr-btn small" onClick={(e) => { e.stopPropagation(); setUi({ dialog: { type: 'cancel', contractId: k.id } }); }}>
-                          Cancel · refund {fmtM(refundM(k, v.clock.day))}
-                        </button>
-                      ) : null}
-                    </td>
                   </tr>
                 );
               })}
@@ -86,6 +124,7 @@ export function ContractsView() {
       ) : (
         <div class="pr-empty"><h3>No Contracts yet</h3><p>Sign an Offer to add a Contract.</p></div>
       )}
+      </div>
     </main>
   );
 }
@@ -97,8 +136,7 @@ export function ContractInspector() {
   const v = useP();
   const sel = useUi((u) => u.contractId);
   const preview = useUi(u => u.amendmentPreview);
-  const contractView = useUi(u => u.contractView);
-  const k = v.market.contracts.find((x) => x.id === sel) ?? v.market.contracts[v.market.contracts.length - 1];
+  const k = v.market.contracts.find((x) => x.id === sel);
   if (!k) {
     return (
       <div class="pr-ctx-head"><span class="pr-eyebrow">Contracts</span><h2>Inventory</h2><p>Select a Contract.</p></div>
@@ -117,7 +155,7 @@ export function ContractInspector() {
   return (
     <>
       <div class="pr-ctx-head">
-        {contractView === 'timeline' ? <button type="button" class="pr-btn small pr-close-details" onClick={() => setUi({ contractId: null, amendmentPreview: null })}>Close details</button> : null}
+        <button type="button" class="pr-btn small pr-close-details" onClick={() => setUi({ contractId: null, amendmentPreview: null })}>Close details</button>
         <span class="pr-eyebrow">{k.id} · {statusLabel(k).text}</span>
         <h2>{o.resource.name}</h2>
         <p>{o.supplierName} · {fmtStats(o.resource.partKind, o.resource.variant, o.resource.stats)} · {o.resource.massT} t</p>

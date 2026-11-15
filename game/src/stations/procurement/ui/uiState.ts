@@ -3,7 +3,7 @@ import { createContext } from 'preact';
 import { useContext, useMemo } from 'preact/hooks';
 import { createStore, useStore } from '../../../core/createStore';
 import type { NewsItem, PartKind, DeliveryOptionId, OrderDraft, Criterion, Destination } from '../../../core/model';
-import { useGame } from '../../../core/store';
+import { getState, useGame } from '../../../core/store';
 import type { PView } from '../rules';
 
 export type View = 'catalogue' | 'calls' | 'contracts' | 'compare';
@@ -100,7 +100,9 @@ export function useUi<S>(sel: (u: UiState) => S): S {
 export function setUi(patch: Partial<UiState>): void {
   const current = ui.get();
   const changingContract = patch.contractId !== undefined && patch.contractId !== current.contractId;
-  ui.set({ ...current, ...(changingContract ? { amendmentPreview: null } : {}), ...patch });
+  const openingHistory = patch.view === 'contracts' && patch.contractId && patch.contractView === undefined
+    && getState().market.contracts.some(k => k.id === patch.contractId && k.status !== 'active');
+  ui.set({ ...current, ...(changingContract ? { amendmentPreview: null } : {}), ...patch, ...(openingHistory ? { contractView: 'table' } : {}) });
 }
 
 /** Encodes a criterion target as one select value. */

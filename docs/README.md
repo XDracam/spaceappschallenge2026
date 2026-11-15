@@ -24,6 +24,8 @@
 | [Order integration walkthrough](playtests/2026-11-15-order-integration-walkthrough.md) | Limited single-operator observations during implementation; fixes followed |
 | [Contract timeline design study](../procurement/timeline-design.md) | Reduced implementation scope selected in D-019; earlier broader proposals, data gaps and paper scenarios retained for history |
 | [Timeline implementation walkthrough](playtests/2026-11-15-timeline-walkthrough.md) | Observed preview, confirmation and saved-date behavior; single-operator limits |
+| [Contract view analysis](reviews/2026-11-15-contract-views.md) | Timeline/Table consistency proposals and observed automatic date fitting |
+| [Contract need context walkthrough](playtests/2026-11-15-contract-needs-walkthrough.md) | Related need labels, expandable Mission needs and observed allocation/counter behavior |
 | [Procurement gameplay UX audit](reviews/2026-11-14-procurement-gameplay-ux.md) | High-level station requirements: awareness, scrolling, active context, competing plans, interruptions and concurrent gameplay; researched proposals |
 | [Concept Maturity Levels paper review](reviews/2026-11-14-cml-paper.md) | Source findings and proposed gameplay applications for sourcing, development, reserves and concurrent mission design |
 | [Procurement order options](notes/2026-11-14-procurement-order-options.md) | User proposal for configurable orders and candidate gameplay additions with role boundaries |

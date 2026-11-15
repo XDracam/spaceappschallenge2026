@@ -338,8 +338,20 @@
 .st-procurement .pr-history summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* Contract timing: markers compare dates, not work completed. */
-.st-procurement .pr-contract-toggle { display:flex; gap:6px; padding:10px 18px 0; }
-.st-procurement .pr-contract-toggle [aria-pressed="true"], .st-procurement .pr-timeline-toolbar [aria-pressed="true"] { border-color:var(--accent); color:var(--accent); }
+.st-procurement .pr-contract-tabs { display:flex; gap:24px; padding:0 20px; border-bottom:1px solid var(--line); }
+.st-procurement .pr-contract-tabs [role="tab"] { padding:14px 2px 11px; border:0; border-bottom:3px solid transparent; background:transparent; color:var(--muted); font-size:14px; font-weight:600; }
+.st-procurement .pr-contract-tabs [role="tab"]:hover { color:var(--text); }
+.st-procurement .pr-contract-tabs [aria-selected="true"] { border-bottom-color:var(--accent); color:var(--text); }
+.st-procurement .pr-contract-tabs [role="tab"]:focus-visible { outline-offset:-3px; }
+.st-procurement .pr-contract-panel { display:flex; flex-direction:column; flex:1; min-height:0; min-width:0; }
+.st-procurement .pr-contract-head-actions { display:flex; align-items:center; justify-content:flex-end; gap:16px; flex-wrap:wrap; }
+.st-procurement .pr-contract-needs { position:relative; z-index:5; }
+.st-procurement .pr-contract-needs > summary { list-style:none; cursor:pointer; border-radius:6px; white-space:nowrap; }
+.st-procurement .pr-contract-needs > summary::-webkit-details-marker { display:none; }
+.st-procurement .pr-contract-needs > summary.warn { color:var(--warn); border-color:rgba(255,200,87,.45); }
+.st-procurement .pr-contract-needs[open] > summary { border-color:var(--accent); }
+.st-procurement .pr-contract-needs-content { position:absolute; top:calc(100% + 10px); right:0; width:360px; max-width:calc(100vw - 48px); height:min(620px, calc(100vh - 190px)); }
+.st-procurement .pr-contract-needs-content .pr-needs { height:100%; background-color:#101a2b; }
 .st-procurement .pr-timeline { display:flex; flex-direction:column; min-height:0; flex:1; padding:8px 12px 10px; }
 .st-procurement .pr-timeline-toolbar, .st-procurement .pr-timeline-key { display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap; }
 .st-procurement .pr-timeline-key { justify-content:flex-end; color:var(--muted); font-size:11px; padding:9px 4px; }
@@ -376,8 +388,8 @@
 .st-procurement .pr-timeline-axis { min-height: 56px; }
 
 /* Wider delivery comparison: the interval is the margin, not progress. */
-.st-procurement .pr-work.pr-work-timeline { grid-template-columns: minmax(0, 1fr) 320px; }
-.st-procurement .pr-work.pr-work-timeline-unselected { grid-template-columns: minmax(0, 1fr); }
+.st-procurement .pr-work.pr-work-contracts { grid-template-columns: minmax(0, 1fr) 320px; }
+.st-procurement .pr-work.pr-work-contracts-unselected { grid-template-columns: minmax(0, 1fr); }
 .st-procurement .pr-timeline-redesign { padding: 10px 20px 18px; }
 .st-procurement .pr-timeline-redesign .pr-timeline-toolbar { padding: 0 0 12px; }
 .st-procurement .pr-timeline-redesign .pr-timeline-key { padding: 0; justify-content: flex-start; gap: 18px; font-size: 12px; }

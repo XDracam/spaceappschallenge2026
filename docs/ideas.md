@@ -156,6 +156,17 @@ Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-
 - November 15 audit refinement: proposed Upcoming action/milestone lanes, Incoming arrival-versus-use rows, and selected live remedy comparisons. Full inventory and source corrections in the study; excludes hidden events, nonexistent production stages and universal order deadlines. Still unselected and unbuilt.
 - November 15 approval update: [D-019](decisions.md#d-019--reduced-contract-timeline-prototype) selects a reduced implementation scope: arrivals against actual needs with identity, recipient and quantity, the existing Table, one selected amendment preview, and concise local delay/cutoff feedback. Upcoming, Call/expiry integration, replacement comparison and a dependency graph are outside this iteration; the budget composition remains unselected. Earlier proposal and status statements above are retained as history. Implementation and observations must be recorded separately.
 
+### I-082 — Contract view consistency and automatic date fitting
+
+- Captured: 2026-11-15.
+- Source: user feedback on subtle pill controls, Timeline/Table usage discrepancies and “Fit dates”.
+- Status: accepted for implementation by the user's “then build it” instruction following the UI analysis. Tabs, shared wide layout, explicit selection and automatic date fitting implemented as a D-019 refinement.
+- Idea: expose incoming versus historical coverage in tab labels, retain a consistent Contracts workspace, reconcile hidden historical selections and add a concise Contract identifier to timeline rows. Derive the date range automatically because the current chart has no pan or zoom controls.
+- Evidence and limits: [analysis and implementation observations](reviews/2026-11-15-contract-views.md). No multiplayer validation.
+- Related: I-081, D-019.
+
+November 15 needs-context follow-up: the user questioned removal of Mission needs and whether related needs were properly displayed. Source review confirmed timing links, but the overview omitted full need/project names and access to uncovered needs. The assistant implemented those names and an expandable reuse of the existing Mission needs panel in both Contract views. This presentation is an assistant implementation choice. [Observed walkthrough and limits](playtests/2026-11-15-contract-needs-walkthrough.md).
+
 ## New entry template
 
 ```markdown
