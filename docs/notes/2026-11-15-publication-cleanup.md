@@ -32,3 +32,9 @@ Observed before publication:
 - Publication uses an explicit lease against the freshly checked original remote tip. If another push changes `main`, the replacement must stop and be rebuilt from that new tip. Verify the published branch after pushing and synchronize the shared checkout without adding untracked video work.
 
 After history replacement, teammates must preserve unfinished work and re-clone; merging old branches can reintroduce removed history. A branch rewrite does not erase old clones, forks or GitHub-retained references/cached commit pages. Those may require separate removal through their owners or GitHub.
+
+## Observed publication result — November 15, 2026
+
+The exact-tip force-push replaced `origin/main` from `521b125119556aa8bf48132bfd2b5f345439d4d3` with `ccca7674a567c712eb7285bc0b82deb64bed662d`. A fresh mirror cloned from GitHub contained only `main`, with 94 commits including the verification note, and passed the removed-image, targeted-text and Git integrity checks. The shared checkout was moved to that rewritten tip with `git reset --keep`; no original untracked video files were removed or changed. The published game tree remained identical to the pre-rewrite game tree.
+
+A separate unauthenticated HTTP HEAD check after publication returned HTTP 200 for both the old image’s raw URL and its old commit page. Therefore this cleanup removed the material from the published branch history but did **not** establish complete removal from GitHub. Retained unreferenced objects or cached views require follow-up with GitHub; rewriting or force-pushing again does not establish their removal. A removal-request draft was prepared outside the repository for the owner. No support message was sent.
