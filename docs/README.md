@@ -1,5 +1,7 @@
 # Documentation index
 
+[Submission text](submission-text.md) provides copy-ready project descriptions, AI disclosure, NASA resource text and an internal submission checklist, prepared November 15, 2026.
+
 ## Current design
 
 [Title-screen implementation and artwork correction](notes/2026-11-15-title-screen.md) records the opening menu, setup flow, browser checks and outstanding finished artwork.

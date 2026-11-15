@@ -6,6 +6,33 @@ Prototype workspace for the [2026 NASA Space Apps challenge](https://www.spaceap
 
 A multiplayer game about making mission planning and communication fun. Four players operate Mission Planning, Procurement, Science and Communications from separate seats. The key design goal is meaningful concurrent activity for every role. This remains a prototype: broader mechanics and campaign structure are open, and implemented actions alone do not establish multiplayer enjoyment.
 
+## AI generation and human contribution
+
+**The human team created the concept and designed the gameplay. All original project code was AI-generated.** The team supplied the cooperative premise, role responsibilities, intended decisions, requirements and feedback, and chose which proposed changes to accept.
+
+All original project code was written by OpenAI Codex and Anthropic Claude under the human team’s direction. All project images, including the title-screen artwork, were generated with ChatGPT Images. Supporting project content, documentation and submission copy were also AI-generated. AI assistance also included implementation suggestions and agent-operated reviews and walkthroughs. Those checks are not independent human validation. Original human notes are preserved in `docs/notes/`; third-party libraries, fonts, research sources and audio candidates retain their own authorship and licenses.
+
+AI generation happened during development. Missions, dialogue and other game content are prepared in advance; the game does not use generative AI to create content during play.
+
+### Submission disclosures still to complete or verify
+
+The [official 2026 Project Submission Guide](https://www.spaceappschallenge.org/resources/project-submission-guide/) was checked November 15, 2026. It requires disclosure of where and how AI was used, visible watermarks on AI-generated images/video, and acknowledgement in descriptive text and metadata for AI-generated code/data/audio. Generated content must not use, contain or modify NASA branding or design elements.
+
+This README supplies a public descriptive acknowledgement. **It does not establish that asset watermarks, metadata, the deployed game, demo or submission form meet every requirement.** Before submission:
+
+- Identify AI use in the submission's AI disclosure field and retain a public acknowledgement with the final project.
+- Check all generated images/video, including the title artwork and demo materials, for visible AI-generation watermarks; add any missing labels.
+- Include AI-generation acknowledgements in the applicable code/data/audio descriptions and metadata. Review any added audio by provenance: third-party recordings need their own credits and license notices.
+- Complete the submission's References field for all resources actually used, including tools and third-party assets. A repository license or credits link alone does not replace that field.
+
+[Copy-ready submission text](docs/submission-text.md) contains the project description, AI disclosure and an internal submission checklist. Completion of the submission and acceptance for judging have not been established by this README.
+
+## Scientific scope and validation
+
+This is a game with simplified orbital mechanics and fictional suppliers, prices, research progression and events. Its numerical models are not validated for operational mission planning. Human learning outcomes, multiplayer enjoyment and sustained engagement across all roles have not been established by the recorded agent walkthroughs.
+
+The team reviewed the JPL paper [*Space Mission Concept Development Using Concept Maturity Levels*](https://dataverse.jpl.nasa.gov/dataset.xhtml?persistentId=hdl:2014/44299) as a conceptual design reference for iterative mission development, parallel specialties, acquisition timing and cost/risk trade-offs; see the [review and its limitations](docs/reviews/2026-11-14-cml-paper.md). This is conceptual resource use, not ingestion of a NASA observational dataset or implementation of a formal NASA maturity assessment. The challenge's other listed resources are research leads unless a documented review establishes their use.
+
 ## Start here
 
 - [Documentation index](docs/README.md) — where ideas, decisions, and evidence live.
