@@ -2,9 +2,10 @@
 import type { Criterion, Task } from '../../../core/model';
 import { procurementActions } from '../logic';
 import {
-  budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, suggestion, taskCode,
+  beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, suggestion, taskCode,
   type Coverage, type PView,
 } from '../rules';
+import { researchEta } from '../../science/model/tree';
 import { categoryOf, setUi, useP, useUi } from './uiState';
 
 const ROLE: Record<string, string> = { planner: 'Planner', procurement: 'Procurement', science: 'Science', comms: 'Comms' };
@@ -48,8 +49,18 @@ function uncoveredCost(v: PView): { cost: number; unsolvable: number } {
 
 /** Last day a standard order still arrives by the needed date, from the fastest fitting Offer that can be signed. */
 function orderByDay(v: PView, t: Task, c: Criterion): number | undefined {
-  const leads = offersForCriterion(v, t, c).filter((a) => a.fits && !a.unavailable).map((a) => leadTimeDays(v, a.offer));
+  // Catalogue parts that wait for research count too: the date tells Procurement and Science how long research may take.
+  const leads = offersForCriterion(v, t, c).filter((a) => a.fits && (!a.unavailable || a.offer.source === 'catalogue')).map((a) => leadTimeDays(v, a.offer));
   return leads.length ? Math.floor(t.neededAt - Math.min(...leads) - deliveryShiftDays(v)) : undefined;
+}
+
+/** Marks a need the catalogue cannot sell before Science has researched it, with how far Science is. */
+function ResearchChip({ v, c }: { v: PView; c: Criterion }) {
+  const keys = beyondKeys(c.partKind, c.variant, c.minimums, v.research);
+  if (!keys.length) return null;
+  const etas = keys.map((k) => researchEta(v.research.projects, k, k.split('.')[2] ? c.minimums[k.split('.')[2]] : undefined));
+  const waiting = etas.some((e) => e === undefined);
+  return <span class="pr-chip warn">{waiting ? 'Beyond research · Science not started' : `Beyond research · Science until ${fmtDate(Math.max(...(etas as number[]))).slice(0, -5)}`}</span>;
 }
 
 export function Needs({ onClose }: { onClose?: () => void } = {}) {
@@ -93,7 +104,7 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
               </span>
               <span class="pr-need-title">{t.title}</span>
               <span class="pr-need-crit">{c.label} · {criterionSummary(c)}</span>
-              {t.beyondResearch.length ? <span class="pr-chip warn">Beyond research</span> : null}
+              {cov.missing > 0 ? <ResearchChip v={v} c={c} /> : null}
               <span class="pr-need-status">
                 <span class={st.tone}>{st.text}</span>
                 {orderBy === undefined

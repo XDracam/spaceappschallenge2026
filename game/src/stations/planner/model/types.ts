@@ -231,6 +231,8 @@ export interface MissionDef {
   research: Record<string, number>;
   /** Unlocked part variants: key `${kind}.${variant}`. Locked variants can still be planned with. */
   unlocked: string[];
+  /** Multiplies the duration of every research project (science tech tree). Short missions use < 1. Default 1. */
+  researchTimeFactor?: number;
   initialRocket: Rocket;
   initialPlan: MissionPlan;
 }

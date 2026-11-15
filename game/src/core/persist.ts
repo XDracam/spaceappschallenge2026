@@ -34,6 +34,7 @@ export function loadSaved(): GameState | null {
     const s = JSON.parse(raw) as GameState;
     if (s?.version === 1) migrateV1(s);
     if (s?.version === 2) migrateV2(s);
+    if (s?.version === 3) migrateV3(s);
     if (s?.version !== STATE_VERSION) return null;
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';
@@ -73,8 +74,13 @@ function migrateV1(s: GameState): void {
 function migrateV2(s: GameState): void {
   for (const a of s.market.allocations) delete (a as { projectId?: string }).projectId;
   s.research.projects = s.research.projects.filter((p) => p.techId);
-  s.research.requests ??= [];
   s.research.access ??= {};
   s.science = initialScienceSlice();
+  s.version = 3;
+}
+
+/** Research requests from Procurement are gone: science reads what the design needs straight from the planner's rocket. */
+function migrateV3(s: GameState): void {
+  delete (s.research as { requests?: unknown }).requests;
   s.version = STATE_VERSION;
 }

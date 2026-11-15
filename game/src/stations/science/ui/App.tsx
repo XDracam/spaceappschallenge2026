@@ -1,12 +1,12 @@
-// Science station: engineering tech tree. Left: Procurement's development requests and the lab.
+// Science station: engineering tech tree. Left: what the planner's design needs beyond research, and the lab.
 // Middle: the tree. Right: details of the selected tech with Start button. Bottom: news.
 import { useMemo, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
-import { budgetAvailableM } from '../../../core/state';
+import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
-import { describeGrant, describeRequest, formatDate, openRequests, running, sci } from '../model/research';
-import { LAYOUT, NODE_H, NODE_W, requestsFor, startCheck, treeViews, goalTechIds, type TechView } from '../model/tree';
+import { describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci } from '../model/research';
+import { LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
 import type { TechStatus } from '../model/types';
 
 const STATUS_TEXT: Record<TechStatus, string> = {
@@ -18,8 +18,7 @@ export function App() {
   const g = useGame((s) => s);
   const [sel, setSel] = useState<string | null>(null);
   const views = useMemo(() => treeViews(g), [g]);
-  const goals = goalTechIds(g.research.requests ?? []);
-  const reqs = openRequests(g.research);
+  const needs = useMemo(() => designNeeds(g).sort((a, b) => (a.researchBy ?? 1e9) - (b.researchBy ?? 1e9)), [g]);
   const slice = sci(g);
   const runs = running(g.research);
 
@@ -31,18 +30,25 @@ export function App() {
       </header>
       <div class="sc-work">
         <aside class="sc-left">
-          <h2>Requests from Procurement</h2>
-          {reqs.length === 0 ? <p class="muted">None. Procurement can ask for a part to be developed instead of bought.</p> : null}
-          {reqs.map((q) => {
-            const task = g.market.tasks.find((t) => t.id === q.taskId);
-            const routes = Array.from(goals).filter((id) => requestsFor(TECH_BY_ID[id], [q]).length);
+          <h2>The mission needs</h2>
+          {needs.length === 0 ? <p class="muted">Nothing. Every part in the Planner's design is within research.</p> : null}
+          {needs.map((n) => {
+            const now = n.value === undefined ? undefined : g.research.limits[n.key];
+            const eta = researchEta(g.research.projects, n.key, n.value);
+            const late = n.researchBy !== undefined && (eta ?? g.clock.day) > n.researchBy;
+            const routes = routesFor(n.key, n.value);
             return (
-              <div class="sc-card" key={q.id}>
-                <strong>{describeRequest(q)}</strong>
-                <span class="muted">for {task?.title ?? 'a task'}</span>
-                <div class="sc-links">
-                  {routes.map((id) => <button type="button" key={id} onClick={() => setSel(id)}>{TECH_BY_ID[id].name}</button>)}
-                </div>
+              <div class="sc-card" key={n.key}>
+                <strong>{describeNeed(n)}</strong>
+                <span class="muted">In the Planner's design{now === undefined ? '' : ` · researched so far: ${formatValue(now, keyInfo(n.key).unit)}`}</span>
+                {n.researchBy === undefined ? null
+                  : <span class={late ? 'sc-warn' : 'muted'}>Finish by {formatDate(n.researchBy)}, or the part arrives after launch.</span>}
+                {eta !== undefined ? <span class="sc-goal">In progress · ends {formatDate(eta)}</span> : (
+                  <div class="sc-links">
+                    <span class="muted">{routes.length > 1 ? 'Research one of:' : 'Research:'}</span>
+                    {routes.map((t) => <button type="button" key={t.id} onClick={() => setSel(t.id)}>{t.name} · {t.costM} M · {techMonths(t)} mo</button>)}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -110,22 +116,23 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
   const v = views[id];
   if (v.status === 'fog') return <><h2>Unknown technology</h2><p class="muted">Research nearby techs to learn what lies here.</p></>;
   const chk = startCheck(g, id);
-  const reqs = requestsFor(t, g.research.requests ?? []);
+  const reqs = needsFor(t, designNeeds(g));
+  const months = techMonths(t);
   return (
     <>
       <h2>{t.name}</h2>
       <p class="muted">{BRANCH_LABEL[t.branch]} · {STATUS_TEXT[v.status]}</p>
       <p>{t.blurb}</p>
       {t.gives.length ? <><h3>Result</h3><ul>{t.gives.map((x, i) => <li key={i}>{describeGrant(x)}</li>)}</ul></> : <p class="muted">Opens further techs.</p>}
-      {reqs.length ? <p class="sc-goal">★ Meets: {reqs.map(describeRequest).join('; ')}</p> : null}
-      <h3>Needs</h3>
+      {reqs.length ? <p class="sc-goal">★ The mission needs this: {reqs.map(describeNeed).join('; ')}</p> : null}
+      <h3>Requires</h3>
       {t.requires.length === 0 ? <p class="muted">Nothing.</p> : (
         <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} {views[r].status === 'fog' ? '?' : TECH_BY_ID[r].name}</li>)}</ul>
       )}
       {v.blocked ? <p class="sc-warn">{v.blockedWhy}</p> : null}
       {!t.start && v.status !== 'researched' ? (
         <>
-          <p>{t.costM} M · {t.months} months · {Math.round(t.chance * 100)} % success</p>
+          <p>{t.costM} M · {months} {months === 1 ? 'month' : 'months'}{v.status === 'running' ? '' : `, done ${formatDate(g.clock.day + months * DAYS_PER_MONTH)}`} · {Math.round(t.chance * 100)} % success</p>
           <button type="button" class="sc-btn" disabled={!chk.ok}
             onClick={() => scienceActions.startTech(`sp-${Date.now().toString(36)}-${id}`, id)}>Start research</button>
           {!chk.ok ? <p class="muted small">{chk.reason}</p> : null}

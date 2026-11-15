@@ -7,7 +7,7 @@
 .st-science h2{font-size:13px;margin:8px 0 6px}.st-science h3{font-size:12px;margin:10px 0 4px;color:#9aa5b8}
 .st-science .muted{color:#8b95a7}.st-science .small{font-size:11px}
 .st-science .sc-card{background:#1b2030;border:1px solid #2a3040;border-radius:6px;padding:8px;margin-bottom:8px;display:flex;flex-direction:column;gap:4px}
-.st-science .sc-links{display:flex;flex-wrap:wrap;gap:4px}
+.st-science .sc-links{display:flex;flex-direction:column;gap:3px}
 .st-science .sc-links button,.st-science .sc-link{background:none;border:0;color:#7db4ff;cursor:pointer;padding:0;text-align:left;font:inherit}
 .st-science .sc-bar{height:6px;background:#2a3040;border-radius:3px}.st-science .sc-bar i{display:block;height:100%;background:#4fb477;border-radius:3px}
 .st-science .sc-btn{background:#2f6fed;color:#fff;border:0;border-radius:5px;padding:7px 12px;cursor:pointer}

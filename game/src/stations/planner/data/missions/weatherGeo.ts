@@ -12,6 +12,14 @@ import { makePart } from '../parts';
 // a bigger upper-stage tank (2 t -> 3 t: ~0.4 km/s spare) or a bigger apogee tank
 // on the satellite (0.7 t -> 1.6 t: ~0.13 km/s spare). Part sizes are at or below
 // catalogue items (procurement/data/catalogue.ts), so contracted parts only help.
+//
+// Two parts of the starting design are beyond what the agency has researched
+// (playtest 1115m-r01, finding 03: science had nothing to do): the camera the
+// imagery goal needs (4.5 against a limit of 4) and the antenna that carries its
+// 225 kbps (limit 200). Science has to research both before the catalogue sells
+// them. Research runs at twice the tree's authored speed (researchTimeFactor), so
+// a first-step tech takes about 2 months and still leaves the 3 months the fastest
+// camera supplier needs before the launch on day 180.
 
 let n = 0;
 const id = (prefix: string) => `${prefix}-w${++n}`;
@@ -56,11 +64,12 @@ export const WEATHER_GEO: MissionDef = {
     },
     {
       id: 'goal-imagery', name: 'Send weather images', kind: 'orbitData', body: 'earth',
-      instrument: 'camera', minPerformance: 3, stayDays: 730,
+      instrument: 'camera', minPerformance: 4.5, stayDays: 730,
       altitudeKm: GEO_ALT_KM, altitudeToleranceKm: 2000, orbitName: 'geostationary orbit',
     },
   ],
   // Same research keys as the Mars mission, so science and procurement work unchanged.
+  researchTimeFactor: 0.5,
   research: {
     'engine.solid.isp': 270,
     'engine.kerolox.isp': 340,
@@ -69,13 +78,13 @@ export const WEATHER_GEO: MissionDef = {
     'engine.ion.isp': 3000,
     'engine.kerolox.thrustKN': 8000,
     'engine.hydrolox.thrustKN': 2500,
-    'instrument.camera.performance': 6,
+    'instrument.camera.performance': 4,
     'instrument.spectrometer.performance': 6,
     'instrument.radar.performance': 4,
     'instrument.surfaceLab.performance': 5,
     'power.solar.outputKW': 15,
     'power.rtg.outputKW': 1,
-    'antenna.standard.dataRateKbps': 3000,
+    'antenna.standard.dataRateKbps': 200,
     'radShield.standard.level': 4,
     'heatProtection.standard.level': 3,
   },

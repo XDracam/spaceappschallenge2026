@@ -1,10 +1,14 @@
 // Pure research rules shared by the science reducers (logic.ts) and the UI: labels, dates,
 // slice access, request coverage. No UI imports, no randomness.
-import type { ResearchRequest, ResearchState } from '../../../core/model';
+import type { ResearchState } from '../../../core/model';
 import type { GameState } from '../../../core/state';
 import { MISSION } from '../../../core/mission';
-import { partName, statDefs } from '../../planner/data/parts';
-import type { PartKind as PlannerPartKind } from '../../planner/model/types';
+import { beyondResearch, partName, statDefs } from '../../planner/data/parts';
+import { partStatus } from '../../planner/derive';
+import { allParts } from '../../planner/model/rocketUtils';
+import type { Part, PartKind as PlannerPartKind } from '../../planner/model/types';
+import { CATALOGUE_OFFERS } from '../../procurement/data/catalogue';
+import { deliveryShiftDays, leadTimeDays } from '../../procurement/rules';
 import type { ScienceSlice } from '../slice';
 import { INITIAL_SLOTS } from '../slice';
 import { START_TECHS } from '../data/techs';
@@ -58,8 +62,8 @@ export function describeGrant(g: Grant): string {
   return `${k.label} up to ${formatValue(g.value, k.unit)}`;
 }
 
-/** What a request asks for, e.g. "Hydrogen / oxygen engine Isp ≥ 462 s". */
-export function describeRequest(r: Pick<ResearchRequest, 'key' | 'value'>): string {
+/** What the design needs, e.g. "Hydrogen / oxygen engine Isp ≥ 462 s". */
+export function describeNeed(r: Pick<Need, 'key' | 'value'>): string {
   const k = keyInfo(r.key);
   return r.value === undefined ? `${k.label} unlocked` : `${k.label} ≥ ${formatValue(r.value, k.unit)}`;
 }
@@ -74,7 +78,25 @@ export function sci(s: GameState): ScienceSlice {
 
 export const running = (r: ResearchState) => r.projects.filter((p) => p.status === 'running');
 
-// ------------------------------------------------------------- requests
+// ------------------------------------------------------------- what the design needs
+
+/**
+ * Something the planner's design needs that research does not cover yet. Never stored: it is read
+ * from the planner's rocket, so science sees it from the first second and it follows every slider change.
+ */
+export interface Need {
+  /** Planner research key: `kind.variant.stat` (a limit) or `kind.variant` (an unlock). */
+  key: string;
+  /** Needed value for a limit key; undefined for an unlock key. */
+  value?: number;
+  /**
+   * Last day research can finish so that the part still arrives for launch (fastest standard
+   * catalogue delivery). Undefined when no catalogue part would fit even after research.
+   */
+  researchBy?: number;
+  /** Days that delivery takes (the lead time behind researchBy). */
+  leadDays?: number;
+}
 
 /** Has this need been met by research (by any route)? */
 export function covered(r: Pick<ResearchState, 'limits' | 'unlocked'>, key: string, value?: number): boolean {
@@ -83,7 +105,36 @@ export function covered(r: Pick<ResearchState, 'limits' | 'unlocked'>, key: stri
   return have !== undefined && have >= value - 1e-9;
 }
 
-export const requestCovered = (r: Pick<ResearchState, 'limits' | 'unlocked'>, q: Pick<ResearchRequest, 'key' | 'value'>) =>
-  covered(r, q.key, q.value);
+/** Fastest standard catalogue delivery (days) of a part that meets these sliders, whatever research says today. */
+function fastestLeadDays(s: GameState, part: Part): number | undefined {
+  const leads = CATALOGUE_OFFERS
+    .filter((o) => o.resource.partKind === part.kind && o.resource.variant === part.variant
+      && Object.entries(part.stats).every(([k, min]) => (o.resource.stats[k] ?? 0) >= min - 1e-9))
+    .map((o) => leadTimeDays(s, o) + deliveryShiftDays(s));
+  return leads.length ? Math.min(...leads) : undefined;
+}
 
-export const openRequests = (r: ResearchState): ResearchRequest[] => (r.requests ?? []).filter((q) => q.status === 'open');
+/**
+ * What the design needs beyond research: every part that is not under contract yet (a contracted part
+ * was bought some other way) and exceeds a research limit or uses a locked part type. One entry per key.
+ */
+export function designNeeds(s: GameState): Need[] {
+  const out = new Map<string, Need>();
+  for (const { part } of allParts(s.planner.rocket)) {
+    const keys = beyondResearch(part, s.research.limits, s.research.unlocked);
+    if (!keys.length) continue;
+    const st = partStatus(s, part.id);
+    if (st !== 'draft' && st !== 'ordered') continue;
+    const lead = fastestLeadDays(s, part);
+    const by = lead === undefined ? undefined : Math.floor(s.planner.plan.launchDay - lead);
+    for (const key of keys) {
+      const stat = key.split('.')[2];
+      const value = stat ? part.stats[stat] : undefined;
+      const prev = out.get(key);
+      if (!prev) { out.set(key, { key, value, researchBy: by, leadDays: lead }); continue; }
+      if (value !== undefined && (prev.value ?? -Infinity) < value) prev.value = value;
+      if (by !== undefined && (prev.researchBy === undefined || by < prev.researchBy)) { prev.researchBy = by; prev.leadDays = lead; }
+    }
+  }
+  return [...out.values()];
+}

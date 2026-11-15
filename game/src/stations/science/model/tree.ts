@@ -1,10 +1,11 @@
 // Pure tech tree rules: layout, reveal (fog), status, who can start what, routes to a goal.
 // Shared by the reducers (logic.ts) and the UI. No UI imports, no randomness.
-import type { ResearchRequest, ResearchState, TechAccess } from '../../../core/model';
+import type { ResearchProject, ResearchState, TechAccess } from '../../../core/model';
 import type { GameState } from '../../../core/state';
 import { budgetAvailableM } from '../../../core/state';
+import { MISSION } from '../../../core/mission';
 import { BRANCH_ORDER, TECHS, TECH_BY_ID } from '../data/techs';
-import { covered, openRequests, running, sci } from './research';
+import { covered, designNeeds, running, sci, type Need } from './research';
 import type { Branch, Tech, TechStatus, TreeLayout } from './types';
 
 // ------------------------------------------------------------- layout
@@ -70,9 +71,28 @@ export function ancestors(id: string): Set<string> {
   return out;
 }
 
-/** Techs whose grants would meet a request. */
+/** Techs whose grants would meet a need. */
 export function techsFor(key: string, value?: number): Tech[] {
   return TECHS.filter((t) => t.gives.some((g) => (value === undefined ? g.kind === 'unlock' && g.key === key : g.kind === 'limit' && g.key === key && g.value >= value - 1e-9)));
+}
+
+/** The shortest routes to a need: techs that meet it and do not build on another tech that already does. */
+export function routesFor(key: string, value?: number): Tech[] {
+  const all = techsFor(key, value);
+  const ids = new Set(all.map((t) => t.id));
+  return all.filter((t) => ![...ancestors(t.id)].some((a) => ids.has(a)));
+}
+
+/** How long a tech takes in the active mission (months). Short missions research faster. */
+export function techMonths(t: Tech): number {
+  return Math.round(t.months * (MISSION.researchTimeFactor ?? 1) * 10) / 10;
+}
+
+/** Day the first running project that would meet this need ends; undefined if none is running. */
+export function researchEta(projects: ResearchProject[] | undefined, key: string, value?: number): number | undefined {
+  const ids = new Set(techsFor(key, value).map((t) => t.id));
+  const ends = (projects ?? []).filter((p) => p.status === 'running' && p.techId && ids.has(p.techId)).map((p) => p.endsAt);
+  return ends.length ? Math.min(...ends) : undefined;
 }
 
 // ------------------------------------------------------------- state of a tech
@@ -102,10 +122,10 @@ export function isCovered(t: Tech, r: Pick<ResearchState, 'limits' | 'unlocked'>
   return t.gives.length > 0 && t.gives.every((g) => (g.kind === 'unlock' ? covered(r, g.key) : covered(r, g.key, g.value)));
 }
 
-/** Goal techs: those that would meet an open request. */
-export function goalTechIds(requests: ResearchRequest[]): Set<string> {
+/** Goal techs: the shortest routes to something the design needs. */
+export function goalTechIds(needs: Need[]): Set<string> {
   const out = new Set<string>();
-  for (const q of requests) if (q.status === 'open') for (const t of techsFor(q.key, q.value)) out.add(t.id);
+  for (const q of needs) for (const t of routesFor(q.key, q.value)) out.add(t.id);
   return out;
 }
 
@@ -130,7 +150,7 @@ export const REVEAL_STEPS = 2;
 export function treeViews(g: GameState): Record<string, TechView> {
   const researched = new Set(sci(g).researched);
   const runningIds = new Set(running(g.research).map((p) => p.techId).filter(Boolean) as string[]);
-  const goals = goalTechIds(g.research.requests ?? []);
+  const goals = goalTechIds(designNeeds(g));
   const dist = distances(researched);
   const out: Record<string, TechView> = {};
   for (const t of TECHS) {
@@ -173,10 +193,9 @@ export function startCheck(s: GameState, techId: string): StartCheck {
   return { ok: true, reason: null };
 }
 
-/** Open requests a tech would help (its grants meet the request). */
-export function requestsFor(t: Tech, requests: ResearchRequest[]): ResearchRequest[] {
-  return requests.filter((q) => q.status === 'open' && techsFor(q.key, q.value).some((x) => x.id === t.id));
+/** Needs of the design a tech would meet. */
+export function needsFor(t: Tech, needs: Need[]): Need[] {
+  return needs.filter((q) => routesFor(q.key, q.value).some((x) => x.id === t.id));
 }
 
-export { openRequests };
 export const branchOf = (id: string): Branch => TECH_BY_ID[id].branch;

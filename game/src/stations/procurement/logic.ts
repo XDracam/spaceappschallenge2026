@@ -18,7 +18,7 @@ import type { GameState } from '../../core/state';
 import type { Part } from '../planner/model/types';
 import { beyondResearch } from '../planner/data/parts';
 import { CALL_DURATION_DAYS, CALL_OFFER_VALID_DAYS } from './data/calls';
-import { criterionCoverage, findOffer, fmtDate, fmtM, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, previewCall, freeContractQuantity, sameHardware, fitFailures, beyondKeys, cancellationToken, deliveryOptions } from './rules';
+import { criterionCoverage, findOffer, fmtDate, fmtM, refundM, sameKind, taskCode, quoteOrder, quoteAmendment, previewCall, freeContractQuantity, sameHardware, fitFailures, cancellationToken, deliveryOptions } from './rules';
 import { contractTiming } from './timing';
 
 const money = (v: number) => Math.round(v * 1000) / 1000;
@@ -198,39 +198,6 @@ export const procurementActions = defineActions('procurement', {
     if (!call || call.status !== 'open') return;
     call.status = 'withdrawn';
     call.revision++;
-  },
-
-  /**
-   * Resource planning chooses to develop the part instead of buying it (or as well): ask science to raise
-   * every research key this criterion exceeds. Buying beyond research stays possible through Calls.
-   */
-  requestDevelopment(s, ctx, taskId: string, criterionId: string) {
-    if (s.meta.phase !== 'planning') return;
-    const { task, crit } = findCriterion(s, taskId, criterionId);
-    if (!task || !crit || task.status !== 'open') return;
-    s.research.requests ??= [];
-    const keys = beyondKeys(crit.partKind, crit.variant, crit.minimums, s.research);
-    const made: string[] = [];
-    for (const key of keys) {
-      if (s.research.requests.some((q) => q.status === 'open' && q.taskId === taskId && q.criterionId === crit.id && q.key === key)) continue;
-      const stat = key.split('.')[2];
-      s.research.requests.push({
-        id: ctx.newId('req'), taskId, criterionId: crit.id, key,
-        ...(stat ? { value: crit.minimums[stat] } : {}),
-        requestedAt: ctx.day, status: 'open',
-      });
-      made.push(key);
-    }
-    if (made.length) news(s, ctx, `Procurement asks science to develop ${crit.label} for ${taskCode(task)} (${made.length} research goal${made.length === 1 ? '' : 's'}) instead of buying it beyond research.`, ['science', 'planner']);
-  },
-
-  /** Call the development request off (for example because a tender looks better). */
-  withdrawDevelopment(s, ctx, taskId: string, criterionId: string) {
-    const open = (s.research.requests ?? []).filter((q) => q.status === 'open' && q.taskId === taskId && q.criterionId === criterionId);
-    if (!open.length) return;
-    for (const q of open) q.status = 'withdrawn';
-    const { task, crit } = findCriterion(s, taskId, criterionId);
-    if (task && crit) news(s, ctx, `Procurement withdrew the development request for ${crit.label} (${taskCode(task)}).`, ['science']);
   },
 
   /** Cancel an active Contract: refund by the time-remaining rule, release its allocations. */

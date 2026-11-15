@@ -8,7 +8,7 @@ import { initialCommsSlice, type CommsSlice } from '../stations/comms/slice';
 import { initialScienceSlice, type ScienceSlice } from '../stations/science/slice';
 import { initialProcurementSlice, type ProcurementSlice } from '../stations/procurement/slice';
 
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 
 export interface GameState {
   version: number;
@@ -44,7 +44,7 @@ export function createGame(seed: number, missionId: string = DEFAULT_MISSION_ID)
     clock: { day: 0, running: false, daysPerSecond: DEFAULT_DAYS_PER_SECOND },
     budget: { fundingTotalM: MISSION.budgetM, spentM: 0, committedM: 0 },
     market: { tasks: [], offers: [], calls: [], contracts: [], allocations: [], modifiers: [] },
-    research: { limits: { ...MISSION.research }, unlocked: [...MISSION.unlocked], projects: [], modifiers: [], requests: [], access: {} },
+    research: { limits: { ...MISSION.research }, unlocked: [...MISSION.unlocked], projects: [], modifiers: [], access: {} },
     events: { flags: [], news: [] },
     planner: initialPlannerSlice(),
     procurement: initialProcurementSlice(),

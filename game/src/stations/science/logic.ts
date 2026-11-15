@@ -1,8 +1,8 @@
 // science station game logic: reducers (defineActions('science', …)) and tick handlers (onTick).
 // Imported eagerly by core/registerStations.ts — must not import UI code.
 //
-// Loop (D-020): Procurement asks science to develop a part (research requests). The science player
-// finds a route through the tech tree and starts projects. A project spends its cost at once and runs
+// Loop (D-020, changed by playtest 1115m-r01): science sees what the planner's design needs beyond
+// research (model/research.ts designNeeds), finds a route through the tech tree and starts projects. A project spends its cost at once and runs
 // for months on the shared calendar. Comms researchPace modifiers speed it up or slow it down, and a
 // comms block pauses it. At its end it is rolled with the shared seeded rng: success makes the tech
 // researched and raises the planner's research limits or unlocks parts; failure leaves the tech
@@ -16,8 +16,8 @@ import type { ScienceSlice } from './slice';
 import { initialScienceSlice } from './slice';
 import { TECH_BY_ID } from './data/techs';
 import { FAILURE_LINES } from './data/flavour';
-import { describeGrant, describeRequest, requestCovered, running } from './model/research';
-import { blockInfo, startCheck } from './model/tree';
+import { covered, describeGrant, describeNeed, designNeeds, running } from './model/research';
+import { blockInfo, startCheck, techMonths } from './model/tree';
 
 /** Fill slice and shared research fields missing from older saves. */
 function ensure(s: GameState): ScienceSlice {
@@ -27,7 +27,6 @@ function ensure(s: GameState): ScienceSlice {
   x.researched ??= d.researched;
   x.info ??= d.info;
   s.research.modifiers ??= [];
-  s.research.requests ??= [];
   s.research.access ??= {};
   return s.science;
 }
@@ -60,32 +59,25 @@ function resolve(s: GameState, ctx: ActionCtx, p: ResearchProject): void {
   }
   p.status = 'succeeded';
   if (!sl.researched.includes(tech.id)) sl.researched.push(tech.id);
+  const needed = designNeeds(s);
   applyEffects(s, p.effects);
+  // What the design was waiting for and this project delivered: Procurement can now buy it.
+  const met = needed.filter((n) => covered(s.research, n.key, n.value));
+  if (met.length) {
+    setFlag(s, 'research.breakthrough', true);
+    pushNews(s, {
+      from: 'science',
+      text: `Science finished "${tech.name}": ${met.map(describeNeed).join(' and ')} ${met.length > 1 ? 'are' : 'is'} now within research. Procurement can buy ${met.length > 1 ? 'them' : 'it'} from the catalogue.`,
+      affects: ['procurement', 'planner'], internal: true,
+    }, ctx.newId);
+    return;
+  }
   const gains = tech.gives.map(describeGrant).join('; ');
   pushNews(s, {
     from: 'science',
     text: `Science finished "${tech.name}".${gains ? ` ${gains}.` : ' It opens the way to further techs.'}`,
     affects: tech.gives.length ? ['planner', 'procurement'] : [], internal: tech.gives.length > 0,
   }, ctx.newId);
-}
-
-/** Close requests that research has met, and withdraw those whose task is gone. */
-function settleRequests(s: GameState, ctx: ActionCtx): void {
-  for (const q of s.research.requests) {
-    if (q.status !== 'open') continue;
-    const task = s.market.tasks.find((t) => t.id === q.taskId);
-    if (!task || task.status !== 'open') { q.status = 'withdrawn'; continue; }
-    if (requestCovered(s.research, q)) {
-      q.status = 'done';
-      q.doneAt = ctx.day;
-      setFlag(s, 'research.breakthrough', true);
-      pushNews(s, {
-        from: 'science',
-        text: `Science delivered what Procurement asked for: ${describeRequest(q)}. "${task.title}" can now be bought within research.`,
-        affects: ['procurement', 'planner'], internal: true,
-      }, ctx.newId);
-    }
-  }
 }
 
 export const scienceActions = defineActions('science', {
@@ -99,7 +91,7 @@ export const scienceActions = defineActions('science', {
     const effects: Effect[] = tech.gives.map((g) => (g.kind === 'unlock' ? { kind: 'unlock', key: g.key } : { kind: 'researchLimit', key: g.key, value: g.value }));
     s.research.projects.push({
       id: projectId, title: tech.name, techId, costM: tech.costM,
-      startedAt: ctx.day, endsAt: ctx.day + tech.months * DAYS_PER_MONTH,
+      startedAt: ctx.day, endsAt: ctx.day + techMonths(tech) * DAYS_PER_MONTH,
       status: 'running', successChance: tech.chance, effects,
     });
     sl.info[projectId] = { techId };
@@ -145,5 +137,4 @@ onTick('science', (s, ctx, fromDay, toDay) => {
     if (p.endsAt <= toDay) resolve(s, ctx, p);
   }
   if (s.research.modifiers.length) s.research.modifiers = s.research.modifiers.filter((m) => m.untilDay > toDay);
-  settleRequests(s, ctx);
 });
