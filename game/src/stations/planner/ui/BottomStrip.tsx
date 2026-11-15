@@ -100,7 +100,11 @@ function GoalsCard() {
   const ev = useEvaluation();
   return (
     <section class="card glass goals-card">
-      <div class="card-top"><span class="label">Goals</span></div>
+      <div class="card-top">
+        <span class="label">Goals</span>
+        <div class="spacer" />
+        <span class="goal-hint" title="Each goal's chance is the combined reliability of the parts used up to that goal. More reliable parts raise it.">chance of success, from part reliability</span>
+      </div>
       <ul class="goal-list thin-scroll">
         {goals.map((g) => {
           const r = ev.goals.find((x) => x.goalId === g.id);

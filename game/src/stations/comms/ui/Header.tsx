@@ -18,10 +18,12 @@ export function Header() {
         <TodayChip />
         <BudgetChip />
         <LaunchChip />
-        <button class={`pill dev-pill${devOpen ? ' active' : ''}`} title="Debug: fire events, inspect flags and news"
-          onClick={() => uiStore.update((u) => { u.devOpen = !u.devOpen; })}>
-          <GearIcon /> Dev
-        </button>
+        {import.meta.env.DEV && (
+          <button class={`pill dev-pill${devOpen ? ' active' : ''}`} title="Debug: fire events, inspect flags and news"
+            onClick={() => uiStore.update((u) => { u.devOpen = !u.devOpen; })}>
+            <GearIcon /> Dev
+          </button>
+        )}
       </div>
     </header>
   );

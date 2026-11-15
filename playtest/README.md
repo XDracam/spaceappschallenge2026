@@ -15,7 +15,13 @@ An agent playtest finds friction: bugs, dead ends, unclear labels, missing feedb
 | `harness/ptadmin.mjs` | Overseer CLI: `status`, `stop [reason]`, `extend MINUTES`. |
 | `briefs/player.md` | What a player agent is told. Nothing about the game. |
 | `briefs/triage.md` | How a round becomes classified findings. |
-| `briefs/fixer.md` | What may be changed without the team, and what may not. |
+| `briefs/fixer.md` | Polish step: bugs and unclear screens, small diffs. |
+| `briefs/rework.md` | Rework step: one root problem per round — systems, rules, mission content. |
+| `briefs/judge.md` | Judge step: an agent that did not make the change accepts only what is clearly better. |
+| `rejected.md` | Changes the judge turned down, and why. |
+| `changes.md` | Every change the loop made, with evidence and how to drop it. |
+| `ledger.json` | Findings of every round. |
+| `morning.md` | Written at the end of a night: what to keep, what to drop, what is still open. |
 | `runs/<round>/` | One round's evidence (ignored by git). |
 
 The game has one hook for this: `game/src/core/playtestHook.ts`. It installs only when the harness sets `window.__MC_PLAYTEST__` before the app loads, and gives the harness read access to the state, the actions a browser dispatched, and the calendar speed.
@@ -62,3 +68,17 @@ Each round serves its own build (`runs/<round>/dist`), so source edits during pl
 - The slowed calendar makes on-screen statements about real time ("1 real minute = 1 month") inaccurate. Triage treats confusion about that as an artifact.
 - Players talk through text that arrives when they next act, not through live voice.
 - A player agent could read files it should not. The brief forbids it; the harness does not prevent it.
+
+## The overnight loop
+
+`loop/overnight.workflow.js` runs until morning in a dedicated git worktree on its own branch. Per round:
+
+1. **Play** — four fresh players, no knowledge of the game. Every third round they do the lobby themselves.
+2. **Triage** — findings by class (bug, clarity, design, agent artifact), surface symptoms linked to their root, a verdict on each change of the previous round, and one design finding picked for rework.
+3. **Revert** — changes that triage judged to have harmed play are taken back.
+4. **Polish** — up to four bugs or unclear screens. One commit.
+5. **Rework** — the picked root problem: rules, balance, content, what stations show each other. Verified in a running one-player session. One commit.
+
+Before anything is committed, a fresh agent that was not told the author's reasons compares the game before (the players' screenshots) and after (a running session) and accepts only what is clearly better for a first-time player; the rest is discarded and logged in `rejected.md`. Each commit then passes typecheck and build, or the tree is put back. If the game no longer starts in a round, the changes since it last started are reverted. Nothing is pushed.
+
+The loop may change rules and content without approval for the night of 2026-11-15 ([user direction](../docs/notes/2026-11-15-overnight-playtest-autonomy.md)). What it changes is not an accepted decision; `morning.md` lists each change with the command to drop it.

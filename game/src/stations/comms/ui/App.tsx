@@ -35,7 +35,7 @@ export function App() {
       <NewsFeed />
       <ProjectPicker />
       {launched && !launchCardClosed && <LaunchedCard />}
-      <DevDrawer />
+      {import.meta.env.DEV && <DevDrawer />}
       <Briefing />
     </div>
   );
