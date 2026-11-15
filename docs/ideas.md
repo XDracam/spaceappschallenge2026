@@ -227,6 +227,15 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Status: accepted direction under D-026.
 - Result: DNS-only CNAME to GitHub Pages, Actions publishing and a domain-aware build base path. [redacted for publication] See [setup record](notes/2026-11-15-github-pages-domain.md).
 
+### I-095 — Optional mission goals with bonus points
+
+- Date: 2026-11-15.
+- Source: user, [weather mission note, November 15 follow-up](../mission-planner/notes/2026-11-14-weather-mission.md).
+- Status: accepted direction under D-028; implemented for the weather mission only.
+- Idea: goals the mission does not need, scored as a separate bonus part. The budget is sized so that a careful plan just affords all of them.
+- Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
+- Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
+
 ## New entry template
 
 ```markdown

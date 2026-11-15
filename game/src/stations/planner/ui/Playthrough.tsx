@@ -118,7 +118,11 @@ function ResultCard({ onHide }: { onHide: () => void }) {
   const game = usePlanner((g) => g);
   const ev = useEvaluation();
   const outcomes = pt.result.goalOutcomes;
-  const ok = outcomes.filter((o) => o.success).length;
+  const isOpt = (id: string) => game.mission.goals.find((g) => g.id === id)?.optional === true;
+  const required = outcomes.filter((o) => !isOpt(o.goalId));
+  const optionalOk = outcomes.filter((o) => isOpt(o.goalId) && o.success).length;
+  const optionalCount = outcomes.length - required.length;
+  const ok = required.filter((o) => o.success).length;
   const failures = pt.result.events.filter((e) => e.kind === 'failure').length;
   const start = game.mission.startDateISO;
   const reasons = failReasons(game, ev, pt.result);
@@ -141,8 +145,8 @@ function ResultCard({ onHide }: { onHide: () => void }) {
             Launch scrubbed — {plural(Math.max(1, notDelivered), 'part was', 'parts were')} not delivered
           </div>
         ) : (
-          <div class={`result-score ${ok === outcomes.length ? 'ok-text' : ok === 0 ? 'err-text' : 'warn-text'}`}>
-            {ok} / {outcomes.length} goals achieved
+          <div class={`result-score ${ok === required.length ? 'ok-text' : ok === 0 ? 'err-text' : 'warn-text'}`}>
+            {ok} / {required.length} goals achieved{optionalCount > 0 ? ` · ${optionalOk} / ${optionalCount} optional` : ''}
           </div>
         )}
         <ul class="outcome-list">
@@ -153,7 +157,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
               <li key={o.goalId} class={o.success ? 'ok' : 'err'}>
                 <span class="outcome-icon">{o.success ? <CheckIcon /> : <CloseIcon />}</span>
                 <div class="outcome-text">
-                  <span>{g?.name ?? o.goalId}</span>
+                  <span>{g?.name ?? o.goalId}{g?.optional ? ' (optional)' : ''}</span>
                   {!o.success && reason && !scrubbed && <span class="outcome-reason">{reason}</span>}
                 </div>
               </li>

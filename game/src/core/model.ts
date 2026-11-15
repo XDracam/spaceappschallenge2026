@@ -40,16 +40,20 @@ export interface Meta {
 
 /** How the flight went, as the mission result says (= missionScore(computeMissionResult(s)) in stations/planner/result.ts). */
 export interface AttemptOutcome {
+  /** Required goals achieved / total (optional goals are counted separately). */
   achieved: number;
   total: number;
   scrubbed: boolean;
+  /** Optional goals: weight of the achieved ones / weight of all (Goal.bonusPoints). Absent = no optional goals. */
+  bonusEarned?: number;
+  bonusTotal?: number;
 }
 
 /** Score parts (core/score.ts). Every part is always present; see SCORE_WEIGHTS for each part's maximum. */
-export type ScorePartId = 'goals' | 'budget' | 'time' | 'deliveries' | 'research' | 'trust';
+export type ScorePartId = 'goals' | 'budget' | 'time' | 'deliveries' | 'research' | 'trust' | 'bonus';
 
 export interface AttemptScore {
-  /** Sum of the parts (integer, 0..SCORE_MAX). */
+  /** Sum of the parts (integer, 0..scoreMax(mission)). */
   total: number;
   /** Integer points per part, each 0..SCORE_WEIGHTS[part]. */
   parts: Record<ScorePartId, number>;
@@ -62,6 +66,8 @@ export interface AttemptRecord {
   achieved: number;
   total: number;
   scrubbed: boolean;
+  bonusEarned?: number;
+  bonusTotal?: number;
   score: AttemptScore;
   /** spent + committed at the end of the attempt (M). */
   spentM: number;

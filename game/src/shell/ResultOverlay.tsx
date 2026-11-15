@@ -39,6 +39,7 @@ export function ResultOverlay() {
         <div class="shell-label">Mission result</div>
         <h2 class="shell-result-title">
           {score.scrubbed ? 'Launch scrubbed' : `${score.achieved} of ${score.total} goals achieved`}
+          {!score.scrubbed && score.optionalTotal > 0 && <small class="shell-result-bonus"> · {score.optionalAchieved} of {score.optionalTotal} optional</small>}
         </h2>
         <ul class="shell-result-goals">
           {result.goalOutcomes.map((o) => {
@@ -46,7 +47,7 @@ export function ResultOverlay() {
             const why = !o.success && !score.scrubbed ? planned.find((g) => g.goalId === o.goalId) : undefined;
             return (
               <li key={o.goalId} class={o.success ? 'is-ok' : 'is-fail'}>
-                <span aria-hidden="true">{o.success ? '✓' : '✗'}</span> {goal?.name ?? o.goalId}
+                <span aria-hidden="true">{o.success ? '✓' : goal?.optional ? '–' : '✗'}</span> {goal?.name ?? o.goalId}{goal?.optional ? ' (optional)' : ''}
                 {why && !why.achievable && why.reason && <div class="shell-result-why">{why.reason}</div>}
               </li>
             );

@@ -49,14 +49,19 @@ export const WEATHER_GEO: MissionDef = {
   name: 'Weather satellite',
   briefing:
     'Put a weather satellite into geostationary orbit, where it keeps pace with the Earth and forecasters can watch ' +
-    'a whole hemisphere around the clock. All goals must be achieved by the mission deadline.',
+    'a whole hemisphere around the clock. The two main goals must be achieved by the mission deadline. ' +
+    'Two optional goals earn bonus points: they need extra instruments, some research and more fuel for the heavier satellite, ' +
+    'and the budget only covers all of them with careful buying.',
   startDateISO: '2030-01-01',
   // 5 Feb 2031. Launch is planned for day 180 (30 Jun 2030, about 6 real minutes
   // in): the booster engine's fastest catalogue offer takes 4 months, so it must be
   // signed in the first ~2 minutes. The orbit raise takes hours, so the deadline
   // leaves room to slip the launch.
   completionDeadlineDay: 400,
-  budgetM: 350,
+  // Tuned so that all four goals are just affordable (playtest: the 350 M of the first version was never spent):
+  // the cheapest complete plan costs about 175 M (parts ~85, camera and antenna research ~25, extras below),
+  // a typical one about 205 M. The two main goals alone are done for 105-140 M.
+  budgetM: 210,
   goals: [
     {
       id: 'goal-geo', name: 'Reach geostationary orbit', kind: 'orbit', body: 'earth',
@@ -66,6 +71,22 @@ export const WEATHER_GEO: MissionDef = {
       id: 'goal-imagery', name: 'Send weather images', kind: 'orbitData', body: 'earth',
       instrument: 'camera', minPerformance: 4.5, stayDays: 730,
       altitudeKm: GEO_ALT_KM, altitudeToleranceKm: 2000, orbitName: 'geostationary orbit',
+    },
+    // Optional goals (user direction 2026-11-15): bonus points, no effect on the main goals. Each needs one more
+    // instrument on the satellite: power (0.09 / 0.38 kW) and data (50 / 300 kbps) fit the starting solar panels and antenna,
+    // so the cost is the instrument itself (spectrometer S5 about 19-24 M; sounding radar R3 about 34 M plus 14 M to research
+    // radar electronics, because the radar is not unlocked) and its extra mass in the satellite's tanks.
+    {
+      id: 'goal-ozone', name: 'Measure ozone and aerosols', kind: 'orbitData', body: 'earth',
+      instrument: 'spectrometer', minPerformance: 5, stayDays: 730,
+      altitudeKm: GEO_ALT_KM, altitudeToleranceKm: 2000, orbitName: 'geostationary orbit',
+      optional: true, bonusPoints: 40,
+    },
+    {
+      id: 'goal-rain', name: 'Sound rain and cloud layers with radar', kind: 'orbitData', body: 'earth',
+      instrument: 'radar', minPerformance: 3, stayDays: 730,
+      altitudeKm: GEO_ALT_KM, altitudeToleranceKm: 2000, orbitName: 'geostationary orbit',
+      optional: true, bonusPoints: 60,
     },
   ],
   // Same research keys as the Mars mission, so science and procurement work unchanged.

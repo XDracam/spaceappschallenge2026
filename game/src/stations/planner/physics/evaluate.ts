@@ -499,11 +499,11 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
 
   const destIssues: Issue[] = [];
   const seen = new Set<string>();
-  const pushDest = (branchId: string, res: ManeuverResult, code: IssueCode, msg: string) => {
+  const pushDest = (branchId: string, res: ManeuverResult, code: IssueCode, msg: string, severity: Severity = 'error') => {
     const key = `${branchId}|${res.maneuverId}|${msg}`;
     if (seen.has(key)) return;
     seen.add(key);
-    const issue: Issue = { severity: 'error', code, message: msg, branchId, maneuverId: res.maneuverId };
+    const issue: Issue = { severity, code, message: msg, branchId, maneuverId: res.maneuverId };
     res.issues.push(issue);
     destIssues.push(issue);
   };
@@ -564,7 +564,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
           const problems = hazardProblems(gBody, 'surface', scs, 0, false);
           if (problems.length) {
             failReason ??= problems[0].msg;
-            for (const p of problems) pushDest(bi.branchId, step.result, p.code, p.msg);
+            for (const p of problems) pushDest(bi.branchId, step.result, p.code, p.msg, goal.optional ? 'warning' : 'error');
             continue;
           }
           consider(bi, step, base, []);
@@ -586,7 +586,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
           if (problems.length) {
             if (!failReason) {
               failReason = problems[0].msg;
-              for (const p of problems) pushDest(bi.branchId, step.result, p.code, p.msg);
+              for (const p of problems) pushDest(bi.branchId, step.result, p.code, p.msg, goal.optional ? 'warning' : 'error');
             }
             continue;
           }
@@ -612,7 +612,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
     let reason = failReason;
     if (!reason && reachedLate) {
       reason = `Reached after the mission deadline (${formatDay(mission.completionDeadlineDay, mission.startDateISO)})`;
-      lateGoals.push(goal.name);
+      if (!goal.optional) lateGoals.push(goal.name);
     }
     if (!reason && reachedBlocked) reason = 'The plan fails before this goal is reached';
     if (!reason && wrongAltitudeKm !== undefined && hasAltitudeWindow(goal)) reason = altitudeMissText(goal, wrongAltitudeKm);

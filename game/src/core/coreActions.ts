@@ -32,13 +32,15 @@ export function attemptRecorded(s: GameState): boolean {
 function validOutcome(o: unknown): o is AttemptOutcome {
   const x = o as AttemptOutcome;
   return !!x && Number.isInteger(x.achieved) && Number.isInteger(x.total) && x.total >= 0
-    && x.achieved >= 0 && x.achieved <= x.total && typeof x.scrubbed === 'boolean';
+    && x.achieved >= 0 && x.achieved <= x.total && typeof x.scrubbed === 'boolean'
+    && (x.bonusEarned === undefined || (Number.isFinite(x.bonusEarned) && x.bonusEarned >= 0))
+    && (x.bonusTotal === undefined || (Number.isFinite(x.bonusTotal) && x.bonusTotal >= (x.bonusEarned ?? 0)));
 }
 
 /** Append the current attempt to the history once (only after the mission ended). */
 function record(s: GameState, outcome: unknown): void {
   if (!missionEnded(s) || attemptRecorded(s) || !validOutcome(outcome)) return;
-  const o = { achieved: outcome.achieved, total: outcome.total, scrubbed: outcome.scrubbed };
+  const o = { achieved: outcome.achieved, total: outcome.total, scrubbed: outcome.scrubbed, bonusEarned: outcome.bonusEarned, bonusTotal: outcome.bonusTotal };
   s.meta.attempts.push({
     attempt: s.meta.attempt,
     missionId: s.meta.missionId,

@@ -601,7 +601,7 @@ function coordinationEntries(s: GameState): CoordinationTask[] {
       id: `goal:${goal.goalId}`,
       revision: 1,
       source: 'planning',
-      title: `Plan feasibility: ${def?.name ?? goal.goalId}`,
+      title: `Plan feasibility: ${def?.name ?? goal.goalId}${def?.optional ? ' (optional)' : ''}`,
       description: goal.achievable ? `The current plan can reach this goal; estimated success chance ${Math.round(goal.successChance * 100)}%. This is a plan estimate.` : `The current plan does not reach this goal: ${goal.reason ?? 'review planner issues'}.`,
       authorRole: 'planner',
       assignee: 'planner',
@@ -609,7 +609,7 @@ function coordinationEntries(s: GameState): CoordinationTask[] {
       createdAt: 0,
       updatedAt: 0,
       neededAt: planner.mission.completionDeadlineDay,
-      actions: playing && !goal.achievable ? {
+      actions: playing && !goal.achievable && !def?.optional ? {
         planner: 'Review the goal and plan issues in Mission Planning.'
       } : {},
       link: {

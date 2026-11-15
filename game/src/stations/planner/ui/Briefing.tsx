@@ -60,8 +60,16 @@ export function Briefing() {
           Budget <b class="num">{fmtMoneyShort(budgetM)}</b>. Each goal scores separately:
         </p>
         <ul class="briefing-goals">
-          {mission.goals.map((g) => <li key={g.id}>{g.name}</li>)}
+          {mission.goals.filter((g) => !g.optional).map((g) => <li key={g.id}>{g.name}</li>)}
         </ul>
+        {mission.goals.some((g) => g.optional) && (
+          <>
+            <p>Optional goals earn bonus points. The mission is complete without them, and the budget is tight for all of them together:</p>
+            <ul class="briefing-goals">
+              {mission.goals.filter((g) => g.optional).map((g) => <li key={g.id}>{g.name} <span class="muted">(optional)</span></li>)}
+            </ul>
+          </>
+        )}
         <ol class="briefing-steps">
           <li>Plan the route on the map.</li>
           <li>Fix problems until the Issues card is clear.</li>

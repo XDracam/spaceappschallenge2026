@@ -216,6 +216,13 @@ export interface Goal {
   altitudeToleranceKm?: number;
   /** Name of that orbit for menus and hints, e.g. "geostationary orbit". */
   orbitName?: string;
+  /**
+   * Optional goal: not needed for the mission to count as complete. It never blocks the launch and does not
+   * lower the goal share of the score; achieving it earns bonus points (core/score.ts).
+   */
+  optional?: boolean;
+  /** Relative weight of an optional goal in the bonus score part (default 1). Only used with `optional`. */
+  bonusPoints?: number;
 }
 
 export interface MissionDef {

@@ -168,3 +168,8 @@ The user's example was "better camera modules for less weight". The planner deri
 ## Q-038 — Hidden parts of the tree
 
 How much of the tree does the player see at the start, and how do they find routes (fog by distance, scouting projects, hints from partners)? How many routes should a goal have, and can all of them be blocked? See I-085.
+
+## Q-039 — Balance of the optional goals
+
+Is 210 M the right weather budget, and do the bonus weights (40 and 60 of 100 points) match the effort of each goal? Costs are catalogue estimates (cheapest full plan about 175 M), not measured in play. Should Mars get optional goals too, and should an optional goal be worth more than its extra cost in the budget score (150 points)?
+

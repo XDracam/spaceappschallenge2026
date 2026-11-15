@@ -1,5 +1,5 @@
 // Weather satellite — proactive projects (2 slots). Smaller and shorter than
-// Mars: the budget is about 350 M and launch is about six months away. Costs
+// Mars: the budget is about 210 M and launch is about six months away. Costs
 // come from the shared budget; some cost trust at start (startTrust). Bigger
 // deals need trust (`requires`). Negotiated parts arrive as offers to procurement.
 //

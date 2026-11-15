@@ -117,7 +117,7 @@ function GoalsCard() {
           if (na) {
             return (
               <li key={g.id} class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}`} title={`${g.name}: ${reason}`}>
-                <span class="goal-name">{g.name}</span>
+                <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional"> · optional</em> : null}</span>
                 <span class="goal-status">{notPlanned ? 'Not planned' : 'Blocked'}</span>
                 <span class="goal-reason">{reason}</span>
               </li>
@@ -126,7 +126,7 @@ function GoalsCard() {
           const cls = chanceClass(c);
           return (
             <li key={g.id} class="goal" title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`}>
-              <span class="goal-name">{g.name}</span>
+              <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional"> · optional</em> : null}</span>
               <span class="goal-bar"><span class={`gb-fill ${cls}`} style={{ width: `${Math.max(2, c * 100)}%` }} /></span>
               <span class={`goal-chance num ${cls}`}>{pct(c)}</span>
             </li>
