@@ -184,6 +184,29 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .shell-invite-head { display: flex; align-items: center; gap: 8px; }
 .shell-invite p { margin: 6px 0; }
 
+/* Room code (D-027): the one thing the host reads out. */
+.shell-room { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 4px 0 14px; padding: 16px 18px;
+  border-radius: 14px; background: linear-gradient(160deg, rgba(63,199,255,.09), rgba(42,127,255,.04) 60%, transparent);
+  border: 1px solid rgba(63,199,255,.32); box-shadow: inset 0 0 24px rgba(63,199,255,.06); }
+.shell-room.is-error { border-color: rgba(255,95,109,.35); background: rgba(255,95,109,.04); box-shadow: none; }
+.shell-room p { margin: 4px 0 6px; }
+.shell-room-code { font-family: var(--sh-display); font-size: 40px; font-weight: 700; letter-spacing: .14em; line-height: 1.1;
+  color: #dff6ff; text-shadow: 0 0 18px rgba(63,199,255,.55); font-variant-numeric: tabular-nums; user-select: all; }
+.shell-room.is-opening .shell-room-code, .shell-room.is-error .shell-room-code { color: var(--sh-muted); text-shadow: none; }
+.shell-room-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.shell-manual { margin-top: 4px; border-top: 1px solid var(--sh-line); padding-top: 10px; }
+.shell-manual summary { cursor: pointer; color: var(--sh-muted); font-size: 12px; }
+.shell-manual summary:hover { color: var(--sh-text); }
+.shell-manual[open] summary { margin-bottom: 4px; }
+.shell-manual > .shell-btn { margin-top: 2px; }
+
+.shell-join { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.shell-join .shell-field { margin: 0; flex: 0 1 220px; }
+.shell-join .shell-field-grow { flex: 1 1 240px; max-width: 420px; }
+.shell-room-input { font-family: var(--sh-display); font-size: 22px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; padding: 8px 14px; }
+.shell-room-input::placeholder { color: rgba(135,150,176,.45); letter-spacing: .14em; }
+
 .shell-codebox { display: flex; gap: 8px; align-items: stretch; }
 .shell-code { flex: 1; min-width: 0; resize: none; font: 11.5px/1.35 ui-monospace, 'Cascadia Mono', Consolas, monospace; word-break: break-all; }
 .shell-code[readonly] { color: #a9dcff; }

@@ -6,7 +6,7 @@ import { coreActions } from '../core/coreActions';
 import { setLocalStation, useGame, useSync } from '../core/store';
 import { HostLeft } from './Lobby';
 import { STATION_INFO } from './stations';
-import { backToStart, playerName, useSession } from './session';
+import { backToStart, connectedPlayerCount, playerName, useSession } from './session';
 import { requestConfirmation } from '../shared/confirmation';
 
 export function StationSwitcher() {
@@ -15,7 +15,7 @@ export function StationSwitcher() {
   const running = useGame((s) => s.clock.running);
   const phase = useGame((s) => s.meta.phase);
   const { station, peerId, role, connected } = useSync((s) => s);
-  const invites = useSession((s) => s.invites);
+  const connectedPeers = useSession(connectedPlayerCount);
   const closeReason = useSession((s) => s.join.closeReason);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -58,7 +58,6 @@ export function StationSwitcher() {
     setOpen(false);
   };
   const players = STATIONS.filter((st) => seats[st].claimedBy).length;
-  const connectedPeers = invites.filter((i) => i.status === 'connected').length;
   const status =
     role === 'host' ? (connectedPeers ? `Hosting · ${connectedPeers} connected` : 'Hosting · alone')
     : role === 'client' ? 'Connected to host'

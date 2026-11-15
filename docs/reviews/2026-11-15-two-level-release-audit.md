@@ -2,7 +2,7 @@
 
 Date: November 15, 2026. Requested by the user: expert subagents to audit the two current levels for quality, playability, balance and the shortest route to a hackathon release.
 
-**Subsequent implementation:** the user approved fixing these findings under D-027. See [release-fix observations](../playtests/2026-11-15-release-fixes-walkthrough.md) for the current implementation, revised Mars costs/timing and checks actually performed. The audit below retains its original pre-fix findings.
+**Subsequent implementation:** the user approved fixing these findings under D-029. See [release-fix observations](../playtests/2026-11-15-release-fixes-walkthrough.md) for the current implementation, revised Mars costs/timing and checks actually performed. The audit below retains its original pre-fix findings.
 
 ## Verdict
 

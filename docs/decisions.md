@@ -140,7 +140,7 @@ Merge provenance — the incoming branch used D-006 for this decision. D-006 alr
 ## D-015 — Integration architecture
 
 - Date: 2026-11-14
-- Status: accepted user direction ([integration questions](notes/2026-11-14-integration-questions.md))
+- Status: accepted user direction ([integration questions](notes/2026-11-14-integration-questions.md)); copy-paste signalling superseded by D-027 (room codes), kept as fallback
 - Decision:
   - Connection (resolves the connection part of Q-012): peer-to-peer. One player's browser hosts the authoritative game state; the other stations connect via WebRTC. Signaling by copy-paste connection codes, no third-party matchmaking.
   - Code: one web app with four station views sharing one game-state module and types. Station folders keep their specs and notes.
@@ -274,7 +274,18 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 - Ownership: [redacted for publication].
 - Evidence: configuration, workflow deployment and public availability are verified separately in the setup record. This decision does not establish multiplayer playtest success.
 
-## D-027 — Fix the two-level hackathon audit findings
+## D-027 — Room codes for connecting
+
+- Date: 2026-11-15
+- Status: accepted user direction; supersedes the signalling part of D-015 ("copy-paste connection codes, no third-party matchmaking"). The rest of D-015 stands.
+- Decision: the host opens a room under a short code (six characters from an unambiguous alphabet, shown as `K7Q-4XM`); players type the code or open a `#join=` link and connect. The public PeerJS broker (`0.peerjs.com`, library `peerjs` 1.5.5) brokers connection setup only. Game traffic stays peer-to-peer on a WebRTC data channel, falling back to PeerJS's public TURN relay when a direct path fails. The D-015 copy-paste invite and reply codes remain available as a fallback under the room code. A resumed game reopens under the same room code when it is free, so players rejoin with the code they have.
+- Source / approval: user, November 15 conversation, after the assistant compared PeerJS, Trystero, an own relay (Cloudflare Worker / PartyKit) and polished manual codes; the user chose PeerJS.
+- Rationale: manual signalling needed two long code swaps per player (six for a full table). One short, speakable code removes the reply step. PeerJS fits the host-star topology; the app stays a static GitHub Pages site.
+- Alternatives considered: Trystero (serverless signalling over public relays; mesh-first, slower relays), own WebSocket relay (most robust on strict networks; needs an account and a deploy), QR or link versions of the manual codes (still two-way).
+- Consequences and limitations: depends on free public PeerJS infrastructure with no uptime guarantee; check it before a demo, and use manual codes if it is down. The broker sees peer ids and connection metadata (IP candidates), not game messages. Peers relayed through TURN pass through PeerJS's relay (DTLS-encrypted). Room ids share the public server's namespace (prefix `nasa-mission-control-26-`). Strict-network behaviour is not yet verified.
+- Related: D-015, D-026, Q-012, [integration design](design/integration.md#network-d-015-d-027), [third-party notices](../THIRD_PARTY.md).
+
+## D-029 — Fix the two-level hackathon audit findings
 
 - Date: 2026-11-15.
 - Status: accepted user direction for implementation; observed checks and remaining release limitations are separate.
@@ -292,6 +303,8 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 - Correction: the user rejected the procedural planet treatment and decorative orbit lines. Removed them; the user subsequently supplied Earth-and-satellite artwork, now integrated in place of the atmospheric placeholder.
 - Source and observations: [title-screen record](notes/2026-11-15-title-screen.md), including the requested ChatGPT image prompt and browser/build verification limits.
 - Related: D-010, D-013–D-015, I-095.
+
+Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally while room-code work independently used D-027 upstream. Room codes retain D-027; audit fixes are D-029. The local title-screen entry retains D-028.
 
 ## Future decision template
 

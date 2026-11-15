@@ -1,0 +1,128 @@
+{
+  "package": "a",
+  "verdict": "accept-without",
+  "items": [
+    {
+      "item": "Try again for the whole table (confirm row, armed after a moment, attempt notice on every screen)",
+      "finding": "R1115d-r01-02, R1115m-r01-02, Rr001-14, R1115-r01-06",
+      "accept": true,
+      "needed": "After any ending (scrub, failed launch, success) all four players sat with nothing to press, budget and deadline unused, and searched for a retry for minutes before giving up (1115d-r01 chat n47-n54, 1115-r01 session ended at 16 of 30 min). They needed one obvious way to fly again that does not surprise the others.",
+      "sawRunning": "Weather mission, host at Planner and client at Procurement. Client double-clicked Try again: only the confirm row opened ('Start attempt 2 for all four stations? ... This score is kept.'), confirm button greyed until armed. Client confirmed: both screens went straight to a fresh day-2 game with a top banner 'Attempt 2 started: same mission and seats, fresh calendar and budget. Attempt 1 scored 18.' Later the client held the confirm row open while the host pressed Try again and confirmed: client's card vanished cleanly into attempt 3 with the same banner. Attempts 2 to 4 each recorded once (history rows #1-#4 matched).",
+      "added": ["Try again button", "confirm row with Cancel / 'Yes, start attempt N'", "footer line 'Anyone can press these. They change every station's screen.'", "9 s banner after a restart"],
+      "removed": ["lone Close button as the only control"],
+      "reason": "Answers the most repeated finding directly; safe against double clicks and against a second player acting at the same time; the three players who did not press it are told what happened and why their screen changed.",
+      "toBeAcceptable": ""
+    },
+    {
+      "item": "Back to mission choice",
+      "finding": "R1115-r01-06, Rr001-14",
+      "accept": false,
+      "needed": "A way to a different mission with the same players connected.",
+      "sawRunning": "Client confirmed 'Yes, back to mission choice' (confirm text: 'the host picks the next mission'). Host landed on its lobby screen with the client still connected, but the screen offers only 'Start mission' for the same Weather satellite; there is no mission choice. Client got its join screen. Start mission from there started the same mission again correctly.",
+      "added": ["Back to mission choice button", "confirm row"],
+      "removed": [],
+      "reason": "The label and the confirm text promise a mission choice that the screen does not offer; nothing explains on the lobby why everyone is there. A first-time player who pressed it to try Mars finds no way to pick it.",
+      "toBeAcceptable": "Either the host's lobby after a game offers the mission picker (and says which attempt they came from), or the button is removed until it does."
+    },
+    {
+      "item": "Shared result card at every station (replaces the shell card and the Planner's card)",
+      "finding": "R1115d-r01-02, R1115m-r01-09",
+      "accept": true,
+      "needed": "Every player, whatever station, sees the same truthful result and can find it again after closing it.",
+      "sawRunning": "Same card on Planner, Procurement, Communications (client switched seats after the flight) and, solo on Mars, on Science after switching; each station's own score row and 'Next time' line highlighted. The Planner's card appeared after its playback. Closing with X leaves a bottom-right chip 'Mission result: 1 / 2 goals · Try again' that reopens it. On Communications the station's own 'Mission launched' card (with a fresh briefing on top after the seat switch) still sits underneath, so Comms closes two result cards.",
+      "added": ["one shared card", "result chip on the Planner too"],
+      "removed": ["Planner ResultCard (launch mass, agency spend, part-failure count)", "old shell card's raw event list and stats line"],
+      "reason": "One consistent result instead of two different cards; nothing a player needed is lost (the playback log stays beside the map). The stacked Comms card is a pre-existing card, consistent with the flight I saw, but it doubles the end screen at that station.",
+      "toBeAcceptable": ""
+    },
+    {
+      "item": "Scrub explanation: 'Not on the pad on launch day' and goals 'Nothing flew.'",
+      "finding": "R1115m-r01-09, R1115m-r01-02",
+      "accept": true,
+      "needed": "After a scrub, know which parts were missing and why, without any flight narrated.",
+      "sawRunning": "Scrub 1 (nothing ordered): 'Never ordered: Booster engine, Booster tank, Upper stage engine and 6 more'. Scrub 2: 'Ordered, but no contract signed: Orbital camera, Antenna' plus 'Upper stage tank: arrives 16 Dec 2030, 21 d after launch day', 'Solar panels: arrives 9 Jan 2031, 44 d after launch day'. Mars 'Launch now' scrub: 'Never ordered: Booster engine x2 ...'. No flight events anywhere; Planner playback header 'Launch scrubbed · Never left the pad'.",
+      "added": ["red 'Not on the pad on launch day' box (1-4 lines)"],
+      "removed": ["'LAUNCHED · T+30 d' / flight narration on a scrub (playback header)"],
+      "reason": "True, specific, short; a skimming player can tell what went wrong at the pad.",
+      "toBeAcceptable": ""
+    },
+    {
+      "item": "Per-goal 'why' on a flown launch",
+      "finding": "R1115d-r01-03",
+      "accept": false,
+      "needed": "For each lost goal, the true reason for this flight.",
+      "sawRunning": "Flown launch (attempt 4, all parts delivered, 1 of 2 goals): 'Reach geostationary orbit ✓ 95 % chance at launch' and directly under it 'Send weather images ✗ The plan never reached it: The plan does not reach geostationary orbit: orbit at 200 km, needs 35,786 ± 2,000 km'. The spacecraft did reach GEO; the real gap was the instrument spec (camera/antenna lowered below what the goal needs). I did not get a part failure, so the reliability line ('It was 97 % reliable ... fails about 1 flight in N') was not seen.",
+      "added": ["why line per goal"],
+      "removed": ["'✗ goal: reason' lines at the end of the Planner log"],
+      "reason": "The one 'why' I saw on a real flight contradicts the line above it; a first-time player cannot learn from it.",
+      "toBeAcceptable": "Only state a reason that is consistent with the flight (e.g. name the instrument requirement the plan missed), never a 'did not reach orbit' reason next to an achieved orbit goal."
+    },
+    {
+      "item": "'Next time' list with station tags",
+      "finding": "R1115d-r01-02 (debrief per station)",
+      "accept": false,
+      "needed": "What each station could do differently.",
+      "sawRunning": "Scrub 1: PLAN 'Order the parts early (Rocket → Order parts) ...', SCI, COMMS tips - good. Scrub 2: 'Move the launch to after 9 Jan 2031' listed first although two parts had no contract at all, and PROC 'Sign a contract for every ordered part well before launch day' for camera and antenna that had no catalogue offer (beyond research; only a Call or Science research could supply them) - Procurement could not have signed. Flown: PLAN 'Fix the plan until the Goals card shows a chance for \"Send weather images\"' (does not say what to change).",
+      "added": ["up to 4 tagged lines"],
+      "removed": [],
+      "reason": "Helpful in the simple case, misleading in the beyond-research case, which is exactly where first-time players get stuck.",
+      "toBeAcceptable": "For a part with no catalogue offer, say so and point at Science research / a Call / the Planner lowering the spec; do not put 'move the launch' first when it cannot fix the scrub alone."
+    },
+    {
+      "item": "Mission score (x/1000) with six parts, per-station tags and attempt history",
+      "finding": "challenge scoring requirement",
+      "accept": false,
+      "needed": "A score a player can read: what raised or lowered it, which station, and that a scrub with money left does not score well.",
+      "sawRunning": "Scrub with nothing ordered 18; scrub 2 49 ('+31 vs attempt 1 · best yet' in green); scrub 3 63 ('+14 vs attempt 2 · best yet') with Deliveries 50/50 '4 of 4 rocket parts delivered by launch day' while the box above says five parts never got a contract; flown 1/2 goals 425. Every scrub shows 'Time left: launched 220 d before the deadline' though nothing launched. Money left correctly 0 on scrubs ('counts only with goals achieved').",
+      "added": ["score header with delta / 'best yet'", "six rows with bar, points/max, tag and note", "Attempts list (up to 4 rows with bars)"],
+      "removed": ["'Spent / deliveries / research successes' stats line"],
+      "reason": "Ordering is roughly right (scrubs 18-63, flight 425), but the card celebrates scrubs as 'best yet', gives Procurement full Deliveries on a scrub caused by missing contracts, and says 'launched' for a scrub. With six bars, ten tags and the attempt list it is also half of a crowded card.",
+      "toBeAcceptable": "Deliveries measured against all parts the rocket needs; no 'launched' wording on a scrub; no green 'best yet' for a scrub; consider fewer rows (the team rejected dense screens)."
+    },
+    {
+      "item": "Planner playback header and progress",
+      "finding": "R1115m-r01-09",
+      "accept": false,
+      "needed": "Playback that tells only what happened, with consistent dates.",
+      "sawRunning": "Scrub: 'Launch scrubbed · 30 Jun 2030 · Never left the pad', no play controls - good. Flown launch: header 'Flight ended · 26 Nov 2030 · T+0 d' while the log below lists in-flight events on 16 Dec 2030; the top bar still says 'LAUNCHED · T+30 d' and the map 'Planets shown on 26 Dec 2030'.",
+      "added": ["'Launch scrubbed / Never left the pad' header", "'Flight ended' header"],
+      "removed": ["play/speed/skip on a scrub", "'Show result' button (chip replaces it)"],
+      "reason": "The new flightEnd (endDay - 30) gives T+0 d when the last base event is on launch day, contradicting the log; it adds a new false label to the screen.",
+      "toBeAcceptable": "End date/T+ consistent with the last event shown in the log."
+    },
+    {
+      "item": "Rule: in-flight Comms events count only for a flight that reached its end; step success lines dropped when a part failed in that step",
+      "finding": "R1115d-r01-03, R1115m-r01-09",
+      "accept": true,
+      "needed": "No flight events after the flight ended (players called the old narration a bug and 'nothing I did mattered').",
+      "sawRunning": "Scrubs: no in-flight events on the card, the Planner log or anywhere. Flown launch with no part failure: 'In flight: 1 of 4 events went well', the Comms card listed the same four events, consistent. I did not get a cut-short flight, so the 'flight was cut short' note and the Comms 'Flight lost' label on a partially successful flight were not seen.",
+      "added": ["one 'In flight' line"],
+      "removed": ["in-flight events and their goal changes on any flight a part failure cut short"],
+      "reason": "Directly matches the evidence; no contradiction seen on screen in the cases I produced.",
+      "toBeAcceptable": ""
+    }
+  ],
+  "mustRemove": [
+    "Back to mission choice: remove, or make the host's lobby actually offer a mission choice",
+    "Per-goal why: repair the reason shown for a goal the plan never reached so it cannot contradict an achieved goal (seen: 'does not reach geostationary orbit' next to 'Reach geostationary orbit ✓')",
+    "Planner playback 'Flight ended · <launch day> · T+0 d' on a flown launch: repair so the date/T+ match the log",
+    "Score: 'launched N d before the deadline' on a scrub, Deliveries 50/50 on a scrub with uncontracted parts, green 'best yet' on scrubs: repair (or take the per-part breakdown out)",
+    "Next time: 'Sign a contract for every ordered part' for parts with no catalogue offer, and 'Move the launch' listed first when it cannot fix the scrub: repair"
+  ],
+  "broken": [
+    "Back to mission choice leads to a lobby without any mission choice: finish a mission, press Back to mission choice, confirm; host sees only 'Start mission' for the same mission.",
+    "Flown launch, Planner: playback header reads 'Flight ended 26 Nov 2030 · T+0 d' while the log shows events dated 16 Dec 2030 (weather mission, launch moved to 26 Nov, all parts delivered, no part failure).",
+    "Scrub with 4 parts signed and 5 never contracted: Deliveries row shows 50/50 '4 of 4 rocket parts delivered by launch day' and the header '+14 vs attempt 2 · best yet' (attempt 3 in session judge-a).",
+    "Every scrub: Time left note 'launched N d before the deadline'.",
+    "Flown 1/2 result: 'Send weather images - The plan never reached it: The plan does not reach geostationary orbit ...' directly below an achieved 'Reach geostationary orbit'."
+  ],
+  "notChecked": [
+    "A flown launch with a part failure (failed launch, lost stage, lost instrument): the reliability 'why', 'Lost in the same failure', 'flight was cut short' note and the Comms 'Flight lost' label on a flight that still achieved a goal",
+    "A full success (all goals)",
+    "A flown Mars mission; Mars checked only as a 'Launch now' scrub, solo, with a switch to Science",
+    "Four players at once (only 2)",
+    "Starting a different mission after Back to mission choice (no picker offered)",
+    "A restart racing an in-flight action from another client (only a held confirm row was tested)",
+    "Rescue in flight ('saved in flight')"
+  ]
+}

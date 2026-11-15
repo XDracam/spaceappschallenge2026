@@ -3,7 +3,7 @@
 // (source 'trigger', on trust). Each fires once, the first time its `when` holds.
 import type { EventDef } from '../../model/types';
 import {
-  FLAG_RTG_STORY, allOf, anyOf, delay, hasFlag, odds, option, pace, price, setFlag, trust, trustBelow,
+  FLAG_LAUNCH_PROMISE, FLAG_PROMISE_BROKEN, FLAG_RTG_STORY, allOf, anyOf, delay, hasFlag, lacksFlag, odds, option, pace, price, setFlag, trust, trustBelow,
 } from '../helpers';
 
 export const PLAYER_EVENTS: EventDef[] = [
@@ -37,9 +37,9 @@ export const PLAYER_EVENTS: EventDef[] = [
     title: 'About that late delivery',
     message: "About that late delivery: the truck is stuck behind another truck carrying another satellite. We're doing our best. Please don't tell the weather service.",
     options: [
-      option('bonus', 'Pay an expediting bonus (next delivery arrives sooner).',
+      option('bonus', 'Pay an expediting bonus: the late part arrives a month sooner.',
         [trust('industry', 5), delay(-1, 'next')],
-        "Money, it turns out, clears motorways. Procurement's next delivery moves up a month.", 5),
+        'Money, it turns out, clears motorways. The late part moves up a month.', 5),
       option('blame', 'Publicly blame Feldwerk for the slip.',
         [trust('public', 5), trust('industry', -10)],
         'The public appreciates the candour. Feld appreciates nothing about it.'),
@@ -49,7 +49,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     ],
     ignored: {
       effects: [trust('industry', -5), delay(1, 'next')],
-      outcome: 'Nobody pushes, so nothing moves. The next delivery slips another month.',
+      outcome: 'Nobody pushes, so Feldwerk pulls its crews onto the late part and lets your next delivery slip a month instead.',
     },
     tags: ['industry', 'bad'],
   },
@@ -83,7 +83,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     title: 'The cheapest bidder, again',
     message: "Your cheapest bidder built a weather satellite for another country. It went quiet after six months, during a heatwave. Should I be worried?",
     options: [
-      option('audit', 'Order an independent audit (next delivery slips a month).',
+      option('audit', 'Order an independent audit (a delivery slips a month).',
         [trust('public', 5), trust('industry', -5), delay(1, 'next')],
         'The audit reassures the public and strains supplier relations; the next delivery slips a month. Hardware reliability is unchanged. Ask Science to test the part to reduce its failure risk.', 5),
       option('test-clauses', 'Have procurement add test clauses (prices rise).',
@@ -147,7 +147,7 @@ export const PLAYER_EVENTS: EventDef[] = [
   },
   {
     id: 'wx-launch-moved',
-    source: 'player', when: hasFlag('plan.launchMoved'), deadlineDays: 21,
+    source: 'player', when: allOf(hasFlag('plan.launchMoved'), lacksFlag(FLAG_LAUNCH_PROMISE)), deadlineDays: 21,
     characterId: 'lindqvist',
     title: 'You moved the launch',
     message: 'My forecasters were counting the days to your launch, and now they are counting differently. Storm season does not move. What changed?',
@@ -165,6 +165,27 @@ export const PLAYER_EVENTS: EventDef[] = [
     ignored: {
       effects: [trust('government', -10)],
       outcome: 'Lindqvist learns the new date from the news. She is not a fan of surprises, professionally.',
+    },
+    tags: ['government', 'bad'],
+  },
+  {
+    // Follow-up of the 'promise' answer to "Before storm season, please" (eventsTimeline.ts).
+    id: 'wx-promise-broken',
+    source: 'player', when: hasFlag(FLAG_PROMISE_BROKEN), deadlineDays: 21,
+    characterId: 'lindqvist',
+    title: 'You promised me a date',
+    message: 'You promised me a launch date, and I repeated it to every coastal mayor. Now the launch is later. What do I tell them?',
+    options: [
+      option('mayor-briefings', 'Fund weekly storm briefings for the coastal mayors until launch.',
+        [trust('government', -5), trust('public', 5)],
+        'The mayors get a forecaster on the phone every Monday. Lindqvist stays cool, if not warm.', 6),
+      option('apologise', 'Apologise in person and explain the new date.',
+        [trust('government', -15), trust('public', 5)],
+        'Lindqvist accepts the apology and keeps the receipt. The mayors hear it from her, unvarnished.'),
+    ],
+    ignored: {
+      effects: [trust('government', -20)],
+      outcome: 'Lindqvist tells the mayors the agency broke its word. Duarte hears it before you do.',
     },
     tags: ['government', 'bad'],
   },

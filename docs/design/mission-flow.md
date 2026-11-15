@@ -2,7 +2,7 @@
 
 **Status:** brainstorming. The relationship between preparation, real-time play, in-mission events, and the earlier one-shot simulation idea has not been decided.
 
-## Current two-level prototype under D-027
+## Current two-level prototype under D-029
 
 The implementation currently prepares in real time, launches automatically at the planned date, and shows one seeded goal-by-goal playthrough. This observed implementation does not settle the broader campaign brainstorm below. Positive Comms rescue applies only to physically achievable goals with a fallible reliability factor; it cannot supply a missing route, instrument, data capacity or missed deadline. `stayDays` remains the hazard-assessment horizon, not mandatory elapsed science collection.
 

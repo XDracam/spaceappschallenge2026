@@ -1,6 +1,6 @@
 import type { NewsItem } from '../model/types';
 import { useGame } from '../../../core/store';
-import { useStartISO } from './store';
+import { useLaunched, useStartISO } from './store';
 import { STATION_LABEL } from './common';
 import { formatDay } from './format';
 
@@ -9,8 +9,9 @@ export function NewsFeed() {
   const news = useGame((s) => s.events.news);
   const startISO = useStartISO();
   const items = [...news].sort((a, b) => b.day - a.day);
+  const ended = useLaunched(); // the shell's result chip sits at the bottom right after the launch
   return (
-    <section class="news glass" tabIndex={0}>
+    <section class={`news glass${ended ? ' ended' : ''}`} tabIndex={0}>
       <span class="label news-label">News</span>
       <div class="news-strip">
         {items.length === 0 && <span class="muted">No news yet. Outcomes that affect the team appear here for every station.</span>}

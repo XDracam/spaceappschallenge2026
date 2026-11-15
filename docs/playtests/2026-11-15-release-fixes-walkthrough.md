@@ -3,7 +3,7 @@
 - Status: completed implementation walkthrough; not a human multiplayer playtest.
 - Facilitator: Codex parent, with five Sol implementation packets and one independent Sol source reviewer.
 - Participants / roles: one agent operating four browser tabs, host Planning plus Procurement, Science and Communications peers. No human participant observations.
-- Prototype: current working tree under `game/`, following [audit](../reviews/2026-11-15-two-level-release-audit.md) and [approval](../notes/2026-11-15-release-fixes-approval.md), D-027 / I-093.
+- Prototype: current working tree under `game/`, following [audit](../reviews/2026-11-15-two-level-release-audit.md) and [approval](../notes/2026-11-15-release-fixes-approval.md), D-029 / I-093.
 - Scenario: both missions' route controls and station guidance, controlled Weather scrub, retry, connected mission change to Mars, host reload and one peer rejoin; numerical evaluation of complete feasible routes.
 - Question: do the identified defects have concrete repairs, and do the shared UI/recovery flows work together?
 
@@ -72,4 +72,8 @@ The Mars opening now has a relevant Science decision and a feasible schedule. Re
 
 - **Still required for release qualification:** human four-player completion of both missions, recording confusion and idle intervals; actual venue-network connection or prepared fallback; successful end-to-end UI procurement/research/flight run rather than only evaluated reference states; controlled Full HD check.
 - No new levels, budget cuts, TURN service or cosmetic redesign were added by this fix packet. STUN-only connectivity and background host-clock throttling remain documented prototype limitations.
-- Accepted implementation scope and Mars tuning: D-027, [user approval](../notes/2026-11-15-release-fixes-approval.md).
+- Accepted implementation scope and Mars tuning: D-029, [user approval](../notes/2026-11-15-release-fixes-approval.md).
+
+## Subsequent integration before publication
+
+On the user's request to commit and push all work, newer remote commits were merged. They add PeerJS room codes with manual signalling retained as fallback, Communications consequence previews and actual project changes, and mission-specific Science availability. Conflicts were resolved by the corresponding Sol owners, retaining the audit fixes and the incoming behavior. The earlier four-browser observations above describe the pre-merge manual-code build; they are not a new room-code or combined-balance playtest. The original locally assigned audit-fix decision D-027 was aligned to D-029 because the upstream room-code decision already used D-027; title-screen D-028 is retained.

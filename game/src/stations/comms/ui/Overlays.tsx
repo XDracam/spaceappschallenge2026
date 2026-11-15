@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
 import { commsInFlightResults } from '../logic';
 import { uiStore, useComms, useFlightLost, useScrubbed } from './store';
-import { SH, STAKEHOLDER_ORDER } from './common';
+import { SH, STAKEHOLDER_ORDER, signedPct } from './common';
 
 const SEEN_KEY = 'comms.briefing.seen';
 
@@ -30,9 +30,9 @@ export function Briefing() {
           Keep <b style={{ color: SH.government.color }}>government</b>, <b style={{ color: SH.industry.color }}>industry</b>,{' '}
           the <b style={{ color: SH.public.color }}>public</b> and <b style={{ color: SH.partners.color }}>partners</b> on side.
         </p>
-        <p>Answer messages before their deadline — ignored ones resolve on their own, usually badly.</p>
-        <p>Run 2–3 projects to build trust, raise money or negotiate parts and research from partners.</p>
-        <p>Some choices affect your teammates — they're marked <span class="tag-int">Affects procurement</span>.</p>
+        <p>Answer messages before their deadline — ignored ones resolve on their own, usually badly. Each answer shows what it will change, for which teammate, and until when.</p>
+        <p>Run two projects at a time: build trust, raise money, win parts, research and test help for your teammates.</p>
+        <p>Trust at launch decides the in-flight events that can save or lose a goal (right panel), and counts in the score.</p>
         <div class="briefing-foot">
           <button class="pill primary" onClick={close} autoFocus>Start</button>
         </div>
@@ -68,7 +68,7 @@ export function LaunchedCard() {
             <li key={r.eventId} class={r.good ? 'ok' : 'err'}>
               <span class="outcome-icon">{r.good ? '✓' : '!'}</span>
               <div class="outcome-text">
-                <b>{r.title}</b>
+                <b>{r.title} <span class={`num ${r.good ? 'ok-text' : 'warn-text'}`}>{signedPct(r.goalChanceDelta)}</span></b>
                 <span class="muted small">{r.text}</span>
               </div>
             </li>

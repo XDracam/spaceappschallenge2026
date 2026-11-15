@@ -29,9 +29,12 @@ export const commsActions = defineActions('comms', {
 
 onTick('comms', (s, ctx, _fromDay, toDay) => {
   if (s.comms.launched) return;
-  // Launch: the planner's handler (earlier in the same tick) sets phase 'launched' on
-  // launch day. Resolve in-flight events once — also when only the day says so.
-  if (s.meta.phase !== 'planning' || toDay >= s.planner.plan.launchDay) {
+  // Launch: the planner's handler (earlier in the same tick) sets phase 'launched'.
+  // Comms keeps working until the phase says so, also past the planned day (a held launch).
+  // "Launch now" (planner/launchNow) launches without a tick: then this never runs, and the
+  // in-flight events are resolved from the state, which no longer changes after the launch
+  // (commsInFlightResults) — the same outcome either way.
+  if (s.meta.phase !== 'planning') {
     resolveLaunch(s);
     return;
   }

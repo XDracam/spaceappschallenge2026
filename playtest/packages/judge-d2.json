@@ -1,0 +1,152 @@
+{
+  "package": "d2",
+  "verdict": "accept-without",
+  "items": [
+    {
+      "item": "Expediting bonus speeds up the late delivery",
+      "finding": "R1115m-r01-10",
+      "accept": true,
+      "needed": "The 'pay an expediting bonus' answer to the late-delivery message must move the part that is late, and say which part, so Comms and Procurement are not misled.",
+      "sawRunning": "Weather, two contracts: Taiga KL-2000 (late, 6 Dec, needed 19 Nov) and Flask PT-1.6 (6 Aug). The option read 'PROCUREMENT Taiga KL-2000 arrives 5 Nov 2030 instead of 6 Dec 2030 (needed 19 Nov 2030)'. After paying, Procurement's Contracts timeline showed Taiga arriving 5 Nov (13.4 d early) and Flask unchanged at 6 Aug; the news line named the part and both dates.",
+      "added": ["consequence chip naming the part, old and new date and need date"],
+      "removed": ["'next delivery arrives sooner' wording"],
+      "reason": "The players' exact problem cannot recur: the right part moves and the screen says so beforehand. The 'no answer' line truthfully shows that ignoring slips a different, unrelated delivery (Flask from Helix), which reads oddly against the text 'Feldwerk's queue sets the pace', but it is stated, not hidden."
+    },
+    {
+      "item": "Finished one-off projects not offered again",
+      "finding": "R1115m-r01-13",
+      "accept": true,
+      "needed": "A licence or deal already granted must not be offered (and paid for) again.",
+      "sawRunning": "Started 'Northgate test technicians' (negotiation); after it finished the picker no longer listed it, while galas and campaigns stayed available.",
+      "added": [],
+      "removed": ["finished one-off projects from the picker"],
+      "reason": "Fixes the bug directly with no new UI. Side effect: Mars 'Capitol lobbying push' (kind lobbying) is now one-off too; harmless."
+    },
+    {
+      "item": "News line clear of the station badge and result chip",
+      "finding": "R1115d-r01-13",
+      "accept": true,
+      "needed": "The start (and end) of the Comms ticker readable.",
+      "sawRunning": "The NEWS label and first item start right of the 'Communications' pill; after the scrubbed launch the ticker ends left of the 'Mission result: launch scrubbed' chip.",
+      "added": [],
+      "removed": [],
+      "reason": "Plain fix, nothing hidden any more."
+    },
+    {
+      "item": "'Affects planner' options rewritten into effects that happen, launch promise with follow-up",
+      "finding": "R1115m-r01-08",
+      "accept": true,
+      "needed": "No option should promise a change at another station that never happens; a cross-station option should be something the team can actually see and decide.",
+      "sawRunning": "Weather: 'Promise launch on the announced date' showed 'Binds the launch to 30 Jun 2030: if the Planner launches later, a follow-up costs Government −5 to −20'. I promised, moved the launch to 5 Nov at the Planner, and within seconds 'You promised me a date' (Lindqvist) arrived with two options (8 M + Government −5 + Partners +5, or Government −15 / Public +5) and 'no answer: Government −20'; the generic 'You moved the launch' did not also fire. 'Have Science re-check the radiation margins' showed 'SCIENCE research and part tests 15 % slower until 12 Jul 2030 (nothing running now)'. The Planner's launch popover says nothing about the promise.",
+      "added": ["two follow-up messages (weather Lindqvist, Mars Duarte)", "flag-based launch promise"],
+      "removed": ["'planner finds the mass / adjusts the antenna plan / keeps the date / gains a test facility' promises and their dead constraint/service effects"],
+      "reason": "Every rewritten option now states something that really happens. The Planner still sees no sign of the promise, but the cost is borne by Comms and the outcome text tells Comms to tell the Planner, so nothing is misleading. Minor: the new 'Rent Meridian's storm imagery until the launch' option repeats an option of Lindqvist's 'First storm, no new satellite' message almost word for word."
+    },
+    {
+      "item": "Messages that change a teammate's work stay open 45 days, real time shown",
+      "finding": "R1115-r01-03",
+      "accept": true,
+      "needed": "Time to ask a teammate and answer before the message expires, and a deadline in real time, plus knowing what not answering costs.",
+      "sawRunning": "Budget review arrived 12 Mar with 'by 26 Apr' (45 d, was 25) and 'NO ANSWER BY 26 APR 2030: Shared budget −25 M, Government −5' under the options. Deadlines show '· 0:36 real time'. Messages with no teammate effect keep short deadlines (storm message 20 d expired in ~10 s at 2x while I clicked).",
+      "added": ["'No answer by <date>' line with its chips", "real-time remainder next to the deadline"],
+      "removed": [],
+      "reason": "The 25 M loss in the evidence came from a 49 s deadline and an invisible cost of ignoring; both are gone. More messages are open at once (I saw three), but none forces a decision less. The promise message itself (a planner matter) is not extended because its effect is a flag; minor."
+    },
+    {
+      "item": "Exact consequences on options and projects instead of ↑/↓ hints and AFFECTS tags",
+      "finding": "R1115m-r01-08, R1115d-r01-07",
+      "accept": true,
+      "needed": "Hints that match what happens; players liked the hint chips for showing who reacts and which teammate to ask.",
+      "sawRunning": "Each option has one row of chips in the same place and size as the old hints: 'Government +10', 'Costs 8 M of the shared budget', 'PROCUREMENT new orders +10 % price until 6 Jul 2030'. I took the home-suppliers pledge and Procurement's Taiga price went from 29.1 M (+15 % already active) to 31.6 M, i.e. +10 % as stated. Chips update live: the rush-fee option read 'no delivery under contract yet: nothing moves' before any order and 'all 2 deliveries 1 mo earlier' after two. Project picker rows 'Now / When done' are readable; the longest chip (partner engine offer) wraps to four lines.",
+      "added": ["consequence chips with numbers and dates", "station label inside the chip"],
+      "removed": ["↑/↓ pills", "'Hints show who is likely to react…' note", "AFFECTS tags"],
+      "reason": "Same visual weight as before; trust arrows and '+5/+10' carry nearly the same information, so the number costs nothing in legibility, and the cross-station lines are exactly where the old hints lied. A truthful-but-vaguer middle form would not have been clearly better: the misleading cases were all cross-station, where a date and a part name are what the teammate needs to answer. The station README (line 44) still records the old direction and should be updated by its owner."
+    },
+    {
+      "item": "In-flight panel 'In flight · decided at launch' with score",
+      "finding": "R1115d-r01-01 (p4 problem 3)",
+      "accept": true,
+      "needed": "A Comms player wanted to see how relationships bear on mission success, and not find out only after launch.",
+      "sawRunning": "Right column under the two project slots: four weather rows (five Mars) with ✓/✗, the condition with today's value ('Government above 60 (now 40)'), a ±2–3 % figure, a net line ('Net now −3 %: each achieved goal has a 3 % risk of being lost in flight') and 'score 23/50' (meaning only in a tooltip). When Meridian's ground station finished, 'First image downlink' flipped from ✗ −2 % to ✓ +3 % and the net to +2 %. Screen stayed calm at 1280x720; the panel fills space that held the slot-3 line and emptiness.",
+      "added": ["right-column panel (about 12 short lines)", "'score n/50' label"],
+      "removed": ["'Slot 3 opens at strong trust' line"],
+      "reason": "Gives Comms concrete targets that touch the goals and makes the launch card no surprise. 'score 23/50' is a new term a first-timer may ask about; not severe."
+    },
+    {
+      "item": "Trust line under each meter",
+      "finding": "Rr001-12",
+      "accept": true,
+      "needed": "Know what trust does without finding a hover tooltip.",
+      "sawRunning": "One small line under each bar: 'Above 70: more funding offers', 'Above 70: orders −10 % price and time', 'Above 70: event budget cuts halved', 'Above 70: more partner deals'; at Government 20 it changed to a red 'Audits and budget cuts likelier' line.",
+      "added": ["four short lines"],
+      "removed": ["hover tooltip"],
+      "reason": "Short, always visible, answers the player's question."
+    },
+    {
+      "item": "New-message banner and unread dot",
+      "finding": "Rr001-12",
+      "accept": true,
+      "needed": "Notice a new message before it expires.",
+      "sawRunning": "With another message open, a glowing 'NEW MESSAGE · Dr. Rosa Lindqvist · Before storm season, please · answer by 7 Mar 2030' pill appeared top centre for a few seconds; inbox rows carry a dot until opened. Both times I clicked the banner it had already gone (about 5 s real). Nothing appears when the player is at another station (solo).",
+      "added": ["transient header banner", "unread dot"],
+      "removed": [],
+      "reason": "Clearly stronger cue than a count badge for a Comms player who sits at Comms; the banner is short-lived but the dot persists."
+    },
+    {
+      "item": "Weather licences, coastal lobbying removed",
+      "finding": "R1115d-r01-12",
+      "accept": false,
+      "needed": "No controls that a weather mission never needs (one licence was bought for nothing).",
+      "sawRunning": "Weather picker no longer lists the plutonium, laser, ion licences, the nuclear hearing or coastal lobbying (Mars still does). But Science's tree in the weather mission still shows a red 'Radioisotope heat source · Blocked by Comms' tile whose inspector says 'Nuclear material needs government approval. Ask Comms to arrange it.' (same for the optical terminal) — Comms now has no way to arrange it.",
+      "added": [],
+      "removed": ["four licence/hearing projects and coastal caucus lobbying in the weather mission"],
+      "reason": "Removing them is the right direction, but it leaves a red tile at Science that sends a new player to Comms for something that no longer exists: a dead end created by this change.",
+      "toBeAcceptable": "Ship it together with Science hiding the gated techs in the weather mission, or labelling them 'not available in this mission' instead of 'Ask Comms to arrange it' (science/model/tree.ts blockInfo), or keep the licences until that is done."
+    },
+    {
+      "item": "Third project slot removed",
+      "finding": "R1115d-r01-12",
+      "accept": true,
+      "needed": "Fewer controls nobody uses.",
+      "sawRunning": "'PROJECTS · 0 OF 2', two start buttons, no locked-slot line.",
+      "added": [],
+      "removed": ["slot 3 and its unlock line"],
+      "reason": "Never used in four rounds; simpler. The README's '2–3 projects' wording is now stale."
+    },
+    {
+      "item": "New project 'Northgate test technicians'",
+      "finding": "R1115d-r01-01 (p4 problem 3)",
+      "accept": true,
+      "needed": "A Comms lever on reliability.",
+      "sawRunning": "3 M, 1 mo, Partners 50: chip 'SCIENCE research and part tests 30 % faster until 6 Jul 2030'. It finished on schedule, news line named the +30 %. Science's tech inspector kept showing '2 months' for a not-yet-started tech, so the bonus is not visible at Science before research starts; the code applies it to running research and tests.",
+      "added": ["one project card"],
+      "removed": [],
+      "reason": "A real, modest lever into part tests (the only reliability lever) at a price; it adds a choice rather than removing one."
+    },
+    {
+      "item": "Launch chip SCRUBBED / FLIGHT LOST and Comms state after launch",
+      "finding": "judge leftover",
+      "accept": true,
+      "needed": "The Comms header must not say LAUNCHED after a scrub.",
+      "sawRunning": "After the scrub the header chip read 'LAUNCH SCRUBBED 19 Nov 2030', Comms card 'The rocket never left the pad' with final trust values.",
+      "added": [],
+      "removed": [],
+      "reason": "Correct and consistent with the shell result."
+    }
+  ],
+  "mustRemove": [
+    "Weather licence removal: either fix Science's 'Blocked by Comms … Ask Comms to arrange it' for rtg-heat-source and optical-terminal in the weather mission (hide or 'not available in this mission'), or keep the weather licences until that is done."
+  ],
+  "broken": [
+    "Dangling text (not a crash): weather mission, Science station, click 'Radioisotope heat source' (or the optical terminal) — 'Ask Comms to arrange it', while Comms no longer offers the licence.",
+    "Documentation drift: communications/README.md line 44 (hints, not numbers) and the '2–3 projects/slots' wording now contradict the build; not player-facing."
+  ],
+  "notChecked": [
+    "A flown launch (all parts contracted) and whether the Comms in-flight outcomes match the shell's result card",
+    "'Launch now' path for in-flight resolution",
+    "Mars follow-up 'My front seat moved' (only the Mars picker and first message were seen)",
+    "Four players / client browsers; normal speed (all at 2 game months per minute)",
+    "UI reset on a new attempt",
+    "Banner over an open project picker"
+  ]
+}

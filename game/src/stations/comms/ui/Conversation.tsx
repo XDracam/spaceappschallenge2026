@@ -3,9 +3,9 @@ import { useGame } from '../../../core/store';
 import { actions, useBudgetLeft, useComms, useLaunched, useStartISO, useToday, useUi } from './store';
 import { optionEffects } from '../state/world';
 import {
-  Avatar, ChangeList, HintPills, InternalTag, SH, dueClass, eventById, eventCharacter, offerTerms, openByUrgency,
+  Avatar, ChangeList, SH, changeLines, dueClass, eventById, eventCharacter, openByUrgency, previewLines,
 } from './common';
-import { formatDay, formatDuration, formatMoney } from './format';
+import { formatDay, formatDuration, formatMoney, formatRealTime } from './format';
 import { selectEvent } from './Inbox';
 
 /** Centre panel: the selected conversation, or a calm empty state. */
@@ -22,7 +22,7 @@ export function Conversation() {
           <div class="calm-ring"><span /></div>
           <div class="display calm-title">All quiet</div>
           <p class="muted">No one is waiting for an answer. New messages arrive on the agency calendar, about one a month.</p>
-          <p class="muted small">Meanwhile, start a project on the right to build trust before you need it.</p>
+          <p class="muted small">Meanwhile, start a project on the right: trust at launch decides the in-flight events.</p>
         </div>
       </section>
     );
@@ -48,21 +48,25 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
   const startISO = useStartISO();
   const launched = useLaunched();
   const inbox = useComms((s) => s.inbox);
-  const contracts = useGame((s) => s.market.contracts);
-  const design = useGame((s) => s.planner.rocket);
+  // The previews read contracts, research, trust and the calendar: re-render with the shared state.
+  const state = useGame((s) => s);
+  const running = state.clock.running;
   const lastOutcome = useUi((u) => u.lastOutcome);
   const isOpen = inst.status === 'open';
   const left = Math.max(0, Math.ceil(inst.deadlineDay - today));
+  const realSec = Math.max(0, (inst.deadlineDay - state.clock.day) / Math.max(1e-9, state.clock.daysPerSecond));
   const chosen = def.options.find((o) => o.id === inst.chosenOptionId);
   const next = openByUrgency(inbox).find((i) => i.instanceId !== inst.instanceId);
 
   let outcomeText = '';
-  let outcomeEffects = chosen ? optionEffects(chosen) : [];
+  let outcomeLines = chosen ? changeLines(optionEffects(chosen)) : [];
   if (inst.status === 'answered') {
-    outcomeText = lastOutcome?.instanceId === inst.instanceId ? lastOutcome.text : chosen?.outcome ?? '';
+    const mine = lastOutcome?.instanceId === inst.instanceId && lastOutcome.optionId === inst.chosenOptionId ? lastOutcome : null;
+    outcomeText = mine?.text ?? chosen?.outcome ?? '';
+    if (mine) outcomeLines = mine.lines;
   } else if (inst.status === 'expired') {
     outcomeText = def.ignored.outcome;
-    outcomeEffects = def.ignored.effects;
+    outcomeLines = changeLines(def.ignored.effects);
   }
 
   return (
@@ -78,7 +82,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
           <div class="who-due">
             {isOpen ? (
               <><span class="label">Answer within</span> <b class={`num ${dueClass(left) || 'calm'}`}>{left} day{left === 1 ? '' : 's'}</b>
-                <span class="muted tiny"> · by {formatDay(inst.deadlineDay, startISO)}</span></>
+                <span class="muted tiny num"> · by {formatDay(inst.deadlineDay, startISO)}{running ? ` · ${formatRealTime(realSec)} real time` : ''}</span></>
             ) : (
               <span class={`status-pill ${inst.status}`}>{inst.status === 'answered' ? 'answered' : 'no answer in time'}</span>
             )}
@@ -98,8 +102,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
           <div class={`outcome ${inst.status}`}>
             <div class="label">{inst.status === 'answered' ? 'Outcome' : 'Ignored — it resolved on its own'}</div>
             {outcomeText && <p class="outcome-text">{outcomeText}</p>}
-            <div class="label tiny-gap">What changed</div>
-            <ChangeList effects={outcomeEffects} />
+            <ChangeList lines={outcomeLines} />
             {next && (
               <button class="pill primary next-btn" onClick={() => selectEvent(next.instanceId)}>
                 Next message · {formatDuration(Math.max(0, next.deadlineDay - today))} left →
@@ -114,7 +117,6 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
             const disabled = !isOpen || launched || tooExpensive;
             const isChosen = o.id === inst.chosenOptionId;
             if (!isOpen && !isChosen) return null;
-            const terms = offerTerms(o.effects, contracts, design);
             return (
               <button key={o.id} class={`opt${isChosen ? ' chosen' : ''}`} disabled={disabled && !isChosen}
                 title={tooExpensive && isOpen ? `Needs ${formatMoney(o.costM!)}; only ${formatMoney(budget)} left` : undefined}
@@ -122,17 +124,20 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
                   if (!disabled) actions.answer(inst.instanceId, o.id);
                 }}>
                 <span class="opt-key">{isChosen ? '✓' : idx + 1}</span>
-                <span class="opt-text">{o.text}{terms && <span class="muted small opt-terms">{terms}</span>}</span>
-                <span class="opt-meta">
-                  <HintPills hints={o.hints} />
-                  <InternalTag effects={o.effects} costM={o.costM} />
-                  {!!o.costM && <span class={`opt-cost num${tooExpensive ? ' err-text' : ''}`}>costs {formatMoney(o.costM)}</span>}
+                <span class="opt-body">
+                  <span class="opt-text">{o.text}</span>
+                  {isOpen && <ChangeList lines={previewLines(state, o.effects, { costM: o.costM, shield: !o.costM })} empty="Changes nothing measurable." />}
                 </span>
               </button>
             );
           })}
         </div>
-        {isOpen && <div class="muted tiny opts-note">Hints show who is likely to react, not by how much.</div>}
+        {isOpen && (
+          <div class="ignore-line">
+            <span class="label">No answer by {formatDay(inst.deadlineDay, startISO)}</span>
+            <ChangeList lines={previewLines(state, def.ignored.effects, { shield: true })} empty="Nothing changes." />
+          </div>
+        )}
       </div>
     </div>
   );

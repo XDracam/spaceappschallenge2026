@@ -6,7 +6,7 @@ import { openByUrgency } from './common';
 import { Conversation } from './Conversation';
 import { DevDrawer } from './DevDrawer';
 import { Header } from './Header';
-import { Inbox } from './Inbox';
+import { ArrivalToast, Inbox } from './Inbox';
 import { NewsFeed } from './NewsFeed';
 import { Briefing, LaunchedCard } from './Overlays';
 import { ProjectPicker, Projects } from './Projects';
@@ -28,6 +28,7 @@ export function App() {
   return (
     <div class="screen">
       <Header />
+      <ArrivalToast />
       <TrustBar />
       <Inbox />
       <Conversation />

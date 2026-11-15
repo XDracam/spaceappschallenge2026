@@ -224,7 +224,7 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 
 - Date: 2026-11-15.
 - Source: user requested expert subagent audits of the two levels for quality, playability, balance and the shortest path to hackathon release.
-- Status: audit completed; user subsequently requested all findings fixed under D-027, using Sol subagents. See [approval](notes/2026-11-15-release-fixes-approval.md) and [implementation observations](playtests/2026-11-15-release-fixes-walkthrough.md).
+- Status: audit completed; user subsequently requested all findings fixed under D-029, using Sol subagents. See [approval](notes/2026-11-15-release-fixes-approval.md) and [implementation observations](playtests/2026-11-15-release-fixes-walkthrough.md).
 - Evidence: [five-packet release audit](reviews/2026-11-15-two-level-release-audit.md), including current evaluator/quote calculations, build verification and limited browser opening observations. No full multiplayer completion or enjoyment claim.
 - Proposals: fix impossible-goal rescue and prerequisite locks; support retry/level change; give Mars immediate mission-directed Science work; show precise fuel shortfalls; align event prose with effects; add concise role guidance and focused accessibility/recovery safeguards.
 - Balance disposition: retain generous budgets and introductory Weather difficulty for now; defer broad economy changes, new levels and cosmetic redesign. Mars objective changes require re-evaluating the concrete feasible route. These are recommendations, not accepted mechanics.

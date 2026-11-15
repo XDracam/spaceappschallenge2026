@@ -24,7 +24,7 @@ Files: `data/techs.ts` (authored placeholder content, D-005), `model/tree.ts` (l
 Not modelled: mass/cost reductions (Q-037). Removed from main's version: knowledge graph, bench, recipes, field findings.
 
 Missions: the tree uses the same research keys as both missions (Mars, weather satellite), so it works unchanged.
-Under D-027, Mars starts with camera performance limit 3 while the design needs 4: Larger sensor arrays is a useful
+Under D-029, Mars starts with camera performance limit 3 while the design needs 4: Larger sensor arrays is a useful
 opening project ($9M, four months, 90% success). Weather keeps its faster sensor and downlink research needs.
 Prerequisite identities still matter when another route already covers a tech's grants: such a tech remains researchable
 when required by an unresearched dependent. The UI explains that it satisfies prerequisites without raising the limit again.

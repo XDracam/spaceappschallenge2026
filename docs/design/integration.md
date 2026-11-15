@@ -68,11 +68,16 @@ Calendar: only the host runs the clock (`core/clock.ts`), dispatching `core/tick
 
 D-012 + D-015: four stations, one per player. Players claim a seat in the lobby; anyone may hop to an unclaimed station (`core/claimSeat` frees their previous seat). The host's browser is a station too.
 
-## Network (D-015)
+## Network (D-015, D-027)
 
-WebRTC data channels, one per joining player, signalled by copy-paste codes: the host creates an invite code per player, the player pastes it and returns a reply code. Public STUN server `stun:stun.l.google.com:19302` (connection setup only; strict networks without a TURN relay may fail). If a local save succeeded, the host can resume after closing/reloading and players reconnect with new codes.
+WebRTC data channels, one per joining player, host in the middle. Two ways in, both feeding one `HostTransport` (`combineHosts` in `net/peerjs.ts`):
 
-Under D-027, result recovery remains inside the hosted session: host-only Retry and Choose mission dispatch the existing reset actions without replacing transports or seats. Host result recording is idempotent, and reset notifications clear planner popups, selections and playback. Non-planner result dismissal is keyed by attempt. Four connected browser stations were used to verify recovery; see the [walkthrough](../playtests/2026-11-15-release-fixes-walkthrough.md).
+- **Room code (default, D-027)** — `net/peerjs.ts`. The host's PeerJS peer id is `nasa-mission-control-26-<CODE>`; players connect to it with `serialization: 'raw'` and the same JSON/chunk/bye framing as the manual transport. The public PeerJS broker brokers setup only; ICE uses PeerJS defaults (Google STUN + `turn.peerjs.com` TURN). The room code is kept in localStorage (`mission-control.room`); a resumed game reclaims it (a few retries while the broker frees the old id), otherwise it gets a new one. If the host loses the broker, open data channels keep running and the host reconnects in the background. A `#join=CODE` link pre-fills the join screen.
+- **Manual codes (fallback, D-015)** — `net/webrtc.ts`. The host creates an invite code per player, the player pastes it into the same join box and returns a reply code. STUN only, so strict networks may fail.
+
+If a local save succeeded before the host closes the tab, that game can be hosted again; room players rejoin with the same code (a "Rejoin" button on the host-left screen), manual players need new codes.
+
+Under D-029, result recovery remains inside the hosted session: host-only Retry and Choose mission dispatch the existing reset actions without replacing transports or seats. Host result recording is idempotent, and reset notifications clear planner popups, selections and playback. Non-planner result dismissal is keyed by attempt. Four connected browser stations were used to verify recovery; see the [walkthrough](../playtests/2026-11-15-release-fixes-walkthrough.md).
 
 ## Styling
 

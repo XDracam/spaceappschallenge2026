@@ -19,6 +19,9 @@ const STATUS_TEXT: Record<TechStatus, string> = {
   covered: 'Not needed', locked: 'Needs earlier techs', fog: 'Unknown',
 };
 
+/** Status words of a tile: a tech out of reach in this mission says so instead of "Blocked by Comms" / "Needs earlier techs". */
+const statusText = (v: TechView): string => (v.unavailable ? 'Not in this mission' : STATUS_TEXT[v.status]);
+
 export function App() {
   const g = useGame((s) => s);
   const [sel, setSel] = useState<string | null>(null);
@@ -129,11 +132,11 @@ export function App() {
               const p = LAYOUT.pos[t.id];
               return (
                 <button type="button" key={t.id} data-tech={t.id}
-                  class={`sc-node ${v.status} ${sel === t.id ? 'sel' : ''} ${v.goal ? 'goal' : ''}`}
+                  class={`sc-node ${v.unavailable ? 'covered' : v.status} ${sel === t.id ? 'sel' : ''} ${v.goal ? 'goal' : ''}`}
                   style={{ left: `${p.x - NODE_W / 2}px`, top: `${p.y - NODE_H / 2}px`, width: `${NODE_W}px`, height: `${NODE_H}px`, '--c': BRANCH_COLOR[t.branch] }}
                   onClick={(e) => { e.stopPropagation(); setSel(t.id); }}>
                   <b>{v.status === 'fog' ? '?' : t.name}</b>
-                  <small>{v.goal ? '★ goal · ' : ''}{v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : STATUS_TEXT[v.status]}</small>
+                  <small>{v.goal ? '★ goal · ' : ''}{!v.unavailable && v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : statusText(v)}</small>
                 </button>
               );
             })}
@@ -219,11 +222,11 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
   return (
     <>
       <h2>{t.name}</h2>
-      <p class="muted">{BRANCH_LABEL[t.branch]} · {STATUS_TEXT[v.status]}</p>
+      <p class="muted">{BRANCH_LABEL[t.branch]} · {statusText(v)}</p>
       <p>{t.blurb}</p>
       {t.gives.length ? <><h3>Result</h3><ul>{t.gives.map((x, i) => <li key={i}>{describeGrant(x)}</li>)}</ul></> : <p class="muted">Opens further techs.</p>}
       {reqs.length ? <p class="sc-goal">★ The mission needs this: {reqs.map(describeNeed).join('; ')}</p> : null}
-      {isCovered(t, g.research) && neededAsPrerequisite(g, t.id) && v.status !== 'researched'
+      {!v.unavailable && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) && v.status !== 'researched'
         ? <p class="muted">Its results are already within research. Research it to satisfy later technology prerequisites; it will not raise these limits again.</p> : null}
       {reqs.some(n => n.researchBy !== undefined && g.clock.day + months * DAYS_PER_MONTH > n.researchBy)
         ? <p class="sc-warn">This route finishes after the current order-by date. Ask the Planner to move launch, or choose a faster research route.</p> : null}
@@ -231,8 +234,9 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
       {t.requires.length === 0 ? <p class="muted">Nothing.</p> : (
         <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} {views[r].status === 'fog' ? '?' : TECH_BY_ID[r].name}</li>)}</ul>
       )}
-      {v.blocked ? <p class="sc-warn">{v.blockedWhy}</p> : null}
-      {!t.start && v.status !== 'researched' ? (
+      {v.blocked ? <p class={v.unavailable ? 'muted' : 'sc-warn'}>{v.blockedWhy}</p> : null}
+      {v.unavailable && !v.blocked ? <p class="muted">It builds on a tech no one can approve in this mission.</p> : null}
+      {!t.start && v.status !== 'researched' && !v.unavailable ? (
         <>
           <p>{t.costM} M · {months} {months === 1 ? 'month' : 'months'}{v.status === 'running' ? '' : `, done ${formatDate(g.clock.day + months * DAYS_PER_MONTH)}`} · {Math.round(t.chance * 100)} % success</p>
           <button type="button" class="sc-btn" disabled={!chk.ok}

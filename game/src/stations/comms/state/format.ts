@@ -81,9 +81,9 @@ export function describeEffect(e: Effect): string {
     case 'techAccess':
       return `Science: ${e.note}`;
     case 'researchLimit':
-      return `Research limit ${e.key} raised to ${e.value}`;
+      return `${e.key.split('.').join(' ')} limit raised to ${e.value}`;
     case 'unlock':
-      return `Unlocked: ${e.key}`;
+      return `Unlocked: ${e.key.split('.').join(' ')}`;
     case 'service':
       return `Service: ${e.note}`;
     case 'missionConstraint':

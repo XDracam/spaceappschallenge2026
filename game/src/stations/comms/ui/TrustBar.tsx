@@ -2,49 +2,35 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { StakeholderId } from '../model/types';
 import { TRUST_STRAINED, TRUST_STRONG } from '../data/mission';
 import { useComms } from './store';
-import { passiveModifiers } from '../state/world';
-import type { PassiveModifiers } from '../state/world';
 import { SH, STAKEHOLDER_ORDER } from './common';
 import { signed } from './format';
 
-/** Passive effect of each trust band in plain words (README proposal). */
-const PASSIVE: Record<StakeholderId, { strong: string; neutral: string; strained: string }> = {
+/**
+ * What each trust band does, always visible under the meter (Rr001-12: it was only in a
+ * hover tooltip). Same rules as state/world.ts passiveModifiers and the engine's poolWeight.
+ */
+const EFFECT: Record<StakeholderId, { strong: string; neutral: string; strained: string }> = {
   government: {
-    strong: 'Strong government trust: budget reviews are more likely to add funding.',
-    neutral: 'No passive effect. Above 70, budget reviews favour you; below 30, audits and cuts get likelier.',
-    strained: 'Strained government trust: audits and budget cuts are likelier.',
+    strong: 'More funding offers, fewer cuts',
+    neutral: `Above ${TRUST_STRONG}: more funding offers`,
+    strained: 'Audits and budget cuts likelier',
   },
   industry: {
-    strong: 'Strong industry trust: cheaper, faster deliveries (about −10 % price and delivery time).',
-    neutral: 'No passive effect. Above 70, suppliers deliver cheaper and faster; below 30, slower and dearer.',
-    strained: 'Strained industry trust: dearer, slower deliveries (about +10 % price and delivery time).',
+    strong: 'New orders −10 % price and lead time',
+    neutral: `Above ${TRUST_STRONG}: orders −10 % price and time`,
+    strained: 'New orders +10 % price and lead time',
   },
   public: {
-    strong: 'Strong public trust: budget cuts are smaller and the press is on your side.',
-    neutral: 'No passive effect. Above 70, budget cuts shrink; below 30, protests and scandals get likelier.',
-    strained: 'Strained public trust: protests and press scandals are likelier.',
+    strong: 'Budget cuts from events halved',
+    neutral: `Above ${TRUST_STRONG}: event budget cuts halved`,
+    strained: 'Protests and scandals likelier',
   },
   partners: {
-    strong: 'Strong partner trust: more partner deals for parts, research and services are offered.',
-    neutral: 'No passive effect. Above 70, partners offer more deals; below 30, they offer fewer.',
-    strained: 'Strained partner trust: partners offer fewer deals.',
+    strong: 'More partner deals offered',
+    neutral: `Above ${TRUST_STRONG}: more partner deals`,
+    strained: 'Fewer partner deals offered',
   },
 };
-
-/** Live passive effect in words, from the engine's passiveModifiers (null when neutral). */
-function liveEffect(id: StakeholderId, pm: PassiveModifiers): string | null {
-  switch (id) {
-    case 'government':
-      return pm.governmentFundingBonus === 1 ? null : `Now: funding opportunities ×${pm.governmentFundingBonus} as likely.`;
-    case 'industry':
-      return pm.procurementPricePct === 0 ? null
-        : `Now: procurement prices ${signed(pm.procurementPricePct, ' %')}, delivery times ${signed(pm.procurementDeliveryPct, ' %')}.`;
-    case 'public':
-      return pm.budgetCutShieldPct === 0 ? null : `Now: budget cuts from events are ${pm.budgetCutShieldPct} % smaller.`;
-    case 'partners':
-      return pm.partnerDealsBonus === 1 ? null : `Now: partner deal offers ×${pm.partnerDealsBonus} as likely.`;
-  }
-}
 
 function band(v: number): 'strong' | 'neutral' | 'strained' {
   return v < TRUST_STRAINED ? 'strained' : v > TRUST_STRONG ? 'strong' : 'neutral';
@@ -95,13 +81,11 @@ function Meter({ id }: { id: StakeholderId }) {
     return () => clearTimeout(t);
   }, [value]);
 
-  const trust = useComms((s) => s.trust);
-  const live = liveEffect(id, passiveModifiers(trust));
   const meta = SH[id];
   const b = band(value);
   const barColor = b === 'strained' ? 'var(--err)' : meta.color;
   return (
-    <div class={`meter ${b}`} tabIndex={0} style={{ '--c': meta.color } as Record<string, string>}>
+    <div class={`meter ${b}`} style={{ '--c': meta.color } as Record<string, string>}>
       <div class="meter-row">
         <span class="label">{meta.label}</span>
         <span class="meter-state">{b === 'strong' ? 'strong' : b === 'strained' ? 'strained' : ''}</span>
@@ -113,12 +97,7 @@ function Meter({ id }: { id: StakeholderId }) {
         <span class="tick" style={{ left: `${TRUST_STRAINED}%` }} />
         <span class="tick" style={{ left: `${TRUST_STRONG}%` }} />
       </div>
-      <div class="meter-tip glass strong" role="tooltip">
-        <div class="label" style={{ color: meta.color }}>{meta.label} · {value}</div>
-        <div>{PASSIVE[id][b]}</div>
-        {live && <div class="tip-live">{live}</div>}
-        <div class="muted tiny">Below {TRUST_STRAINED} strained · above {TRUST_STRONG} strong{b === 'strong' ? ' (also opens a third project slot)' : ''}</div>
-      </div>
+      <div class={`meter-effect${b === 'neutral' ? '' : ' live'}`}>{EFFECT[id][b]}</div>
     </div>
   );
 }

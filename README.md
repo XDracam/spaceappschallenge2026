@@ -23,13 +23,15 @@ The integrated game lives in [`game/`](game/) (one web app, four station views; 
 - **Online:** https://missioncontrol.dractec.com/ (GitHub Pages; deployed by `.github/workflows/pages.yml` on every push to `main` that touches `game/`). The workflow reads the site's base path from GitHub Pages configuration.
 - **Locally:** `cd game && npm install && npm run dev`, then open the printed address.
 
-**Playing together.** There is no game server: one player's browser hosts the game and the others connect to it directly (WebRTC). Connecting takes one exchange of codes per player, through any chat:
+**Playing together.** One browser hosts the shared mission; the others connect through WebRTC.
 
-1. The host clicks **New game**, chooses a mission to host, picks a station and clicks **Invite a player**. They send the **invite code** to the player.
-2. The player clicks **Join game**, pastes the invite code and sends back the **reply code** shown.
-3. The host pastes the reply code into that invite. The player is connected and picks a free station. The host clicks **Start mission** (fewer than four players is fine; anyone can switch to a free station during the game).
+1. The host clicks **New game**, chooses a mission and station, and shares the short **room code** or join link.
+2. Players click **Join game**, enter their names and the room code, then choose free stations. Opening a join link pre-fills the code.
+3. The host starts the mission. Fewer than four players is supported; anyone can switch to a free station.
 
-The host's browser attempts to save locally; watch for a save warning if storage is unavailable or full. After a successful save, **Continue** restores it following a reload, and players join again with new codes. Some networks (company or school Wi-Fi, VPNs) block direct browser connections; try another network or play on one computer by opening the game in several tabs or windows. Check the actual demonstration network beforehand. Keep the host tab visible: background browser throttling can slow the agency calendar.
+The public PeerJS broker handles room setup, with a public TURN relay available for connections that cannot be direct. Check the actual demonstration network beforehand. If room codes are unavailable, expand the host's **Manual codes** fallback: exchange an invite and reply code once per player. A long MC1- invite can be pasted into the same join field.
+
+The host's browser attempts to save locally; watch for a save warning if storage is unavailable or full. After a successful save, **Continue** restores it following a reload. Room players can rejoin using the room code when the host reclaims it; manual-code players need fresh codes. Keep the host tab visible: background browser throttling can slow the agency calendar.
 
 ### First session
 
@@ -37,7 +39,7 @@ The host's browser attempts to save locally; watch for a save warning if storage
 2. Planning adds maneuvers and publishes part needs. Procurement compares offers and orders against the launch date. Science researches the design's missing capabilities, then prioritizes tests of delivered parts. Communications chooses projects and handles messages that affect the whole team.
 3. Read shared **Tasks** and use **Open work** to reach the relevant station action. Direct conversation remains useful, but required coordination is also available in the interface.
 4. Watch research, delivery and test dates. The planned launch is automatic; move it when recovery needs more time, while respecting the mission deadline.
-5. Review the goal-by-goal result. The host can retry or choose another mission inside the session; a host reload still requires new invitation codes.
+5. Review the goal-by-goal result. The host can retry or choose another mission inside the session; a host reload requires players to rejoin (fresh codes for the manual fallback).
 
 The [release audit](docs/reviews/2026-11-15-two-level-release-audit.md) contains facilitator reference routes and distinguishes numerical feasibility from observed play. Use Mars after the group understands the station loops.
 

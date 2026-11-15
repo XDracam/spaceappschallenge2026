@@ -2,7 +2,7 @@
 // Day 0 = 1 Jan 2030; planned launch day 230. Events after day 230 only appear
 // when the planner moves the launch later (up to day 1277).
 import type { EventDef } from '../../model/types';
-import { budget, constraint, option, pace, price, trust, unlock } from '../helpers';
+import { FLAG_LAUNCH_PROMISE, budget, option, pace, price, setFlag, trust, unlock } from '../helpers';
 
 export const TIMELINE_EVENTS: EventDef[] = [
   {
@@ -81,9 +81,9 @@ export const TIMELINE_EVENTS: EventDef[] = [
     title: 'Students want a ride to Mars',
     message: 'My students built a 3 kg microphone to record the Martian wind. They have been sleeping in the lab for months. Will your lander carry it?',
     options: [
-      option('fly-it', 'Fly it: the planner finds 3 kg on the lander.',
-        [constraint("Carry Northgate's 3 kg student microphone on the lander."), trust('partners', 10), trust('public', 5)],
-        'The students cry on camera. The planner finds 3 kg somewhere, mostly by staring at the lander.'),
+      option('fly-it', 'Say yes: the microphone rides in the lander\'s spare-mass margin.',
+        [trust('partners', 10), trust('public', 5)],
+        'The students cry on camera. The lander engineers find 3 kg of margin, mostly by staring at it.'),
       option('data-share', "Offer them a share of the lander's data instead.",
         [trust('partners', 5)],
         'The dean accepts graciously. Her students start writing proposals for data they cannot yet have.'),
@@ -107,9 +107,9 @@ export const TIMELINE_EVENTS: EventDef[] = [
       option('factory-visit', "Host her at Feldwerk's factory for a photo op.",
         [trust('government', 10), trust('industry', 5), trust('public', -5)],
         'Duarte wears a hard hat beautifully. Okafor runs the photo under the headline "Campaign Stop, Orbit Pending".'),
-      option('launch-seat', 'Promise her a front seat at launch (planner keeps the date).',
-        [trust('government', 10), constraint('Senator Duarte attends launch: keep the announced launch date.')],
-        'Duarte books her flights. The planner now has a launch date with a senator attached to it.'),
+      option('launch-seat', 'Promise her a front seat at launch on the announced date.',
+        [trust('government', 10), setFlag(FLAG_LAUNCH_PROMISE)],
+        'Duarte books her flights. Tell the planner: the launch date now has a senator attached to it.'),
       option('neutral', 'Keep the agency out of the campaign.',
         [trust('government', -5), trust('public', 5)],
         'Editorials praise your neutrality. Duarte notes that editorials do not vote on budgets.'),

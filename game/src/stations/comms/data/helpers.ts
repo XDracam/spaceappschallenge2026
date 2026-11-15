@@ -14,6 +14,14 @@ type OfferEffect = Extract<Effect, { kind: 'offer' }>;
 export const FLAG_RTG_STORY = 'press.rtgStory';
 /** A partner ground-station deal completed (used by in-flight events). */
 export const FLAG_GROUND_STATION = 'comms.groundStation';
+/**
+ * Comms promised to keep the launch date (both missions). The rules remember the launch
+ * day of that moment (CommsSlice.promisedLaunchDay) and raise FLAG_PROMISE_BROKEN once the
+ * launch is later than promised; a follow-up message then calls the promise in
+ * (eventsTriggered.ts). Replaces the 'missionConstraint' text the Planner never saw (R1115m-r01-08).
+ */
+export const FLAG_LAUNCH_PROMISE = 'comms.promise.launchDate';
+export const FLAG_PROMISE_BROKEN = 'comms.promise.broken';
 
 // ------------------------------------------------------------------ effects
 
