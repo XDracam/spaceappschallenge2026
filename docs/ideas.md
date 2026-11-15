@@ -248,6 +248,15 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Dependencies and unanswered questions: final visual direction and artwork source remain unselected. Preserve existing hosting, joining and saved-game behavior; reduced-motion support is required if animation is added.
 - Related: D-010, D-013–D-015; I-094.
 
+### I-096 — Optional mission goals with bonus points
+
+- Date: 2026-11-15.
+- Source: user, [weather mission note, November 15 follow-up](../mission-planner/notes/2026-11-14-weather-mission.md).
+- Status: accepted direction under D-030; implemented for the weather mission only.
+- Idea: goals the mission does not need, scored as a separate bonus part. The budget is sized so that a careful plan just affords all of them.
+- Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
+- Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
+
 ### I-097 — Extend the title-screen quality through mission setup
 
 - Captured: 2026-11-15.

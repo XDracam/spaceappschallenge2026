@@ -82,11 +82,26 @@ export function isScrubbed(result: PlaythroughResult): boolean {
   return result.events.some((e) => e.kind === 'failure' && e.text.startsWith('Launch scrubbed'));
 }
 
-/** Goals achieved / total, for a compact result line. */
-export function missionScore(result: PlaythroughResult): { achieved: number; total: number; scrubbed: boolean } {
+/**
+ * Required goals achieved / total, for a compact result line, plus the optional goals' bonus
+ * (weights from Goal.bonusPoints, default 1). Optional goals never count in achieved / total.
+ */
+export function missionScore(result: PlaythroughResult): {
+  achieved: number; total: number; scrubbed: boolean;
+  optionalAchieved: number; optionalTotal: number; bonusEarned: number; bonusTotal: number;
+} {
+  const optional = (id: string) => MISSION.goals.find((g) => g.id === id)?.optional === true;
+  const weight = (id: string) => MISSION.goals.find((g) => g.id === id)?.bonusPoints ?? 1;
+  const required = result.goalOutcomes.filter((o) => !optional(o.goalId));
+  const extra = result.goalOutcomes.filter((o) => optional(o.goalId));
+  const scrubbed = isScrubbed(result);
   return {
-    achieved: result.goalOutcomes.filter((o) => o.success).length,
-    total: result.goalOutcomes.length,
-    scrubbed: isScrubbed(result),
+    achieved: required.filter((o) => o.success).length,
+    total: required.length,
+    scrubbed,
+    optionalAchieved: extra.filter((o) => o.success).length,
+    optionalTotal: extra.length,
+    bonusEarned: scrubbed ? 0 : extra.filter((o) => o.success).reduce((a, o) => a + weight(o.goalId), 0),
+    bonusTotal: extra.reduce((a, o) => a + weight(o.goalId), 0),
   };
 }

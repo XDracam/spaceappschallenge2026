@@ -16,7 +16,7 @@
 //                        the ↑/↓ hints from the option's trust effects (|net| >= 10 → ±2).
 //
 // Missions: 'mars-orbiter-lander' (data/mars/, long, budget 900 M) and 'weather-geo'
-// (data/weather/, short: launch ≈ day 150, budget ≈ 350 M, smaller amounts).
+// (data/weather/, short: launch ≈ day 150, budget ≈ 210 M, smaller amounts).
 // Flags raised by this content: 'press.rtgStory' (plutonium story ran unanswered),
 // 'comms.groundStation' (partner ground-station deal done). Texts: messages ≤ 3
 // sentences, options ≤ 12 words (teammate impact named in brackets), outcomes 1–2 sentences.

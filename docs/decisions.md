@@ -306,6 +306,21 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 
 Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally while room-code work independently used D-027 upstream. Room codes retain D-027; audit fixes are D-029. The local title-screen entry retains D-028.
 
+## D-030 — Optional goals with bonus points; weather mission reworked
+
+- Date: 2026-11-15
+- Status: accepted user direction; implemented, weather mission only
+- Decision:
+  - A mission goal can be optional (`Goal.optional`, weight `Goal.bonusPoints`). Optional goals never block the launch (their plan problems are warnings), do not count in "goals achieved", and do not lower the goal share of the score.
+  - The score gets a seventh part, **bonus** (up to 100): the weight of the optional goals achieved divided by the weight of all of them. Missions without optional goals cannot earn it (`scoreMax(missionId)`: 1000 without, 1100 with).
+  - The weather satellite keeps its two main goals (geostationary orbit, weather images) and gets two optional ones: "Measure ozone and aerosols" (spectrometer performance 5, weight 40) and "Sound rain and cloud layers with radar" (radar performance 3, weight 60). The radar is not unlocked, so it also needs Science (radar electronics) and Comms-independent buying.
+  - The weather budget drops from 350 M to 210 M. The cheapest plan for all four goals costs about 175 M and a typical one about 205 M, so completing everything is possible but only with careful buying. The two main goals alone cost 105 to 140 M.
+- Source / approval: [weather mission note, November 15 follow-up](../mission-planner/notes/2026-11-14-weather-mission.md)
+- Rationale and evidence: user direction. The playtest of the first version left most of the 350 M unspent (playtest changes, finding 04), so money was no decision. The optional goals give the money a use and tie Science (radar unlock), Procurement (cheapest instruments, extra tank mass) and the Planner (more fuel for a heavier satellite) together.
+- Alternatives considered: a second satellite in a low orbit (more expensive and needs a second branch, left for later); a costlier camera for sharper pictures (only about 8 M more than the base camera, so no real decision).
+- Consequences and limitations: costs are estimates from the catalogue and the tech tree, not a playtest. Comms numbers for the weather set were written for 350 M (a +25 M gift, price events) and may need a second look. Mars has no optional goals.
+- Related: D-005, D-020, I-096, Q-039.
+
 ## D-031 — Carry the title-screen design through pre-game
 
 - Date: 2026-11-15.

@@ -18,10 +18,15 @@ export const SCORE_WEIGHTS: Record<ScorePartId, number> = {
   deliveries: 50,   // share of the rocket's contracts delivered by launch day (Procurement)
   research: 50,     // share of finished research projects and part tests that succeeded (Science)
   trust: 50,        // mean stakeholder trust, 0..100 (Comms)
+  bonus: 100,       // weight of the optional goals achieved / weight of all (missions with optional goals only)
 };
-export const SCORE_MAX = Object.values(SCORE_WEIGHTS).reduce((a, b) => a + b, 0);
+/** Highest possible score of a mission: the bonus part only exists where the mission has optional goals. */
+export function scoreMax(missionId: string): number {
+  const hasBonus = missionById(missionId).goals.some((g) => g.optional);
+  return Object.entries(SCORE_WEIGHTS).reduce((a, [id, w]) => a + (id === 'bonus' && !hasBonus ? 0 : w), 0);
+}
 /** Order in which the parts are listed. */
-export const SCORE_PARTS: ScorePartId[] = ['goals', 'budget', 'time', 'deliveries', 'research', 'trust'];
+export const SCORE_PARTS: ScorePartId[] = ['goals', 'budget', 'time', 'deliveries', 'research', 'trust', 'bonus'];
 
 const clamp01 = (x: number) => (Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : 0);
 
@@ -58,6 +63,7 @@ export function scoreFractions(s: GameState, outcome: AttemptOutcome): Record<Sc
     deliveries: clamp01(deliveries),
     research: clamp01(research),
     trust,
+    bonus: outcome.scrubbed || !outcome.bonusTotal ? 0 : clamp01((outcome.bonusEarned ?? 0) / outcome.bonusTotal),
   };
 }
 

@@ -29,3 +29,10 @@ Decision recorded: a non-linear UI is required — players must be able to chang
 > like theres so many things there which cannot be interacted with and dont help in any way
 
 The assistant proposed a sliders-first panel (all sliders visible, one Δv line, one problem line with a fix button, status dots, short group names, an Advanced switch for expert controls). The user answered: "Build it".
+
+## Follow-up — November 15, 2026 (optional objectives)
+
+User message, verbatim: "can you rework the first mission, the space satellite to include optional objectives, which give bonus points and where full completion can be solved "just so" by the budget?"
+
+Interpretation (assistant): "the first mission, the space satellite" is the weather satellite (the first mission in this note). An optional objective is a goal that is not needed for the mission to count as complete, never blocks the launch, and earns bonus points. "Just so by the budget" means the budget is sized so that a careful plan can afford all four goals, while the two main goals alone leave most of the budget unspent. All content is hand-authored placeholder (D-005). Implemented as D-030.
+
