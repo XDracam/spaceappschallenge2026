@@ -70,6 +70,12 @@ The host's browser attempts to save locally; watch for a save warning if storage
 
 The [release audit](docs/reviews/2026-11-15-two-level-release-audit.md) contains facilitator reference routes and distinguishes numerical feasibility from observed play. Use Mars after the group understands the station loops.
 
+## AI tools used
+
+- **Claude** (Anthropic): Opus 5.5, Fable 5.2 and Sonnet 5.5 for code, docs and design (see `Co-Authored-By` commit trailers); Sonnet and Haiku as agent players and helpers in the [playtest loop](playtest/README.md).
+- **Codex** (OpenAI), including Sol, Terra and Luna subagents: implementation, source review and walkthroughs recorded in [`docs/playtests/`](docs/playtests/).
+- **ChatGPT image generation** (OpenAI): Communications character portraits and title-screen artwork, watermarked "AI-generated" (see [third-party credits](THIRD_PARTY.md)).
+
 ## Repository
 
 [XDracam/spaceappschallenge2026](https://github.com/XDracam/spaceappschallenge2026)
