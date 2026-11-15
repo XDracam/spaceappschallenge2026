@@ -48,7 +48,7 @@ export function ResultOverlay() {
             const why = !o.success && !score.scrubbed ? planned.find((g) => g.goalId === o.goalId) : undefined;
             return (
               <li key={o.goalId} class={o.success ? 'is-ok' : 'is-fail'}>
-                <span aria-hidden="true">{o.success ? '✓' : goal?.optional ? '–' : '✗'}</span> {goal?.name ?? o.goalId}{goal?.optional ? ' (optional)' : ''}
+                <span aria-hidden="true">{o.success ? '✓' : goal?.optional ? '–' : '✗'}</span> {goal?.name ?? o.goalId}{goal?.optional ? <em class="shell-goal-optional">Bonus</em> : null}
                 {why && !why.achievable && why.reason && <div class="shell-result-why">{why.reason}</div>}
               </li>
             );

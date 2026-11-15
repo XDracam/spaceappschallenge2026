@@ -10,8 +10,10 @@ export interface ProjectInfo {
   cancelled?: boolean;
   /** Finished day (success, failure or cancel). */
   endedAt?: number;
-  /** The project is paused because comms blocked its tech. */
+  /** The project is paused (see pausedWhy). */
   paused?: boolean;
+  /** Why it is paused: comms blocked the tech, or a facility from Procurement lapsed. */
+  pausedWhy?: 'comms' | 'equipment';
 }
 
 export interface ScienceSlice {
@@ -23,7 +25,8 @@ export interface ScienceSlice {
   info: Record<string, ProjectInfo>;
 }
 
-export const INITIAL_SLOTS = 3;
+/** The agency's own research teams. Procurement can hire up to three more (core/facilities.ts). */
+export const INITIAL_SLOTS = 2;
 
 export function initialScienceSlice(): ScienceSlice {
   return { slots: INITIAL_SLOTS, researched: [...START_TECHS], info: {} };

@@ -173,3 +173,6 @@ How much of the tree does the player see at the start, and how do they find rout
 
 Is 210 M the right weather budget, and do the bonus weights (40 and 60 of 100 points) match the effort of each goal? Costs are catalogue estimates (cheapest full plan about 175 M), not measured in play. Should Mars get optional goals too, and should an optional goal be worth more than its extra cost in the budget score (150 points)?
 
+## Q-040 — Prices of facilities and teams
+
+Are the rent and purchase prices, lead times, the base of 2 own teams and the cap of 3 hired teams right? Should a rental have to cover a whole project, or only its start? Should a bought facility be sellable? All are placeholders (D-031).

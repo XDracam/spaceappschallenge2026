@@ -407,3 +407,14 @@
 .st-procurement .pr-role-guide > summary { cursor: pointer; color: var(--text); padding: 4px 0; }
 .st-procurement .pr-role-guide > summary:hover { color: var(--accent); }
 .st-procurement .pr-role-guide p { margin: 4px 0 8px; line-height: 1.5; }
+
+/* Research support (D-031) */
+.st-procurement .pr-rs-body { overflow: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+.st-procurement .pr-rs h3 { margin: 6px 0 8px; font-size: 13px; }
+.st-procurement .pr-rs-asks { margin: 0 0 8px; padding-left: 18px; font-size: 12.5px; }
+.st-procurement .pr-rs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.st-procurement .pr-rs-card { border: 1px solid var(--line, #2a3347); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.02); }
+.st-procurement .pr-rs-card.wanted { border-color: #f2c14e; box-shadow: 0 0 0 1px #f2c14e; }
+.st-procurement .pr-rs-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.st-procurement .pr-rs-ok { color: #4fb477; font-size: 12px; }
+.st-procurement .pr-rs-soon { color: #f2c14e; font-size: 12px; }

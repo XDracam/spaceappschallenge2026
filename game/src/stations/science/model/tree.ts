@@ -7,7 +7,8 @@ import { MISSION } from '../../../core/mission';
 import { BRANCH_ORDER, TECHS, TECH_BY_ID } from '../data/techs';
 import { contentFor } from '../../comms/data/content';
 import type { Effect } from '../../../shared/events/types';
-import { covered, designNeeds, running, sci, type Need } from './research';
+import { covered, designNeeds, formatDate, running, sci, teamCapacity, type Need } from './research';
+import { facilityState, missingFacilities } from './needs';
 import type { Branch, Tech, TechStatus, TreeLayout } from './types';
 
 // ------------------------------------------------------------- layout
@@ -114,6 +115,8 @@ export interface TechView {
   missing: string[];
   /** A tech that is a stepping stone for a goal, or a goal itself. */
   goal: boolean;
+  /** Ready to start except for a facility Procurement has not supplied yet (D-031). */
+  lacksFacilities: boolean;
 }
 
 /**
@@ -215,7 +218,10 @@ export function treeViews(g: GameState): Record<string, TechView> {
     else if (isCovered(t, g.research) && !neededAsPrerequisite(g, t.id)) status = 'covered';
     else if (blocked) status = 'blocked';
     else status = 'available';
-    out[t.id] = { status, blocked, blockedWhy: why, missing, goal: isGoal, unavailable: reach(t.id) && status !== 'fog' };
+    out[t.id] = {
+      status, blocked, blockedWhy: why, missing, goal: isGoal, unavailable: reach(t.id) && status !== 'fog',
+      lacksFacilities: status === 'available' && missingFacilities(g, t.id).length > 0,
+    };
   }
   return out;
 }
@@ -238,7 +244,14 @@ export function startCheck(s: GameState, techId: string): StartCheck {
   if (isCovered(t, s.research) && !neededAsPrerequisite(s, techId)) return no('Nothing left to gain: its results are already available.');
   const b = blockInfo(t, s.research.access, s.meta.missionId);
   if (b.blocked) return no(b.why ?? 'Blocked.');
-  if (running(s.research).length >= sci(s).slots) return no(`All ${sci(s).slots} research teams are busy.`);
+  const lacking = missingFacilities(s, techId);
+  if (lacking.length) {
+    const coming = lacking.map((f) => ({ f, s: facilityState(s, f.id) })).find((x) => x.s.kind === 'coming');
+    return no(coming && coming.s.kind === 'coming'
+      ? `${coming.f.name} from Procurement is ready on ${formatDate(coming.s.fromDay)}.`
+      : `Needs ${lacking.map((f) => f.name).join(' and ')} from Procurement.`);
+  }
+  if (running(s.research).length >= teamCapacity(s)) return no(`All ${teamCapacity(s)} research teams are busy.`);
   if (t.costM > budgetAvailableM(s.budget) + 1e-9) return no('Not enough budget available.');
   return { ok: true, reason: null };
 }

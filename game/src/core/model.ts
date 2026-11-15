@@ -262,6 +262,38 @@ export interface ResearchProject {
 /** Comms can block or enable a tech by id (science/data/techs.ts). Absent = the tech's default. */
 export type TechAccess = 'blocked' | 'enabled';
 
+/** Science equipment held for Procurement's lease or purchase (core/facilities.ts catalogue). */
+export interface FacilityLease {
+  id: string;
+  facilityId: string;
+  /** Day it becomes usable (signing day + lead time). */
+  from: number;
+  /** Last day (exclusive) of a rental; undefined = bought, kept for good. */
+  until?: number;
+  costM: number;
+}
+
+/** An extra research team hired by Procurement. It adds one team to Science from `from` until `until` (undefined = permanent). */
+export interface ResearchTeam {
+  id: string;
+  offerId: string;
+  from: number;
+  until?: number;
+  costM: number;
+}
+
+/** What Science asks Procurement for: a facility some techs need, or another team. */
+export interface SupplyRequest {
+  id: string;
+  kind: 'facility' | 'team';
+  /** facility requests: the facility, and the techs waiting for it. */
+  facilityId?: string;
+  techIds?: string[];
+  requestedAt: number;
+  status: 'open' | 'done' | 'withdrawn';
+  doneAt?: number;
+}
+
 export interface ResearchState {
   /** `${kind}.${variant}.${stat}` → max value currently researched. */
   limits: Record<string, number>;
@@ -272,6 +304,12 @@ export interface ResearchState {
   modifiers: { effect: Extract<Effect, { kind: 'researchPace' }>; untilDay: number }[];
   /** Comms decisions on techs. A tech with an approval gate starts blocked until comms enables it. */
   access: Record<string, TechAccess>;
+  /** Facilities Procurement leased or bought for Science (D-031). */
+  facilities: FacilityLease[];
+  /** Extra research teams Procurement hired (D-031). */
+  teams: ResearchTeam[];
+  /** Science's open asks to Procurement. */
+  supplyRequests: SupplyRequest[];
 }
 
 // ----------------------------------------------------------------- events

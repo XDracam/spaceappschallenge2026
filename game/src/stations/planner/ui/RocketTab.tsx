@@ -458,7 +458,9 @@ function StageBlock({ stage, ctx, index, count, spacecraft, liftRatio }: {
   const rocketStage = !spacecraft;
   const name = rocketStage ? rocketStageName(index, count) : stage.name;
   // Rocket stages show their position; a custom name shows next to it in Advanced.
-  const sub = rocketStage && ctx.advanced && stage.name !== name && !/^Stage \d+$/.test(stage.name) ? stage.name : undefined;
+  const customName = rocketStage && ctx.advanced && stage.name !== name && !/^Stage \d+$/.test(stage.name) ? stage.name : undefined;
+  // The simple view shows the engine type (fuel) next to the stage name; Advanced has it in the stage details.
+  const sub = customName ?? (ctx.advanced ? undefined : PROPULSION[stage.propulsion].name);
 
   const menu: MenuEntry[] = [
     { label: 'Rename', onPick: () => setRenaming(true) },
@@ -475,7 +477,7 @@ function StageBlock({ stage, ctx, index, count, spacecraft, liftRatio }: {
     {
       label: 'Remove stage', danger: true,
       onPick: async () => {
-        if (await requestConfirmation(`Remove ${name}${sub ? ` (${sub})` : ''}? Running contracts are not cancelled.`, 'Remove stage')) actions.removeStage(stage.id);
+        if (await requestConfirmation(`Remove ${name}${customName ? ` (${customName})` : ''}? Running contracts are not cancelled.`, 'Remove stage')) actions.removeStage(stage.id);
       },
     },
   ];

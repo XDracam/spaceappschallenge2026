@@ -8,7 +8,7 @@ import { DRAFT_PREFIX, type PView } from '../rules';
 import { partStatus } from '../../planner/derive';
 import { allParts } from '../../planner/model/rocketUtils';
 
-export type View = 'catalogue' | 'contracts';
+export type View = 'catalogue' | 'contracts' | 'research';
 export type Category = 'all' | 'propulsion' | 'tanks' | 'instruments' | 'power' | 'comms' | 'landing' | 'protection';
 
 export const CATEGORIES: { id: Category; label: string; kinds: PartKind[] }[] = [

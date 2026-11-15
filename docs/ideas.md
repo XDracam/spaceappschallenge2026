@@ -257,6 +257,15 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
 - Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
 
+### I-097 — Facilities and hired teams link Science and Procurement
+
+- Date: 2026-11-15.
+- Source: user, [science module note, November 15 follow-up](notes/2026-11-14-science-module.md).
+- Status: accepted direction under D-031; implemented.
+- Idea: higher techs need labs, equipment or rented machine time that Procurement supplies, and Science asks for extra research teams that Procurement hires for a time or for good, without assignment or idle costs.
+- Intended player experience: the two tables talk early: Science asks, Procurement weighs the cost against the parts budget.
+- Dependencies and unanswered questions: prices and lead times (Q-040); effect on the weather budget (D-030, Q-039).
+
 ## New entry template
 
 ```markdown

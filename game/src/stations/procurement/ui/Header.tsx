@@ -1,6 +1,7 @@
 // Top bar: brand, views, mission, calendar + launch countdown, Budget.
 import { MISSION } from '../../../core/mission';
 import { budgetAvailableM, fmtDate, fmtM } from '../rules';
+import { useGame } from '../../../core/store';
 import { setUi, useP, useUi, type View } from './uiState';
 import { contractTiming } from '../timing';
 
@@ -32,9 +33,11 @@ export function Header() {
   const active = v.market.contracts.filter((c) => c.status === 'active').length;
   const timingState = { market: v.market, research: { projects: v.research.projects ?? [] } };
   const late = v.market.contracts.filter(c => c.status === 'active' && contractTiming(timingState, c).needs.some(n => n.margin !== undefined && n.margin < 0)).length;
+  const asks = useGame((g) => (g.research.supplyRequests ?? []).filter((q) => q.status === 'open').length);
   const nav: { id: View; label: string; count?: string; warn?: boolean }[] = [
-    { id: 'catalogue', label: 'Needs & catalogue' },
-    { id: 'contracts', label: 'Contracts', count: late ? `${late} late` : active ? String(active) : '', warn: late > 0 },
+    { id: 'catalogue', label: 'Parts' },
+    { id: 'research', label: 'Research needs', count: asks ? `${asks} ask${asks > 1 ? 's' : ''}` : '', warn: asks > 0 },
+    { id: 'contracts', label: 'Contracts & schedule', count: late ? `${late} late` : active ? String(active) : '', warn: late > 0 },
   ];
   return (
     <header class="pr-top">

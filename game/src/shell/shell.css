@@ -354,3 +354,4 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
  .title-footer { padding-top: 16px; padding-bottom: 16px; }
  .title-roles { padding-top: 20px; padding-bottom: 20px; }
 }
+.shell-goal-optional { margin-left: 8px; padding: 0 6px; border: 1px solid var(--sh-muted); border-radius: 8px; color: var(--sh-muted); font-style: normal; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
