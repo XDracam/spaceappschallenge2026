@@ -60,6 +60,13 @@ export function loadSaved(): GameState | null {
       s.coordination ??= [];
       s.version = 7;
     }
+    // Version 8 added science facilities, hired teams and supply requests (D-032).
+    if (s?.version === 7) {
+      s.research.facilities ??= [];
+      s.research.teams ??= [];
+      s.research.supplyRequests ??= [];
+      s.version = 8;
+    }
     if (s?.version !== STATE_VERSION || !s.meta) return null;
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';

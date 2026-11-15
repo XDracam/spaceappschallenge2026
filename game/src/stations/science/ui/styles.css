@@ -30,3 +30,7 @@
 .st-science .sc-node.goal{box-shadow:0 0 0 2px #f2c14e}.st-science .sc-node.sel{outline:2px solid #7db4ff}
 .st-science .sc-warn{color:#ff8f84}.st-science .sc-goal{color:#f2c14e}
 .st-science .sc-news{display:flex;flex-direction:column;gap:2px;padding:6px 14px;border-top:1px solid #2a3040;font-size:12px;color:#9aa5b8;max-height:70px;overflow:hidden}
+.st-science .sc-equip { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-direction: column; gap: 4px; }
+.st-science .sc-equip .sc-btn { margin-left: 8px; }
+
+.st-science .sc-equip-art { width: 54px; height: 32px; vertical-align: middle; margin-right: 6px; background: #0e1626; border-radius: 6px; }

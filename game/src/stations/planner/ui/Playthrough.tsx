@@ -160,7 +160,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
               <li key={o.goalId} class={o.success ? 'ok' : 'err'}>
                 <span class="outcome-icon">{o.success ? <CheckIcon /> : <CloseIcon />}</span>
                 <div class="outcome-text">
-                  <span>{g?.name ?? o.goalId}{g?.optional ? ' (optional)' : ''}</span>
+                  <span>{g?.name ?? o.goalId}{g?.optional ? <em class="goal-optional">Bonus</em> : null}</span>
                   {!o.success && reason && !scrubbed && <span class="outcome-reason">{reason}</span>}
                 </div>
               </li>

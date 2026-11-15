@@ -343,10 +343,10 @@ export function RocketTab() {
           liftRatio={i === 0 ? liftRatio : undefined} />
       ))}
       {rocket.spacecraft.length === 0 && rocket.stages.length === 0 && (
-        <div class="empty">Nothing in the design. Turn on Advanced to add a spacecraft and rocket stages.</div>
+        <div class="empty">Nothing in the design. Add a spacecraft and rocket stages below.</div>
       )}
 
-      {advanced && (
+      {(
         <div class="rt-adds">
           <AddMenu label="Spacecraft" title="Add a spacecraft to the payload" groups={[{
             title: 'Add spacecraft',
@@ -429,8 +429,8 @@ function SpacecraftGroup({ sc, ctx }: { sc: Spacecraft; ctx: Ctx }) {
   return (
     <div class="rt-group">
       <GroupHead name={sc.name} editValue={sc.name} renaming={renaming} onRename={(v) => actions.renameSpacecraft(sc.id, v)} onDone={() => setRenaming(false)}
-        menu={ctx.advanced && <>
-          <RowMenu title={`${sc.name}: rename, type, remove`} entries={menu} />
+        menu={<>
+          {ctx.advanced && <RowMenu title={`${sc.name}: rename, type, remove`} entries={menu} />}
           <AddMenu title="Add equipment or a propulsion stage" groups={groups} />
         </>} />
       {ctx.advanced && (
@@ -440,7 +440,7 @@ function SpacecraftGroup({ sc, ctx }: { sc: Spacecraft; ctx: Ctx }) {
         </div>
       )}
       {sc.equipment.length === 0 && sc.stages.length === 0 && (
-        <div class="empty rt-adv-indent">No equipment or propulsion.{ctx.advanced ? ' Use + to add.' : ''}</div>
+        <div class="empty rt-adv-indent">No equipment or propulsion. Use + to add.</div>
       )}
       {sc.equipment.map((p) => <PartLines key={p.id} part={p} ctx={ctx} />)}
       {sc.stages.map((_, i) => sc.stages.length - 1 - i).map((i) => (
@@ -458,7 +458,9 @@ function StageBlock({ stage, ctx, index, count, spacecraft, liftRatio }: {
   const rocketStage = !spacecraft;
   const name = rocketStage ? rocketStageName(index, count) : stage.name;
   // Rocket stages show their position; a custom name shows next to it in Advanced.
-  const sub = rocketStage && ctx.advanced && stage.name !== name && !/^Stage \d+$/.test(stage.name) ? stage.name : undefined;
+  const customName = rocketStage && ctx.advanced && stage.name !== name && !/^Stage \d+$/.test(stage.name) ? stage.name : undefined;
+  // The simple view shows the engine type (fuel) next to the stage name; Advanced has it in the stage details.
+  const sub = customName ?? (ctx.advanced ? undefined : PROPULSION[stage.propulsion].name);
 
   const menu: MenuEntry[] = [
     { label: 'Rename', onPick: () => setRenaming(true) },
@@ -475,7 +477,7 @@ function StageBlock({ stage, ctx, index, count, spacecraft, liftRatio }: {
     {
       label: 'Remove stage', danger: true,
       onPick: async () => {
-        if (await requestConfirmation(`Remove ${name}${sub ? ` (${sub})` : ''}? Running contracts are not cancelled.`, 'Remove stage')) actions.removeStage(stage.id);
+        if (await requestConfirmation(`Remove ${name}${customName ? ` (${customName})` : ''}? Running contracts are not cancelled.`, 'Remove stage')) actions.removeStage(stage.id);
       },
     },
   ];

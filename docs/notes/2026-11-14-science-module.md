@@ -111,3 +111,14 @@ Source: user messages in the project conversation (the first was interrupted and
 - "Comms may enable or block" was read as new comms effects that block a tech (it cannot be researched while blocked) or enable one. Some techs start blocked and need comms to approve them.
 - "Better camera modules for less weight": the planner derives mass from stats, so the first version expresses better modules as higher performance limits. Lower mass for the same stats is not modelled. See Q-037.
 - All tech names, costs, durations, odds and prerequisites are authored placeholders (D-005).
+
+## 2026-11-15 follow-up: facilities and hired teams
+
+The user replaced the earlier proposal of research-team contracts with monthly fees:
+
+> Science braucht einige Teile / Labs / gemietete Maschienenzeit von Procurement als Vorraussetzung zum Forschen (für höhere Stufen, vmtl ab 2) Denk dir aus welche. Ebenso soll Science mehr Research-Teams anfragen, die Procurement dann auf Zeit oder dauerhaft anstellen kann. Aber assignment und leerlauf komplizierter zu machen möchte ich nicht.
+
+### Interpretation boundaries
+
+- "Higher levels, probably from 2" was read as every tech with tree depth 2 or more. Facility choices per tech are invented placeholders (D-005, D-032).
+- "No assignment and no idle" was read as: teams are plain extra slots, costs are one-off at signing, and nothing is charged while a team or facility waits unused.

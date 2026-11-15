@@ -11,6 +11,7 @@ import { CATALOGUE_OFFERS } from '../../procurement/data/catalogue';
 import { deliveryShiftDays, leadTimeDays } from '../../procurement/rules';
 import type { ScienceSlice } from '../slice';
 import { INITIAL_SLOTS } from '../slice';
+import { activeTeams } from '../../../core/facilities';
 import { START_TECHS } from '../data/techs';
 import type { Grant } from './types';
 
@@ -77,6 +78,11 @@ export function sci(s: GameState): ScienceSlice {
 }
 
 export const running = (r: ResearchState) => r.projects.filter((p) => p.status === 'running');
+
+/** Research teams at work today: the agency's own plus the ones Procurement hired (core/facilities.ts). */
+export function teamCapacity(s: GameState): number {
+  return sci(s).slots + activeTeams(s.research, s.clock.day).length;
+}
 
 // ------------------------------------------------------------- what the design needs
 

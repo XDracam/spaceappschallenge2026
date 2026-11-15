@@ -22,6 +22,8 @@ import { TECH_BY_ID } from './data/techs';
 import { FAILURE_LINES } from './data/flavour';
 import { cancellationRefund, covered, describeGrant, describeNeed, designNeeds, running } from './model/research';
 import { blockInfo, startCheck, techMonths } from './model/tree';
+import { facilityActive, facilityComing, MAX_HIRED_TEAMS, hiredTeams, FACILITY_BY_ID } from '../../core/facilities';
+import { missingFacilities, techFacilities } from './model/needs';
 import { partTests, testCheck, testContracts, testDays } from './model/tests';
 
 /** Fill slice and shared research fields missing from older saves. */
@@ -33,6 +35,9 @@ function ensure(s: GameState): ScienceSlice {
   x.info ??= d.info;
   s.research.modifiers ??= [];
   s.research.access ??= {};
+  s.research.facilities ??= [];
+  s.research.teams ??= [];
+  s.research.supplyRequests ??= [];
   return s.science;
 }
 
@@ -134,6 +139,45 @@ export const scienceActions = defineActions('science', {
     });
   },
 
+  /**
+   * Ask Procurement for a facility the tech needs (D-032). One open request per facility; later techs
+   * waiting for the same facility are added to it.
+   */
+  askFacility(s, ctx, facilityId: string, techId: string) {
+    ensure(s);
+    if (s.meta.phase !== 'planning' || !FACILITY_BY_ID[facilityId] || !techFacilities(techId).some((f) => f.id === facilityId)) return;
+    const day = ctx.day;
+    if (facilityActive(s.research, facilityId, day) || facilityComing(s.research, facilityId, day) !== undefined) return;
+    const open = s.research.supplyRequests.find((q) => q.kind === 'facility' && q.status === 'open' && q.facilityId === facilityId);
+    if (open) {
+      if (!open.techIds!.includes(techId)) open.techIds!.push(techId);
+      return;
+    }
+    s.research.supplyRequests.push({ id: ctx.newId('sup'), kind: 'facility', facilityId, techIds: [techId], requestedAt: day, status: 'open' });
+    pushNews(s, {
+      from: 'science',
+      text: `Science needs a ${FACILITY_BY_ID[facilityId].name.toLowerCase()} to research "${TECH_BY_ID[techId]?.name}". Procurement can rent or buy one.`,
+      affects: ['procurement'], internal: true,
+    }, ctx.newId);
+  },
+
+  /** Ask Procurement for one more research team. At most one open request, and not above the hiring limit. */
+  askTeam(s, ctx) {
+    ensure(s);
+    if (s.meta.phase !== 'planning') return;
+    if (s.research.supplyRequests.some((q) => q.kind === 'team' && q.status === 'open')) return;
+    if (hiredTeams(s.research, ctx.day).length >= MAX_HIRED_TEAMS) return;
+    s.research.supplyRequests.push({ id: ctx.newId('sup'), kind: 'team', requestedAt: ctx.day, status: 'open' });
+    pushNews(s, { from: 'science', text: 'Science asks Procurement for another research team: the labs are full.', affects: ['procurement'], internal: true }, ctx.newId);
+  },
+
+  /** Take back a request (Science changed its mind). */
+  withdrawSupplyRequest(s, _ctx, requestId: string) {
+    ensure(s);
+    const q = s.research.supplyRequests.find((x) => x.id === requestId && x.status === 'open');
+    if (q) q.status = 'withdrawn';
+  },
+
   /** Stop a running project. Half of the unspent share of its cost comes back. */
   cancelProject(s, ctx, projectId: string) {
     const sl = ensure(s);
@@ -155,17 +199,27 @@ onTick('science', (s, ctx, fromDay, toDay) => {
   for (const p of running(s.research)) {
     const tech = p.techId ? TECH_BY_ID[p.techId] : undefined;
     const info = sl.info[p.id];
-    if (tech && blockInfo(tech, s.research.access).blocked) {
-      // Comms blocked the tech: the clock stops for this project until comms enables it again.
+    const why: 'comms' | 'equipment' | undefined = !tech ? undefined
+      : blockInfo(tech, s.research.access).blocked ? 'comms'
+      : missingFacilities(s, tech.id, toDay).length ? 'equipment' : undefined;
+    if (tech && why) {
+      // Comms blocked the tech, or a facility from Procurement lapsed: the clock stops for this project until it is back.
       p.endsAt += dt;
       if (info && !info.paused) {
         info.paused = true;
-        pushNews(s, { from: 'science', text: `Science paused "${tech.name}": comms has blocked it.`, affects: [], internal: false }, ctx.newId);
+        info.pausedWhy = why;
+        const lacking = missingFacilities(s, tech.id, toDay).map((f) => f.name.toLowerCase()).join(' and ');
+        pushNews(s, {
+          from: 'science',
+          text: why === 'comms' ? `Science paused "${tech.name}": comms has blocked it.` : `Science paused "${tech.name}": the ${lacking} is no longer available. Procurement can renew it.`,
+          affects: why === 'equipment' ? ['procurement'] : [], internal: why === 'equipment',
+        }, ctx.newId);
       }
       continue;
     }
     if (info?.paused) {
       info.paused = false;
+      delete info.pausedWhy;
       if (tech) pushNews(s, { from: 'science', text: `Science resumed "${tech.name}".`, affects: [], internal: false }, ctx.newId);
     }
     if (pct !== 0) p.endsAt -= dt * (pct / 100);
@@ -174,4 +228,12 @@ onTick('science', (s, ctx, fromDay, toDay) => {
     if (p.endsAt <= toDay) resolve(s, ctx, p);
   }
   if (s.research.modifiers.length) s.research.modifiers = s.research.modifiers.filter((m) => m.untilDay > toDay);
+  // A facility request is met once Procurement has signed it; a team request is closed by the hire (procurement/logic.ts).
+  for (const q of s.research.supplyRequests) {
+    if (q.status === 'open' && q.kind === 'facility' && q.facilityId
+      && (facilityActive(s.research, q.facilityId, toDay) || facilityComing(s.research, q.facilityId, toDay) !== undefined)) {
+      q.status = 'done';
+      q.doneAt = toDay;
+    }
+  }
 });

@@ -321,6 +321,21 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Consequences and limitations: costs are estimates from the catalogue and the tech tree, not a playtest. Comms numbers for the weather set were written for 350 M (a +25 M gift, price events) and may need a second look. Mars has no optional goals.
 - Related: D-005, D-020, I-096, Q-039.
 
+## D-032 — Science needs facilities and hired teams from Procurement
+
+- Date: 2026-11-15
+- Status: accepted user direction; implemented
+- Decision:
+  - Techs of tier 2 and above need one or two **facilities** (labs, equipment, rented machine time; `game/src/stations/science/data/needs.ts`, catalogue in `game/src/core/facilities.ts`) before Science may start them. Tier-1 techs need none, so the first weather-satellite routes stay free.
+  - Science asks Procurement per facility; Procurement rents it for 3, 6 or 12 months or buys it (some are rent-only). Cost is paid at once from the shared budget, delivery takes 15 to 40 days (buying takes twice as long). A rental that lapses while a project runs pauses that project (its clock stops) until Procurement renews it.
+  - The agency has 2 own research teams (was 3). Science can ask for more; Procurement hires a team for 6 or 12 months or permanently (up to 3 hired). Teams are only extra slots for new starts. There is no assignment of people and no idle cost.
+  - In the Mission Planner, clicking "Goals" (or one goal) opens a full-screen window listing all goals, mission-critical first, then optional ones marked as bonus, with status, success chance and the parts they depend on.
+- Source / approval: [science module note, November 15 follow-up](notes/2026-11-14-science-module.md)
+- Rationale and evidence: user direction, to make Science and Procurement depend on each other without adding assignment or idle bookkeeping.
+- Alternatives considered: monthly fees per team and per-project assignment (rejected by the user as too complex).
+- Consequences and limitations: all prices, lead times and the facility list are placeholders (D-005). The weather mission's 210 M budget (D-030) was balanced before facilities existed; routes through tier 2 cost extra. Facilities cannot be sold back.
+- Related: D-005, D-020, D-030, I-098, Q-040.
+
 ## D-031 — Carry the title-screen design through pre-game
 
 - Date: 2026-11-15.
@@ -338,12 +353,12 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Evidence and limits: [implementation checks](reviews/2026-11-15-in-game-style-audit.md#css-only-implementation-follow-up), including four-station inspection at Full HD and 1440×900. No automated tests or full mission replay.
 - Related: D-013–D-014, D-028, D-031; I-099.
 
-## D-032 — Integrate the user-selected hackathon audio set
+## D-035 — Integrate the user-selected hackathon audio set
 
 - Date: 2026-11-15.
 - Status: accepted user direction, implementation recorded separately from verification.
 - Decision: use the user's seven audition choices, with replacement achievement candidate 5 (cynicmusic's cinematic fanfare), for music, station attention, accepted commitments, completion, launch and outcomes. Keep audio local, quiet under conversation, optional through mute/volume, and limited to meaningful events.
-- Source: user: “I pick 5 for cinematic fanfare. work it all in”; remaining selected controls verified in the audition browser. See [selection and integration record](notes/2026-11-15-audio-integration.md), I-098.
+- Source: user: “I pick 5 for cinematic fanfare. work it all in”; remaining selected controls verified in the audition browser. See [selection and integration record](notes/2026-11-15-audio-integration.md), I-101.
 - Constraints: no routine hover/tab/slider sounds, voice acting or new content/network systems. Preserve third-party terms; audio supports existing visual information. Confirm actions only after host acceptance; suppress snapshot/rejoin and result-reopening replays.
 - Related: D-004, D-005, D-014–D-015, D-021–D-022, D-025, D-028.
 
@@ -354,7 +369,7 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Decision: the team preferred the original station appearance and liked only the less-rounded corners. Remove the broad station theme and retain only border-radius overrides: 6px panels/cards, 3px rectangular controls/fields, 4px Science nodes. Keep circular avatars, slider thumbs, switches and data marks circular. Keep the accepted title/pre-game pages unchanged.
 - Preservation: do not revert parallel audio, artwork or other work. Remove only this assistant's station theme; replace it with `game/src/shell/station-corners.css`, loaded by `shell.css`.
 - Evidence: TypeScript/build passed. Browser measurements confirmed Science's original system font, 16px heading, original background and blue action, and Planner/Comms' original tracking, panel gradients and glows alongside the smaller corner radii. See the [audit follow-up](reviews/2026-11-15-in-game-style-audit.md#user-rejection-and-corner-only-replacement).
-- Identifier alignment: audio retains D-032. The unpublished conflicting station-theme entry is retained as D-033 and superseded here.
+- Identifier alignment after merging concurrent work: published Science facilities retain D-032 and I-098; audio moves to D-035 and I-101. The station-theme entry remains D-033 and is superseded here.
 - Related: I-099, D-028, D-031–D-033.
 
 ## Future decision template

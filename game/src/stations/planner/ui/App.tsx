@@ -5,7 +5,7 @@ import { actions, getPlanner, stepPlaythrough, uiStore, usePlanner, useUi } from
 import { BODIES } from '../data/bodies';
 import { computeMissionResult } from '../result';
 import { TopBar } from './TopBar';
-import { BottomStrip } from './BottomStrip';
+import { BottomStrip, GoalDialogHost } from './BottomStrip';
 import { RocketTab } from './RocketTab';
 import { VersionsTab } from './VersionsTab';
 import { PopupLayer } from './Popups';
@@ -105,6 +105,7 @@ export function App() {
         <PlaythroughOverlay />
         <PopupLayer />
         <Briefing />
+        <GoalDialogHost />
       </div>
     </div>
   );

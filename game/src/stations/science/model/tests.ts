@@ -10,7 +10,7 @@ import { MISSION } from '../../../core/mission';
 import { partReliability } from '../../planner/data/parts';
 import { actualPart, partProcurement } from '../../planner/derive';
 import { allParts, partPlaceName } from '../../planner/model/rocketUtils';
-import { formatDate, running, sci } from './research';
+import { formatDate, running, teamCapacity } from './research';
 
 /** Length of a test in tree months; scaled per mission like research (1 month in the weather mission). */
 const TEST_MONTHS = 2;
@@ -110,7 +110,7 @@ export function testCheck(s: GameState, partId: string): TestCheck {
   if (t.state === 'arriving') return no(`Arrives ${formatDate(t.arrivesAt ?? 0)}.`);
   if (t.state === 'testing') return no('A team is already testing it.');
   if (t.state === 'tested') return no('Already tested.');
-  if (running(s.research).length >= sci(s).slots) return no(`All ${sci(s).slots} research teams are busy.`);
+  if (running(s.research).length >= teamCapacity(s)) return no(`All ${teamCapacity(s)} research teams are busy.`);
   if (t.costM > budgetAvailableM(s.budget) + 1e-9) return no('Not enough budget available.');
   return { ok: true, reason: null };
 }

@@ -1,6 +1,6 @@
 # Selected audio integrated into Mission Control
 
-Date: 2026-11-15. User direction: “I pick 5 for cinematic fanfare. work it all in”. The audition browser showed seven chosen categories; the remaining six choices were read from their selected controls without changing them. Accepted under D-032, I-098.
+Date: 2026-11-15. User direction: “I pick 5 for cinematic fanfare. work it all in”. The audition browser showed seven chosen categories; the remaining six choices were read from their selected controls without changing them. Accepted under D-035, I-101.
 
 | Use | Selected asset | Terms |
 | --- | --- | --- |

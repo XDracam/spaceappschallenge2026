@@ -257,16 +257,25 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Intended player experience: the table decides how far to stretch: take the safe two goals and bank the budget score, or add the ozone spectrometer and the rain radar and buy carefully. The radar also needs Science (unlock) and the extra mass needs bigger tanks.
 - Dependencies and unanswered questions: balance of costs and weights (Q-039); optional goals for Mars.
 
-### I-098 — High-value hackathon audio
+### I-101 — High-value hackathon audio
 
 - Captured: 2026-11-15.
 - Source: user requested Terra subagents to identify where and what audio to add, then emphasized limited hackathon time and high-value additions over small details.
-- Status: the user selected seven audition sounds and requested integration under D-032; earlier shortlists remain historical proposals.
+- Status: the user selected seven audition sounds and requested integration under D-035; earlier shortlists remain historical proposals.
 - Idea: use one quiet atmospheric loop and a small reusable set of attention, completion, launch and outcome sounds. Focus on new actionable work and mission payoff; defer routine interface sounds and voice/radio chatter.
 - Evidence: three Terra source reviews; no assets auditioned, implementation or audible/multiplayer validation. See [audio shortlist](reviews/2026-11-15-audio-plan.md) for actual trigger points, priorities, cut list and limitations.
 - Related: D-004, D-005, D-012, D-021, D-025, D-028.
 
 - Follow-up: user requested at least five freely reusable candidates per sound and a contextual audition page, including the subtle confirmation cue. [Audition record](notes/2026-11-15-audio-audition.md) documents the licensed previews and selection tool, rejection of the original achievement family, and replacement candidates. The user then chose cinematic fanfare 5 and requested integration; see [selected game audio](notes/2026-11-15-audio-integration.md).
+
+### I-098 — Facilities and hired teams link Science and Procurement
+
+- Date: 2026-11-15.
+- Source: user, [science module note, November 15 follow-up](notes/2026-11-14-science-module.md).
+- Status: accepted direction under D-032; implemented.
+- Idea: higher techs need labs, equipment or rented machine time that Procurement supplies, and Science asks for extra research teams that Procurement hires for a time or for good, without assignment or idle costs.
+- Intended player experience: the two tables talk early: Science asks, Procurement weighs the cost against the parts budget.
+- Dependencies and unanswered questions: prices and lead times (Q-040); effect on the weather budget (D-030, Q-039).
 
 ### I-097 — Extend the title-screen quality through mission setup
 

@@ -14,6 +14,12 @@ All original project code was written by OpenAI Codex and Anthropic Claude under
 
 AI generation happened during development. Missions, dialogue and other game content are prepared in advance; the game does not use generative AI to create content during play.
 
+### Models and tools used
+
+- **Anthropic Claude:** Opus 5.5, Fable 5.2 and Sonnet 5.5 for code, docs and design (see `Co-Authored-By` commit trailers); Sonnet and Haiku as agent players and helpers in the [playtest loop](playtest/README.md).
+- **OpenAI Codex**, including GPT-6 Astra, Terra and Luna and GPT-6.1 Sol: concept work, documentation, implementation, SVG icon generation, source review and walkthroughs recorded in [`docs/playtests/`](docs/playtests/).
+- **ChatGPT Images (OpenAI):** Communications character portraits and title-screen artwork, watermarked "AI-generated" (see [third-party credits](THIRD_PARTY.md)).
+
 ### Submission disclosures still to complete or verify
 
 The [official 2026 Project Submission Guide](https://www.spaceappschallenge.org/resources/project-submission-guide/) was checked November 15, 2026. It requires disclosure of where and how AI was used, visible watermarks on AI-generated images/video, and acknowledgement in descriptive text and metadata for AI-generated code/data/audio. Generated content must not use, contain or modify NASA branding or design elements.

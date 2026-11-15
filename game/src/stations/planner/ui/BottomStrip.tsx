@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { Issue, ManeuverType, Severity } from '../model/types';
+import { createStore, useStore } from '../../../core/createStore';
+import type { Goal, Issue, ManeuverType, Severity } from '../model/types';
 import { uiStore, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
 import { DAYS_PER_MONTH, formatDv } from '../model/units';
 import { allParts, partPlaceName } from '../model/rocketUtils';
@@ -95,6 +96,100 @@ function DvCard() {
   );
 }
 
+function goalAsk(g: Goal): string {
+  const body = g.body.charAt(0).toUpperCase() + g.body.slice(1);
+  const orbit = g.orbitName ?? (g.altitudeKm !== undefined ? `an orbit around ${body} at ${Math.round(g.altitudeKm).toLocaleString('en')} km` : `an orbit around ${body}`);
+  switch (g.kind) {
+    case 'orbit': return `Reach ${orbit}.`;
+    case 'orbitData': return `Reach ${orbit} and send data home${g.instrument ? ` with the ${g.instrument} instrument` : ''}${g.minPerformance !== undefined ? ` at performance ${g.minPerformance} or better` : ''}.`;
+    case 'surfaceData': return `Land on ${body} and send data home${g.instrument ? ` with the ${g.instrument} instrument` : ''}${g.minPerformance !== undefined ? ` at performance ${g.minPerformance} or better` : ''}.`;
+    case 'land': return `Land on ${body}.`;
+    default: return `Bring the craft back from ${body}.`;
+  }
+}
+
+const goalStore = createStore<{ open: boolean; focus: string | null }>({ open: false, focus: null });
+const openGoals = (focus: string | null = null) => goalStore.set({ open: true, focus });
+
+/** Full-screen window with every goal: mission-critical first, then optional ones. */
+export function GoalDialogHost() {
+  const { open, focus } = useStore(goalStore, (s) => s);
+  const goals = usePlanner((g) => g.mission.goals);
+  const close = () => goalStore.set({ open: false, focus: null });
+  useEffect(() => {
+    if (!open) return;
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, [open]);
+  useEffect(() => {
+    if (open && focus) document.getElementById(`goal-detail-${focus}`)?.scrollIntoView({ block: 'center' });
+  }, [open, focus]);
+  if (!open) return null;
+  const required = goals.filter((g) => !g.optional);
+  const optional = goals.filter((g) => g.optional);
+  return (
+    <div class="briefing-wrap goal-dialog-wrap" style={{ inset: 0 }}
+      onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+      <section class="briefing glass strong goal-dialog" role="dialog" aria-labelledby="goal-dialog-title">
+        <div class="goal-dialog-top">
+          <h2 id="goal-dialog-title" class="briefing-title">Goals</h2>
+          <button class="pill primary" autoFocus onClick={close}>Close</button>
+        </div>
+        <div class="briefing-subhead">Mission-critical · the mission needs these</div>
+        {required.map((g) => <GoalDetail key={g.id} goal={g} onClose={close} />)}
+        {optional.length > 0 && (
+          <>
+            <div class="briefing-subhead">Optional · bonus points</div>
+            {optional.map((g) => <GoalDetail key={g.id} goal={g} onClose={close} />)}
+          </>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function GoalDetail({ goal, onClose }: { goal: Goal; onClose: () => void }) {
+  const game = usePlanner((g) => g);
+  const ev = useEvaluation();
+  const r = ev.goals.find((x) => x.goalId === goal.id);
+  const c = r?.successChance ?? 0;
+  const na = !r || !r.achievable || c <= 0;
+  const branch = game.plan.branches.find((b) => b.id === r?.branchId);
+  const locs = new Map(allParts(game.rocket).map((l) => [l.part.id, l]));
+  const factors = [...(r?.factors ?? [])].filter((f) => locs.has(f.partId)).sort((a, b) => a.p - b.p);
+  const optWeight = game.mission.goals.filter((x) => x.optional).reduce((n, x) => n + (x.bonusPoints ?? 1), 0);
+  const share = goal.optional && optWeight > 0 ? Math.round(((goal.bonusPoints ?? 1) / optWeight) * 100) : 0;
+  return (
+    <article id={`goal-detail-${goal.id}`} class={`goal-detail${goal.optional ? ' is-optional' : ''}`}>
+      <h3 class="goal-detail-name">{goal.name}{goal.optional ? <em class="goal-optional">Bonus</em> : null}</h3>
+      <p>{goalAsk(goal)}</p>
+      {goal.optional ? <p class="muted">Achieving it earns {share} % of the bonus part of the score. The mission is complete without it.</p> : null}
+      {na ? (
+        <p class={/^The plan does not/.test(r?.reason ?? 'x') || !r ? 'muted' : 'err-text'}>{r?.reason ?? 'Not reached by the plan.'}</p>
+      ) : (
+        <>
+          <div class="goal-dialog-chance">
+            <span class="goal-bar"><span class={`gb-fill ${chanceClass(c)}`} style={{ width: `${Math.max(2, c * 100)}%` }} /></span>
+            <span class={`num ${chanceClass(c)}`}>{pct(c)}</span>
+          </div>
+          <p class="muted">Chance of success, reached by {branch ? branchDisplayName(game, branch) : 'the plan'}.</p>
+        </>
+      )}
+      {factors.length > 0 && (
+        <ul class="goal-dialog-parts">
+          {factors.map((f) => (
+            <li key={f.partId}>
+              <button class="text-btn" title="Show this part in the Rocket panel" onClick={() => { highlightPart(f.partId); onClose(); }}>{partPlaceName(locs.get(f.partId)!)}</button>
+              <span class="num">{Math.round(f.p * 1000) / 10}%</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
+  );
+}
+
 function GoalsCard() {
   const goals = usePlanner((g) => g.mission.goals);
   const game = usePlanner((g) => g);
@@ -102,12 +197,12 @@ function GoalsCard() {
   return (
     <section class="card glass goals-card">
       <div class="card-top">
-        <span class="label">Goals</span>
+        <button type="button" class="label goals-open" title="Open all goals in a large window" onClick={() => openGoals()}>Goals</button>
         <div class="spacer" />
         <span class="goal-hint">chance of success</span>
       </div>
       <ul class="goal-list thin-scroll">
-        {goals.map((g) => {
+        {[...goals].sort((a, b) => Number(!!a.optional) - Number(!!b.optional)).map((g, i, all) => {
           const r = ev.goals.find((x) => x.goalId === g.id);
           const c = r?.successChance ?? 0;
           const na = !r || !r.achievable || c <= 0;
@@ -116,8 +211,8 @@ function GoalsCard() {
           const branch = game.plan.branches.find((b) => b.id === r?.branchId);
           if (na) {
             return (
-              <li key={g.id} class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}`} title={`${g.name}: ${reason}`}>
-                <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional"> · optional</em> : null}</span>
+              <li key={g.id} class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${reason}`} role="button" tabIndex={0} onClick={() => openGoals(g.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGoals(g.id); } }}>
+                <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional">Bonus</em> : null}</span>
                 <span class="goal-status">{notPlanned ? 'Not planned' : 'Blocked'}</span>
                 <span class="goal-reason">{reason}</span>
               </li>
@@ -125,8 +220,8 @@ function GoalsCard() {
           }
           const cls = chanceClass(c);
           return (
-            <li key={g.id} class="goal" title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`}>
-              <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional"> · optional</em> : null}</span>
+            <li key={g.id} class={`goal${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`} role="button" tabIndex={0} onClick={() => openGoals(g.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGoals(g.id); } }}>
+              <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional">Bonus</em> : null}</span>
               <span class="goal-bar"><span class={`gb-fill ${cls}`} style={{ width: `${Math.max(2, c * 100)}%` }} /></span>
               <span class={`goal-chance num ${cls}`}>{pct(c)}</span>
             </li>

@@ -8,7 +8,10 @@ import { composeTask } from '../../../shared/taskDraft';
 import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
-import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci } from '../model/research';
+import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci, teamCapacity } from '../model/research';
+import { facilityState, techFacilities } from '../model/needs';
+import { FacilityArt } from '../../../shell/FacilityArt';
+import { MAX_HIRED_TEAMS, hiredTeams } from '../../../core/facilities';
 import { isCovered, neededAsPrerequisite, LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
 import { partTests, testCheck, testCounts, testDays, testDurationText } from '../model/tests';
 import type { TechStatus } from '../model/types';
@@ -61,7 +64,9 @@ export function App() {
     <div class="sc-app" ref={root}>
       <header class="sc-head">
         <h1>Science · Engineering tech tree</h1>
-        <span>Teams {runs.length}/{slice.slots} · Budget available {budgetAvailableM(g.budget).toFixed(0)} M · {formatDate(g.clock.day)}</span>
+        <span>Teams {runs.length}/{teamCapacity(g)} · Budget available {budgetAvailableM(g.budget).toFixed(0)} M · {formatDate(g.clock.day)}</span>
+        {g.meta.phase === 'planning' && hiredTeams(g.research, g.clock.day).length < MAX_HIRED_TEAMS && !g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'team')
+          ? <button type="button" class="sc-btn small" onClick={() => scienceActions.askTeam()}>Request more research teams</button> : null}
       </header>
       <div class="sc-work">
         <aside class="sc-left">
@@ -88,6 +93,7 @@ export function App() {
               </div>
             );
           })}
+          <Teams g={g} />
           <h2 data-science-lab tabIndex={-1}>Lab</h2>
           {runs.length === 0 ? <p class="muted">No project running.</p> : null}
           {runs.map((p) => {
@@ -136,7 +142,7 @@ export function App() {
                   style={{ left: `${p.x - NODE_W / 2}px`, top: `${p.y - NODE_H / 2}px`, width: `${NODE_W}px`, height: `${NODE_H}px`, '--c': BRANCH_COLOR[t.branch] }}
                   onClick={(e) => { e.stopPropagation(); setSel(t.id); }}>
                   <b>{v.status === 'fog' ? '?' : t.name}</b>
-                  <small>{v.goal ? '★ goal · ' : ''}{!v.unavailable && v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : statusText(v)}</small>
+                  <small>{v.goal ? '★ goal · ' : ''}{!v.unavailable && v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : v.lacksFacilities ? 'Needs equipment' : statusText(v)}</small>
                 </button>
               );
             })}
@@ -210,6 +216,50 @@ function PartTests({ g }: { g: GameState }) {
   );
 }
 
+/** Facilities this tech needs from Procurement, and whether they are in place (D-032). */
+function Equipment({ g, techId }: { g: GameState; techId: string }) {
+  const facilities = techFacilities(techId);
+  return (
+    <>
+      <h3>Equipment from Procurement</h3>
+      <ul class="sc-equip">
+        {facilities.map((f) => {
+          const st = facilityState(g, f.id);
+          const asked = g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'facility' && q.facilityId === f.id);
+          return (
+            <li key={f.id}>
+              <FacilityArt id={f.id} class="sc-equip-art" /> {st.kind === 'active' ? '✓' : st.kind === 'coming' ? '⏳' : '○'} {f.name}
+              <span class="muted"> · {st.kind === 'active' ? (st.untilDay !== undefined ? `until ${formatDate(st.untilDay)}` : 'owned')
+                : st.kind === 'coming' ? `ready ${formatDate(st.fromDay)}` : asked ? 'asked, waiting for Procurement' : 'not held'}</span>
+              {st.kind === 'missing' && !asked && g.meta.phase === 'planning'
+                ? <button type="button" class="sc-btn small" onClick={() => scienceActions.askFacility(f.id, techId)}>Ask Procurement</button> : null}
+            </li>
+          );
+        })}
+      </ul>
+      <p class="muted small">Rented time must cover the whole project: if it lapses, the project pauses until Procurement renews it.</p>
+    </>
+  );
+}
+
+/** Research teams: the agency's own plus hired ones; Science can ask Procurement for another (D-032). */
+function Teams({ g }: { g: GameState }) {
+  const hired = hiredTeams(g.research, g.clock.day);
+  const asked = g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'team');
+  const full = hired.length >= MAX_HIRED_TEAMS;
+  return (
+    <>
+      <h2>Teams</h2>
+      <div class="sc-card">
+        <span>{teamCapacity(g)} at work · {sci(g).slots} own{hired.length ? ` · ${hired.length} hired` : ''}</span>
+        {hired.map((t) => <span class="muted small" key={t.id}>{t.from > g.clock.day ? `Starts ${formatDate(t.from)}` : 'Hired team'}{t.until === undefined ? ' · permanent' : ` · until ${formatDate(t.until)}`}</span>)}
+        <button type="button" class="sc-btn small" disabled={asked || full || g.meta.phase !== 'planning'}
+          onClick={() => scienceActions.askTeam()}>{asked ? 'Requested: waiting for Procurement' : full ? 'No more teams to hire' : 'Request more research teams'}</button>
+      </div>
+    </>
+  );
+}
+
 function Inspector({ id, views }: { id: string | null; views: Record<string, TechView> }) {
   const g = useGame((s) => s);
   if (!id) return <p class="muted">Select a tech. Several routes can lead to the same result: compare their cost, time and risk.</p>;
@@ -234,6 +284,7 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
       {t.requires.length === 0 ? <p class="muted">Nothing.</p> : (
         <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} {views[r].status === 'fog' ? '?' : TECH_BY_ID[r].name}</li>)}</ul>
       )}
+      {techFacilities(id).length && v.status !== 'researched' ? <Equipment g={g} techId={id} /> : null}
       {v.blocked ? <p class={v.unavailable ? 'muted' : 'sc-warn'}>{v.blockedWhy}</p> : null}
       {v.unavailable && !v.blocked ? <p class="muted">It builds on a tech no one can approve in this mission.</p> : null}
       {!t.start && v.status !== 'researched' && !v.unavailable ? (

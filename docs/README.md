@@ -6,7 +6,7 @@
 
 ## Current design
 
-[Selected game audio](notes/2026-11-15-audio-integration.md) records D-032's seven chosen sounds, local music/mute/volume, accepted-action feedback and station/result routing.
+[Selected game audio](notes/2026-11-15-audio-integration.md) records D-035's seven chosen sounds, local music/mute/volume, accepted-action feedback and station/result routing.
 
 [Procurement part geometry](notes/2026-11-15-procurement-artwork.md) records the parallel artwork corrections and rendered/browser checks across all catalogue families.
 
