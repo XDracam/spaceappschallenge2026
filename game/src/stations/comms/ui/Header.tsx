@@ -1,5 +1,5 @@
 import { useGame } from '../../../core/store';
-import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useLaunched, useMission, useScrubbed, useStartISO, useToday, useUi } from './store';
+import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useFlightLost, useGoalsAchieved, useLaunched, useMission, useScrubbed, useStartISO, useToday, useUi } from './store';
 import { GearIcon } from './common';
 import { formatDay, formatDuration, formatMoney, formatRealTime } from './format';
 
@@ -29,9 +29,16 @@ export function Header() {
   );
 }
 
+/** After the launch: what happened, in one word (a scrub or a lost flight is not "launched"). */
+function useLaunchWord(): string {
+  const scrubbed = useScrubbed();
+  const lost = useFlightLost();
+  return scrubbed ? 'scrubbed' : lost ? 'flight lost' : 'launched';
+}
+
 function TodayChip() {
   const launched = useLaunched();
-  const scrubbed = useScrubbed();
+  const word = useLaunchWord();
   const day = useToday();
   const running = useGame((s) => s.clock.running);
   const startISO = useStartISO();
@@ -44,7 +51,7 @@ function TodayChip() {
       <div class="chip-stack">
         <span class="chip-label">Today</span>
         <span class="chip-value num">{formatDay(day, startISO)}</span>
-        <span class="chip-sub">{launched ? (scrubbed ? 'launch scrubbed' : 'launched') : running ? `1 min = ${months} month${months === 1 ? '' : 's'}` : 'calendar stopped'}</span>
+        <span class="chip-sub">{launched ? (word === 'scrubbed' ? 'launch scrubbed' : word) : running ? `1 min = ${months} month${months === 1 ? '' : 's'}` : 'calendar stopped'}</span>
       </div>
     </div>
   );
@@ -72,18 +79,19 @@ function BudgetChip() {
 function LaunchChip() {
   const launchDay = useGame((s) => s.planner.plan.launchDay);
   const launched = useLaunched();
-  const scrubbed = useScrubbed();
+  const word = useLaunchWord();
+  const goals = useGoalsAchieved();
   const running = useGame((s) => s.clock.running);
   const now = useToday();
   const startISO = useStartISO();
   const realSec = useGame((s) => Math.ceil(Math.max(0, launchDay - s.clock.day) / Math.max(1e-9, s.clock.daysPerSecond)));
   if (launched) {
     return (
-      <div class={`chip-box launched-chip${scrubbed ? ' scrubbed' : ''}`}>
+      <div class={`chip-box launched-chip${word !== 'launched' ? ' scrubbed' : ''}`}>
         <div class="chip-stack">
           <span class="chip-label">Launch</span>
-          <span class="chip-value">{scrubbed ? 'SCRUBBED' : 'LAUNCHED'}</span>
-          <span class="chip-sub num">{formatDay(launchDay, startISO)}</span>
+          <span class="chip-value">{word.toUpperCase()}</span>
+          <span class="chip-sub num">{formatDay(launchDay, startISO)}{goals && word !== 'scrubbed' ? ` · ${goals} goals` : ''}</span>
         </div>
       </div>
     );

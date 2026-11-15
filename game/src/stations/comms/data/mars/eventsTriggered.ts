@@ -3,7 +3,7 @@
 // trust and budget). Each fires once, the first time its `when` holds.
 import type { EventDef } from '../../model/types';
 import {
-  FLAG_RTG_STORY, allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, techAccess, trust, trustAbove, trustBelow,
+  FLAG_PROMISE_BROKEN, FLAG_RTG_STORY, allOf, anyOf, budget, budgetBelow, delay, hasFlag, odds, option, pace, price, setFlag, techAccess, trust, trustAbove, trustBelow,
 } from '../helpers';
 
 export const PLAYER_EVENTS: EventDef[] = [
@@ -80,9 +80,9 @@ export const PLAYER_EVENTS: EventDef[] = [
     title: 'About that late delivery',
     message: "About that late delivery: a supplier of our supplier had a supplier problem. We're doing our best. Please don't tell the senator.",
     options: [
-      option('bonus', 'Pay an expediting bonus (next delivery arrives sooner).',
+      option('bonus', 'Pay an expediting bonus: the late part arrives a month sooner.',
         [trust('industry', 5), delay(-1, 'next')],
-        "Money, it turns out, dissolves supply-chain problems. Procurement's next delivery moves up a month.", 10),
+        'Money, it turns out, dissolves supply-chain problems. The late part moves up a month.', 10),
       option('blame', 'Publicly blame Feldwerk for the slip.',
         [trust('public', 5), trust('industry', -10)],
         'The public appreciates the candour. Feld appreciates nothing about it.'),
@@ -92,7 +92,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     ],
     ignored: {
       effects: [trust('industry', -5), delay(1, 'next')],
-      outcome: 'Nobody pushes, so nothing moves. The next delivery slips another month.',
+      outcome: 'Nobody pushes, so Feldwerk pulls its crews onto the late part and lets your next delivery slip a month instead.',
     },
     tags: ['industry', 'bad'],
   },
@@ -126,7 +126,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     title: 'Whistleblower at the cheapest bidder',
     message: 'An engineer at your cheapest bidder says they skip half the vibration tests. She wants to go on the record. Should I be worried?',
     options: [
-      option('audit', 'Order an independent audit (next delivery slips a month).',
+      option('audit', 'Order an independent audit (a delivery slips a month).',
         [trust('public', 5), trust('industry', -5), delay(1, 'next')],
         'The auditors find shortcuts and fix them. The part arrives late but shakes properly.', 10),
       option('test-clauses', 'Have procurement add test clauses (prices rise).',
@@ -210,6 +210,27 @@ export const PLAYER_EVENTS: EventDef[] = [
       outcome: "Feldwerk applies its 'schedule change surcharge' by default. Procurement notices first.",
     },
     tags: ['industry', 'bad'],
+  },
+  {
+    // Follow-up of the 'launch-seat' answer to "Election season" (eventsTimeline.ts).
+    id: 'launch-promise-broken',
+    source: 'player', when: hasFlag(FLAG_PROMISE_BROKEN), deadlineDays: 21,
+    characterId: 'duarte',
+    title: 'My front seat moved',
+    message: 'I told my voters I would be at your launch. Now there is a new date and a very confused campaign office. Explain this to me.',
+    options: [
+      option('fly-her-in', 'Fly her in for a hangar tour on the old date.',
+        [trust('government', -5)],
+        'Duarte gets her photo next to the lander, just not next to a launch. She is gracious about it, barely.', 5),
+      option('apologise', 'Apologise and explain the new date.',
+        [trust('government', -15), trust('public', 5)],
+        'Duarte accepts the apology in private and quotes it in public. The editorials like your candour.'),
+    ],
+    ignored: {
+      effects: [trust('government', -20)],
+      outcome: 'Duarte learns the new date from a reporter. Her next speech mentions the agency, unkindly.',
+    },
+    tags: ['government', 'bad', 'politics'],
   },
 ];
 

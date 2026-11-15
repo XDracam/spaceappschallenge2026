@@ -5,6 +5,8 @@ import type { GameState } from '../../../core/state';
 import { budgetAvailableM } from '../../../core/state';
 import { MISSION } from '../../../core/mission';
 import { BRANCH_ORDER, TECHS, TECH_BY_ID } from '../data/techs';
+import { contentFor } from '../../comms/data/content';
+import type { Effect } from '../../../shared/events/types';
 import { covered, designNeeds, running, sci, type Need } from './research';
 import type { Branch, Tech, TechStatus, TreeLayout } from './types';
 
@@ -103,17 +105,50 @@ export interface TechView {
   blocked: boolean;
   /** Why it is blocked (shown to the player). */
   blockedWhy?: string;
+  /**
+   * The tech needs an approval that nobody can give in this mission (or builds on such a
+   * tech): shown calmly as "Not in this mission" instead of a red "ask Comms" dead end.
+   */
+  unavailable: boolean;
   /** Prerequisites not researched yet (ids). */
   missing: string[];
   /** A tech that is a stepping stone for a goal, or a goal itself. */
   goal: boolean;
 }
 
+/**
+ * Techs Comms can approve in a mission: some project or message of that mission's Comms
+ * content enables them (a licence, a hearing). The weather mission has none, so its gated
+ * techs cannot be opened there.
+ */
+const arrangeableCache = new Map<string, Set<string>>();
+export function arrangeableTechs(missionId: string = MISSION.id): Set<string> {
+  let set = arrangeableCache.get(missionId);
+  if (!set) {
+    const c = contentFor(missionId);
+    const effects: Effect[] = [
+      ...c.projects.flatMap((p) => p.effects),
+      ...c.events.flatMap((e) => [...e.options.flatMap((o) => o.effects), ...e.ignored.effects]),
+    ];
+    set = new Set(effects.flatMap((e) => (e.kind === 'techAccess' && e.access === 'enable' ? [e.tech] : [])));
+    arrangeableCache.set(missionId, set);
+  }
+  return set;
+}
+
+/** A gated tech whose approval nobody can give in this mission. */
+export function gateUnavailable(t: Tech, missionId: string = MISSION.id): boolean {
+  return !!t.gate && !arrangeableTechs(missionId).has(t.id);
+}
+
 /** Is the tech blocked by comms, or gated and not approved? */
-export function blockInfo(t: Tech, access: Record<string, TechAccess> | undefined): { blocked: boolean; why?: string } {
+export function blockInfo(t: Tech, access: Record<string, TechAccess> | undefined, missionId: string = MISSION.id): { blocked: boolean; why?: string } {
   const a = access?.[t.id];
   if (a === 'blocked') return { blocked: true, why: 'Comms has blocked this tech.' };
-  if (t.gate && a !== 'enabled') return { blocked: true, why: `${t.gate.why} Ask Comms to arrange it.` };
+  if (t.gate && a !== 'enabled') {
+    if (gateUnavailable(t, missionId)) return { blocked: true, why: `${t.gate.why} No one can grant that in this mission.` };
+    return { blocked: true, why: `${t.gate.why} Ask Comms to arrange it.` };
+  }
   return { blocked: false };
 }
 
@@ -152,10 +187,19 @@ export function treeViews(g: GameState): Record<string, TechView> {
   const runningIds = new Set(running(g.research).map((p) => p.techId).filter(Boolean) as string[]);
   const goals = goalTechIds(designNeeds(g));
   const dist = distances(researched);
+  const missionId = g.meta.missionId;
+  // A tech is out of reach in this mission when its own gate cannot be opened, or a prerequisite is out of reach.
+  const outOfReach: Record<string, boolean> = {};
+  const reach = (id: string): boolean => {
+    if (id in outOfReach) return outOfReach[id];
+    const t = TECH_BY_ID[id];
+    outOfReach[id] = !researched.has(id) && (gateUnavailable(t, missionId) || t.requires.some(reach));
+    return outOfReach[id];
+  };
   const out: Record<string, TechView> = {};
   for (const t of TECHS) {
     const missing = t.requires.filter((r) => !researched.has(r));
-    const { blocked, why } = blockInfo(t, g.research.access);
+    const { blocked, why } = blockInfo(t, g.research.access, missionId);
     const isGoal = goals.has(t.id);
     let status: TechStatus;
     if (researched.has(t.id)) status = 'researched';
@@ -165,7 +209,7 @@ export function treeViews(g: GameState): Record<string, TechView> {
     else if (isCovered(t, g.research)) status = 'covered';
     else if (blocked) status = 'blocked';
     else status = 'available';
-    out[t.id] = { status, blocked, blockedWhy: why, missing, goal: isGoal };
+    out[t.id] = { status, blocked, blockedWhy: why, missing, goal: isGoal, unavailable: reach(t.id) && status !== 'fog' };
   }
   return out;
 }
@@ -186,7 +230,7 @@ export function startCheck(s: GameState, techId: string): StartCheck {
   const missing = t.requires.filter((r) => !researched.has(r));
   if (missing.length) return no(`Needs ${missing.map((m) => TECH_BY_ID[m].name).join(' and ')} first.`);
   if (isCovered(t, s.research)) return no('Nothing left to gain: its results are already available.');
-  const b = blockInfo(t, s.research.access);
+  const b = blockInfo(t, s.research.access, s.meta.missionId);
   if (b.blocked) return no(b.why ?? 'Blocked.');
   if (running(s.research).length >= sci(s).slots) return no(`All ${sci(s).slots} research teams are busy.`);
   if (t.costM > budgetAvailableM(s.budget) + 1e-9) return no('Not enough budget available.');

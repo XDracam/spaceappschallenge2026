@@ -3,7 +3,7 @@
 // 'bad'/'opportunity'). `eligible` gates an event to a trust range. Each fires at most once.
 import type { EventDef } from '../../model/types';
 import {
-  budget, constraint, delay, offer, option, pace, price, trust, trustAbove, trustBelow,
+  budget, delay, offer, option, pace, price, trust, trustAbove, trustBelow,
 } from '../helpers';
 
 export const POOL_EVENTS: EventDef[] = [
@@ -88,7 +88,7 @@ export const POOL_EVENTS: EventDef[] = [
       option('surcharge', 'Accept a temporary surcharge (procurement pays more).',
         [trust('industry', 5), price(10, 3)],
         'Feld thanks you for "understanding markets". Procurement thanks no one.'),
-      option('wait', 'Wait for the queue (next delivery slips a month).',
+      option('wait', 'Wait for the queue (a delivery slips a month).',
         [trust('industry', 5), delay(1, 'next')],
         'Feld appreciates the patience. Procurement updates a delivery date with a sigh.'),
       option('fixed-price', 'Point to the fixed-price clause in the contracts.',
@@ -182,9 +182,9 @@ export const POOL_EVENTS: EventDef[] = [
       option('explain', 'Explain on air why a satellite on the ground is safe.',
         [trust('public', 5)],
         'Your explainer is calm and clear. The tabloid moves on to a comet.'),
-      option('shielding', 'Add radiation shielding to the design (planner finds the mass).',
-        [trust('public', 5), trust('government', 5), constraint('Add radiation shielding to the weather satellite.')],
-        'The headline becomes "Agency Takes No Chances". The planner takes on a little extra mass.'),
+      option('shielding', 'Have Science re-check the radiation margins (costs lab time).',
+        [trust('public', 5), trust('government', 5), pace(-15, 1)],
+        'The headline becomes "Agency Takes No Chances". Science spends a fortnight re-running radiation numbers.'),
       option('ignore', 'Ignore the tabloids.',
         [trust('public', -5)],
         'The solar storm passes harmlessly. The tabloid claims credit for the warning.'),
@@ -231,9 +231,9 @@ export const POOL_EVENTS: EventDef[] = [
     title: 'Radio astronomers object',
     message: "Our regulator says your satellite's downlink frequency sits next to our radio telescope's. Our astronomers are, in their words, 'deafened in advance'. Can you move?",
     options: [
-      option('shift', 'Shift the frequency (planner adjusts the antenna plan).',
-        [trust('partners', 10), constraint('Use the shifted downlink frequency agreed with Meridian.')],
-        'The astronomers send a thank-you card with a picture of a galaxy. The planner updates the antenna plan.'),
+      option('shift', 'Shift the frequency: the antenna supplier retunes it for a fee.',
+        [trust('partners', 10)],
+        'The astronomers send a thank-you card with a picture of a galaxy. The supplier sends an invoice.', 3),
       option('treaty', 'Ask Senator Duarte to raise it at the treaty office.',
         [trust('partners', 5), trust('government', -5)],
         'Two calls and a lunch later, a compromise is found. Duarte adds it to your tab.'),

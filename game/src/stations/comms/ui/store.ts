@@ -1,16 +1,17 @@
 // Comms UI glue: shared-state hooks (core/store) + UI-local state (selection, last
 // outcome, open panels) that is never shared. Game changes go through commsActions.
 import { createStore, useStore } from '../../../core/createStore';
-import { getState, useGame } from '../../../core/store';
+import { getState, onGameReset, useGame } from '../../../core/store';
 import { budgetAvailableM } from '../../../core/state';
 import { missionById } from '../../../core/mission';
 import type { MissionDef } from '../../planner/model/types';
-import { computeMissionResult, inFlightCounted, isScrubbed } from '../../planner/result';
+import { computeMissionResult, inFlightCounted, isScrubbed, missionScore } from '../../planner/result';
 import { commsActions } from '../logic';
 import type { CommsSlice } from '../slice';
 import {
-  canStartProject, contentOf, getEventDef, isLaunched, projectSlotsFor, type Content, type ProjectBlock,
+  canStartProject, contentOf, getEventDef, isLaunched, projectSlots, type Content, type ProjectBlock,
 } from '../state/world';
+import { previewLines, type ChangeLine } from './common';
 
 export { DAYS_PER_MONTH } from '../state/world';
 /** The game's mission (from the shared state, so it follows the mission the host picked). */
@@ -23,16 +24,21 @@ export const useContent = (): Content => useGame(contentOf);
 export interface UiState {
   selectedInstanceId: string | null;
   devOpen: boolean;
-  /** Outcome text shown after answering, until the next selection. */
-  lastOutcome: { instanceId: string; text: string } | null;
+  /** Outcome text and what it changed (computed just before applying), shown after answering. */
+  lastOutcome: { instanceId: string; optionId: string; text: string; lines: ChangeLine[] } | null;
   projectPickerOpen: boolean;
   /** The launch card was dismissed. */
   launchCardClosed: boolean;
+  /** Messages this player has opened (unopened open ones are marked new). */
+  opened: string[];
 }
 const initialUi = (): UiState => ({
-  selectedInstanceId: null, devOpen: false, lastOutcome: null, projectPickerOpen: false, launchCardClosed: false,
+  selectedInstanceId: null, devOpen: false, lastOutcome: null, projectPickerOpen: false, launchCardClosed: false, opened: [],
 });
 export const uiStore = createStore<UiState>(initialUi());
+// A new attempt (restart, mission change, resumed save): selection, outcome, open panels
+// and the launch card belong to the old game (playtest/packages/contract.md).
+onGameReset(() => uiStore.set({ ...initialUi(), devOpen: uiStore.get().devOpen }));
 export const useUi = <S,>(sel: (s: UiState) => S) => useStore(uiStore, sel);
 
 /** Select from the comms slice of the shared state. */
@@ -46,16 +52,27 @@ export const useLaunched = () => useGame(isLaunched);
 export const useScrubbed = () => useGame((s) => (s.meta.phase === 'launched' || s.meta.phase === 'finished') && isScrubbed(computeMissionResult(s)));
 /** The launch flew but lost every goal before the in-flight events could happen. */
 export const useFlightLost = () => useGame((s) => (s.meta.phase === 'launched' || s.meta.phase === 'finished') && !inFlightCounted(s) && !isScrubbed(computeMissionResult(s)));
+/** Goals achieved of the mission's goals once launched (null before the launch). */
+export const useGoalsAchieved = () => useGame((s) => {
+  if (s.meta.phase !== 'launched' && s.meta.phase !== 'finished') return null;
+  const r = missionScore(computeMissionResult(s));
+  return `${r.achieved}/${r.total}`;
+});
 
 /** Player actions (dispatch shared reducers; UI-local bookkeeping). */
 export const actions = {
   /** Answer an open inbox event; shows the option's outcome once the answer applied. */
   answer(instanceId: string, optionId: string): void {
+    // What the option will change, in the numbers of the state it applies to.
+    const before = getState();
+    const pre = before.comms.inbox.find((i) => i.instanceId === instanceId);
+    const option = pre && getEventDef(pre.eventId, contentOf(before))?.options.find((o) => o.id === optionId);
+    if (!option) return;
+    const lines = previewLines(before, option.effects, { costM: option.costM, shield: !option.costM });
+    // Kept before dispatching: on a client the answer applies when the host's state arrives.
+    // The conversation shows it only once the event is answered with this option.
+    uiStore.set({ ...uiStore.get(), lastOutcome: { instanceId, optionId, text: option.outcome, lines } });
     commsActions.answer(instanceId, optionId);
-    const inst = getState().comms.inbox.find((i) => i.instanceId === instanceId);
-    if (inst?.status !== 'answered' || inst.chosenOptionId !== optionId) return;
-    const text = getEventDef(inst.eventId, contentOf(getState()))?.options.find((o) => o.id === optionId)?.outcome ?? '';
-    uiStore.set({ ...uiStore.get(), lastOutcome: { instanceId, text } });
   },
   startProject(defId: string): void {
     commsActions.startProject(defId);
@@ -64,14 +81,15 @@ export const actions = {
   canStartProject(defId: string): { ok: boolean; reason?: ProjectBlock } {
     return canStartProject(getState(), defId);
   },
-  /** Number of project slots currently available (2, or 3 with any strong stakeholder). */
+  /** Number of project slots. */
   projectSlots(): number {
-    return projectSlotsFor(getState().comms.trust);
+    return projectSlots();
   },
   /** Select an inbox event; clears the last outcome when switching to another event. */
   select(instanceId: string | null): void {
     const ui = uiStore.get();
     const keep = ui.lastOutcome && ui.lastOutcome.instanceId === instanceId;
-    uiStore.set({ ...ui, selectedInstanceId: instanceId, lastOutcome: keep ? ui.lastOutcome : null });
+    const opened = instanceId && !ui.opened.includes(instanceId) ? [...ui.opened, instanceId] : ui.opened;
+    uiStore.set({ ...ui, selectedInstanceId: instanceId, lastOutcome: keep ? ui.lastOutcome : null, opened });
   },
 };

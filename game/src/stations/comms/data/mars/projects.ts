@@ -1,8 +1,8 @@
-// Proactive projects (2–3 slots). They cost money from the shared budget,
+// Proactive projects (2 slots). They cost money from the shared budget,
 // calendar time, and sometimes trust (startTrust, applied at start). Bigger
 // deals need trust (`requires`). Negotiated parts arrive as offers to procurement.
 import type { ProjectDef } from '../../model/types';
-import { FLAG_GROUND_STATION, budget, limit, odds, offer, price, service, setFlag, techAccess, trust } from '../helpers';
+import { FLAG_GROUND_STATION, budget, limit, odds, offer, price, setFlag, techAccess, trust } from '../helpers';
 
 export const PROJECTS: ProjectDef[] = [
   // ------------------------------------------------------------- galas
@@ -175,16 +175,15 @@ export const PROJECTS: ProjectDef[] = [
     id: 'meridian-ground-station',
     name: 'Deep-space ground station access',
     kind: 'negotiation',
-    description: "Book time on Meridian's 70 m dish so the lander needs a smaller antenna. Some senators prefer domestic dishes.",
+    description: "Book time on Meridian's 70 m dish for the lander's relay windows. Some senators prefer domestic dishes.",
     costM: 10, months: 3,
     startTrust: [{ stakeholder: 'government', delta: -5 }],
     requires: { stakeholder: 'partners', min: 50 },
-    effects: [
-      trust('partners', 5),
-      service('groundStation', "Meridian's 70 m dish receives lander data: the needed antenna data rate is halved."),
-      setFlag(FLAG_GROUND_STATION),
-    ],
-    result: "Meridian's 70 m dish is booked for the mission. The planner can plan with a smaller lander antenna.",
+    // Was also a 'groundStation' service promising the planner a smaller antenna; no
+    // station reads it (R1115m-r01-08). What it really does: the in-flight "Busy week on
+    // the dishes" goes well (data/mars/inFlight.ts).
+    effects: [trust('partners', 5), setFlag(FLAG_GROUND_STATION)],
+    result: "Meridian's 70 m dish is booked for the lander's relay windows.",
     partnerCharacterId: 'moreau',
   },
 ];

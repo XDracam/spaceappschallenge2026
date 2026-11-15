@@ -3,7 +3,7 @@
 // day 15 and day 130. The day-195 event only arrives if the launch slips past the
 // start of storm season (comms stops at launch).
 import type { EventDef } from '../../model/types';
-import { budget, constraint, option, pace, price, trust } from '../helpers';
+import { FLAG_LAUNCH_PROMISE, budget, option, pace, price, setFlag, trust } from '../helpers';
 
 export const TIMELINE_EVENTS: EventDef[] = [
   {
@@ -36,9 +36,9 @@ export const TIMELINE_EVENTS: EventDef[] = [
     title: 'Before storm season, please',
     message: "Storm season starts in early summer, and our old satellite won't see it through. My forecasters need your satellite up before the first hurricane. Can you promise me that?",
     options: [
-      option('promise', 'Promise launch before storm season (planner keeps the date).',
-        [trust('government', 10), constraint('Weather service expects launch before storm season: keep the announced launch date.')],
-        'Lindqvist pins your promise above her desk. The planner now has a launch date with hurricanes attached to it.'),
+      option('promise', 'Promise launch on the announced date, before storm season.',
+        [trust('government', 10), setFlag(FLAG_LAUNCH_PROMISE)],
+        'Lindqvist pins your promise above her desk. Tell the planner: the launch date now has hurricanes attached to it.'),
       option('bridge-data', "Book a partner satellite's images as a stopgap, just in case.",
         [trust('government', 5), trust('partners', 5)],
         "Meridian's images cover the gap if you slip. Lindqvist calls it 'a seatbelt', which is the nicest thing she says all year.", 6),

@@ -1,0 +1,93 @@
+{
+  "package": "D2 Communications cleanup",
+  "status": "done",
+  "what": "Every Comms answer and project now shows what it will really do, in the numbers the rules apply: trust after clamping, the shared-budget amount (halved cuts included), which delivery moves from which date to which date and when it is needed, prices and research pace until which day, a partner offer's terms against what is contracted. The same line is shown for 'no answer by <date>'. The expediting bonus now speeds up the late part (it used to move the earliest delivery), finished one-off projects are not offered again, options that promised the Planner something no station reads were rewritten into real effects (Science pace, a fee, a launch-date promise that is called in when the launch slips), and messages that touch a teammate's work stay open at least 45 days (90 s at normal speed) with the real time left shown. The right column shows, live, the in-flight events trust will decide at launch (condition, current value, goal-chance effect, net effect) and the trust part of the score, so a Comms player can see and steer what the relationships are worth for the mission. A new message gets a short banner in the header and a marked row. Unused controls were removed: four weather licences, the coastal lobbying, the third project slot. The launch chip says SCRUBBED / FLIGHT LOST / LAUNCHED with goals, the news line clears the station pill and the result chip, and the Comms UI state resets on a new attempt.",
+  "added": [
+    "Consequence chips on every option, project (picker 'Now' / 'When done' rows and running cards) and outcome: e.g. 'Costs 5 M of the shared budget', 'Industry +5', 'PROCUREMENT Taiga KL-2000 arrives 1 Jun 2030 instead of 1 Jul 2030 (needed 30 Jun 2030)', 'SCIENCE research and part tests 30 % faster until 1 May 2030'",
+    "Line under the options: 'No answer by <date>' with the chips of what ignoring does",
+    "Real time left next to a message's deadline ('· 0:33 real time')",
+    "Panel 'In flight · decided at launch' in the right column: each in-flight event with ✓/✗, its condition with today's value ('Government above 60 (now 55)'), its goal-chance effect, the net effect in words, and 'score n/50' for trust",
+    "One always-visible line under each trust meter saying what the band does ('Above 70: orders −10 % price and time', 'Budget cuts from events halved' …)",
+    "New-message banner in the header centre for ~7 s (click opens the message) when another message is already open; a dot on unopened rows",
+    "Weather project 'Northgate test technicians' (3 M, 1 mo, partners 50): research and part tests 30 % faster for 2 months — Comms' lever on part reliability through Science's tests",
+    "Follow-up messages 'You promised me a date' (weather, Lindqvist) and 'My front seat moved' (Mars, Duarte) when the launch ends up later than the date Comms promised",
+    "Goal-chance numbers on the launch card's in-flight events; 'FLIGHT LOST' and '· n/m goals' on the header launch chip",
+    "Science tree: grey \"Not in this mission\" status for gated techs no Comms project can approve in the current mission (weather: RTG heat source, thermoelectric converters, optical terminal)"
+  ],
+  "removed": [
+    "↑/↓ hint pills and the 'Hints show who is likely to react, not by how much' note (replaced by the real numbers)",
+    "'AFFECTS PLANNER / PROCUREMENT / SHARED BUDGET' tags (the consequence chips name the station and the effect)",
+    "Hover tooltip on the trust meters (its content is the always-visible line)",
+    "Third project slot and the line 'Slot 3 opens at strong trust (70+)' — never opened in four rounds",
+    "Weather projects 'Plutonium licence', 'Laser link licence', 'Ion export licence', 'Public hearing on nuclear power' (they open techs the weather satellite never needs; the one bought, in 1115m-r01, was 6 M for nothing; the ion licence and hearing lifted blocks that never exist in this mission) and 'Coastal caucus lobbying' (never started; its 'funding' odds also made the Treasury claw-back likelier). Mars keeps its licences and lobbying.",
+    "Finished one-off projects (licences, negotiations, lobbying, sponsorship) from the project picker",
+    "Every 'planner finds the mass / adjusts the antenna plan / keeps the date / gains a test facility' promise and the missionConstraint/service effects behind them (both missions): no station reads them",
+    "'Next delivery' wording on options where the rules move another delivery",
+    "Science, weather mission: red \"Blocked by Comms · Ask Comms to arrange it\" tiles for techs Comms cannot arrange there"
+  ],
+  "findings": [
+    "R1115m-r01-10",
+    "R1115m-r01-13",
+    "R1115d-r01-13",
+    "R1115m-r01-08",
+    "R1115-r01-03",
+    "Rr001-12",
+    "R1115d-r01-12",
+    "R1115d-r01-01 (player 4 problem 3: no Comms lever on mission success)",
+    "R1115d-r01-07 (offer terms kept, now in the general consequence line and in the project picker)",
+    "judge leftover: Comms header chip LAUNCHED after a failed or scrubbed launch",
+    "core builder note: Comms tick never runs after 'Launch now'"
+  ],
+  "files": [
+    "game/src/stations/comms/logic.ts",
+    "game/src/stations/comms/slice.ts",
+    "game/src/stations/comms/state/world.ts",
+    "game/src/stations/comms/state/format.ts",
+    "game/src/stations/comms/data/mission.ts",
+    "game/src/stations/comms/data/helpers.ts",
+    "game/src/stations/comms/data/weather/eventsTimeline.ts",
+    "game/src/stations/comms/data/weather/eventsTriggered.ts",
+    "game/src/stations/comms/data/weather/eventsPool.ts",
+    "game/src/stations/comms/data/weather/projects.ts",
+    "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "game/src/stations/comms/data/mars/eventsPool.ts",
+    "game/src/stations/comms/data/mars/projects.ts",
+    "game/src/stations/comms/ui/App.tsx",
+    "game/src/stations/comms/ui/common.tsx",
+    "game/src/stations/comms/ui/Conversation.tsx",
+    "game/src/stations/comms/ui/Header.tsx",
+    "game/src/stations/comms/ui/Inbox.tsx",
+    "game/src/stations/comms/ui/NewsFeed.tsx",
+    "game/src/stations/comms/ui/Overlays.tsx",
+    "game/src/stations/comms/ui/Projects.tsx",
+    "game/src/stations/comms/ui/TrustBar.tsx",
+    "game/src/stations/comms/ui/store.ts",
+    "game/src/stations/comms/ui/styles.css",
+    "game/src/stations/science/model/tree.ts",
+    "game/src/stations/science/ui/App.tsx"
+  ],
+  "verified": "npx tsc --noEmit clean. Three one-player sessions on port 4780 at --speed 2 (screens are 1920x1080 scaled to 1280x720). Weather, run 1: answered 'Wait for the queue' — option and news named 'Taiga KL-2000 arrives 1 Jul 2030 instead of 1 Jun 2030 (needed 30 Jun 2030)'; this made the part late, the late-delivery message arrived and its expediting bonus named the same part ('arrives 1 Jun instead of 1 Jul'); after paying, Procurement's Contracts timeline showed Taiga arriving 1 Jun, 29 d early, and the Comms news line on Procurement's ticker. Started 'Northgate test technicians' and 'Northgate imager research'; both left the picker after finishing (one-off); after the imager research Science's 'The mission needs' dropped the camera and marked its techs 'Not needed'. Promised the launch date, then moved the launch in the Planner: 'You promised me a date' arrived; the in-flight row 'Arrival at the geostationary slot' turned ✗. Budget review arrived with 45 days to answer (was 25). Arrival banner and new-dot appeared while another message was open. Launch scrubbed with 7 parts missing: header chip SCRUBBED, card 'The rocket never left the pad', no in-flight events. Run 2: all nine parts contracted (two after Science's research), launch moved to 15 Oct, flew 2 of 2 goals: header 'LAUNCHED · 15 Oct 2030 · 2/2 goals', the Comms card listed the same four in-flight outcomes as the shell's result (−2 / −2 / +3 / −2 %), the news line ended left of the result chip. Mars: Comms content loads (Okafor press conference with real chips, five in-flight rows, the Mars project picker with licences, sponsorship and lobbying showing their consequences).",
+  "notVerified": "The UI reset on a new attempt (onGameReset): this checkout has no 'Try again' button yet, so only the code path was checked. Four players / a client browser (the outcome lines are computed before dispatching, so they should show on clients too, not seen). The promise-broken rule in its final form (promise breaks only when the launch is later than the promised day; fixed after run 1, where a promise given after an earlier move would have fired at once) was type-checked but not replayed; the Mars follow-up message was not reached. 'Launch now' with a flying rocket (in-flight results then come from commsInFlightResults' resolve-from-state path; the scrub path was not seen with Launch now either). The arrival banner over the open project picker. A full Mars playthrough. Normal speed (all runs were at 2 game months per minute, where several messages expired while I was driving other stations).",
+  "risk": "Balance: teammate-affecting messages stay open 45 days, so two or three open messages at once are more common; 'Northgate test technicians' (+30 % research and test pace for 2 months, 3 M) makes Science's part tests faster, i.e. a little more reliability for the team; dropping the third slot limits Comms to two projects even at strong trust. Expediting ('next', sooner) now always hits the most-late delivery (or the last to arrive), slips still hit the next arrival; Mars 'late-delivery-excuse' and the audit events use the same rule. In the weather mission the RTG and optical-terminal techs (and what builds on them) cannot be researched; Science says so (\"Not in this mission\"). The previews read the live state, so a target shown can change if a contract changes before the click (the chip updates live). EventOption.hints is no longer shown (still authored). New optional CommsSlice fields 'done' and 'promisedLaunchDay' (old saves load without them). New shared flag 'comms.promise.broken'. The communications/README.md user direction 'hints, not numbers; exact effects revealed afterwards' is now contradicted by design (this package's brief asked for the real consequence before the choice); the README was not edited (not my path).",
+  "coreRequests": [
+    "shared/events/types.ts: the comment on deliveryDelay says scope 'next' is the next delivery; the comms rules now read 'next' as 'the delivery most at risk' when speeding up (most late, else last to arrive) and 'the next to arrive' when slipping (stations/comms/state/world.ts deliveryMoves). Update the comment, or add an explicit scope 'late' so content can say it."
+  ],
+  "foreignRequests": [
+    "Planner (B) — what the 'affects planner' tags would need to be real: (1) the launch promise: show it where the launch date is changed (planner/ui TopBar launch popover), e.g. 'Comms promised the weather service 30 Jun 2030: a later launch costs Government trust', reading s.comms.promisedLaunchDay (set when Comms answers 'Promise launch on the announced date' / Mars 'front seat at launch'). (2) A partner ground station that halves the needed antenna data rate: if wanted, planner/physics/evaluate.ts would read flag 'comms.groundStation' and halve the required downlink rate, and the Goals/Issues card would name it; then Comms' project text can promise it again. (3) Mission requirements from Comms (flag plaque, guest instrument, extra shielding) would need a requirement list in the Planner's Issues that adds mass; until then Comms content no longer promises them.",
+    "Shell (A or later builder): when a player sits at another station (solo play), the roster pill could show the number of open Comms messages (s.comms.inbox.filter(i => i.status === 'open').length) so a new message is noticed off-station.",
+    "Result screen (A): nothing required. In-flight events come from commsInFlightResults(state): the stored s.comms.inFlight after a launch on the calendar, otherwise resolved from the state (trust and flags no longer change after the launch, so the outcome is the same). The Comms card now shows each event's goal-chance delta; the result could show it too."
+  ],
+  "next": "",
+  "repairs": {
+    "judge": "playtest/packages/judge-d2.json (accept-without: weather licence removal)",
+    "changed": [
+      "Science dead end (rejected item): science/model/tree.ts now derives, per mission, which gated techs Comms can approve (some project or message of that mission's Comms content has a techAccess enable for it). A gated tech nobody can approve in this mission, and every tech built on it, is shown as a grey \"Not in this mission\" tile (same styling as \"Not needed\") instead of the red \"Blocked by Comms\"; its inspector says \"<gate reason> No one can grant that in this mission.\" with no cost/Start block. Weather: Radioisotope heat source, Thermoelectric converters, Optical communications terminal. Mars is unchanged because its Comms content still has the licences. Hiding was rejected because other techs require these nodes and the tree layout would break. blockInfo keeps its 2-argument signature (core/coordination.ts calls it); the mission id is an optional 3rd argument, taken from the state in treeViews/startCheck.",
+      "New-message banner: glows for ~2 s on arrival, then stays as a quiet pill in the header centre until that message is opened (by the banner, the inbox or auto-select), answered or expired. It no longer disappears by a timer.",
+      "Near-identical options: the weather follow-up \"You promised me a date\" now offers \"Fund weekly storm briefings for the coastal mayors until launch\" (6 M, Government -5, Public +5) instead of renting Meridian's imagery, which repeated the \"First storm, no new satellite\" option.",
+      "Expediting message: the no-answer story now says Feldwerk pulls its crews onto the late part and lets your next delivery slip a month instead, which matches the effect (the next arrival slips, as the chip names). Same in Mars."
+    ],
+    "verified": "npx tsc --noEmit clean after the rebase. Weather session (port 4780, --speed 2): Science tree shows Radioisotope heat source, Thermoelectric converters and Optical communications terminal as grey \"Not in this mission\"; the inspector shows the reason once and no Start button. A second message arrived while another was open: the banner was still there more than 10 s later, a click on it opened Lindqvist's message and the banner went away. Mars session: Radioisotope heat source is the red \"Blocked by Comms ... Ask Comms to arrange it\" tile as before; Comms' picker lists Plutonium and Laser licences; after the Plutonium licence finished, the tile read \"Ready to start\" with an enabled Start research button. Harness stopped afterwards; nothing left running.",
+    "notVerified": "The two reworded texts (promise follow-up option, expediting no-answer outcome) were checked in the data and by typecheck, not seen on screen. The banner over an open project picker. The task board (core/coordination.ts) in the weather mission naming an unavailable tech: it uses the same blockInfo, so it would say \"No one can grant that in this mission\", but not seen."
+  }
+}

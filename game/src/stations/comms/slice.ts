@@ -13,6 +13,13 @@ export interface CommsSlice {
   modifiers: ActiveModifier[];
   /** Event ids already fired (timeline/trigger/player fire once). */
   fired: string[];
+  /**
+   * One-off projects (licences, negotiations, lobbying, money) that finished: not
+   * offered again. Optional: saves from before it existed load without it.
+   */
+  done?: string[];
+  /** Launch day Comms promised to keep (FLAG_LAUNCH_PROMISE); a later launch breaks the promise. */
+  promisedLaunchDay?: number;
   /** Day the next pool draw is due. */
   nextPoolDay: number;
   /** True once the in-flight events were resolved (at launch). */
@@ -24,7 +31,7 @@ export interface CommsSlice {
 export function initialCommsSlice(): CommsSlice {
   return {
     trust: { ...MISSION.startTrust },
-    inbox: [], projects: [], modifiers: [], fired: [],
+    inbox: [], projects: [], modifiers: [], fired: [], done: [],
     nextPoolDay: 20, launched: false, inFlight: [],
   };
 }

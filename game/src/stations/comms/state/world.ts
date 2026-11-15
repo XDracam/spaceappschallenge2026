@@ -3,20 +3,21 @@
 // No framework imports; used by ../logic.ts (reducers + tick handler) and read by the UI.
 
 import { applyTrust, drawPoolEvent, dueEvents, resolveInFlight, trustBand } from '../../../shared/events/engine';
-import { affectedStations, STAKEHOLDERS } from '../../../shared/events/types';
+import { affectedStations } from '../../../shared/events/types';
 import type { EventOption, WorldView } from '../../../shared/events/types';
 import type { ActionCtx } from '../../../core/actions';
 import { pushNews, setFlag } from '../../../core/coreActions';
-import type { Offer, PartKind } from '../../../core/model';
+import type { Contract, Offer, PartKind } from '../../../core/model';
 import { budgetAvailableM, DAYS_PER_MONTH, type GameState } from '../../../core/state';
-import { MISSION } from '../../../core/mission';
+import { MISSION, missionById } from '../../../core/mission';
 import type {
   Character, Effect, EventDef, EventInstance, ProjectDef, StakeholderId, StationId,
 } from '../model/types';
 import type { CommsSlice } from '../slice';
 import { contentFor, type Content } from '../data/content';
-import { BASE_PROJECT_SLOTS, MAX_PROJECT_SLOTS, POOL_INTERVAL_DAYS, TRUST_STRONG } from '../data/mission';
-import { describeEffect, STAKEHOLDER_LABEL } from './format';
+import { POOL_INTERVAL_DAYS, PROJECT_SLOTS, TEAM_DEADLINE_DAYS } from '../data/mission';
+import { FLAG_LAUNCH_PROMISE, FLAG_PROMISE_BROKEN } from '../data/helpers';
+import { describeEffect, formatDay, STAKEHOLDER_LABEL } from './format';
 
 export { DAYS_PER_MONTH };
 /** Pool draws are jittered by up to ± this fraction of POOL_INTERVAL_DAYS. */
@@ -129,9 +130,24 @@ export function passiveModifiers(trust: Record<StakeholderId, number>): PassiveM
   };
 }
 
-/** Concurrent project slots: BASE, or MAX when any stakeholder is strong. */
-export function projectSlotsFor(trust: Record<StakeholderId, number>): number {
-  return STAKEHOLDERS.some((k) => trust[k] > TRUST_STRONG) ? MAX_PROJECT_SLOTS : BASE_PROJECT_SLOTS;
+/** Concurrent project slots (fixed). */
+export function projectSlots(): number {
+  return PROJECT_SLOTS;
+}
+
+/**
+ * A project that can only be done once: a licence, a negotiation, lobbying, or one that
+ * brings money, parts, research or a service. Galas and campaigns that only move trust
+ * (or event odds) can be repeated.
+ */
+export function isOneOff(def: ProjectDef): boolean {
+  if (def.kind === 'negotiation' || def.kind === 'lobbying') return true;
+  return def.effects.some((e) => e.kind !== 'trust' && e.kind !== 'eventOdds' && e.kind !== 'flag');
+}
+
+/** One-off projects already finished in this game. */
+export function doneProjects(c: CommsSlice): string[] {
+  return c.done ?? [];
 }
 
 /** Comms stops (no new events, no answers, no projects) once the mission launched. */
@@ -139,7 +155,7 @@ export function isLaunched(s: GameState): boolean {
   return s.comms.launched || s.meta.phase === 'launched' || s.meta.phase === 'finished';
 }
 
-export type ProjectBlock = 'unknown' | 'launched' | 'running' | 'noSlot' | 'trust' | 'budget';
+export type ProjectBlock = 'unknown' | 'launched' | 'running' | 'done' | 'noSlot' | 'trust' | 'budget';
 
 /** Whether a project can start now, and why not. */
 export function canStartProject(s: GameState, defId: string, content: Content = contentOf(s)): { ok: boolean; reason?: ProjectBlock } {
@@ -148,7 +164,8 @@ export function canStartProject(s: GameState, defId: string, content: Content = 
   if (!def) return { ok: false, reason: 'unknown' };
   if (isLaunched(s)) return { ok: false, reason: 'launched' };
   if (c.projects.some((p) => p.defId === defId)) return { ok: false, reason: 'running' };
-  if (c.projects.length >= projectSlotsFor(c.trust)) return { ok: false, reason: 'noSlot' };
+  if (doneProjects(c).includes(defId)) return { ok: false, reason: 'done' };
+  if (c.projects.length >= projectSlots()) return { ok: false, reason: 'noSlot' };
   if (def.requires && c.trust[def.requires.stakeholder] < def.requires.min) return { ok: false, reason: 'trust' };
   if (budgetAvailableM(s.budget) < def.costM) return { ok: false, reason: 'budget' };
   return { ok: true };
@@ -169,6 +186,66 @@ export interface Applied { lines: string[]; affects: StationId[] }
 
 function news(s: GameState, rules: RulesCtx, text: string, affects: StationId[]): void {
   pushNews(s, { from: 'comms', text, affects, internal: true }, rules.newId);
+}
+
+// --------------------------------------------------------- delivery targets
+
+/** Calendar date of a game day in the game's mission ("14 Mar 2030"). */
+export function dateOf(s: GameState, day: number): string {
+  return formatDay(day, missionById(s.meta.missionId).startDateISO);
+}
+
+/** Day the part under this contract is needed: the earliest open task it serves, else the launch day. */
+export function contractNeededAt(s: GameState, k: Contract): number {
+  const days = s.market.allocations
+    .filter((a) => a.contractId === k.id && a.status !== 'released')
+    .flatMap((a) => s.market.tasks.filter((t) => t.id === a.taskId && t.status === 'open').map((t) => t.neededAt));
+  return days.length ? Math.min(...days) : s.planner.plan.launchDay;
+}
+
+/** One delivery a deliveryDelay effect moves, with its arrival before and after. */
+export interface DeliveryMove {
+  contractId: string;
+  part: string;
+  supplier: string;
+  from: number;
+  to: number;
+  neededAt: number;
+}
+
+/**
+ * The deliveries a deliveryDelay effect moves, decided from the state now (the same rule
+ * the effect applies, so the preview on an option is what happens):
+ * - scope 'all': every active contract;
+ * - scope 'next', sooner (months < 0): the delivery that is most late against its need date,
+ *   or, when none is late, the one that arrives last (R1115m-r01-10: the expediting bonus
+ *   used to speed up the earliest delivery, never the late one);
+ * - scope 'next', later (months > 0): the delivery that arrives next.
+ */
+export function deliveryMoves(s: GameState, e: Extract<Effect, { kind: 'deliveryDelay' }>): DeliveryMove[] {
+  const day = s.clock.day;
+  const active = s.market.contracts.filter((c) => c.status === 'active');
+  let targets: Contract[];
+  if (e.scope === 'all') targets = active;
+  else if (e.months < 0) {
+    const late = (k: Contract) => k.expectedAt - contractNeededAt(s, k);
+    targets = [...active].sort((a, b) => late(b) - late(a) || b.expectedAt - a.expectedAt).slice(0, 1);
+  } else targets = [...active].sort((a, b) => a.expectedAt - b.expectedAt).slice(0, 1);
+  return targets.map((k) => ({
+    contractId: k.id,
+    part: k.offerSnapshot.resource.name,
+    supplier: k.offerSnapshot.supplierName,
+    from: k.expectedAt,
+    to: Math.max(Math.ceil(day), k.expectedAt + e.months * DAYS_PER_MONTH),
+    neededAt: contractNeededAt(s, k),
+  }));
+}
+
+/** A budget effect as it will apply: an event cut (shield) is halved by strong Public trust. */
+export function shieldedBudget(s: GameState, deltaM: number, shield: boolean): { deltaM: number; softened: boolean } {
+  if (deltaM >= 0 || !shield) return { deltaM, softened: false };
+  const pct = passiveModifiers(s.comms.trust).budgetCutShieldPct;
+  return pct > 0 ? { deltaM: round2(deltaM * (1 - pct / 100)), softened: true } : { deltaM, softened: false };
 }
 
 /** Money the agency spends directly (option and project costs). */
@@ -217,10 +294,11 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
   const day = s.clock.day;
   let e = effect;
   let note = '';
-  if (e.kind === 'budget' && e.deltaM < 0 && ctx.shield) {
-    const pct = passiveModifiers(s.comms.trust).budgetCutShieldPct;
-    if (pct > 0) {
-      e = { kind: 'budget', deltaM: round2(e.deltaM * (1 - pct / 100)) };
+  let text: string | null = null;
+  if (e.kind === 'budget') {
+    const b = shieldedBudget(s, e.deltaM, ctx.shield);
+    if (b.softened) {
+      e = { kind: 'budget', deltaM: b.deltaM };
       note = ', softened by public support';
     }
   }
@@ -243,13 +321,19 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
       s.budget.fundingTotalM = round2(s.budget.fundingTotalM + e.deltaM);
       break;
     case 'deliveryDelay': {
-      const active = s.market.contracts.filter((c) => c.status === 'active');
-      const targets = e.scope === 'next' ? [...active].sort((a, b) => a.expectedAt - b.expectedAt).slice(0, 1) : active;
-      for (const c of targets) {
-        c.expectedAt = Math.max(day, c.expectedAt + e.months * DAYS_PER_MONTH);
+      const moves = deliveryMoves(s, e);
+      for (const m of moves) {
+        const c = s.market.contracts.find((k) => k.id === m.contractId)!;
+        c.expectedAt = m.to;
         c.revision++;
       }
-      if (!targets.length) note = ' (no active contract affected)';
+      // The news names the part and the dates, so Procurement sees which delivery moved.
+      const mo = (n: number) => `${Math.abs(n)} month${Math.abs(n) === 1 ? '' : 's'}`;
+      if (!moves.length) text = `${describeEffect(e)}: no delivery under contract, nothing moved`;
+      else if (e.scope === 'next') {
+        const m = moves[0];
+        text = `${m.part} (${m.supplier}) now arrives ${dateOf(s, m.to)} instead of ${dateOf(s, m.from)}`;
+      } else text = `${moves.length} deliveries ${mo(e.months)} ${e.months < 0 ? 'earlier' : 'later'}`;
       break;
     }
     case 'priceModifier':
@@ -279,6 +363,7 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
       break;
     case 'flag':
       setFlag(s, e.flag, e.on);
+      if (e.flag === FLAG_LAUNCH_PROMISE && e.on) s.comms.promisedLaunchDay = s.planner.plan.launchDay;
       break;
     case 'eventOdds':
       s.comms.modifiers.push({ effect: e, untilDay: day + e.months * DAYS_PER_MONTH });
@@ -287,7 +372,7 @@ export function applyEffect(s: GameState, effect: Effect, ctx: EffectContext): s
 
   const to = affectedStations([e]);
   if (to.length === 0) return null;
-  return describeEffect(e) + note;
+  return (text ?? describeEffect(e)) + note;
 }
 
 /** Shared flag raised by a missionConstraint effect: 'constraint.<slug of the text>'. */
@@ -316,12 +401,26 @@ export function deliverEvent(s: GameState, def: EventDef, rules: RulesCtx): Even
     instanceId: rules.newId('ev'),
     eventId: def.id,
     arrivedDay: day,
-    deadlineDay: day + def.deadlineDays,
+    deadlineDay: day + deadlineDaysOf(def),
     status: 'open',
   };
   s.comms.inbox.push(inst);
   if (!s.comms.fired.includes(def.id)) s.comms.fired.push(def.id);
   return inst;
+}
+
+/**
+ * Does answering (or ignoring) this event change a teammate's own work (deliveries, prices,
+ * offers, research)? Money alone does not count: the shared budget is visible to everyone.
+ */
+export function needsTeammate(def: EventDef): boolean {
+  const touches = (fx: Effect[]) => affectedStations(fx.filter((e) => e.kind !== 'budget')).length > 0;
+  return def.options.some((o) => touches(o.effects)) || touches(def.ignored.effects);
+}
+
+/** Days to answer: the authored deadline, at least TEAM_DEADLINE_DAYS when a teammate is affected. */
+export function deadlineDaysOf(def: EventDef): number {
+  return needsTeammate(def) ? Math.max(def.deadlineDays, TEAM_DEADLINE_DAYS) : def.deadlineDays;
 }
 
 /** Whether an open event can be answered with this option right now (budget for its cost). */
@@ -403,6 +502,7 @@ export function startProjectIn(s: GameState, rules: RulesCtx, defId: string, con
 function finishProject(s: GameState, rules: RulesCtx, defId: string, content: Content): void {
   const def = getProjectDef(defId, content);
   if (!def) return;
+  if (isOneOff(def)) s.comms.done = [...doneProjects(s.comms).filter((id) => id !== defId), defId];
   const a = applyEffects(s, def.effects, { rules, source: def.name, shield: false });
   if (a.lines.length) news(s, rules, `${def.name} finished: ${def.result} (${a.lines.join('; ')})`, a.affects);
 }
@@ -416,6 +516,11 @@ function finishProject(s: GameState, rules: RulesCtx, defId: string, content: Co
  */
 export function stepTo(s: GameState, rules: RulesCtx, day: number, content: Content = contentOf(s)): void {
   const c = s.comms;
+
+  // 0. A launch later than the day Comms promised breaks the promise (follow-up message).
+  if (c.promisedLaunchDay !== undefined && s.planner.plan.launchDay > c.promisedLaunchDay && !s.events.flags.includes(FLAG_PROMISE_BROKEN)) {
+    setFlag(s, FLAG_PROMISE_BROKEN, true);
+  }
 
   // 1. Timeline / trigger / player events.
   const fired = new Set(c.fired);

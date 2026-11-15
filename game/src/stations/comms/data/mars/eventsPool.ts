@@ -3,7 +3,7 @@
 // `eligible` gates an event to a trust range. Each fires at most once.
 import type { EventDef } from '../../model/types';
 import {
-  budget, constraint, delay, offer, option, pace, price, service, trust, trustAbove, trustBelow,
+  budget, delay, offer, option, pace, price, trust, trustAbove, trustBelow,
 } from '../helpers';
 
 export const POOL_EVENTS: EventDef[] = [
@@ -15,9 +15,9 @@ export const POOL_EVENTS: EventDef[] = [
     title: 'A flag on Mars',
     message: 'My constituents want a flag on Mars. A real one, waving. I may have promised them at a fish fry.',
     options: [
-      option('plaque', 'Add a flag plaque to the lander (planner finds the mass).',
-        [trust('government', 10), constraint('Mount a 1 kg national flag plaque on the lander.')],
-        'Duarte announces it at the next fish fry. The planner adds 1 kg of patriotism to the lander.'),
+      option('plaque', 'Promise a small flag plaque on the lander.',
+        [trust('government', 10)],
+        'Duarte announces it at the next fish fry. The plaque will weigh less than the speech.'),
       option('calibration', "Print the flag on the camera's calibration target.",
         [trust('government', 5)],
         "The first image from Mars will include the flag, technically. Duarte calls it 'a start'."),
@@ -206,8 +206,8 @@ export const POOL_EVENTS: EventDef[] = [
     title: 'The first song on Mars',
     message: "Nova Reyes, the pop star, wants to beam her new single to your orbiter. Her fans already call it 'the first song on Mars'. Your call.",
     options: [
-      option('uplink', 'Uplink it after orbit insertion (planner schedules it).',
-        [trust('public', 10), constraint("Uplink Nova Reyes' single to the orbiter after Mars orbit insertion.")],
+      option('uplink', 'Uplink it after orbit insertion.',
+        [trust('public', 10)],
         'Twelve million fans count down to orbit insertion. The flight team learns all the words.'),
       option('launch-party', 'Play it at the launch party instead.',
         [trust('public', 5)],
@@ -277,9 +277,9 @@ export const POOL_EVENTS: EventDef[] = [
     title: 'A ride for our spectrometer',
     message: "Our spectrometer team built an instrument with no spacecraft to fly on. Carry it on your orbiter and we'll share every byte. Our ministry will contribute to costs.",
     options: [
-      option('fly-it', 'Fly it: planner fits 10 kg, Meridian pays 20 M.',
-        [budget(20), constraint("Carry Meridian's 10 kg spectrometer on the orbiter."), trust('partners', 10), trust('government', -5)],
-        'Meridian wires 20 M and ships a crate. The planner finds room; Duarte finds it foreign.'),
+      option('fly-it', 'Fly it in the orbiter\'s margin; Meridian pays 20 M.',
+        [budget(20), trust('partners', 10), trust('government', -5)],
+        'Meridian wires 20 M and ships a crate. The engineers find room; Duarte finds it foreign.'),
       option('science-team', 'Decline the hardware but join their science team.',
         [trust('partners', 5)],
         'Your scientists get seats at their data meetings. Moreau calls it "a beginning".'),
@@ -348,9 +348,9 @@ export const POOL_EVENTS: EventDef[] = [
     title: 'Vacuum chamber available',
     message: 'Our thermal vacuum chamber has a free slot next quarter. It fits a lander and costs less than yours. First come, first served.',
     options: [
-      option('book', 'Book the chamber (planner gains a test facility).',
-        [trust('partners', 5), service('testFacility', 'Northgate thermal vacuum chamber available for lander tests.')],
-        'The lander gets a cold, airless spa week. The planner can count on a test facility.', 10),
+      option('book', "Book the chamber for Science's lab (tests run faster).",
+        [trust('partners', 5), pace(20, 2)],
+        "The lander parts get a cold, airless spa week. Science's research and part tests run faster for two months.", 10),
       option('decline', "Thanks, but we'll test in-house.",
         [trust('partners', -5)],
         'Salo rents the slot to a cubesat team within the hour.'),
