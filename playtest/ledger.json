@@ -1,1 +1,157 @@
-[]
+[
+  {
+    "round": "1115m-r01",
+    "lobby": "manual",
+    "speedScale": 0.5,
+    "progress": "Lobby in 2:40, plan and nine orders placed, 8 of 9 parts delivered; the camera was contracted too late, so the launch scrubbed on day 180 with 0 of 2 goals and no way to continue.",
+    "verdicts": "none",
+    "reverted": [],
+    "reworkPick": "R1115m-r01-03",
+    "findings": [
+      {
+        "id": "R1115m-r01-01",
+        "title": "Procurement could not confirm orders: the quote goes stale every game day, so 'Confirm order' keeps turning into 'Refresh quote'",
+        "class": "bug",
+        "severity": "blocker",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-02",
+        "title": "One contracted part arriving after launch day ended the whole game: the launch fires by itself, scrubs, and nothing can be tried afterwards",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-03",
+        "title": "Science had nothing to do for the whole mission: no research could matter and none was started",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-04",
+        "title": "Planner could not find how to move the launch date, although the control exists and would have saved the mission",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-05",
+        "title": "Procurement was not told which need has to be ordered first; the camera's three-month lead time was found too late",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-06",
+        "title": "When the standard delivery turned late, Procurement's suggestion jumped to the cheapest and latest supplier and hid the one that could still deliver on time",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-07",
+        "title": "Planner finished in 45 seconds and then had no decision left until launch",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-08",
+        "title": "Comms options marked 'affects planner' change nothing the Planner can see or do, so the two stations could not decide them together in time",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-09",
+        "title": "A scrubbed launch is shown as a launched mission: 'LAUNCHED · T+30 d', 'Mission launched', and flight events that never happened",
+        "class": "bug",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-10",
+        "title": "The message about the late delivery sold an expediting bonus that sped up a different delivery",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-11",
+        "title": "Joining took 2 min 40 s: one invite and one reply code per player, handed over one after another",
+        "class": "design",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-12",
+        "title": "Players could not tell that the budget is shared or who had just spent from it",
+        "class": "clarity",
+        "severity": "major",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-13",
+        "title": "A finished one-off Comms project (Laser link licence) is offered again",
+        "class": "bug",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-14",
+        "title": "Science screen gave no hint which research the mission needs",
+        "class": "clarity",
+        "severity": "minor",
+        "symptomOf": "R1115m-r01-03",
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-15",
+        "title": "The result screen did not say what could have been done about the late part, or whether anything can be tried again",
+        "class": "clarity",
+        "severity": "minor",
+        "symptomOf": "R1115m-r01-02",
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-16",
+        "title": "Before the Planner ordered, Procurement saw 77 parts and 'No open mission needs' and could not tell whether the game had started or what to buy",
+        "class": "clarity",
+        "severity": "minor",
+        "symptomOf": "R1115m-r01-07",
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-17",
+        "title": "Comms waited between messages",
+        "class": "agent-artifact",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      },
+      {
+        "id": "R1115m-r01-18",
+        "title": "Share of the failed order confirmations and missed clicks that comes from agent latency",
+        "class": "agent-artifact",
+        "severity": "minor",
+        "symptomOf": null,
+        "repeatOf": null
+      }
+    ]
+  }
+]
