@@ -27,6 +27,8 @@ jobs:
         working-directory: game
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true # the submission video is stored in Git LFS; without this Pages would serve the pointer file
       - name: Read GitHub Pages configuration
         uses: actions/configure-pages@v5
         id: pages
