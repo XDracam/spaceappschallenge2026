@@ -306,6 +306,14 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 
 Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally while room-code work independently used D-027 upstream. Room codes retain D-027; audit fixes are D-029. The local title-screen entry retains D-028.
 
+## D-031 — Carry the title-screen design through pre-game
+
+- Date: 2026-11-15.
+- Status: accepted user direction.
+- Decision: extend D-028's typography, spacing, pale-cyan actions and supplied artwork to New game, host/crew setup, joining and connection recovery. Keep the initial title screen as the visual reference. Retain networking behavior, manual connection controls and station ownership feedback.
+- Layout: separate the New game introduction/name field from mission selection; move the host's repeated mission picker into an explicit Change mission disclosure. Give station selection the same role icons. Use concise single-line mission descriptions and helper copy instead of forced wrapping or width tricks.
+- Source and evidence: [pre-game design and walkthrough](notes/2026-11-15-title-screen.md#pre-game-design-extension). Related: I-097, D-027–D-029.
+
 ## Future decision template
 
 ```markdown

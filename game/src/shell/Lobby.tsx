@@ -10,6 +10,7 @@ import type { InviteInfo } from '../net/webrtc';
 import { formatRoomCode, roomLink, type RoomPlayer } from '../net/peerjs';
 import { STATION_INFO } from './stations';
 import { TitleScene } from './TitleScene';
+import { LobbyIcon } from './LobbyIcon';
 import { requestConfirmation } from '../shared/confirmation';
 import {
   acceptReply, backToStart, cancelInvite, cancelJoin, connectedPlayerCount, createInvite, hasSavedGame,
@@ -26,6 +27,7 @@ export function Lobby() {
   else body = <StartScreen />;
   return (
     <div class="shell-lobby">
+      <div class="pregame-backdrop"><TitleScene /></div>
       <div class="shell-lobby-inner">{body}</div>
     </div>
   );
@@ -36,10 +38,8 @@ export function Lobby() {
 function Brand({ tag }: { tag?: string }) {
   return (
     <header class="shell-brand">
-      <div class="shell-logo" aria-hidden="true" />
       <div>
-        <h1>Mission Control</h1>
-        <p class="shell-muted">Space mission design game · NASA Space Apps 2026</p>
+        <h1>MISSION CONTROL<span class="title-period">.</span></h1>
       </div>
       {tag && <span class="shell-chip shell-chip-accent">{tag}</span>}
     </header>
@@ -140,7 +140,7 @@ function SeatGrid({ seats, me, onPick, names }: {
             onClick={() => onPick(st)}
             aria-pressed={mine}
           >
-            <span class="shell-seat-name">{info.label}</span>
+            <span class="shell-seat-title"><LobbyIcon name={st} /><span class="shell-seat-name">{info.label}</span></span>
             <span class="shell-seat-blurb">{info.blurb}</span>
             <span class="shell-seat-who">
               <span class="shell-dot" />
@@ -177,11 +177,11 @@ function dayLabel(day: number): string {
 const MISSION_CARD: Record<string, { tag: string; text: string }> = {
   'weather-geo': {
     tag: 'Start here',
-    text: 'One satellite: launch to low Earth orbit, then raise it to geostationary orbit. Short game.',
+    text: 'Reach geostationary orbit.',
   },
   'mars-orbiter-lander': {
     tag: 'Harder',
-    text: 'An orbiter and a lander to Mars: launch windows, orbit insertion and a landing. Long game.',
+    text: 'Orbit Mars. Land a probe.',
   },
 };
 
@@ -198,9 +198,12 @@ function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; cur
           return (
             <button key={m.id} class={`shell-mission${on ? ' is-on' : ''}`} role="radio" aria-checked={on} onClick={() => setPick(m.id)}>
               <span class="shell-mission-head">
+                <LobbyIcon name={m.id === 'weather-geo' ? 'weather' : 'mars'} />
+                <span class="shell-mission-heading">
+                  <span class="shell-choice-title">{m.name}</span>
+                  {card && <span class={`shell-chip${m.id === DEFAULT_MISSION_ID ? ' shell-chip-accent' : ''}`}>{card.tag}</span>}
+                </span>
                 <span class="shell-mission-radio" aria-hidden="true" />
-                <span class="shell-choice-title">{m.name}</span>
-                {card && <span class={`shell-chip${m.id === DEFAULT_MISSION_ID ? ' shell-chip-accent' : ''}`}>{card.tag}</span>}
               </span>
               <span class="shell-choice-text">{card?.text ?? m.briefing}</span>
             </button>
@@ -209,7 +212,7 @@ function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; cur
       </div>
       <div class="shell-mission-actions">
         <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => onChoose ? onChoose(chosen.id) : hostNewGame(chosen.id)}>
-          {onChoose ? 'Select' : 'Host'} “{chosen.name}”
+          <span>{onChoose ? 'Select' : 'Host'} “{chosen.name}”</span><MenuArrow />
         </button>
         {onBack && <button class="shell-link" onClick={onBack}>← Back</button>}
       </div>
@@ -240,9 +243,12 @@ function StartScreen() {
     return (
       <div class="shell-start-setup">
         <Brand />
-        <h2 ref={heading} tabIndex={-1}>Assemble your mission</h2>
-        <p class="shell-muted">Choose a mission, then invite your crew. You can also start alone and use the free stations.</p>
-        <PlayerName />
+        <div class="pregame-intro">
+          <h2 ref={heading} tabIndex={-1}>Your next<br />mission<span class="title-period">.</span></h2>
+          <p>Choose your destination.<br />Bring a crew. Make it fly.</p>
+          <PlayerName />
+          <p class="pregame-note">Bring a crew, or play solo.</p>
+        </div>
         <MissionPicker onBack={() => { setPicking(false); requestAnimationFrame(() => newGame.current?.focus()); }} />
       </div>
     );
@@ -269,10 +275,10 @@ function StartScreen() {
       </div>
       <footer class="title-footer">
         <div class="title-roles" aria-label="Four player stations">
-          <div style={{ '--role-color': STATION_INFO.planner.color }}><b>Mission planning</b><span>Design the spacecraft.</span></div>
-          <div style={{ '--role-color': STATION_INFO.procurement.color }}><b>Procurement</b><span>Secure the hardware.</span></div>
-          <div style={{ '--role-color': STATION_INFO.science.color }}><b>Science</b><span>Advance the science.</span></div>
-          <div style={{ '--role-color': STATION_INFO.comms.color }}><b>Communications</b><span>Win support.</span></div>
+          <div style={{ '--role-color': STATION_INFO.planner.color }}><LobbyIcon name="planner" /><b>Mission planning</b><span>Design the spacecraft.</span></div>
+          <div style={{ '--role-color': STATION_INFO.procurement.color }}><LobbyIcon name="procurement" /><b>Procurement</b><span>Secure the hardware.</span></div>
+          <div style={{ '--role-color': STATION_INFO.science.color }}><LobbyIcon name="science" /><b>Science</b><span>Advance the science.</span></div>
+          <div style={{ '--role-color': STATION_INFO.comms.color }}><LobbyIcon name="comms" /><b>Communications</b><span>Win support.</span></div>
         </div>
         <div class="title-credits"><span>Made for NASA Space Apps 2026</span><span>Plan together. Launch together.</span></div>
       </footer>
@@ -313,8 +319,9 @@ function HostScreen() {
   return (
     <>
       <Brand tag={started ? `Hosting · ${dayLabel(day)}` : 'Hosting'} />
+      <h2 class="pregame-title">{started ? 'Mission in progress' : 'Assemble your crew'}<span class="title-period">.</span></h2>
       <MissionLine />
-      {!started && <MissionPicker key={missionId} current={missionId} onChoose={hostChooseMission} />}
+      {!started && <details class="pregame-change-mission"><summary>Change mission</summary><MissionPicker key={missionId} current={missionId} onChoose={hostChooseMission} /></details>}
       <div class="shell-cols">
         <div>
           <Step n={1} title="Choose your station" done={!!mine}>
@@ -331,7 +338,7 @@ function HostScreen() {
                 : 'You can start with fewer than four players. Free stations stay open for switching or late joiners.'}
             </p>
             <button class="shell-btn shell-btn-primary shell-btn-big" disabled={!mine} onClick={hostEnterMission}>
-              {started ? 'Return to the mission' : 'Start mission'}
+              <span>{started ? 'Return to the mission' : 'Start mission'}</span><MenuArrow />
             </button>
             {!mine && <p class="shell-hint">Choose your station first.</p>}
           </Step>
@@ -514,6 +521,7 @@ function JoinScreen() {
     return (
       <>
         <Brand tag="Disconnected" />
+        <h2 class="pregame-title">Connection interrupted<span class="title-period">.</span></h2>
         <HostLeft reason={join.closeReason} />
       </>
     );
@@ -522,6 +530,7 @@ function JoinScreen() {
   return (
     <>
       <Brand tag={ready ? 'Connected' : 'Joining'} />
+      <h2 class="pregame-title">{ready ? 'Take your station' : 'Join your crew'}<span class="title-period">.</span></h2>
       {ready && <MissionLine />}
       <Step n={1} title="Enter the room code from the host" done={join.status !== 'idle'}>
         {join.status === 'idle' ? (
@@ -550,7 +559,7 @@ function JoinScreen() {
                   />
                 )}
               </label>
-              <button type="submit" class="shell-btn shell-btn-primary shell-btn-big" disabled={!code.trim()}>Join</button>
+              <button type="submit" class="shell-btn shell-btn-primary shell-btn-big" disabled={!code.trim()}><span>Join game</span><MenuArrow /></button>
             </form>
             {join.error && <p class="shell-error" role="alert">{join.error}</p>}
             <p class="shell-hint">Got a long manual code starting with MC1- instead? Paste it into the same box.</p>

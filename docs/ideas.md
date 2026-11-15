@@ -248,6 +248,14 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Dependencies and unanswered questions: final visual direction and artwork source remain unselected. Preserve existing hosting, joining and saved-game behavior; reduced-motion support is required if animation is added.
 - Related: D-010, D-013–D-015; I-094.
 
+### I-097 — Extend the title-screen quality through mission setup
+
+- Captured: 2026-11-15.
+- Source: user praised the initial page's typography/design and requested equally polished, consistent pre-game screens; flagged awkward wrapping in mission text and the name-field helper.
+- Status: accepted direction under D-031; implemented and browser-checked.
+- Idea: reuse the title screen's large Exo 2 headings, restrained Earth backdrop and flat pale-cyan actions throughout mission selection, hosting, joining and connection recovery. Retain existing controls and states; organize mission changes behind a disclosure rather than repeating full mission selection above the host controls.
+- Evidence: [pre-game design extension](notes/2026-11-15-title-screen.md#pre-game-design-extension), including an actual two-tab room connection and narrower-screen inspection. No human multiplayer enjoyment claim.
+
 ## New entry template
 
 ```markdown
