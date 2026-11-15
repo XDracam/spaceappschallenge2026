@@ -179,6 +179,10 @@ const MISSION_CARD: Record<string, { tag: string; text: string }> = {
     tag: 'Start here',
     text: 'Reach geostationary orbit.',
   },
+  'moon-lander': {
+    tag: 'Next step',
+    text: 'One lander to the Moon: leave Earth, brake into lunar orbit, land and drill for ice. Medium game.',
+  },
   'mars-orbiter-lander': {
     tag: 'Harder',
     text: 'Orbit Mars. Land a probe.',
@@ -198,7 +202,7 @@ function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; cur
           return (
             <button key={m.id} class={`shell-mission${on ? ' is-on' : ''}`} role="radio" aria-checked={on} onClick={() => setPick(m.id)}>
               <span class="shell-mission-head">
-                <LobbyIcon name={m.id === 'weather-geo' ? 'weather' : 'mars'} />
+                <LobbyIcon name={m.id === 'weather-geo' ? 'weather' : m.id === 'moon-lander' ? 'moon' : 'mars'} />
                 <span class="shell-mission-heading">
                   <span class="shell-choice-title">{m.name}</span>
                   {card && <span class={`shell-chip${m.id === DEFAULT_MISSION_ID ? ' shell-chip-accent' : ''}`}>{card.tag}</span>}

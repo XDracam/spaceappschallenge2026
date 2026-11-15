@@ -519,14 +519,12 @@ async function autoLobby() {
   const names = ['Avery', 'Blake', 'Casey', 'Devon'];
   const host = players[0];
   const hp = host.page;
+  // Title screen → "New game" → name and mission picker → "Host “…”".
+  await hp.getByRole('button', { name: /^New game/ }).click();
   await hp.getByPlaceholder('e.g. Alex').fill(names[0]);
-  await hp.getByRole('button', { name: /Host a new game/ }).click();
-  // Mission picker (if the lobby has one): --mission "Mars" picks by name, default is the lobby's default.
-  const picker = hp.locator('.shell-mission').first();
-  if (await picker.waitFor({ timeout: 2000 }).then(() => true, () => false)) {
-    if (opt.mission) await hp.locator('.shell-mission', { hasText: new RegExp(String(opt.mission), 'i') }).first().click();
-    await hp.getByRole('button', { name: /^Host “/ }).click();
-  }
+  // --mission "Mars" picks the card whose name contains that text; default is the lobby's default.
+  if (opt.mission) await hp.locator('.shell-mission', { has: hp.locator('.shell-choice-title', { hasText: new RegExp(String(opt.mission), 'i') }) }).first().click();
+  await hp.getByRole('button', { name: /^Host “/ }).click();
   await hp.locator('.shell-seat').nth(0).click();
   // Guests join with the host's short room code (D-027). The code needs the signalling
   // service; if it does not come up, the lobby failure is reported with screenshots.
@@ -543,10 +541,10 @@ async function autoLobby() {
   }
   for (let i = 1; i < players.length; i++) {
     const pp = players[i].page;
+    await pp.getByRole('button', { name: /^Join game/ }).click();
     await pp.getByPlaceholder('e.g. Alex').fill(names[i]);
-    await pp.getByRole('button', { name: /Join a game/ }).click();
     await pp.locator('.shell-room-input').fill(roomCode);
-    await pp.getByRole('button', { name: 'Join', exact: true }).click();
+    await pp.locator('form.shell-join button[type="submit"]').click();
     await pp.locator('.shell-seat').first().waitFor({ timeout: 40_000 });
     await pp.locator('.shell-seat').nth(i).click();
   }

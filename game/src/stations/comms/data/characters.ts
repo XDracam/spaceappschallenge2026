@@ -12,6 +12,8 @@ export const CHARACTERS: Character[] = [
   // Weather satellite mission: the satellite's customer and the people who live by its forecasts.
   { id: 'lindqvist', name: 'Dr. Rosa Lindqvist', role: 'Director, National Weather Service', stakeholder: 'government', initials: 'RL', portrait: 'lindqvist.webp' },
   { id: 'harlan', name: 'Tom Harlan', role: "President, Plains Growers' Association", stakeholder: 'public', initials: 'TH', portrait: 'harlan.webp' },
+  // Lunar ice lander mission: the crewed programme that will use the ice data.
+  { id: 'kessler', name: 'Dr. Amara Kessler', role: 'Head of landing-site selection, crewed lunar programme', stakeholder: 'government', initials: 'AK' },
   // Spares: no mission cast uses them yet; events can bring them in by id.
   { id: 'brandt', name: 'Rep. Walter Brandt', role: 'Congressman, budget hawk on the oversight committee', stakeholder: 'government', initials: 'WB', portrait: 'brandt.webp' },
   { id: 'osei', name: 'Abena Osei', role: 'Head of the Launch Safety Office', stakeholder: 'government', initials: 'AO', portrait: 'osei.webp' },
@@ -29,3 +31,5 @@ const byId = (ids: string[]): Character[] => ids.map((id) => CHARACTERS.find((c)
 export const MARS_CAST: Character[] = byId(['duarte', 'feld', 'okafor', 'moreau', 'salo']);
 /** Weather satellite cast. */
 export const WEATHER_CAST: Character[] = byId(['duarte', 'feld', 'okafor', 'moreau', 'salo', 'lindqvist', 'harlan']);
+/** Lunar ice lander cast. */
+export const MOON_CAST: Character[] = byId(['duarte', 'feld', 'okafor', 'moreau', 'salo', 'kessler']);

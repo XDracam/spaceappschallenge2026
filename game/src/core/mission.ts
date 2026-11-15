@@ -4,10 +4,11 @@
 // that read `MISSION` at call time see the right mission.
 import type { MissionDef } from '../stations/planner/model/types';
 import { WEATHER_GEO } from '../stations/planner/data/missions/weatherGeo';
+import { MOON_LANDER } from '../stations/planner/data/missions/moonLander';
 import { MARS_ORBITER_LANDER } from '../stations/planner/data/missions/marsOrbiterLander';
 
-/** In lobby order: the first is the default. */
-export const MISSIONS: MissionDef[] = [WEATHER_GEO, MARS_ORBITER_LANDER];
+/** In lobby order (easiest first): the first is the default. */
+export const MISSIONS: MissionDef[] = [WEATHER_GEO, MOON_LANDER, MARS_ORBITER_LANDER];
 export const DEFAULT_MISSION_ID = WEATHER_GEO.id;
 
 export function missionById(id: string | undefined): MissionDef {

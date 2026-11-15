@@ -1,0 +1,148 @@
+// Lunar ice lander — scripted timeline: events on a fixed agency-calendar day.
+// Medium mission: planned launch day 300 (28 Oct 2030), so the scripted beats sit
+// between day 15 and day 270. The day-330 event only arrives if the launch slipped
+// (comms stops at launch).
+import type { EventDef } from '../../model/types';
+import { FLAG_GROUND_STATION, FLAG_LAUNCH_PROMISE, budget, option, pace, price, setFlag, trust } from '../helpers';
+
+export const TIMELINE_EVENTS: EventDef[] = [
+  {
+    id: 'mo-why-the-moon',
+    source: 'timeline', at: 15, deadlineDays: 20,
+    characterId: 'okafor',
+    title: 'Why the Moon, again?',
+    message: 'People walked on the Moon sixty years ago. My readers ask why we are sending a robot there now, and what it could find that astronauts missed. What should I tell them?',
+    options: [
+      option('ice', 'Explain: ice in dark polar craters could be water for crews.',
+        [trust('public', 10)],
+        'Her piece "Water on the Moon?" is the most-read story of the week. Readers start asking where exactly.'),
+      option('crew', 'Say it scouts the landing site for the next crew.',
+        [trust('government', 5), trust('public', 5)],
+        'Duarte forwards the article to the whole committee. Okafor asks to fly with the next crew, half joking.'),
+      option('tour', 'Show her the lander in the clean room (science hosts).',
+        [trust('public', 5), trust('partners', 5), pace(-10, 1)],
+        'Her photos of the drill go everywhere. Science loses a few days to hairnets and questions.'),
+    ],
+    ignored: {
+      effects: [trust('public', -5)],
+      outcome: "The story runs as 'Agency silent on Moon plans' next to a photo of an empty launch pad.",
+    },
+    tags: ['public', 'press'],
+  },
+  {
+    id: 'mo-site-team-needs-data',
+    source: 'timeline', at: 45, deadlineDays: 25,
+    characterId: 'kessler',
+    title: 'The crew needs your ice map',
+    message: 'My team picks the landing site for the first crew next spring. If your lander finds ice before then, we land next to it; if not, we guess. Can you promise me your launch date?',
+    options: [
+      option('promise', 'Promise launch on the announced date.',
+        [trust('government', 10), setFlag(FLAG_LAUNCH_PROMISE)],
+        'Kessler pins the date to her wall. Tell the planner: the launch date now has a crew attached to it.'),
+      option('share-early', 'Promise to share every reading the day it arrives.',
+        [trust('government', 5), trust('partners', 5)],
+        'Kessler is pleased, and so is Meridian, who will see the same files. Openness costs nothing until someone leaks it.'),
+      option('no-promise', 'Promise nothing: the Moon has wrecked faster schedules than ours.',
+        [trust('government', -5), trust('public', 5)],
+        'Engineers nod. Kessler says she will plan around a guess, and makes it sound like your fault.'),
+    ],
+    ignored: {
+      effects: [trust('government', -10)],
+      outcome: "Kessler tells the committee that the robotic programme 'does not answer the phone'.",
+    },
+    tags: ['government'],
+  },
+  {
+    id: 'mo-budget-review',
+    source: 'timeline', at: 75, deadlineDays: 25,
+    characterId: 'duarte',
+    title: 'Budget review',
+    message: 'The committee reviews your budget next week. One colleague says we already have Moon rocks in a museum, so why buy more. Give me an answer I can say out loud.',
+    options: [
+      option('trim', 'Offer a 10 M trim to show discipline.',
+        [budget(-10), trust('government', 10)],
+        'The committee praises your restraint. Every station now has 10 M less to be restrained with.'),
+      option('home-suppliers', 'Pledge contracts to home suppliers (procurement pays more).',
+        [trust('government', 10), trust('industry', 5), price(10, 3)],
+        'Duarte gets her line about local jobs. Procurement gets a memo explaining why parts cost more.'),
+      option('water', 'Explain: water found on the Moon need not be launched.',
+        [trust('government', -5), trust('public', 5)],
+        'The explainer about rocket fuel from ice goes viral. The colleague does not enjoy being the example.'),
+    ],
+    ignored: {
+      effects: [budget(-20), trust('government', -5)],
+      outcome: "Without a champion, the committee trims 20 M 'to encourage efficiency'.",
+    },
+    tags: ['government', 'funding'],
+  },
+  {
+    id: 'mo-meridian-tracking',
+    source: 'timeline', at: 120, deadlineDays: 25,
+    characterId: 'moreau',
+    title: 'Our dish for your landing',
+    message: 'Our deep-space dish can follow your lander during the descent, when every second of data counts. In return, our scientists would like the ice data on the same day as yours. Shall we sign?',
+    options: [
+      option('sign', 'Sign: Meridian tracks the landing and shares the data.',
+        [trust('partners', 10), trust('government', -5), setFlag(FLAG_GROUND_STATION)],
+        "Meridian's dish is booked for landing day. A senator asks why foreigners see the data first."),
+      option('rent', 'Rent the dish for landing day only.',
+        [trust('partners', 5), setFlag(FLAG_GROUND_STATION)],
+        "A clean deal: money for antenna time. Moreau calls it 'efficient', which is not a compliment.", 5),
+      option('own-dishes', 'Decline: our own dishes are enough.',
+        [trust('partners', -5), trust('government', 5)],
+        "Duarte likes the sound of 'our own dishes'. Moreau offers the slot to a rival agency."),
+    ],
+    ignored: {
+      effects: [trust('partners', -10)],
+      outcome: "Meridian takes the silence as a no and books the dish for a rival's lander.",
+    },
+    tags: ['partners'],
+  },
+  {
+    id: 'mo-launch-readiness',
+    source: 'timeline', at: 270, deadlineDays: 15,
+    characterId: 'duarte',
+    title: 'Launch-readiness hearing',
+    message: 'The committee holds its launch-readiness hearing next week. Members want to hear one word: ready. Are you?',
+    options: [
+      option('candid', 'Give a candid status, risks included.',
+        [trust('government', 5), trust('public', 5)],
+        'The hearing runs long but ends respectfully. Okafor calls it "the landing with error bars".'),
+      option('reserve', 'Ask for a 10 M contingency reserve.',
+        [budget(10), trust('government', -5)],
+        'The committee grants it with a collective sigh. Every station breathes a little easier.'),
+      option('all-green', 'Declare everything green, no caveats.',
+        [trust('government', 10), trust('public', -5)],
+        "The hearing ends early and happily. Okafor notes that landers have said 'all green' before."),
+    ],
+    ignored: {
+      effects: [trust('government', -10)],
+      outcome: 'An empty witness chair makes for a bad photo. The committee chair says so, at length.',
+    },
+    tags: ['government'],
+  },
+  {
+    // Arrives only if the launch slipped past day 330 (comms stops at launch).
+    id: 'mo-still-on-the-ground',
+    source: 'timeline', at: 330, deadlineDays: 20,
+    characterId: 'kessler',
+    title: 'Still on the ground',
+    message: 'Your lander was meant to fly in October and is still on the ground. My team chooses the crew landing site in April, with or without your data. What do I plan on?',
+    options: [
+      option('new-date', 'Promise her the current launch date, and keep it.',
+        [trust('government', 5), setFlag(FLAG_LAUNCH_PROMISE)],
+        'Kessler writes the new date in pen. Tell the planner: a later launch now breaks a promise.'),
+      option('orbital-maps', "Buy Meridian's orbital ice maps as a stopgap.",
+        [trust('government', 5), trust('partners', 5)],
+        "Meridian's maps narrow the choice to three craters. Kessler still wants yours for the final pick.", 6),
+      option('blame-suppliers', 'Blame the delay on late suppliers.',
+        [trust('public', 5), trust('industry', -10)],
+        'The public gets a villain. Feld gets a phone call from his board, then makes one to you.'),
+    ],
+    ignored: {
+      effects: [trust('government', -10), trust('public', -5)],
+      outcome: "Kessler tells a press briefing the crew 'may have to land on a guess'. Okafor quotes it.",
+    },
+    tags: ['government', 'bad'],
+  },
+];

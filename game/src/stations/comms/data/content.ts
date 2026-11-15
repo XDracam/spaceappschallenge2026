@@ -2,7 +2,7 @@
 // (state/world.ts) and UI pick the set of the game's mission (s.meta.missionId).
 //
 // Structure (one folder per mission under data/, same files in each):
-// - characters.ts        shared cast; each mission picks who appears (MARS_CAST, WEATHER_CAST)
+// - characters.ts        shared cast; each mission picks who appears (MARS_CAST, WEATHER_CAST, MOON_CAST)
 // - <mission>/eventsTimeline.ts   source 'timeline': fixed calendar days (`at`)
 // - <mission>/eventsTriggered.ts  source 'player': other stations' shared flags (s.events.flags);
 //                                 source 'trigger': trust / budget / day thresholds. Each fires once.
@@ -15,14 +15,16 @@
 // - helpers.ts           effect/condition builders and content flags; option() derives
 //                        the ↑/↓ hints from the option's trust effects (|net| >= 10 → ±2).
 //
-// Missions: 'mars-orbiter-lander' (data/mars/, long, budget 900 M) and 'weather-geo'
-// (data/weather/, short: launch ≈ day 150, budget ≈ 210 M, smaller amounts).
+// Missions: 'mars-orbiter-lander' (data/mars/, long, budget 900 M), 'weather-geo'
+// (data/weather/, short: launch ≈ day 150, budget ≈ 210 M, smaller amounts) and
+// 'moon-lander' (data/moon/, medium: launch ≈ day 300, budget 260 M, small amounts).
 // Flags raised by this content: 'press.rtgStory' (plutonium story ran unanswered),
 // 'comms.groundStation' (partner ground-station deal done). Texts: messages ≤ 3
 // sentences, options ≤ 12 words (teammate impact named in brackets), outcomes 1–2 sentences.
 import type { Character, EventDef, InFlightEventDef, ProjectDef } from '../model/types';
-import { MARS_CAST, WEATHER_CAST } from './characters';
+import { MARS_CAST, MOON_CAST, WEATHER_CAST } from './characters';
 import * as mars from './mars/index';
+import * as moon from './moon/index';
 import * as weather from './weather/index';
 
 export { CHARACTERS } from './characters';
@@ -52,9 +54,18 @@ export const WEATHER_CONTENT: Content = {
   inFlight: weather.IN_FLIGHT,
 };
 
+export const MOON_CONTENT: Content = {
+  missionId: 'moon-lander',
+  characters: MOON_CAST,
+  events: [...moon.TIMELINE_EVENTS, ...moon.PLAYER_EVENTS, ...moon.TRIGGER_EVENTS, ...moon.POOL_EVENTS],
+  projects: moon.PROJECTS,
+  inFlight: moon.IN_FLIGHT,
+};
+
 export const CONTENT_BY_MISSION: Record<string, Content> = {
   [MARS_CONTENT.missionId]: MARS_CONTENT,
   [WEATHER_CONTENT.missionId]: WEATHER_CONTENT,
+  [MOON_CONTENT.missionId]: MOON_CONTENT,
 };
 
 /** Comms content of a mission. Unknown ids fall back to Mars, like core/mission.ts missionById(). */

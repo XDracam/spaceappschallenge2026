@@ -229,6 +229,8 @@ export interface MissionDef {
   id: string;
   name: string;
   briefing: string;
+  /** Ideas this mission adds over the easier ones, one beginner sentence each (shown in the planner's briefing). */
+  ideas?: string[];
   startDateISO: string;          // calendar day 0
   /** Mission completion deadline: goals achieved after this day do not count. */
   completionDeadlineDay: number;

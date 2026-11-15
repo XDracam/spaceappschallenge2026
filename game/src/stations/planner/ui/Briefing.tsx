@@ -72,6 +72,14 @@ export function Briefing() {
             </ul>
           </>
         )}
+        {mission.ideas?.length ? (
+          <>
+            <div class="tb-label">New in this mission</div>
+            <ul class="briefing-ideas">
+              {mission.ideas.map((t) => <li key={t}>{t}</li>)}
+            </ul>
+          </>
+        ) : null}
         <ol class="briefing-steps">
           <li>Plan the route on the map.</li>
           <li>Fix problems until the Issues card is clear.</li>

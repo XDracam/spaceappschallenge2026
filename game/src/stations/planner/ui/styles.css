@@ -759,6 +759,8 @@
 .st-planner .briefing b { color: var(--text); font-weight: 600; }
 .st-planner .briefing-goals { margin: 0 0 12px; padding-left: 20px; color: var(--text); }
 .st-planner .briefing-goals li { margin: 1px 0; }
+.st-planner .briefing-ideas { margin: 4px 0 12px; padding-left: 20px; color: #c3d0e3; }
+.st-planner .briefing-ideas li { margin: 2px 0; }
 .st-planner .briefing-steps {
   margin: 0 0 12px; padding: 10px 12px 10px 30px; border-radius: 12px;
   background: rgba(63, 199, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text);

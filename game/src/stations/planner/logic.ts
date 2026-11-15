@@ -12,6 +12,7 @@ import { allParts, findBranch, findManeuver, findPart, findSpacecraft, findStage
 import { PAYLOAD_TYPE_LABEL, beyondResearch, makePart, makeSpacecraft, makeStage, statDefs } from './data/parts';
 import { designFlags, partEditable, partProcurement, partStatus, plannerGame } from './derive';
 import { evaluate } from './physics';
+import { BODIES } from './data/bodies';
 
 // ================================================================= helpers
 
@@ -95,6 +96,17 @@ function setLaunch(s: GameState, ctx: ActionCtx, day: number): void {
   const next = Math.round(Math.min(MISSION.completionDeadlineDay, Math.max(Math.ceil(ctx.day), day)));
   if (!Number.isFinite(next) || next === prev) return;
   s.planner.plan.launchDay = next;
+  // A transfer from the launch body to one of its moons (Earth to the Moon) has no launch
+  // window: it leaves any day, so it keeps its place right after the moved launch instead of
+  // staying on the old date ("Departure before arrival in orbit"). Transfers to planets keep
+  // their window dates.
+  const root = s.planner.plan.branches[0]?.maneuvers[0];
+  const home = root?.type === 'launch' ? root.body : undefined;
+  for (const b of s.planner.plan.branches) {
+    for (const m of b.maneuvers) {
+      if (home && m.type === 'transfer' && BODIES[m.target]?.parent === home) m.departDay += next - prev;
+    }
+  }
   for (const t of s.market.tasks) {
     if (t.authorRole === 'planner' && t.status === 'open' && t.neededAt !== next) {
       t.neededAt = next;

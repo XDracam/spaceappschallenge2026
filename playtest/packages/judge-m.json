@@ -1,0 +1,131 @@
+{
+  "package": "m",
+  "verdict": "accept",
+  "placement": {
+    "weather": {
+      "source": "played this checkout (8073b23/2ba2c6f version), round judge-m-wx, speed 1",
+      "goals": "2 main + 2 optional (bonus)",
+      "routeSteps": 2,
+      "startingDesignFix": "one click: Bigger upper-stage tank (0.24 km/s short)",
+      "validPlanAt": "0:43 real (main goals), 1:16 with the optional spectrometer added",
+      "researchNeeded": "2 (camera >= 4.5, antenna >= 600 kbps), 90 % each, two routes each; camera research already finishes after its order-by date when started on day 41",
+      "parts": "9 (10 with spectrometer)",
+      "budgetM": 210,
+      "budgetMargin": "85.7 M spare at order (41 %); flew with 53.5 M left (25 %) after spectrometer + priority camera",
+      "launchDay": 180,
+      "minutesToLaunch": 5.9,
+      "chanceShown": "91 / 86 / 87 % (GEO / images / ozone)",
+      "result": "2/2 main + 1/2 optional, spent 156.5 of 210 M"
+    },
+    "moon": {
+      "goals": 3,
+      "routeSteps": 4,
+      "startingDesignFix": "cannot lift off (lift ratio 0.67); no tank fix; must change booster engines (Push slider or Advanced -> engines x2), then a lander-tank click",
+      "validPlanAt": "1:45 real cold (first-timer), 1:16 second time",
+      "researchNeeded": "2 (surface lab >= 4.5 at 85 %, hypergolic Isp >= 312 at 95 %); lab must start by ~day 26 or the launch slips",
+      "parts": "10 (11 engine units with twin booster)",
+      "budgetM": 260,
+      "budgetMargin": "at order: twin/Tallis 36.7 M spare (14 %), single/Helix 2.3 M spare (1 %), single after Comms roundtable 20-35 M",
+      "launchDay": "planned 300; flown 280 (single) and 308 (twin)",
+      "minutesToLaunch": "9.9 planned; 9.2 and 10.1 flown",
+      "chanceShown": "single 94/93/89 %, twin 92/90/86 % (Tallis-bought 94/93/88 %)",
+      "results": "3/3 both designs"
+    },
+    "mars": {
+      "goals": 4,
+      "routeSteps": "6 (launch, transfer, orbit with aerobraking, release lander, land) plus two antenna fixes",
+      "startingDesignFix": "orbit insertion 0.69 km/s short, 'No tank size fixes this', needs aerobraking; then orbiter antenna 199<200 kbps and lander antenna 40<60 kbps",
+      "validPlanAt": "1:31 real (with experience from the other two)",
+      "researchNeeded": "1 (camera >= 4, 4 mo)",
+      "parts": "16 (17 units), 2 vehicles",
+      "budgetM": 900,
+      "budgetMargin": "647 M spare at order (72 %)",
+      "launchDay": 230,
+      "minutesToLaunch": "7.6, then an 8-month cruise (arrival 13 May 2031, ~16 min)",
+      "chanceShown": "90 / 86 / 88 / 84 %",
+      "note": "surface lab already past its order-by date on day 47; launch is window-bound"
+    },
+    "verdict": "between",
+    "reason": "On the Planner axis, which is what a first-time team meets first, the order is clear: Weather is 2 steps and one tank click, Moon is 4 steps with an engine decision the tank fix cannot solve, and Mars is 6 steps with two vehicles, aerobraking, antenna fixes and a launch window. Parts go 9, 10 and 16. Time to launch goes 5.9, ~10 and 7.6 min, plus Mars's long cruise. On money and research the Moon is the tightest of the three (1-14 % spare against 41 % and 72 %; 2 needs at 85/95 % against 2 at 90 % and 1). So Procurement and Science feel harder than in Mars, but the mission as a whole still sits between the other two."
+  },
+  "flights": [
+    {
+      "design": "one big engine (Push slider to 3,937 kN -> Feldwerk 4,500 kN offer via Comms roundtable + 'Booster engine from Feldwerk'); cold start, Planner first",
+      "result": "3/3 goals (1 part failure absorbed)",
+      "days": 280,
+      "minutesAtNormalSpeed": 9.2,
+      "moneyLeftM": 25.5,
+      "tight": "Tallis KL-4500 (sign by day 56) was already late when Procurement opened on day 64; Helix (91.4 M) would have left 2.3 M spare. The Feldwerk deal saved it. Lab research started day 49, so the lab arrived after the planned launch: Planner's 'Next: move launch' button moved it to 2 Dec, then Comms rush fee + expediting bonus (14 M) pulled the lab back to 2 Oct and the launch to 8 Oct. Spent 234.5 of 260 M, 30+ M of it on Comms."
+    },
+    {
+      "design": "two booster engines (Advanced -> engines 2, tank fix 1.18 t, Tallis 2x KL-2000 57 M); Science started at ~10 s, calendar paused while acting",
+      "result": "3/3 goals",
+      "days": 308,
+      "minutesAtNormalSpeed": 10.1,
+      "moneyLeftM": 43.9,
+      "tight": "Margin +0.15 km/s with bought parts (1.6 t tank, 2.5 t legs; no legs error). Budget fell to 42 M after a 10 M trim; Comms then added 30 + 10 M (funding 290). A Feldwerk strike late on would have pushed the descent engine past launch ('all 1 deliveries 1 mo later'); an 8 M settlement avoided it. I moved the launch 8 days on purpose to test the promise follow-up."
+    }
+  ],
+  "items": [
+    {
+      "item": "1. Harder than Weather, easier than Mars",
+      "accept": true,
+      "sawRunning": "all three played this session; numbers in placement",
+      "reason": "Route complexity, part count and vehicles rank Weather < Moon < Mars. The Moon's budget and research are tighter than Mars's, which is a balance note, not a placement failure.",
+      "toBeAcceptable": "-"
+    },
+    {
+      "item": "2. Winnable with both designs in one sitting",
+      "accept": true,
+      "sawRunning": "both designs flew 3/3, launch at days 280 and 308 (9-10 min at normal speed)",
+      "reason": "Both won with money left. For a first-time team the single big engine is in practice reachable only through the Comms Feldwerk deal or the expensive Helix offer (Tallis must be signed by day 56, about 1.8 min in). That is the intended design.",
+      "toBeAcceptable": "-"
+    },
+    {
+      "item": "3. Understandable for a beginner",
+      "accept": true,
+      "sawRunning": "cold start: the Issues card said 'Too weak to lift off (lift ratio 0.67, needs above 1). Add engines to the first stage.' The briefing's 'New in this mission' list names Rocket -> Advanced and Push. Dragging Push fixed lift-off at once. The Enter-orbit panel says 'Moon has no air to brake in'. The transfer shows 5 d. Land shows thrust ratio and fuel shortfall.",
+      "reason": "The reason and both options are on screen. A weak spot: the engine-count control the error asks for sits behind 'Advanced', and the briefing that points there closes after 'Start planning'. The Push slider is visible, so a beginner is not stuck.",
+      "toBeAcceptable": "-"
+    },
+    {
+      "item": "4. All four stations have Moon work; Comms consequences true",
+      "accept": true,
+      "sawRunning": "Comms is Moon content (Kessler, Moon messages and projects, Moon in-flight list). Checked at the other station that the stated effect happened: roundtable -10 % (KL-4500 58.3 -> 52.5); Feldwerk offer 55 M / 4 mo / 4,500 kN appeared and delivered ~4 mo after signing; joint lab +25 % (lab research ended 18 May instead of 24 May); strike 'nothing moves' with no contracts; rush fee: every delivery 1 mo earlier (lab 2 Dec->1 Nov, antenna 13 Jul->16 Jun, legs 13 Aug->13 Jul); expediting bonus: lab 1 Nov->2 Oct; audit 'open every file': Sunleaf 16 Jun->16 Jul and HT-22 5 May->4 Jun; budget trim: funding 260->250; supplemental +30 (280); reserve +10 (290); gala gov +10 / industry +5; Meridian 'sign' turned 'Tracking the descent' green and it appeared good in the flight; promise -> later launch -> 'You promised me a date' fired ('You moved the launch' did not), and its costs matched; Northgate regolith lab honestly showed 'limit already 6: no change'. Science: 2 needs from second one, then tests. Procurement: long-lead booster, lab window, budget.",
+      "reason": "Every consequence I took happened as stated.",
+      "toBeAcceptable": "-"
+    },
+    {
+      "item": "5. Harmless to Weather and Mars",
+      "accept": true,
+      "sawRunning": "Weather: briefing without 'New in this mission', weather Comms cast (Okafor, Lindqvist), played to launch 2/2+1. Mars: lobby card 'Orbit Mars. Land a probe.', 16 parts, 900 M, launch 19 Aug, plan and order normal. Diff: logic.ts shifts only transfers whose target's parent is the launch body (Moon); `ideas` is optional and only Moon sets it.",
+      "reason": "Nothing in the other two missions changed that I could see or read.",
+      "toBeAcceptable": "-"
+    },
+    {
+      "item": "Lobby",
+      "accept": true,
+      "sawRunning": "three cards in order Weather (Start here), Lunar ice lander (Next step, crescent icon), Mars (Harder). Weather and Mars start.",
+      "reason": "Correct. The Moon card's two-sentence text is much longer than the one-line siblings (cosmetic).",
+      "toBeAcceptable": "-"
+    }
+  ],
+  "mustRepair": [],
+  "broken": [],
+  "polish": [
+    "Lobby: the Moon card text is two long sentences next to the one-line Weather and Mars cards; something like 'Land on the Moon and drill for ice.' would match.",
+    "Comms 'About that late delivery' is always Marco Feld (Feldwerk) apologising, also when the late part is Meridian's surface lab; the effect itself is correct.",
+    "In-flight 'Rehearsed landing' bad text ('The moved launch cut the rehearsals short') also fires when the launch was moved later; the stated condition ('launch date never moved') is accurate.",
+    "Lift-off error says 'Add engines to the first stage' while the engine count is only under 'Advanced'; the error could name it (pre-existing message, the briefing covers it).",
+    "Strike option text 'all 1 deliveries 1 mo later' (shared helper wording, not Moon-specific)."
+  ],
+  "notChecked": [
+    "Four players at once (one player switched stations and paused the calendar while acting, then normal speed).",
+    "A failed lab research (15 %) and its recovery: retry + slip, or the Northgate regolith lab when the limit is still 3.2.",
+    "A failed flight and the restart path; overspending past the budget and its consequence.",
+    "'Still on the ground' (day 330) and pool events other than strike, leaked memo, lander crash, export freeze, vacuum chamber and wiring leak.",
+    "Mars beyond its order (cruise, arrival) and Mars Comms content.",
+    "Phone/narrow layouts."
+  ],
+  "note": "Judge wrote only this file outside mc-pkg-m, at the path the task named. Rounds played in mc-pkg-m/playtest/runs: judge-m-cold, judge-m-wx, judge-m-mars, judge-m-twin. No game file edited."
+}
