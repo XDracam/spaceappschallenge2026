@@ -1,9 +1,9 @@
 // Shared coordination board. Procurement and research entries are projections of
 // authoritative game state; player requests are explicit, replicated records.
 import { defineActions } from './actions';
-import { STATIONS, type StationId } from './model';
+import { STATIONS, type Call, type StationId } from './model';
 import { budgetAvailableM, type GameState } from './state';
-import { criterionCoverage, fmtDate, fmtStatValue, offersForCriterion, sameHardware } from '../stations/procurement/rules';
+import { criterionCoverage, fitFailures, fmtDate, fmtStatValue, offersForCriterion, sameHardware, sameKind } from '../stations/procurement/rules';
 import { contractTiming } from '../stations/procurement/timing';
 import { describeNeed, designNeeds, formatValue, keyInfo, sci } from '../stations/science/model/research';
 import { ancestors, blockInfo, routesFor, startCheck, techsFor } from '../stations/science/model/tree';
@@ -12,6 +12,7 @@ import { TECH_BY_ID } from '../stations/science/data/techs';
 import { canStartProject, contentOf, getEventDef, getProjectDef, missionConstraintFlag, optionEffects } from '../stations/comms/state/world';
 import { describeEffect } from '../stations/comms/state/format';
 import { allParts } from '../stations/planner/model/rocketUtils';
+import { beyondResearch } from '../stations/planner/data/parts';
 import { cachedPlannerGame, evaluationOf, partStatus } from '../stations/planner/derive';
 export type CoordinationStatus = 'open' | 'completed' | 'withdrawn';
 export type CoordinationLink = {
@@ -24,6 +25,8 @@ export type CoordinationLink = {
 } | {
   kind: 'call';
   callId: string;
+} | {
+  kind: 'commsProjects' | 'contracts' | 'scienceLab' | 'launch';
 } | {
   kind: 'plan';
 } | {
@@ -62,17 +65,41 @@ export interface PlayerCoordinationTask {
   origin?: 'effect';
   /** Preserve the authored requirement when players edit the working description. */
   sourceText?: string;
+  purpose?: 'request' | 'funding' | 'equipment' | 'timing';
+  requestKey?: string;
+  parentNeedId?: string;
+  neededAt?: number;
 }
+export interface RequestOptions { parentNeedId?: string; neededAt?: number }
 export interface CoordinationTask extends Omit<PlayerCoordinationTask, 'status'> {
   status: CoordinationStatus | 'failed' | 'expired';
   source: 'player' | 'effect' | 'procurement' | 'research' | 'offer' | 'contract' | 'event' | 'project' | 'modifier' | 'budget' | 'planning' | 'notice';
   actions: Partial<Record<StationId, string>>;
-  neededAt?: number;
+  actionKinds?: Partial<Record<StationId, 'work' | 'funding' | 'approval' | 'fundingApproval'>>;
   link?: CoordinationLink;
+  links?: Partial<Record<StationId, CoordinationLink>>;
+  related?: CoordinationTask[];
+  requests?: CoordinationTask[];
+}
+function validRequestOptions(s: GameState, options?: RequestOptions, existingParent?: string): boolean {
+  if (options === undefined) return true;
+  if (!options || typeof options !== 'object' || Array.isArray(options)) return false;
+  const { parentNeedId, neededAt } = options;
+  return (parentNeedId === undefined || typeof parentNeedId === 'string' && parentNeedId.length > 0 && parentNeedId.length <= 160 && (parentNeedId === existingParent || s.market.tasks.some(t => t.id === parentNeedId && t.status === 'open')))
+    && (neededAt === undefined || typeof neededAt === 'number' && Number.isFinite(neededAt) && neededAt >= 0);
 }
 const validRole = (v: unknown): v is StationId => typeof v === 'string' && STATIONS.includes(v as StationId);
+
+/** Recognize the exact funding shortcut format used before purposes were stored. */
+function requestPurpose(task: PlayerCoordinationTask): PlayerCoordinationTask['purpose'] {
+  if (task.purpose) return task.purpose;
+  const titlePrefix = 'Funding for ';
+  if (task.authorRole === 'science' && task.title.startsWith(titlePrefix)
+    && task.description.startsWith(`Science proposes ${task.title.slice(titlePrefix.length)}, costing `)) return 'funding';
+  return 'request';
+}
 export const coordinationActions = defineActions('coordination', {
-  create(s, ctx, title: string, description: string, assignee: StationId, requestId?: string) {
+  create(s, ctx, title: string, description: string, assignee: StationId, requestId?: string, requestKey?: string, purpose: PlayerCoordinationTask['purpose'] = 'request', expectedRevision?: number, options?: RequestOptions) {
     if (s.meta.phase !== 'planning' || !validRole(ctx.by) || !validRole(assignee) || typeof title !== 'string' || typeof description !== 'string')
       return;
     title = title.trim();
@@ -81,6 +108,22 @@ export const coordinationActions = defineActions('coordination', {
       return;
     if (requestId !== undefined && (typeof requestId !== 'string' || !/^[A-Za-z0-9_-]{1,80}$/.test(requestId)))
       return;
+    if (!['request', 'funding', 'equipment', 'timing'].includes(purpose ?? 'request')) return;
+    if (requestKey !== undefined && (typeof requestKey !== 'string' || !/^[A-Za-z0-9:._-]{1,160}$/.test(requestKey))) return;
+    if (!validRequestOptions(s, options)) return;
+    const existing = requestKey && (s.coordination ?? []).find(task => task.authorRole === ctx.by && task.requestKey === requestKey);
+    if (existing) {
+      if (existing.revision !== expectedRevision) return;
+      existing.title = title;
+      existing.description = description;
+      existing.assignee = assignee;
+      existing.purpose = purpose;
+      if (options !== undefined) { existing.parentNeedId = options.parentNeedId; existing.neededAt = options.neededAt; }
+      existing.status = 'open';
+      existing.updatedAt = ctx.day;
+      existing.revision++;
+      return;
+    }
     const id = requestId === undefined ? ctx.newId('coord') : `coord-${requestId}`;
     if ((s.coordination ?? []).some(t => t.id === id))
       return;
@@ -93,10 +136,13 @@ export const coordinationActions = defineActions('coordination', {
       assignee,
       status: 'open',
       createdAt: ctx.day,
-      updatedAt: ctx.day
+      updatedAt: ctx.day,
+      purpose,
+      ...options,
+      ...(requestKey ? { requestKey } : {}),
     });
   },
-  edit(s, ctx, id: string, revision: number, title: string, description: string, assignee: StationId) {
+  edit(s, ctx, id: string, revision: number, title: string, description: string, assignee: StationId, purpose?: PlayerCoordinationTask['purpose'], options?: RequestOptions) {
     if (s.meta.phase !== 'planning' || !validRole(ctx.by) || !validRole(assignee) || typeof title !== 'string' || typeof description !== 'string')
       return;
     title = title.trim();
@@ -106,6 +152,7 @@ export const coordinationActions = defineActions('coordination', {
     const task = (s.coordination ?? []).find(t => t.id === id);
     if (!task || task.status !== 'open' || task.revision !== revision || (ctx.by !== task.authorRole && ctx.by !== task.assignee))
       return;
+    if (!validRequestOptions(s, options, task.parentNeedId)) return;
     if (task.origin === 'effect' && !task.sourceText) {
       const content = contentOf(s);
       const effects = [
@@ -115,6 +162,9 @@ export const coordinationActions = defineActions('coordination', {
       const source = effects.find(effect => effect.kind === 'missionConstraint' && task.description.startsWith(effect.text));
       if (source?.kind === 'missionConstraint') task.sourceText = source.text;
     }
+    if (purpose !== undefined && !['request', 'funding', 'equipment', 'timing'].includes(purpose)) return;
+    if (purpose !== undefined) task.purpose = purpose;
+    if (options !== undefined) { task.parentNeedId = options.parentNeedId; task.neededAt = options.neededAt; }
     task.title = title;
     task.description = description;
     task.assignee = assignee;
@@ -133,11 +183,13 @@ export const coordinationActions = defineActions('coordination', {
   },
 });
 /** Current work and history. Actions identify who can usefully act now. */
-export function coordinationTasks(s: GameState): CoordinationTask[] {
+function coordinationEntries(s: GameState): CoordinationTask[] {
   const playing = s.meta.phase === 'planning';
   const result: CoordinationTask[] = (s.coordination ?? []).map(t => ({
     ...t,
+    purpose: requestPurpose(t),
     source: t.origin === 'effect' ? 'effect' : 'player',
+    links: t.purpose === 'timing' && t.assignee === 'planner' ? { planner: { kind: 'launch' } } : {},
     actions: playing && t.status === 'open' ? {
       [t.assignee]: 'Review the request and mark it complete when satisfied.'
     } : {},
@@ -192,6 +244,8 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
         updatedAt: t.updatedAt,
         neededAt: t.neededAt,
         actions,
+        actionKinds: actions.comms ? { comms: 'funding' } : {},
+        links: { ...(actions.comms ? { comms: { kind: 'commsProjects' as const } } : {}), ...(actions.planner ? { planner: t.partId ? { kind: 'planner' as const, partId: t.partId } : { kind: 'plan' as const } } : {}) },
         link: {
           kind: 'procurement',
           taskId: t.id,
@@ -242,6 +296,8 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
         'Research can fail; other acquisition options may exist.'].filter(Boolean).join(' '),
       authorRole: 'planner', assignee: 'science', status: 'open', createdAt: 0, updatedAt: 0,
       neededAt: need.researchBy, actions,
+      actionKinds: { ...(actions.comms ? { comms: unaffordableTechs.length || unaffordableApprovals.length ? availableApprovals.length ? 'fundingApproval' as const : 'funding' as const : 'approval' as const } : {}) },
+      links: { ...(actions.comms ? { comms: { kind: 'commsProjects' as const } } : {}), ...(actions.procurement ? { procurement: { kind: 'contracts' as const } } : {}), ...(actions.science && unaffordableApprovals.length && s.research.projects.some(p => p.status === 'running') ? { science: { kind: 'scienceLab' as const } } : {}) },
       link: !directRunning && startable.length === 1 ? { kind: 'scienceTech', techId: startable[0].id } : { kind: 'science' },
     });
   }
@@ -276,6 +332,8 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
         check && !check.ok ? check.reason ?? '' : ''].filter(Boolean).join(' '),
       authorRole: 'science', assignee: 'science', status: test.state === 'tested' ? 'completed' : 'open',
       createdAt: 0, updatedAt: 0, neededAt: s.planner.plan.launchDay, actions,
+      actionKinds: actions.comms ? { comms: 'funding' } : {},
+      links: { ...(actions.comms ? { comms: { kind: 'commsProjects' as const } } : {}), ...(actions.procurement ? { procurement: { kind: 'contracts' as const } } : {}), ...(actions.planner ? { planner: { kind: 'launch' as const } } : {}) },
       link: { kind: 'scienceTest', partId: test.partId },
     });
   }
@@ -289,7 +347,7 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
       revision: o.revision,
       source: 'offer',
       title: `Partner offer: ${o.resource.name}`,
-      description: `${o.supplierName}: ${remaining} available, $${o.priceM}M for ${o.quantity}, delivery in ${o.leadTimeDays} days.${o.expiresAt === undefined ? '' : ` Expires ${fmtDate(o.expiresAt)}.`}`,
+      description: `${status === 'open' ? 'Available' : status === 'completed' ? 'Accepted or exhausted' : 'Withdrawn or expired'} offer from ${o.supplierName}: ${remaining} remaining, $${o.priceM}M for ${o.quantity}, delivery in ${o.leadTimeDays} days.${o.expiresAt === undefined ? '' : ` Expiry ${fmtDate(o.expiresAt)}.`}`,
       authorRole: 'comms',
       assignee: 'procurement',
       status,
@@ -392,6 +450,7 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
       updatedAt: event.arrivedDay,
       neededAt: event.deadlineDay,
       actions: eventActions,
+      links: { ...(eventActions.procurement ? { procurement: { kind: 'contracts' as const } } : {}), ...(eventActions.science ? { science: { kind: 'scienceLab' as const } } : {}) },
       link: {
         kind: 'comms',
         instanceId: event.instanceId
@@ -413,6 +472,8 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
       authorRole: 'science', assignee: 'science',
       status: p.status === 'running' ? 'open' : p.status === 'succeeded' ? 'completed' : info?.cancelled ? 'withdrawn' : 'failed',
       createdAt: p.startedAt, updatedAt: info?.endedAt ?? p.startedAt, neededAt: p.endsAt, actions,
+      actionKinds: actions.comms ? { comms: 'approval' } : {},
+      links: { ...(actions.comms ? { comms: { kind: 'commsProjects' as const } } : {}), ...(actions.planner ? { planner: { kind: 'launch' as const } } : {}) },
       link: { kind: 'scienceProject', projectId: p.id },
     });
   }
@@ -508,32 +569,10 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
         procurement: 'Review commitments and cancellation terms in Procurement.',
         science: 'Review running projects and cancellation terms in Science.'
       } : {},
+      actionKinds: { comms: 'funding' },
+      links: { comms: { kind: 'commsProjects' }, procurement: { kind: 'contracts' }, science: { kind: 'scienceLab' } },
       link: { kind: 'budget' }
     });
-  for (const { part } of allParts(s.planner.rocket)) {
-    if (partStatus(s, part.id) !== 'draft')
-      continue;
-    result.push({
-      id: `planning:${part.id}`,
-      revision: 1,
-      source: 'planning',
-      title: `Unordered: ${part.name}`,
-      description: 'This part is still a draft. Ordering it creates a procurement need with its current specifications.',
-      authorRole: 'planner',
-      assignee: 'planner',
-      status: 'open',
-      createdAt: 0,
-      updatedAt: 0,
-      neededAt: s.planner.plan.launchDay,
-      actions: playing ? {
-        planner: 'Review and order the part in Mission Planning.'
-      } : {},
-      link: {
-        kind: 'planner',
-        partId: part.id
-      }
-    });
-  }
   const planner = cachedPlannerGame(s);
   const evaluation = evaluationOf(planner);
   const issues = evaluation.issues.filter(i => i.severity !== 'info');
@@ -579,4 +618,283 @@ export function coordinationTasks(s: GameState): CoordinationTask[] {
     });
   }
   return result;
+}
+
+export interface CoordinationBoard {
+  tasks: CoordinationTask[];
+  overview: CoordinationTask[];
+  schedule: CoordinationTask[];
+}
+
+function callContext(s: GameState, call: Call): string {
+  const task = s.market.tasks.find(task => task.id === call.taskId);
+  const requirement = call.requirement;
+  const specification = requirement && Object.entries(requirement.minimums).map(([key, value]) => `${key} ≥ ${fmtStatValue(requirement.partKind, requirement.variant, key, value)}`).join(', ');
+  const stale = task && call.taskRevision !== undefined && call.taskRevision !== task.revision;
+  const offers = call.offerIds.flatMap(id => {
+    const offer = s.market.offers.find(item => item.id === id);
+    if (!offer) return [];
+    const expired = offer.expiresAt !== undefined && offer.expiresAt <= s.clock.day;
+    return [`${offer.resource.name} from ${offer.supplierName}; ${expired ? 'expired' : offer.status}; ${offer.remainingQuantity ?? offer.quantity} remaining; $${offer.priceM}M for ${offer.quantity}; ${offer.leadTimeDays} days delivery; ${Math.round(offer.reliability * 1000) / 10}% reliability.`];
+  });
+  return [
+    `${call.status}; ${requirement?.quantity ?? 0} units; responses ${fmtDate(call.closesAt)}; ${call.offerIds.length} Offers.`,
+    task?.status === 'withdrawn' ? 'The original requirement was withdrawn.' : '',
+    call.taskId && !task ? 'The original requirement is missing.' : '',
+    stale ? `Opened for revision ${call.taskRevision}; current requirement is revision ${task.revision}. Check received Offers against the current requirement.` : '',
+    specification ? `Original minimums: ${specification}.` : '',
+    ...offers,
+  ].filter(Boolean).join('\n');
+}
+
+/** One shared need owns its sourcing, development and delivery context. */
+export function coordinationBoard(s: GameState): CoordinationBoard {
+  const entries = coordinationEntries(s);
+  const byId = new Map(entries.map(entry => [entry.id, entry]));
+  const attached = new Set<string>();
+  const tasks: CoordinationTask[] = [];
+  const fundingRequests = entries.filter(entry => entry.purpose === 'funding');
+  const fundingNeeds: CoordinationTask[] = [];
+  const playing = s.meta.phase === 'planning';
+  const design = allParts(s.planner.rocket);
+  const researchNeeds = designNeeds(s);
+
+  const mergeActions = (target: CoordinationTask, entry: CoordinationTask) => {
+    for (const role of STATIONS) {
+      const action = entry.actions[role];
+      if (!action) continue;
+      const kind = entry.actionKinds?.[role] ?? 'work';
+      if (kind === 'funding' || kind === 'fundingApproval') {
+        if (kind === 'fundingApproval') {
+          target.actions[role] = 'Review approval projects for the research route in Communications.';
+          (target.actionKinds ??= {})[role] = 'approval';
+          if (entry.links?.[role]) (target.links ??= {})[role] = entry.links[role];
+        }
+        continue;
+      }
+      const previous = target.actions[role];
+      target.actions[role] = previous && previous !== action ? `${previous} ${action}` : action;
+      (target.actionKinds ??= {})[role] = kind;
+      const destination = entry.links?.[role] ?? entry.link;
+      if (destination && !target.links?.[role]) (target.links ??= {})[role] = destination;
+    }
+  };
+
+  for (const entry of entries.filter(entry => entry.source === 'player' || entry.source === 'effect')) {
+    if (entry.purpose !== 'funding' && (!entry.parentNeedId || !s.market.tasks.some(task => task.id === entry.parentNeedId && task.status === 'open'))) {
+      tasks.push(entry);
+    }
+  }
+
+  for (const marketTask of s.market.tasks) {
+    const supplies = marketTask.criteria.map(criterion => byId.get(`supply:${marketTask.id}:${criterion.id}`)!).filter(Boolean);
+    if (!supplies.length) continue;
+    const related: CoordinationTask[] = supplies.length > 1 ? [...supplies] : [];
+    const need: CoordinationTask = {
+      ...supplies[0], id: `need:${marketTask.id}`, title: marketTask.title,
+      description: supplies.length === 1 ? supplies[0].description : `${supplies.length} requirements. Review their specifications and supply below.`,
+      status: marketTask.status === 'withdrawn' ? 'withdrawn' : supplies.every(entry => entry.status === 'completed') ? 'completed' : 'open',
+      actions: {}, actionKinds: {}, related, links: {},
+    };
+    const requests = entries.filter(entry => (entry.source === 'player' || entry.source === 'effect') && entry.purpose !== 'funding' && entry.parentNeedId === marketTask.id);
+    if (requests.length && marketTask.status === 'open') {
+      need.requests = requests;
+      if (requests.some(request => request.status === 'open')) need.status = 'open';
+      for (const request of requests.filter(request => request.status === 'open')) mergeActions(need, request);
+    }
+    for (const supply of supplies) {
+      attached.add(supply.id);
+      mergeActions(need, supply);
+      if (supply.actionKinds?.comms === 'funding' || supply.actionKinds?.comms === 'fundingApproval') fundingNeeds.push(supply);
+    }
+    if (marketTask.status === 'open') {
+      for (const criterion of marketTask.criteria) {
+        const offers = offersForCriterion(s, marketTask, criterion).filter(assessment => assessment.fits && !assessment.unavailable);
+        if (!offers.length) continue;
+        related.push({
+          ...supplies[0], id: `alternatives:${marketTask.id}:${criterion.id}`, title: `Offers for ${criterion.label}`,
+          description: offers.map(assessment => `${assessment.quantity} × ${assessment.offer.resource.name} from ${assessment.offer.supplierName}; $${assessment.totalPriceM.toFixed(2)}M; expected ${fmtDate(assessment.expectedAt)}${assessment.late ? ' (late)' : ''}; ${Math.round(assessment.offer.reliability * 1000) / 10}% reliability${assessment.affordable ? '' : ' (above available budget)'}.`).join('\n'),
+          actions: {}, link: { kind: 'procurement', taskId: marketTask.id, criterionId: criterion.id },
+        });
+      }
+    }
+    if (marketTask.partId && !need.links!.planner) need.links!.planner = { kind: 'planner', partId: marketTask.partId };
+
+    for (const entry of entries.filter(entry => entry.id.startsWith('research:'))) {
+      const key = entry.id.slice('research:'.length);
+      const relevant = marketTask.status === 'open' && marketTask.criteria.some(criterion => {
+        const prefix = `${criterion.partKind}.${criterion.variant}`;
+        if (key === prefix) return !s.research.unlocked.includes(key);
+        if (!key.startsWith(`${prefix}.`)) return false;
+        const stat = key.slice(prefix.length + 1);
+        return criterion.minimums[stat] !== undefined && (s.research.limits[key] ?? -Infinity) < criterion.minimums[stat];
+      });
+      if (!relevant) continue;
+      related.push(entry);
+      attached.add(entry.id);
+      mergeActions(need, entry);
+      if ((entry.actionKinds?.comms === 'funding' || entry.actionKinds?.comms === 'fundingApproval')) fundingNeeds.push(entry);
+      const requirement = researchNeeds.find(item => item.key === key);
+      const technologies = routesFor(key, requirement?.value).flatMap(tech => [tech.id, ...ancestors(tech.id)]);
+      for (const project of s.research.projects.filter(project => project.techId && technologies.includes(project.techId))) {
+        const progress = byId.get(`project:science:${project.id}`);
+        if (progress && !related.some(item => item.id === progress.id)) related.push(progress);
+        if (progress?.actions.comms) { need.status = 'open'; mergeActions(need, progress); }
+        attached.add(`project:science:${project.id}`);
+      }
+      for (const project of s.comms.projects) {
+        const definition = getProjectDef(project.defId, contentOf(s));
+        if (!definition?.effects.some(effect => effect.kind === 'techAccess' && technologies.includes(effect.tech))) continue;
+        const progress = byId.get(`project:comms:${project.instanceId}`);
+        if (progress && !related.some(item => item.id === progress.id)) related.push(progress);
+        attached.add(`project:comms:${project.instanceId}`);
+      }
+    }
+
+    const contractIds = new Set(s.market.allocations.filter(allocation => allocation.taskId === marketTask.id && allocation.status !== 'released').map(allocation => allocation.contractId));
+    if (marketTask.status !== 'withdrawn') {
+      for (const contractId of contractIds) {
+        const contract = byId.get(`contract:${contractId}`);
+        if (!contract) continue;
+        related.push(contract);
+        attached.add(contract.id);
+        if (contract.actions.procurement) {
+          need.status = 'open';
+          mergeActions(need, contract);
+        }
+      }
+      for (const call of s.market.calls.filter(call => call.taskId === marketTask.id)) {
+        const stale = byId.get(`call:${call.id}`);
+        const outdated = call.taskRevision !== undefined && call.taskRevision !== marketTask.revision;
+        const detail: CoordinationTask = stale ?? {
+          ...supplies[0], id: `call:${call.id}`, source: 'procurement', title: outdated ? 'Call uses earlier requirements' : 'Supplier Call',
+          description: callContext(s, call),
+          status: call.status === 'open' ? 'open' : call.status === 'closed' ? 'completed' : 'withdrawn',
+          actions: {}, link: { kind: 'call', callId: call.id },
+        };
+        detail.description = callContext(s, call);
+        related.push(detail);
+        attached.add(detail.id);
+        if (stale) {
+          need.status = 'open';
+          mergeActions(need, stale);
+        }
+      }
+    }
+
+    for (const offer of s.market.offers.filter(offer => offer.source === 'comms' && marketTask.criteria.some(criterion => sameKind(offer.resource, criterion) && fitFailures(offer.resource, criterion).length === 0))) {
+      const detail = byId.get(`offer:${offer.id}`);
+      if (detail) {
+        related.push(detail);
+        // Keep an available offer actionable even when the associated need is fulfilled.
+        if (detail.status === 'open' && detail.actions.procurement && (need.status !== 'open' || !need.actions.procurement) && !tasks.some(task => task.id === detail.id)) tasks.push(detail);
+      }
+      attached.add(`offer:${offer.id}`);
+    }
+    if (marketTask.partId && marketTask.status !== 'withdrawn') {
+      const test = byId.get(`test:${marketTask.partId}`);
+      if (test) {
+        related.push(test);
+        attached.add(test.id);
+        const runningTest = s.research.projects.find(project => project.partId === marketTask.partId && project.status === 'running');
+        if (runningTest) {
+          attached.add(`project:science:${runningTest.id}`);
+          if (test.actions.planner) {
+            need.status = 'open';
+            need.actions.planner = test.actions.planner;
+            need.links!.planner = (test.links?.planner ?? test.link)!;
+          }
+        }
+      }
+    }
+    tasks.push(need);
+  }
+
+  // Live draft research stays available before procurement publishes a part order.
+  for (const entry of entries.filter(entry => entry.id.startsWith('research:'))) {
+    const key = entry.id.slice('research:'.length);
+    const unpublished = design.filter(({ part }) => ['draft', 'ordered'].includes(partStatus(s, part.id)) && !s.market.tasks.some(task => task.partId === part.id && task.status === 'open') && beyondResearch(part, s.research.limits, s.research.unlocked).includes(key));
+    if (!unpublished.length) continue;
+    const task = { ...entry, actions: { ...entry.actions }, description: `${unpublished.map(({ part }) => part.name).join(', ')} need this capability. ${entry.description}` };
+    const requirement = researchNeeds.find(item => item.key === key);
+    const technologies = routesFor(key, requirement?.value).flatMap(tech => [tech.id, ...ancestors(tech.id)]);
+    task.related = entries.filter(item => item.id.startsWith('project:science:') && s.research.projects.some(project => item.id === `project:science:${project.id}` && project.techId && technologies.includes(project.techId)));
+    for (const progress of task.related) attached.add(progress.id);
+    delete task.actions.comms;
+    if (entry.actions.comms && entry.actionKinds?.comms !== 'funding' && entry.actionKinds?.comms !== 'fundingApproval') task.actions.comms = entry.actions.comms;
+    else if (entry.actionKinds?.comms === 'fundingApproval') task.actions.comms = 'Review approval projects for the research route in Communications.';
+    for (const progress of task.related) if (progress.actions.comms) mergeActions(task, progress);
+    if ((entry.actionKinds?.comms === 'funding' || entry.actionKinds?.comms === 'fundingApproval')) fundingNeeds.push(entry);
+    tasks.push(task);
+    attached.add(entry.id);
+  }
+
+  const reconciliation = new Map<string, CoordinationTask>();
+  for (const entry of entries.filter(entry => entry.id.startsWith('contract:') || entry.id.startsWith('call:'))) {
+    if (attached.has(entry.id) || entry.status !== 'open' || !Object.keys(entry.actions).length) continue;
+    const contractId = entry.link?.kind === 'contract' ? entry.link.contractId : undefined;
+    const callId = entry.link?.kind === 'call' ? entry.link.callId : undefined;
+    const allocation = contractId && s.market.allocations.find(item => item.contractId === contractId && item.status !== 'released' && item.taskId && !s.market.tasks.some(task => task.id === item.taskId && task.status !== 'withdrawn'));
+    const call = callId && s.market.calls.find(item => item.id === callId);
+    const obsoleteId = allocation ? allocation.taskId : call ? call.taskId : undefined;
+    const id = obsoleteId ? `reconcile:${obsoleteId}` : `reconcile:${entry.id}`;
+    let task = reconciliation.get(id);
+    if (!task) {
+      task = { ...entry, id, title: obsoleteId ? 'Review commitments for an obsolete need' : 'Review delivery commitment', actions: {}, related: [], links: {} };
+      reconciliation.set(id, task);
+    }
+    task.related!.push(entry);
+    mergeActions(task, entry);
+    attached.add(entry.id);
+  }
+  tasks.push(...reconciliation.values());
+
+  for (const entry of entries.filter(entry => entry.id.startsWith('project:science:') && entry.status === 'open' && entry.actions.comms && !attached.has(entry.id))) {
+    tasks.push({ ...entry, title: `Resolve research approval for ${entry.title.replace('Science: ', '')}` });
+    attached.add(entry.id);
+  }
+
+  const uniqueFundingNeeds = [...new Map(fundingNeeds.map(entry => [entry.id, entry])).values()];
+  const negativeBudget = byId.get('budget:shortfall');
+  const fundingOpen = !!negativeBudget || uniqueFundingNeeds.length > 0 || fundingRequests.some(request => request.status === 'open');
+  if (fundingOpen || fundingRequests.length) {
+    const projects = entries.filter(entry => entry.id.startsWith('project:comms:') && s.comms.projects.some(project => entry.id === `project:comms:${project.instanceId}` && getProjectDef(project.defId, contentOf(s))?.effects.some(effect => effect.kind === 'budget' && effect.deltaM > 0)));
+    for (const project of projects) attached.add(project.id);
+    const actions: CoordinationTask['actions'] = playing && fundingOpen ? { ...negativeBudget?.actions, comms: 'Review funding opportunities and the affected needs in Communications.' } : {};
+    if (playing) for (const request of fundingRequests.filter(request => request.status === 'open')) Object.assign(actions, request.actions);
+    tasks.push({
+      id: 'funding:shared', revision: 1, source: 'budget', title: 'Funding for shared needs',
+      description: `$${budgetAvailableM(s.budget).toFixed(2)}M available across the agency. ${negativeBudget ? 'Current commitments and spending exceed funding. ' : ''}Review the linked requests, alternatives and shared research before choosing a funding target.`,
+      authorRole: 'comms', assignee: 'comms', status: fundingOpen ? 'open' : 'completed', createdAt: 0, updatedAt: 0,
+      actions,
+      links: { comms: { kind: 'commsProjects' }, procurement: { kind: 'contracts' }, science: { kind: 'scienceLab' } },
+      link: { kind: 'budget' }, related: [...uniqueFundingNeeds, ...projects], requests: fundingRequests,
+    });
+  }
+  const overview = entries.filter(entry => {
+    // Optional tests stay discoverable even after their supply requirement is fulfilled.
+    if (entry.id.startsWith('test:') && entry.status === 'open') return true;
+    if (attached.has(entry.id) || entry.source === 'player' || entry.source === 'effect' || entry.source === 'budget') return false;
+    if (entry.id.startsWith('supply:') || entry.id.startsWith('research:') || entry.id.startsWith('planning:')) return false;
+    return true;
+  });
+  // Agency effects and mission feasibility remain shared even as their work is consolidated.
+  const planIssues = byId.get('planning:issues');
+  if (planIssues) overview.push(planIssues);
+  for (const call of s.market.calls.filter(call => !attached.has(`call:${call.id}`) && !overview.some(entry => entry.id === `call:${call.id}`))) {
+    const requirement = call.requirement;
+    overview.push({
+      id: `call:${call.id}`, revision: call.revision, source: 'procurement', title: `Supplier Call · ${requirement?.label ?? call.id}`,
+      description: callContext(s, call),
+      authorRole: 'procurement', assignee: 'procurement', status: call.status === 'open' ? 'open' : call.status === 'closed' ? 'completed' : 'withdrawn',
+      createdAt: call.openedAt, updatedAt: call.openedAt, actions: {}, link: { kind: 'call', callId: call.id },
+    });
+  }
+  const schedule = entries.filter(entry => entry.purpose === 'timing' || entry.neededAt !== undefined && (entry.source === 'player' || entry.source === 'effect' || entry.id.startsWith('supply:') || entry.id.startsWith('research:') || entry.id.startsWith('test:') || entry.id.startsWith('contract:') || entry.id.startsWith('project:science:')))
+    .sort((a, b) => (a.neededAt ?? Infinity) - (b.neededAt ?? Infinity));
+  return { tasks, overview, schedule };
+}
+
+export function coordinationTasks(s: GameState): CoordinationTask[] {
+  return coordinationBoard(s).tasks;
 }

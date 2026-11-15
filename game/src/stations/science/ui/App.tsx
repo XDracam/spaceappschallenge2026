@@ -176,7 +176,7 @@ function PartTests({ g }: { g: GameState }) {
             </button>
             {!chk.ok ? <span class="muted small">{chk.reason}</span>
               : tooLate ? <><span class="sc-warn">Would not end before the launch. Ask the Planner to move it.</span>
-                <button type="button" class="sc-btn small" onClick={() => composeTask({ title: `Launch timing for ${t.name} test`, description: `Science can test ${t.name} in ${testDurationText()}, ending ${formatDate(g.clock.day + days)}. The current launch is ${formatDate(launch)}; the test must finish before launch to count. Please review the launch date.`, assignee: 'planner' })}>Create launch timing task</button></> : null}
+                <button type="button" class="sc-btn small" onClick={() => composeTask({ purpose: 'timing', parentNeedId: g.market.tasks.find(need => need.partId === t.partId && need.status === 'open')?.id, neededAt: g.clock.day + days, requestKey: `science:timing:${t.partId}`, title: `Launch timing for ${t.name} test`, description: `Science can test ${t.name} in ${testDurationText()}, ending ${formatDate(g.clock.day + days)}. The current launch is ${formatDate(launch)}; the test must finish before launch to count. Please review the launch date.`, assignee: 'planner' })}>Create launch timing task</button></> : null}
           </div>
         );
       })}
@@ -229,7 +229,7 @@ function Inspector({ id, views }: { id: string | null; views: Record<string, Tec
           <button type="button" class="sc-btn" disabled={!chk.ok}
             onClick={() => scienceActions.startTech(`sp-${Date.now().toString(36)}-${id}`, id)}>Start research</button>
           {!chk.ok ? <p class="muted small">{chk.reason}</p> : null}
-          {t.costM > budgetAvailableM(g.budget) && g.meta.phase === 'planning' ? <button type="button" class="sc-btn small" onClick={() => composeTask({ title: `Funding for ${t.name}`, description: `Science proposes ${t.name}, costing ${t.costM} M with ${budgetAvailableM(g.budget).toFixed(2)} M currently available. The shortfall is ${(t.costM - budgetAvailableM(g.budget)).toFixed(2)} M. Research takes ${months} months with ${Math.round(t.chance * 100)}% success. Please review funding options.`, assignee: 'comms' })}>Create funding task</button> : null}
+          {t.costM > budgetAvailableM(g.budget) && g.meta.phase === 'planning' ? <button type="button" class="sc-btn small" onClick={() => composeTask({ purpose: 'funding', requestKey: `science:funding:${t.id}`, title: `Funding for ${t.name}`, description: `Science proposes ${t.name}, costing ${t.costM} M with ${budgetAvailableM(g.budget).toFixed(2)} M currently available. The shortfall is ${(t.costM - budgetAvailableM(g.budget)).toFixed(2)} M. Research takes ${months} months with ${Math.round(t.chance * 100)}% success. Please review funding options.`, assignee: 'comms' })}>Create funding task</button> : null}
         </>
       ) : null}
     </>

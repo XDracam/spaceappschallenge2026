@@ -185,6 +185,24 @@ November 15 needs-context follow-up: the user questioned removal of Mission need
 
 Identifier alignment, November 15, 2026: the Science entries retain I-082–I-085. Contract views previously also used I-082 and now use I-086; saved coordination I-083 becomes I-087; saved in-app confirmations I-084 becomes I-088. Historical sources may retain their original branch-local references.
 
+### I-089 — One shared task per need with attached progress
+
+- Date: 2026-11-15
+- Status: accepted user direction under D-023.
+- Source: [task consolidation approval](notes/2026-11-15-task-consolidation.md).
+- Direction: consolidate duplicate part/research/Contract/Call/timing entries around the need they serve. Show general mission context in a shared overview. Retain explicit requests and unresolved obsolete commitments. Group funding work and give contextual requests stable identities.
+- Current model: adapt to D-020's engineering tech tree and flight-part tests. Keep research opportunities from the live draft design and keep optional testing visible after delivery.
+
+### I-090 — Explicit request links and consistent role actions
+
+- Date: 2026-11-15
+- Status: accepted user direction under D-024, following [approval](notes/2026-11-15-task-unification-approval.md).
+- Source: user request to consider remaining simplifications with Terra and Luna; [independent review and synthesis](reviews/2026-11-15-task-unification.md).
+- Idea: optional explicit parent-need links for player requests, preservation of role actions across attached work, fewer manual Purpose choices, and minimal typed action destinations instead of routing by display text. Compare conflicting timing requests together without merging their completion states.
+- Boundaries: preserve standalone requests, individual identity/history, mission-constraint acknowledgement, obsolete commitments, optional test discovery and distinct underlying procurement/research lifecycles. Compact waiting displays are presentation only. Avoid arbitrary task trees or a general workflow framework.
+- Evidence: source review identified paused-project action suppression and partner-Offer visibility risks; neither was reproduced in a fresh gameplay session for this review.
+- Related: D-021–D-023, I-089.
+
 ## New entry template
 
 ```markdown

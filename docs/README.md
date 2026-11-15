@@ -10,6 +10,10 @@
 | [Challenge](challenge.md) | Verified external brief and research pointers |
 | [Roles](design/roles.md) | Responsibilities, decisions, and dependencies |
 | [Shared tasks](design/shared-tasks.md) | Global goals, solution paths, procurement, and timing questions |
+| [Task consolidation](notes/2026-11-15-task-consolidation.md) | Approved reduction to shared needs, attached progress, funding work and Mission overview under D-023 |
+| [Remaining task unification review](reviews/2026-11-15-task-unification.md) | Terra/Luna review leading to D-024: explicit request links, consistent role actions and narrower timing grouping |
+| [Task unification approval](notes/2026-11-15-task-unification-approval.md) · [walkthrough](playtests/2026-11-15-task-unification-walkthrough.md) | D-024 explicit need links, independent schedule requests and preserved role actions |
+| [Task consolidation walkthrough](playtests/2026-11-15-task-consolidation-walkthrough.md) | Observed consolidated part needs, shared overview and funding-request lifecycle checks |
 | [Task coordination request](notes/2026-11-15-task-coordination.md) | Current task-first direction, player-created requests and current-role/all filtering under D-021 |
 | [Task coordination merge walkthrough](playtests/2026-11-15-task-coordination-merge-walkthrough.md) | Current Science integration, legacy save migration, two-station task handoff and live research progress |
 | [Task coordination walkthrough](playtests/2026-11-15-task-coordination-walkthrough.md) | Observed two-browser WebRTC requests, role filtering, procurement handoff, research request and in-app confirmation |

@@ -1,6 +1,20 @@
 # Shared tasks, problems, and goals — brainstorm
 
+## Consolidated board under D-023
+
+The [approved consolidation](../notes/2026-11-15-task-consolidation.md) gives each published shared requirement one board entry. Research routes and progress, supply alternatives, Calls, Contracts and tests are expandable context within that need. Role actions and navigation follow the relevant contribution. Draft design research remains available to Science before a procurement requirement is published.
+
+Funding work shares one entry with its affected needs, running funding projects and individually editable player requests. Explicit requests and mission-constraint follow-ups retain their identity and history. Obsolete commitments require reconciliation until their source work is closed, cancelled or reallocated.
+
+Mission overview keeps feasibility, plan issues, inbox decisions, independent projects and supply, optional tests, agency effects and news visible across roles. These reference views carry their own station navigation. Optional tests stay discoverable after their supply need is fulfilled. The filtered/all task switch continues to use current role actions.
+
 ## Current direction, 2026-11-15
+
+D-024 adds optional explicit links from player requests to published needs. The generic form offers Standalone or a selected need; contextual test timing supplies the affected need when it exists. Requests retain separate author, responsible station, status and edit controls. A closed or missing parent cannot hide an open request. Funding requests stay in their shared group with their explicit association visible.
+
+Schedule compares dated requests, supply deadlines, research, tests and Contract dates against launch. Its history and individual request controls do not combine completion states. All tasks compacts open work without any role action into an expandable waiting/progress section. Generated specifications and progress are expandable; role actions come first and remain visible within related work. Manual Purpose choices are Shared request and Funding, retaining contextual/legacy values when editing those records.
+
+Typed action semantics and per-role navigation preserve required contributions during consolidation, including Communications work on paused research. Available partner Offers can remain actionable independently of fulfilled supply. The underlying Calls, Offers, Contracts, research and tests retain their distinct state.
 
 [D-021](../decisions.md#d-021--coordinate-required-cross-role-work-through-shared-tasks) requires sufficient task detail for cross-role coordination through the interface. Every station exposes the same shared board, with a switch between open tasks actionable by that station and all tasks. Players can create, edit, resolve, withdraw and reopen explicit requests with desired outcomes and a responsible station. Live game records supply generated task details and status. Research progress, procurement fulfillment and mission feasibility keep their individual meanings.
 

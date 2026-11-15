@@ -233,6 +233,29 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 
 Identifier alignment, November 15, 2026: the published Science decision keeps D-020. The saved coordination decision previously also used D-020 and is now D-021. Its in-app confirmation decision moves from D-021 to D-022. This resolves a branch collision without changing either direction.
 
+## D-023 — Consolidate tasks around shared needs
+
+- Date: 2026-11-15
+- Status: accepted user direction.
+- Decision: implement the approved [task consolidation](notes/2026-11-15-task-consolidation.md). A shared requirement owns its supply, research, Offers, Calls, Contract progress and timing context. Keep explicit requests and authored commitment follow-ups. Keep a reconciliation task for unresolved obsolete commitments. Combine related funding requests and their affected needs.
+- Shared visibility: Mission overview exposes goal feasibility, plan issues, inbox decisions, independent projects, optional tests, independent supply, services, modifiers and news. The current-role/all switch applies to tasks. Optional tests remain available through Science and the overview after delivery fulfills their parent need.
+- Request lifecycle: contextual Science funding and timing shortcuts use stable identities and revision checks. Repeating a shortcut updates or reopens the existing request when saved. Explicit request purposes support funding aggregation while preserving individual request descriptions and completion controls. Recognize the exact earlier Science funding-shortcut format for existing saves.
+- Integration: D-020's live design research remains available before a part order. Publishing the part order folds the corresponding research into that need. Standalone blocked research retains an actionable approval follow-up. Free-text mission commitments retain their original requirement and manual acknowledgement.
+- Evidence: [consolidation walkthrough](playtests/2026-11-15-task-consolidation-walkthrough.md). Broader multiplayer experience remains unverified.
+- Related: D-020–D-022, I-089.
+
+## D-024 — Explicit request links and consistent role actions
+
+- Date: 2026-11-15
+- Status: accepted user direction.
+- Source: [task unification approval](notes/2026-11-15-task-unification-approval.md), following the [Terra/Luna review](reviews/2026-11-15-task-unification.md).
+- Decision: requests may explicitly name a related published need, selected by the player or supplied by a contextual shortcut. Never infer parentage from wording. Keep each request's identity, author, responsible station, revision and independent status. Unlinked requests remain standalone; requests whose parent closes or disappears remain independently discoverable. Funding requests keep their shared group and show any explicit need association.
+- Timing: a shared Schedule view compares dated supply, research, tests, Contracts and player requests with the current launch date. It does not merge request completion. Contextual test-timing requests retain their stable key, affected need when available, and proposed timing context. Players may add an optional date to general requests.
+- Interface: generic Purpose offers Shared request and Funding. Preserve older Equipment/Timing values and contextual timing requests. Compact work with no current role action in All tasks; retain full detail and exceptions. Related work displays role actions and its own navigation.
+- Action representation: use typed funding/approval semantics and per-role destinations rather than display-word matching. Attaching paused research must preserve its Communications action. An available partner Offer remains actionable even if a fitting need is fulfilled; optional tests alone do not reopen completed supply.
+- Verification: [unification walkthrough](playtests/2026-11-15-task-unification-walkthrough.md). Browser observations and constructed state fixtures are distinguished there; multiplayer concurrency remains unverified this turn.
+- Related: D-021–D-023, I-090.
+
 ## Future decision template
 
 ```markdown

@@ -25,6 +25,8 @@ UI-only state (selection, open panels, popups, hover) stays in each station's lo
 
 ## Shared coordination board
 
+D-023 consolidates `coordinationBoard(state)` into `tasks` and `overview`. Existing game records remain authoritative. Task entries own related research, Offers, Calls, Contracts and test progress, and per-role links select the appropriate station action. Independent records remain visible in Mission overview. A funding entry groups explicit funding requests and affected needs while retaining individual request controls. Contextual request keys and expected revisions make repeated shortcut saves update the same record and reject stale overwrites.
+
 D-021 adds `GameState.coordination` for explicit player-created requests. `core/coordination.ts` registers deterministic create/edit/status actions with revision checks and derives current board entries from procurement, research, planning and communications state. Required cross-role details are available to all stations in `shell/TaskBoard.tsx`. The filtered view uses each entry's current role actions. The all-tasks view includes waiting progress and optional history. Stored requests are included in snapshots, replication and save migration. Older saves initialize an empty request list while retaining procurement records.
 
 Player requests describe their desired outcome and responsible station. Their author or responsible station may update them. Generated work derives completion from source state and changes when requirements or supply change. Science derives research requirements from the live rocket, including unordered parts. The board exposes relevant research routes, prerequisites, approval blockers and delivered-part tests. Contextual funding and launch-timing actions open editable player requests before publication. Department procurement remains available. The earlier graph-based equipment bonus is retired under D-020.
@@ -73,3 +75,6 @@ WebRTC data channels, one per joining player, signalled by copy-paste codes: the
 ## Styling
 
 Stations share the glass sci-fi look (planner `styles.css` tokens). Each station's CSS must be scoped under `.st-<id>`; only `shell/shell.css` styles `html`, `body` and the shell.
+## Request association and navigation under D-024
+
+Shared requests optionally store `parentNeedId` (a market Task ID) and `neededAt`. These optional fields preserve older saves without a schema-version change. Creation and editing validate new parent references; retained orphan references remain editable, and an empty options object removes the association/date. Author/assignee authorization and revision checks remain in the reducer. The board derives parent grouping and Schedule without persisting another task lifecycle. Typed `actionKinds` and per-role `links` replace action-copy-based routing. Attached entries keep their own navigation; the parent offers one primary destination per role.
