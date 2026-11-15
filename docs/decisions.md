@@ -256,6 +256,15 @@ Identifier alignment, November 15, 2026: the published Science decision keeps D-
 - Verification: [unification walkthrough](playtests/2026-11-15-task-unification-walkthrough.md). Browser observations and constructed state fixtures are distinguished there; multiplayer concurrency remains unverified this turn.
 - Related: D-021–D-023, I-090.
 
+## D-025 — Apache 2.0 and removal of the unlicensed reference image
+
+- Date: 2026-11-15.
+- Status: accepted user direction to remove the reference image and add a sensible Space Apps license; Apache 2.0 selected by the assistant within that authorization.
+- Decision: license original project code, documentation and assets under Apache 2.0, preserving separate third-party terms. Remove `mission-planner/notes/reference/ui-style-reference.webp` from the working tree and replace its Markdown link with a historical description, preserving the user's original feedback.
+- Rationale: the [official 2026 participant terms](https://www.spaceappschallenge.org/legal/), checked November 15, require OSI open source or unrestricted original content and specify Apache 2.0 as the default. Image redistribution permission was undocumented.
+- Source: [user request and implementation record](notes/2026-11-15-publication-license.md), I-092, Q-013.
+- Limits: deletion does not remove the image from existing Git history. No history rewrite, commit, push or repository visibility change is authorized by this implementation. Licensing does not establish complete submission compliance or replace resource citations.
+
 ## Future decision template
 
 ```markdown

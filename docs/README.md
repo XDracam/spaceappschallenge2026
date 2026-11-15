@@ -57,6 +57,10 @@
 
 ## Persistent project memory
 
+[Publication license and reference image](notes/2026-11-15-publication-license.md) records the Apache 2.0 selection, official licensing guidance and the remaining historical image copy under D-025.
+
+[Third-party credits](../THIRD_PARTY.md) list dependency licenses, font/icon credits, submission source references and the notices shipped with the game.
+
 | Document | Purpose |
 | --- | --- |
 | [Ideas](ideas.md) | All substantive ideas, including tentative and deferred ones |

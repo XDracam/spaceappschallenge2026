@@ -32,4 +32,6 @@ These links were verified as listed on the Resources tab. Their underlying conte
 | Visualize a Space Mission Using Virtual Reality | [2023 challenge](https://www.spaceappschallenge.org/2023/challenges/visualize-a-space-mission-using-virtual-reality/) | Related challenge context |
 | Digital Games and Activities | [Canadian Space Agency](https://www.asc-csa.gc.ca/eng/youth-educators/digital-games-and-activities.asp) | Educational interaction references |
 
-Submission rules, judging criteria, team registration, deadlines, and licensing requirements were not checked in this setup. Verify them from their owning sources before making submission commitments.
+Licensing was checked November 15, 2026 against the [official 2026 participant terms](https://www.spaceappschallenge.org/legal/) (updated August 7, 2026): original content must be freely available without restriction or OSI open source; Apache 2.0 is NASA's default when no specific OSI license is selected. Third-party materials need appropriate license documentation, and every resource used must be cited in submission references. The project now uses Apache 2.0 under D-025. This check does not establish complete submission compliance.
+
+Submission portal deliverables, judging criteria, team registration, and deadlines remain unchecked. Verify them from their owning sources before making submission commitments.

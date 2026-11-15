@@ -1,6 +1,6 @@
 # Mission planner: UI feedback after first build — November 14, 2026
 
-Source: user message after trying the first build, with a style reference image ([reference/ui-style-reference.webp](reference/ui-style-reference.webp): a dark, glowing space dashboard with a full-bleed planet, glass cards, pill navigation).
+Source: user message after trying the first build, with a style reference image (formerly `reference/ui-style-reference.webp`: a dark, glowing space dashboard with a full-bleed planet, glass cards, pill navigation). Publication note, November 15, 2026: the user requested deletion of the image because redistribution permission was undocumented; the original feedback below is preserved.
 
 > why is game time top left pauseable thats weird?
 >

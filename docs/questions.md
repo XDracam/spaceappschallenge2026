@@ -58,7 +58,7 @@ Answered 2026-11-14 by D-015: host-browser peer-to-peer (WebRTC, copy-paste sign
 
 ## Q-013 — Publication and license
 
-What license should the project use, and what submission obligations apply? Blocks license selection and submission claims, not local concept work.
+**Partly resolved November 15, 2026 by D-025:** Apache 2.0 selected for original project material; third-party licenses remain in force. Official licensing and citation requirements are recorded in [challenge reference](challenge.md). Submission portal deliverables and other obligations remain open; no complete submission-compliance claim is made.
 
 ## Q-014 — Concurrent activity and communication
 

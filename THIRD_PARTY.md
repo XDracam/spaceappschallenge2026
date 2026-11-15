@@ -1,0 +1,167 @@
+# Third-party credits and submission references
+
+Recorded November 15, 2026 from the game and playtest lockfiles, installed
+package notices, and the upstream Google Fonts license files. Original project
+material is [Apache-2.0](LICENSE); upstream components retain their own terms.
+
+## Game, fonts and prototype assets
+
+[Full third-party notices](game/public/THIRD_PARTY_NOTICES.txt) include Preact's
+MIT notice, all three fonts' copyrights and SIL OFL 1.1 terms, the existing Lucide
+notice, build-tool credits and caniuse-lite attribution/license terms. Vite copies
+this file to `THIRD_PARTY_NOTICES.txt` at the deployed site's root. `LICENSE.txt`
+contains the project's Apache-2.0 terms. The fonts are loaded from Google Fonts;
+no font files are checked in. Lucide and IBM Plex Mono are used in the earlier
+procurement mockup, rather than the integrated game's runtime.
+
+## Challenge and research resources
+
+- [NASA Space Apps: Space Mission Design Game](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/): challenge brief.
+- [Official challenge resources](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/?tab=resources): resource directory; listing a resource does not mean this project used it.
+- Randii R. Wessen, Chester Borden, John Ziemer and Johnny Kwok, *Space Mission Concept Development Using Concept Maturity Levels*, JPL / California Institute of Technology: [source record](https://dataverse.jpl.nasa.gov/dataset.xhtml?persistentId=hdl:2014/44299), [project review](docs/reviews/2026-11-14-cml-paper.md). The paper is not bundled.
+- [Challenge reference](docs/challenge.md) distinguishes reviewed resources from research leads. Design documents retain their individual source links.
+
+Use these credits and the applicable design/research citations in the submission's
+References field. This file does not claim to replace that field or enumerate any
+additional resources used by teammates outside this checkout. NASA branding is
+not licensed by this project and no endorsement is implied.
+
+## Locked dependency inventory
+
+Preact is the integrated game's only direct runtime package. Other game entries
+are build/development dependencies and their transitives, including optional
+platform binaries; the playtest harness is separate. This inventory records package
+license declarations, not a claim that all these packages ship in the game bundle.
+Upstream installed packages contain their own notices. Regenerate/review this list
+when the lockfiles change. No dependencies were installed or updated for this work.
+
+| Area | Package | Locked version | Declared license |
+| --- | --- | --- | --- |
+| game | [@babel/code-frame](https://www.npmjs.com/package/@babel/code-frame) | 7.29.7 | MIT |
+| game | [@babel/compat-data](https://www.npmjs.com/package/@babel/compat-data) | 7.29.7 | MIT |
+| game | [@babel/core](https://www.npmjs.com/package/@babel/core) | 7.29.13 | MIT |
+| game | [@babel/generator](https://www.npmjs.com/package/@babel/generator) | 7.29.14 | MIT |
+| game | [@babel/helper-annotate-as-pure](https://www.npmjs.com/package/@babel/helper-annotate-as-pure) | 7.29.7 | MIT |
+| game | [@babel/helper-compilation-targets](https://www.npmjs.com/package/@babel/helper-compilation-targets) | 7.29.13 | MIT |
+| game | [@babel/helper-globals](https://www.npmjs.com/package/@babel/helper-globals) | 7.29.7 | MIT |
+| game | [@babel/helper-module-imports](https://www.npmjs.com/package/@babel/helper-module-imports) | 7.29.7 | MIT |
+| game | [@babel/helper-module-transforms](https://www.npmjs.com/package/@babel/helper-module-transforms) | 7.29.14 | MIT |
+| game | [@babel/helper-plugin-utils](https://www.npmjs.com/package/@babel/helper-plugin-utils) | 7.29.7 | MIT |
+| game | [@babel/helper-string-parser](https://www.npmjs.com/package/@babel/helper-string-parser) | 7.29.14 | MIT |
+| game | [@babel/helper-validator-identifier](https://www.npmjs.com/package/@babel/helper-validator-identifier) | 7.29.7 | MIT |
+| game | [@babel/helper-validator-option](https://www.npmjs.com/package/@babel/helper-validator-option) | 7.29.7 | MIT |
+| game | [@babel/helpers](https://www.npmjs.com/package/@babel/helpers) | 7.29.14 | MIT |
+| game | [@babel/parser](https://www.npmjs.com/package/@babel/parser) | 7.29.14 | MIT |
+| game | [@babel/plugin-syntax-jsx](https://www.npmjs.com/package/@babel/plugin-syntax-jsx) | 7.29.7 | MIT |
+| game | [@babel/plugin-transform-react-jsx](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) | 7.29.7 | MIT |
+| game | [@babel/plugin-transform-react-jsx-development](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx-development) | 7.29.7 | MIT |
+| game | [@babel/template](https://www.npmjs.com/package/@babel/template) | 7.29.7 | MIT |
+| game | [@babel/traverse](https://www.npmjs.com/package/@babel/traverse) | 7.29.14 | MIT |
+| game | [@babel/types](https://www.npmjs.com/package/@babel/types) | 7.29.14 | MIT |
+| game | [@esbuild/aix-ppc64](https://www.npmjs.com/package/@esbuild/aix-ppc64) | 0.21.5 | MIT |
+| game | [@esbuild/android-arm](https://www.npmjs.com/package/@esbuild/android-arm) | 0.21.5 | MIT |
+| game | [@esbuild/android-arm64](https://www.npmjs.com/package/@esbuild/android-arm64) | 0.21.5 | MIT |
+| game | [@esbuild/android-x64](https://www.npmjs.com/package/@esbuild/android-x64) | 0.21.5 | MIT |
+| game | [@esbuild/darwin-arm64](https://www.npmjs.com/package/@esbuild/darwin-arm64) | 0.21.5 | MIT |
+| game | [@esbuild/darwin-x64](https://www.npmjs.com/package/@esbuild/darwin-x64) | 0.21.5 | MIT |
+| game | [@esbuild/freebsd-arm64](https://www.npmjs.com/package/@esbuild/freebsd-arm64) | 0.21.5 | MIT |
+| game | [@esbuild/freebsd-x64](https://www.npmjs.com/package/@esbuild/freebsd-x64) | 0.21.5 | MIT |
+| game | [@esbuild/linux-arm](https://www.npmjs.com/package/@esbuild/linux-arm) | 0.21.5 | MIT |
+| game | [@esbuild/linux-arm64](https://www.npmjs.com/package/@esbuild/linux-arm64) | 0.21.5 | MIT |
+| game | [@esbuild/linux-ia32](https://www.npmjs.com/package/@esbuild/linux-ia32) | 0.21.5 | MIT |
+| game | [@esbuild/linux-loong64](https://www.npmjs.com/package/@esbuild/linux-loong64) | 0.21.5 | MIT |
+| game | [@esbuild/linux-mips64el](https://www.npmjs.com/package/@esbuild/linux-mips64el) | 0.21.5 | MIT |
+| game | [@esbuild/linux-ppc64](https://www.npmjs.com/package/@esbuild/linux-ppc64) | 0.21.5 | MIT |
+| game | [@esbuild/linux-riscv64](https://www.npmjs.com/package/@esbuild/linux-riscv64) | 0.21.5 | MIT |
+| game | [@esbuild/linux-s390x](https://www.npmjs.com/package/@esbuild/linux-s390x) | 0.21.5 | MIT |
+| game | [@esbuild/linux-x64](https://www.npmjs.com/package/@esbuild/linux-x64) | 0.21.5 | MIT |
+| game | [@esbuild/netbsd-x64](https://www.npmjs.com/package/@esbuild/netbsd-x64) | 0.21.5 | MIT |
+| game | [@esbuild/openbsd-x64](https://www.npmjs.com/package/@esbuild/openbsd-x64) | 0.21.5 | MIT |
+| game | [@esbuild/sunos-x64](https://www.npmjs.com/package/@esbuild/sunos-x64) | 0.21.5 | MIT |
+| game | [@esbuild/win32-arm64](https://www.npmjs.com/package/@esbuild/win32-arm64) | 0.21.5 | MIT |
+| game | [@esbuild/win32-ia32](https://www.npmjs.com/package/@esbuild/win32-ia32) | 0.21.5 | MIT |
+| game | [@esbuild/win32-x64](https://www.npmjs.com/package/@esbuild/win32-x64) | 0.21.5 | MIT |
+| game | [@jridgewell/gen-mapping](https://www.npmjs.com/package/@jridgewell/gen-mapping) | 0.3.13 | MIT |
+| game | [@jridgewell/remapping](https://www.npmjs.com/package/@jridgewell/remapping) | 2.3.5 | MIT |
+| game | [@jridgewell/resolve-uri](https://www.npmjs.com/package/@jridgewell/resolve-uri) | 3.1.3 | MIT |
+| game | [@jridgewell/sourcemap-codec](https://www.npmjs.com/package/@jridgewell/sourcemap-codec) | 1.6.0 | MIT |
+| game | [@jridgewell/trace-mapping](https://www.npmjs.com/package/@jridgewell/trace-mapping) | 0.3.31 | MIT |
+| game | [@preact/preset-vite](https://www.npmjs.com/package/@preact/preset-vite) | 2.9.1 | MIT |
+| game | [@prefresh/babel-plugin](https://www.npmjs.com/package/@prefresh/babel-plugin) | 0.5.4 | MIT |
+| game | [@prefresh/core](https://www.npmjs.com/package/@prefresh/core) | 1.5.11 | MIT |
+| game | [@prefresh/utils](https://www.npmjs.com/package/@prefresh/utils) | 1.2.1 | MIT |
+| game | [@prefresh/vite](https://www.npmjs.com/package/@prefresh/vite) | 2.4.12 | MIT |
+| game | [@rollup/pluginutils](https://www.npmjs.com/package/@rollup/pluginutils) | 4.2.1 | MIT |
+| game | [@rollup/rollup-android-arm-eabi](https://www.npmjs.com/package/@rollup/rollup-android-arm-eabi) | 4.68.3 | MIT |
+| game | [@rollup/rollup-android-arm64](https://www.npmjs.com/package/@rollup/rollup-android-arm64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-android-x64](https://www.npmjs.com/package/@rollup/rollup-android-x64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-darwin-arm64](https://www.npmjs.com/package/@rollup/rollup-darwin-arm64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-darwin-x64](https://www.npmjs.com/package/@rollup/rollup-darwin-x64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-freebsd-arm64](https://www.npmjs.com/package/@rollup/rollup-freebsd-arm64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-freebsd-x64](https://www.npmjs.com/package/@rollup/rollup-freebsd-x64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-arm-gnueabihf](https://www.npmjs.com/package/@rollup/rollup-linux-arm-gnueabihf) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-arm-musleabihf](https://www.npmjs.com/package/@rollup/rollup-linux-arm-musleabihf) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-arm64-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-arm64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-arm64-musl](https://www.npmjs.com/package/@rollup/rollup-linux-arm64-musl) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-loong64-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-loong64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-loong64-musl](https://www.npmjs.com/package/@rollup/rollup-linux-loong64-musl) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-ppc64-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-ppc64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-ppc64-musl](https://www.npmjs.com/package/@rollup/rollup-linux-ppc64-musl) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-riscv64-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-riscv64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-riscv64-musl](https://www.npmjs.com/package/@rollup/rollup-linux-riscv64-musl) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-s390x-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-s390x-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-x64-gnu](https://www.npmjs.com/package/@rollup/rollup-linux-x64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-linux-x64-musl](https://www.npmjs.com/package/@rollup/rollup-linux-x64-musl) | 4.68.3 | MIT |
+| game | [@rollup/rollup-openbsd-x64](https://www.npmjs.com/package/@rollup/rollup-openbsd-x64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-openharmony-arm64](https://www.npmjs.com/package/@rollup/rollup-openharmony-arm64) | 4.68.3 | MIT |
+| game | [@rollup/rollup-win32-arm64-msvc](https://www.npmjs.com/package/@rollup/rollup-win32-arm64-msvc) | 4.68.3 | MIT |
+| game | [@rollup/rollup-win32-ia32-msvc](https://www.npmjs.com/package/@rollup/rollup-win32-ia32-msvc) | 4.68.3 | MIT |
+| game | [@rollup/rollup-win32-x64-gnu](https://www.npmjs.com/package/@rollup/rollup-win32-x64-gnu) | 4.68.3 | MIT |
+| game | [@rollup/rollup-win32-x64-msvc](https://www.npmjs.com/package/@rollup/rollup-win32-x64-msvc) | 4.68.3 | MIT |
+| game | [@types/estree](https://www.npmjs.com/package/@types/estree) | 1.0.10 | MIT |
+| game | [babel-plugin-transform-hook-names](https://www.npmjs.com/package/babel-plugin-transform-hook-names) | 1.0.2 | MIT |
+| game | [baseline-browser-mapping](https://www.npmjs.com/package/baseline-browser-mapping) | 2.11.37 | Apache-2.0 |
+| game | [boolbase](https://www.npmjs.com/package/boolbase) | 1.0.0 | ISC |
+| game | [browserslist](https://www.npmjs.com/package/browserslist) | 4.29.5 | MIT |
+| game | [caniuse-lite](https://www.npmjs.com/package/caniuse-lite) | 1.0.30001826 | CC-BY-4.0 |
+| game | [convert-source-map](https://www.npmjs.com/package/convert-source-map) | 2.0.0 | MIT |
+| game | [css-select](https://www.npmjs.com/package/css-select) | 5.2.2 | BSD-2-Clause |
+| game | [css-what](https://www.npmjs.com/package/css-what) | 6.2.2 | BSD-2-Clause |
+| game | [debug](https://www.npmjs.com/package/debug) | 4.4.3 | MIT |
+| game | [dom-serializer](https://www.npmjs.com/package/dom-serializer) | 2.0.0 | MIT |
+| game | [domelementtype](https://www.npmjs.com/package/domelementtype) | 2.3.0 | BSD-2-Clause |
+| game | [domhandler](https://www.npmjs.com/package/domhandler) | 5.0.3 | BSD-2-Clause |
+| game | [domutils](https://www.npmjs.com/package/domutils) | 3.2.2 | BSD-2-Clause |
+| game | [electron-to-chromium](https://www.npmjs.com/package/electron-to-chromium) | 1.5.485 | ISC |
+| game | [entities](https://www.npmjs.com/package/entities) | 4.5.0 | BSD-2-Clause |
+| game | [esbuild](https://www.npmjs.com/package/esbuild) | 0.21.5 | MIT |
+| game | [escalade](https://www.npmjs.com/package/escalade) | 3.2.0 | MIT |
+| game | [estree-walker](https://www.npmjs.com/package/estree-walker) | 2.0.2 | MIT |
+| game | [fsevents](https://www.npmjs.com/package/fsevents) | 2.3.3 | MIT |
+| game | [gensync](https://www.npmjs.com/package/gensync) | 1.0.0-beta.2 | MIT |
+| game | [he](https://www.npmjs.com/package/he) | 1.2.0 | MIT |
+| game | [js-tokens](https://www.npmjs.com/package/js-tokens) | 4.0.0 | MIT |
+| game | [jsesc](https://www.npmjs.com/package/jsesc) | 3.1.0 | MIT |
+| game | [json5](https://www.npmjs.com/package/json5) | 2.2.3 | MIT |
+| game | [kolorist](https://www.npmjs.com/package/kolorist) | 1.8.0 | MIT |
+| game | [lru-cache](https://www.npmjs.com/package/lru-cache) | 5.1.1 | ISC |
+| game | [magic-string](https://www.npmjs.com/package/magic-string) | 0.30.5 | MIT |
+| game | [ms](https://www.npmjs.com/package/ms) | 2.1.3 | MIT |
+| game | [nanoid](https://www.npmjs.com/package/nanoid) | 3.3.20 | MIT |
+| game | [node-html-parser](https://www.npmjs.com/package/node-html-parser) | 6.1.13 | MIT |
+| game | [node-releases](https://www.npmjs.com/package/node-releases) | 2.0.64 | MIT |
+| game | [nth-check](https://www.npmjs.com/package/nth-check) | 2.1.1 | BSD-2-Clause |
+| game | [picocolors](https://www.npmjs.com/package/picocolors) | 1.1.1 | ISC |
+| game | [picomatch](https://www.npmjs.com/package/picomatch) | 2.3.2 | MIT |
+| game | [postcss](https://www.npmjs.com/package/postcss) | 8.5.33 | MIT |
+| game | [preact](https://www.npmjs.com/package/preact) | 10.24.3 | MIT |
+| game | [rollup](https://www.npmjs.com/package/rollup) | 4.68.3 | MIT |
+| game | [semver](https://www.npmjs.com/package/semver) | 6.3.2 | ISC |
+| game | [source-map](https://www.npmjs.com/package/source-map) | 0.7.6 | BSD-3-Clause |
+| game | [source-map-js](https://www.npmjs.com/package/source-map-js) | 1.2.2 | BSD-3-Clause |
+| game | [stack-trace](https://www.npmjs.com/package/stack-trace) | 1.0.0 | MIT |
+| game | [typescript](https://www.npmjs.com/package/typescript) | 5.6.3 | Apache-2.0 |
+| game | [update-browserslist-db](https://www.npmjs.com/package/update-browserslist-db) | 1.3.4 | MIT |
+| game | [vite](https://www.npmjs.com/package/vite) | 5.4.10 | MIT |
+| game | [yallist](https://www.npmjs.com/package/yallist) | 3.1.1 | ISC |
+| playtest | [playwright-core](https://www.npmjs.com/package/playwright-core) | 1.65.1 | Apache-2.0 |

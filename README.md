@@ -35,7 +35,17 @@ The game is saved in the host's browser. If the host reloads, **Resume hosted ga
 
 [XDracam/spaceappschallenge2026](https://github.com/XDracam/spaceappschallenge2026)
 
-This checkout is connected through `origin`. Initial setup adds local documentation only; it does not publish commits or select a license.
+This checkout is connected through `origin`.
+
+## License
+
+Copyright 2026 Space Mission Design Game contributors.
+
+Original project code, documentation and assets are licensed under the [Apache License 2.0](LICENSE), except where a separate notice states otherwise. Third-party materials retain their own licenses, including the [Lucide icon license](procurement/mockups/icons/LICENSE). Dependencies retain their upstream licenses. The game loads Exo 2 and Inter through Google Fonts; those fonts retain their upstream SIL Open Font License 1.1 terms.
+
+Apache 2.0 is an OSI-approved license and the default specified by the [2026 NASA Space Apps participant terms](https://www.spaceappschallenge.org/legal/) (checked November 15, 2026). This license grants no rights to NASA branding and does not imply NASA endorsement. Submission references must still credit resources used; this license does not replace those credits.
+
+[Third-party credits and submission references](THIRD_PARTY.md) list the libraries, fonts, prototype icons, research sources and locked dependencies. [Full third-party notices](game/public/THIRD_PARTY_NOTICES.txt) ship with every game build at `THIRD_PARTY_NOTICES.txt`; the project license ships at `LICENSE.txt`. Preserve these files when distributing the built game.
 
 ## Working on the prototype
 

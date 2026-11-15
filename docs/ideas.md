@@ -203,6 +203,23 @@ Identifier alignment, November 15, 2026: the Science entries retain I-082–I-08
 - Evidence: source review identified paused-project action suppression and partner-Offer visibility risks; neither was reproduced in a fresh gameplay session for this review.
 - Related: D-021–D-023, I-089.
 
+### I-091 — Mission families with distinct planning problems
+
+- Date: 2026-11-15.
+- Source: user asked, "what general space missions should we cover?"; assistant recommendation below.
+- Status: proposal for discussion; no mission roster, implementation or progression accepted.
+- Proposed coverage: Earth satellites (weather, imaging, communications); space observatories; planetary flybys; planetary orbiters; robotic landers/rovers; sample return; crewed missions; servicing/resupply/repair missions.
+- Design intent: distinguish families by the team's decisions rather than adding destinations with otherwise identical play. Candidate dilemmas include coverage versus payload cost, instrument/power/pointing tradeoffs, brief flyby encounters versus orbit insertion, landing mass versus instruments, return mass versus science yield, crew safety versus ambition, and rendezvous compatibility versus schedule. These are design targets, not claims about existing mechanics.
+- Suggested near-term focus: retain Weather satellite and Mars orbiter + lander; add the proposed Lunar ice lander next, then consider a flyby and sample return. Observatory, crewed and servicing scenarios remain later candidates; crew and rendezvous would need their own design work. Outer-planet or icy-moon destinations could vary these families rather than form a separate mission type automatically.
+- Every authored scenario should offer meaningful concurrent Planning, Science, Procurement and Communications choices under D-004; the roster alone cannot establish that experience. Scope, order and mechanics remain open. Related: I-019, Q-003, Q-014, Q-018, [existing lunar proposal](../mission-planner/notes/2026-11-15-third-mission-proposal.md).
+
+### I-092 — License the project for publication and remove the reference image
+
+- Date: 2026-11-15.
+- Source: user explicitly requested deletion of the reference image and a sensible NASA Space Apps license.
+- Status: accepted action, implemented under D-025; Apache 2.0 chosen within the user's authorization.
+- Result: Apache 2.0 covers original project material; third-party licenses remain in force. The image is deleted from the working tree, with historical feedback preserved. Earlier Git commits still contain it; no history rewrite was performed. See [implementation and official source](notes/2026-11-15-publication-license.md).
+
 ## New entry template
 
 ```markdown
