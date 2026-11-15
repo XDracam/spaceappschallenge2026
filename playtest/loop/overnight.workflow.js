@@ -242,7 +242,8 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
     const undo = await agent(
       `${WHERE}\nThe game no longer starts in a playtest after recent commits. Take those commits back, keeping history.\n` +
       `1. Read "${PT}/runs/${round}/harness.log" and, if present, "${PT}/runs/${round}/lobby-fail.txt" and "build-error.txt" to see why.\n` +
-      `2. List: git -C "${REPO}" rev-list ${goodHead}..HEAD -- game/src playtest/harness   (newest first). If the list is empty, answer ok false: the cause is not a recent change.\n` +
+      `2. List: git -C "${REPO}" log --format="%h %s" ${goodHead}..HEAD -- game/src playtest/harness   (newest first). Keep only commits whose subject starts with "Playtest " — those are this loop's own. ` +
+      `Commits by anyone else came in from the team's main branch: never revert those. If no loop commit is left, or the cause you found lies in a teammate's commit or in the harness, answer ok false and say so.\n` +
       `3. For each hash in that order: git -C "${REPO}" revert --no-edit <hash>. If one conflicts: git -C "${REPO}" revert --abort and stop.\n` +
       `4. Append to "${PT}/changes.md" a heading "## ${round} — reverted" with one line per reverted commit and the reason, and commit that file (subject "Playtest ${round}: note reverts", body ending with: ${TRAILER}).\n` +
       `ok true if every listed commit was reverted. head: git -C "${REPO}" rev-parse --short HEAD. detail: the cause you found and what you reverted.`,
@@ -264,6 +265,10 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
     agent(playerPrompt(n), { label: `${runId} player ${n}`, phase: 'Play', model: PLAYER_MODEL, agentType: 'general-purpose' })))
   const got = reports.filter(Boolean).length
   log(`${runId}: ${got}/4 player reports`)
+  if (got === 0) {
+    log('No player answered — agents are unavailable (usage limit or outage). Stopping this run; it can be started again.')
+    return { stopped: 'agents unavailable', rounds: rounds.map((r) => r.round) }
+  }
 
   // ---- triage
   const reportText = reports.map((r, k) => `=== PLAYER ${k + 1} REPORT ===\n${r ?? '(this player returned no report)'}`).join('\n\n')
@@ -284,9 +289,10 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
   if (triage.revertCommits.length) {
     reverted = await agent(
       `${WHERE}\nTriage of round ${runId} judged these commits to have harmed play: ${triage.revertCommits.join(', ')}. Reasons: ${triage.verdicts}\n` +
-      `For each, newest first: git -C "${REPO}" revert --no-edit <hash>. If one conflicts: git -C "${REPO}" revert --abort, skip it and say so.\n` +
+      `Only commits whose subject starts with "Playtest " may be reverted; skip any other hash and say so. For each, newest first: git -C "${REPO}" revert --no-edit <hash>. If one conflicts: git -C "${REPO}" revert --abort, skip it and say so.\n` +
       `Then in "${REPO}/game" run npx tsc --noEmit. If it fails, undo your reverts (git -C "${REPO}" reset --hard to the HEAD you started from) and answer ok false.\n` +
       `Append to "${PT}/changes.md" a heading "## ${runId} — reverted" with one line per reverted commit and the reason; commit that file (subject "Playtest ${runId}: note reverts", body ending with: ${TRAILER}).\n` +
+      (PUSH ? `If tsc passed, publish: git -C "${REPO}" fetch origin, git -C "${REPO}" rebase origin/main (on conflict: git -C "${REPO}" rebase --abort and do not push), then git -C "${REPO}" push origin HEAD:main (never --force).\n` : '') +
       `head: git -C "${REPO}" rev-parse --short HEAD.`,
       { label: `revert ${runId}`, phase: 'Gate', schema: OK, model: 'sonnet' })
     log(`${runId}: reverted ${triage.revertCommits.join(', ')} — ${reverted?.ok ? 'done' : 'failed'}`)
@@ -317,6 +323,7 @@ const wrap = await agent(
   `(b) Every rework, one block each: commit hash, the problem and its evidence, what is different for players, what later rounds showed about it, what it could have unbalanced, and the exact command to drop it (git revert <hash>). Order them by how much you would keep them. ` +
   `(c) Polish commits, one line each. (d) Changes the judge turned down ("${PT}/rejected.md") and changes the loop reverted itself, and why. (e) Design findings still open, worst first. (f) Findings that kept coming back. ` +
   `(g) How to take the work: the team's checkout "${A.avoid ?? 'the main checkout'}" may hold uncommitted work that this branch already contains as its first commit — say to commit or stash there first, then merge "${BRANCH}" or cherry-pick single commits; and the command to delete the branch and this worktree if none of it is wanted.\n` +
+  (PUSH ? `After the commit, publish it: git -C "${REPO}" fetch origin, git -C "${REPO}" rebase origin/main (on conflict: git -C "${REPO}" rebase --abort and do not push), then git -C "${REPO}" push origin HEAD:main (never --force).\n` : '') +
   `Answer with a ten-line summary of the night.`,
   { label: 'morning report', phase: 'Wrap-up' })
 
