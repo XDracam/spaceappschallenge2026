@@ -800,8 +800,13 @@
 
 .st-planner .goal-list li[role="button"] { cursor: pointer; }
 .st-planner .goal-list li[role="button"]:hover .goal-name { color: #fff; }
-.st-planner .goal-dialog { width: 560px; }
-.st-planner .goal-dialog.is-optional { border-left: 3px dashed rgba(141, 162, 192, 0.6); }
+.st-planner .goal-dialog { width: 100%; height: 100%; max-width: none; padding: 24px 32px; }
+.st-planner .goal-dialog-top { display: flex; justify-content: space-between; align-items: center; }
+.st-planner .goal-detail { padding: 10px 14px; margin: 6px 0; border-radius: 8px; background: rgba(255,255,255,0.03); max-width: 760px; }
+.st-planner .goal-detail.is-optional { border-left: 2px dashed rgba(141, 162, 192, 0.6); }
+.st-planner .goal-detail-name { margin: 0 0 4px; font-size: 15px; }
+.st-planner .goals-open { background: none; border: 0; padding: 0; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.st-planner .goals-open:hover { color: #fff; text-decoration: underline; }
 .st-planner .goal-dialog-h { margin: 12px 0 4px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #8da2c0; }
 .st-planner .goal-dialog-chance { display: grid; grid-template-columns: 1fr 48px; align-items: center; gap: 10px; }
 .st-planner .goal-dialog-chance .goal-bar { height: 6px; }

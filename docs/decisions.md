@@ -332,6 +332,7 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Source / approval: [science module note, November 15 follow-up](notes/2026-11-14-science-module.md)
 - Rationale and evidence: user direction, to make Science and Procurement depend on each other without adding assignment or idle bookkeeping.
 - Alternatives considered: monthly fees per team and per-project assignment (rejected by the user as too complex).
+  - In the Mission Planner, clicking "Goals" (or one goal) opens a full-screen window listing all goals, mission-critical first, then optional ones marked as bonus, with status, success chance and the parts they depend on.
 - Consequences and limitations: all prices, lead times and the facility list are placeholders (D-005). The weather mission's 210 M budget (D-030) was balanced before facilities existed; routes through tier 2 cost extra. Facilities cannot be sold back.
 - Related: D-005, D-020, D-030, I-098, Q-040.
 
