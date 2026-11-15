@@ -18,7 +18,7 @@ export { DAYS_PER_MONTH };
 export interface PView {
   market: Market;
   budget: Budget;
-  research: Pick<GameState['research'], 'limits' | 'unlocked'>;
+  research: Pick<GameState['research'], 'limits' | 'unlocked'> & Partial<Pick<GameState['research'], 'projects'>>;
   clock: { day: number };
   planner: { plan: { launchDay: number } };
   /** Industry trust (comms): strong (> 70) −10 % prices and lead times, strained (< 30) +10 %. */

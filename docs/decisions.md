@@ -182,6 +182,16 @@ Identifier alignment — incoming integration architecture keeps D-015. The proc
 - Evidence and limits: the cited acquisition sources support delivery schedules, solicitation deadlines and modifications; numerical curves, research reuse and reliability aggregation are game choices. Fixtures require balancing. Approval is not evidence of implemented behavior or multiplayer enjoyment. Optional slot reservations and deferred supplier events remain outside this selection.
 - Related: I-079, I-080, D-004, D-005, D-017, Q-005, Q-008, Q-014, Q-023–Q-028, Q-031.
 
+## D-019 — Reduced Contract timeline prototype
+
+- Date: 2026-11-15
+- Status: accepted user direction for implementation; implementation and playtesting require independent verification.
+- Decision: add a Contract timeline showing arrivals against actual needs, with enough identity, recipient and quantity information to distinguish orders and their uses. Retain the Table. On a selected Contract, preview one selected amendment as current versus proposed arrival and fee, and provide concise local delay and cutoff feedback.
+- Scope: no Upcoming area, Call or Offer-expiry integration, replacement comparison, or dependency graph in this iteration. The broader [timeline design study](../procurement/timeline-design.md) remains historical exploration, not an approved specification. The separate budget composition proposal is not selected by this decision.
+- Source: user approval of the reduced implementation scope in the November 15 conversation, following the timeline study.
+- Limitations: approval is not evidence of runtime behavior or multiplayer enjoyment. Preserve unknown need dates rather than inventing them; distinguish research bonuses from mandatory needs.
+- Related: I-081, D-017–D-018, Q-007, Q-024–Q-025, Q-031.
+
 ## Future decision template
 
 ```markdown

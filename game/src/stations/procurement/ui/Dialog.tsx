@@ -2,6 +2,7 @@
 // against the current shared state while the dialog is open.
 import { useEffect, useState } from 'preact/hooks';
 import { procurementActions } from '../logic';
+import { useGame } from '../../../core/store';
 import {
   budgetAvailableM, findOffer, fmtDate, fmtM, fmtPct, fmtStats, refundM, taskCode, quoteOrder, quoteAmendment, cancellationToken,
 } from '../rules';
@@ -10,6 +11,7 @@ import { setUi, useP, useUi } from './uiState';
 
 export function Dialog() {
   const v = useP();
+  const projects = useGame(s => s.research.projects);
   const d = useUi((u) => u.dialog);
   const [cancelToken, setCancelToken] = useState('');
   useEffect(() => { if (d?.type === 'cancel') setCancelToken(cancellationToken(v, d.contractId)); }, [d]);
@@ -35,9 +37,9 @@ export function Dialog() {
     const stale = q.token !== d.token;
     const k = q.contract;
     body = <><h2 id="pr-dialog-title">{k?.offerSnapshot.resource.name ?? 'Contract unavailable'}</h2>
-      {k ? <dl class="pr-facts"><dt>Arrival</dt><dd>{fmtDate(k.expectedAt)} → {fmtDate(q.expectedAt)}</dd><dt>Fee paid now</dt><dd>{fmtM(q.feeM)}</dd><dt>Lifetime cost</dt><dd>{fmtM(k.offerSnapshot.priceM + (k.amendments ?? []).reduce((sum, a) => sum + a.feeM, 0) + q.feeM)}</dd><dt>Available after</dt><dd>{fmtM(budgetAvailableM(v.budget) - q.feeM)}</dd><dt>Affected use</dt><dd>{v.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released').map(a => a.department ? `${a.department}${a.projectId ? ` · project ${a.projectId}` : ''}` : v.market.tasks.find(t => t.id === a.taskId)?.title ?? a.taskId).join(', ') || 'Shared supply'}</dd></dl> : null}
+      {k ? <dl class="pr-facts"><dt>Arrival</dt><dd>{fmtDate(k.expectedAt)} → {fmtDate(q.expectedAt)}</dd><dt>Fee paid now</dt><dd>{fmtM(q.feeM)}</dd><dt>Lifetime cost</dt><dd>{fmtM(k.offerSnapshot.priceM + (k.amendments ?? []).reduce((sum, a) => sum + a.feeM, 0) + q.feeM)}</dd><dt>Available after</dt><dd>{fmtM(budgetAvailableM(v.budget) - q.feeM)}</dd><dt>Affected use</dt><dd>{v.market.allocations.filter(a => a.contractId === k.id && a.status !== 'released').map(a => a.department ? `${a.department[0].toUpperCase()}${a.department.slice(1)}${a.projectId ? ` · ${projects.find(p => p.id === a.projectId)?.title ?? 'Research project'}` : ''}` : v.market.tasks.find(t => t.id === a.taskId)?.title ?? a.taskId).join(', ') || 'Shared supply'}</dd></dl> : null}
       {stale ? <div class="pr-callout warn">Terms changed. Refresh quote.</div> : null}{q.unavailable ? <div class="pr-callout bad">{q.unavailable}</div> : null}
-      <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { ...d, token: q.token } })}>Refresh quote</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.amendDelivery(d.contractId, d.delivery, d.token); setUi({ dialog: null, status: 'Amendment submitted.' }); }}>Confirm amendment · {fmtM(q.feeM)}</button>}</div></>;
+      <div class="pr-row end"><button type="button" class="pr-btn" onClick={close}>Back</button>{stale ? <button type="button" class="pr-btn primary" onClick={() => setUi({ dialog: { ...d, token: q.token } })}>Refresh quote</button> : <button type="button" class="pr-btn primary" disabled={!!q.unavailable} onClick={() => { procurementActions.amendDelivery(d.contractId, d.delivery, d.token); setUi({ dialog: null, amendmentPreview: null, status: 'Amendment submitted.' }); }}>Confirm amendment · {fmtM(q.feeM)}</button>}</div></>;
   } else {
     const k = v.market.contracts.find((x) => x.id === d.contractId);
     if (!k || k.status !== 'active') {

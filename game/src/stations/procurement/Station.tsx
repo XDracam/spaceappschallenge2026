@@ -17,15 +17,19 @@ import { PCtx, usePView, useUi } from './ui/uiState';
 export function ProcurementStation() {
   const v = usePView();
   const view = useUi((u) => u.view);
+  const contractView = useUi((u) => u.contractView);
+  const wideTimeline = view === 'contracts' && contractView === 'timeline';
+  const contractId = useUi(u => u.contractId);
+  const showInspector = !wideTimeline || !!contractId;
   return (
     <PCtx.Provider value={v}>
       <div class="pr-app">
         <ArtDefs />
         <Header />
-        <div class="pr-work">
-          <Needs />
+        <div class={`pr-work${wideTimeline ? ' pr-work-timeline' : ''}${!showInspector ? ' pr-work-timeline-unselected' : ''}`}>
+          {!wideTimeline ? <Needs /> : null}
           {view === 'calls' ? <CallsView /> : view === 'contracts' ? <ContractsView /> : view === 'compare' ? <CompareView /> : <Catalogue />}
-          <Inspector />
+          {showInspector ? <Inspector /> : null}
         </div>
         <NewsStrip />
         <Dialog />

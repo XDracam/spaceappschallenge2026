@@ -139,6 +139,19 @@ Merge alignment on November 14, 2026 — incoming science/comms ideas I-035–I-
 
 **November 14 approval update:** [D-018](decisions.md#d-018--procurement-order-and-department-supply-prototype) selects I-080 as the prototype target. The earlier proposed and awaiting-review statements above are retained as historical status. Implementation and multiplayer observations must be recorded separately.
 
+### I-081 — Contract arrival timeline and budget composition
+
+- Captured: 2026-11-15.
+- Source: user request for intuitive contract/budget visualization followed by a design process without building.
+- Status: assistant design proposal; unselected, unimplemented and not playtested.
+- Idea: shared-calendar arrival and need markers, explicit timing margin and destination, selected-row intervention detail, and a separate labeled Spent / Committed / Available bar.
+- Intended player experience: quickly identify upcoming supply, affected uses and remaining delivery-change opportunities during spoken coordination.
+- Evidence and dependencies: source inspection found standalone needed-by dates are not persisted on Contracts and existing late labels compare all supply to launch. Preserve unknown dates and distinguish research bonuses from mandatory needs.
+- Alternatives and rationale: signing-to-arrival Gantt rejected as the default because it can imply production progress; an agenda/table remains a useful companion.
+- Related: [timeline design study](../procurement/timeline-design.md), D-017–D-018, Q-007, Q-024–Q-025, Q-031.
+- November 15 audit refinement: proposed Upcoming action/milestone lanes, Incoming arrival-versus-use rows, and selected live remedy comparisons. Full inventory and source corrections in the study; excludes hidden events, nonexistent production stages and universal order deadlines. Still unselected and unbuilt.
+- November 15 approval update: [D-019](decisions.md#d-019--reduced-contract-timeline-prototype) selects a reduced implementation scope: arrivals against actual needs with identity, recipient and quantity, the existing Table, one selected amendment preview, and concise local delay/cutoff feedback. Upcoming, Call/expiry integration, replacement comparison and a dependency graph are outside this iteration; the budget composition remains unselected. Earlier proposal and status statements above are retained as history. Implementation and observations must be recorded separately.
+
 ## New entry template
 
 ```markdown

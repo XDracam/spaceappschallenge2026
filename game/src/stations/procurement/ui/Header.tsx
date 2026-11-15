@@ -2,6 +2,7 @@
 import { MISSION } from '../../../core/mission';
 import { budgetAvailableM, fmtDate, fmtM } from '../rules';
 import { setUi, useP, useUi, type View } from './uiState';
+import { contractTiming } from '../timing';
 
 export function Header() {
   const v = useP();
@@ -13,7 +14,8 @@ export function Header() {
   const offersToReview = v.market.offers.filter((o) => o.status === 'available' && (o.source === 'comms' || o.callId)).length;
   const openCalls = v.market.calls.filter((c) => c.status === 'open').length;
   const active = v.market.contracts.filter((c) => c.status === 'active').length;
-  const late = v.market.contracts.filter((c) => c.status === 'active' && c.expectedAt > launch).length;
+  const timingState = { market: v.market, research: { projects: v.research.projects ?? [] } };
+  const late = v.market.contracts.filter(c => c.status === 'active' && contractTiming(timingState, c).needs.some(n => n.margin !== undefined && n.margin < 0)).length;
   const nav: { id: View; label: string; count?: string; warn?: boolean }[] = [
     { id: 'catalogue', label: 'Catalogue' },
     { id: 'calls', label: 'Calls', count: offersToReview ? `${offersToReview} offers` : openCalls ? `${openCalls} open` : '' },
