@@ -193,6 +193,6 @@ The comparison tool also retains candidate previews under CC0 1.0, CC BY 3.0, an
 
 ## Submission narration and sharing assets
 
-The submission narration uses Voicebox with Supertonic 3 (M2 in the final trailer; F1 in the superseded draft). [Narration provenance](video/NARRATION.md) distinguishes the model's OpenRAIL-M terms from the sample-code MIT license and records what generation settings remain unknown. No model weights are shipped.
+The current published trailer uses Microsoft neural text-to-speech (en-US-ChristopherNeural, via edge-tts), as recorded in its [credits](game/public/submission/credits.txt). Earlier retained exports in `video/` use Voicebox with Supertonic 3 (M2 in the archived T-Minus trailer; F1 in the superseded Mission Control draft). [Narration provenance](video/NARRATION.md) distinguishes the model's OpenRAIL-M terms from the sample-code MIT license and records what generation settings remain unknown. No model weights are shipped.
 
 `game/public/social-title.webp` is an unchanged byte-for-byte copy of the labelled title artwork above. `game/public/favicon.svg` is an original neutral orbit icon authored with AI assistance, identified in its SVG description. It contains no NASA insignia. The audio audition workbench is now a [development archive](dev/audio-audit/README.md), excluded from production.

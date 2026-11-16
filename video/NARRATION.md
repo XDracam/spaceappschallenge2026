@@ -1,6 +1,8 @@
 # Submission narration provenance
 
-Recorded November 16, 2026 from the production notes and the installed model package. The final T-Minus trailer uses locally synthesized Supertonic 3 M2; the superseded Mission Control draft used F1. Narration is disclosed in video credits, burned-in labels and export metadata. No real person's voice is claimed.
+Recorded November 16, 2026 from the production notes and the installed model package. The archived T-Minus trailer in `video/t-minus/` uses locally synthesized Supertonic 3 M2; the superseded Mission Control draft used F1. Narration is disclosed in video credits, burned-in labels and export metadata. No real person's voice is claimed.
+
+The current published trailer in `game/public/submission/` was replaced upstream in commit `906a7f9`. Its credits identify Microsoft neural text-to-speech, voice `en-US-ChristopherNeural`, via `edge-tts`. The Supertonic provenance and retained terms below apply to the earlier archived exports, not that replacement. See the [submission reference](../docs/submission-reference.md).
 
 The installed package identifies itself as `sherpa-onnx-supertonic-3-tts-int8-2026-05-11`. Its upstream README links [Supertonic](https://github.com/supertone-inc/supertonic), the [Supertonic 3 model](https://huggingface.co/Supertone/supertonic-3), and distinguishes MIT-licensed sample code from the accompanying model's **OpenRAIL-M** license. The README's licence section was inspected locally November 16; the [model licence](licenses/Supertonic-3-OpenRAIL-M.txt) was retrieved from that linked model repository on the same date. The retained [MIT notice](licenses/Supertonic-sample-code-MIT.txt) applies to sample code, not a blanket claim about model weights or generated outputs. Model terms and use restrictions remain applicable; weights are not redistributed here.
 

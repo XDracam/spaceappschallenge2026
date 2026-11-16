@@ -1,5 +1,7 @@
 # T-Minus submission trailer
 
+Historical production record: this directory preserves the earlier local export. The current published trailer was replaced upstream in `906a7f9`; see the [submission reference](../../docs/submission-reference.md).
+
 This revision replaces the earlier Mission Control walkthrough with a 29.5-second T-Minus trailer: editorial countdown, cropped gameplay, short role verbs, local M2 narration, the game’s music/effects, actual flight playback and a real 2/2 main-goal result.
 
 `T-Minus-Submission.mp4` is the delivery file. `VIDEO-DESCRIPTION.txt` contains shareable hosting copy, credits and disclosures. `capture.mjs` and `render.py` reproduce the capture/edit with the installed local tools. Assets and source recordings are retained alongside them.
