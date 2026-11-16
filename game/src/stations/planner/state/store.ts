@@ -12,7 +12,7 @@ import { createStore, useStore } from '../../../core/createStore';
 
 // ================================================================ UI store
 
-export type SideTab = 'rocket' | 'tasks' | 'versions' | 'dev';
+export type SideTab = 'rocket' | 'versions';
 
 export type Popup =
   | null

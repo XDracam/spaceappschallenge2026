@@ -573,8 +573,8 @@
 .st-planner .goal-weak { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 10px; font-size: 11px; line-height: 1.35; min-width: 0; }
 .st-planner .goal-weak .text-btn { font-size: 11px; padding: 0; white-space: nowrap; }
 .st-planner .goal-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
-.st-planner .goal-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) 38px; align-items: center; column-gap: 10px; font-size: 12px; cursor: default; }
-.st-planner .goal-list li.na { grid-template-columns: minmax(0, 1fr) auto; row-gap: 0; }
+.st-planner .goal-list .goal { width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) 38px; align-items: center; column-gap: 10px; font-size: 12px; cursor: pointer; }
+.st-planner .goal-list .goal.na { grid-template-columns: minmax(0, 1fr) auto; row-gap: 0; }
 .st-planner .goal-status { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; text-align: right; }
 .st-planner .goal.not-planned .goal-status { color: var(--muted); }
 .st-planner .goal.blocked .goal-status { color: var(--err); }
@@ -582,8 +582,8 @@
 .st-planner .goal.blocked .goal-reason { color: #d98a92; }
 .st-planner .goal-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #c3d0e3; }
 .st-planner .goal-optional { margin-left: 6px; padding: 0 5px; border: 1px solid rgba(141, 162, 192, 0.55); border-radius: 8px; color: #8da2c0; font-style: normal; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; vertical-align: 1px; }
-.st-planner .goal-list li.is-optional { border-left: 2px dashed rgba(141, 162, 192, 0.5); padding-left: 6px; }
-.st-planner .goal-list li.first-optional { margin-top: 4px; }
+.st-planner .goal-list .goal.is-optional { border-left: 2px dashed rgba(141, 162, 192, 0.5); padding-left: 6px; }
+.st-planner .goal-list li:has(.first-optional) { margin-top: 4px; }
 .st-planner .goal.is-optional .goal-name { color: #9fb0c8; }
 .st-planner .goal.is-optional .gb-fill.ok { background: #8da2c0; box-shadow: none; }
 .st-planner .briefing-goals.optional { border-left: 2px dashed rgba(141, 162, 192, 0.5); padding-left: 22px; }
@@ -740,6 +740,9 @@
 .st-planner .outcome-reason { font-size: 12px; color: #d98a92; line-height: 1.35; }
 .st-planner .result-score.scrubbed { font-size: 22px; line-height: 1.2; }
 .st-planner .result-summary { border-top: 1px solid var(--line); padding-top: 8px; }
+.st-planner .result-evidence { margin: 12px 0; color: var(--muted); font-size: 12px; }
+.st-planner .result-evidence summary { cursor: pointer; }
+.st-planner .result-evidence ol { padding-left: 20px; display: grid; gap: 6px; }
 .st-planner .ev-summary { border-bottom: 0; padding-left: 15px; }
 .st-planner .ev-summary .ev-text { font-weight: 500; }
 
@@ -767,6 +770,8 @@
 }
 .st-planner .briefing-steps li { margin: 2px 0; }
 .st-planner .briefing-clock { font-size: 12.5px; }
+.st-planner .briefing-details { margin: 12px 0; }
+.st-planner .briefing-details summary { cursor: pointer; color: var(--text); margin-bottom: 8px; }
 .st-planner .briefing-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
 .st-planner .briefing-foot .pill { height: 36px; padding: 0 22px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 
@@ -800,8 +805,8 @@
   .st-planner .row.highlight, .st-planner .rt-part.highlight, .st-planner .row-detail, .st-planner .ev { animation: none; }
 }
 
-.st-planner .goal-list li[role="button"] { cursor: pointer; }
-.st-planner .goal-list li[role="button"]:hover .goal-name { color: #fff; }
+.st-planner .goal-list .goal:hover .goal-name { color: #fff; }
+.st-planner .goal-list .goal:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .st-planner .goal-dialog { width: 100%; height: 100%; max-width: none; padding: 24px 32px; }
 .st-planner .goal-dialog-top { display: flex; justify-content: space-between; align-items: center; }
 .st-planner .goal-detail { padding: 10px 14px; margin: 6px 0; border-radius: 8px; background: rgba(255,255,255,0.03); max-width: 760px; }

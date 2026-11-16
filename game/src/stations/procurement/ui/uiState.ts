@@ -3,7 +3,7 @@ import { createContext } from 'preact';
 import { useContext, useMemo } from 'preact/hooks';
 import { createStore, useStore } from '../../../core/createStore';
 import type { NewsItem, PartKind, DeliveryOptionId, OrderDraft, Task } from '../../../core/model';
-import { getState, onGameReset, useGame } from '../../../core/store';
+import { getState, onConfirmedAction, onGameReset, syncStore, useGame } from '../../../core/store';
 import { DRAFT_PREFIX, type PView } from '../rules';
 import { partStatus } from '../../planner/derive';
 import { allParts } from '../../planner/model/rocketUtils';
@@ -34,6 +34,8 @@ export type Dialog =
   | { type: 'replace'; contractId: string; draft: OrderDraft; token: string }
   | { type: 'cancel'; contractId: string }
   | { type: 'amend'; contractId: string; delivery: DeliveryOptionId; token: string }
+  | { type: 'facility'; facilityId: string; months: number | 'buy' }
+  | { type: 'team'; offerId: string }
   | null;
 
 export interface UiState {
@@ -44,7 +46,7 @@ export interface UiState {
   focus: Focus | null;
   /** Right panel: the selected Resource, or the focused need's overview. */
   inspect: 'resource' | 'need';
-  /** Selected catalogue Resource (null: the first one of the open category). */
+  /** Explicitly selected catalogue Resource; null leaves the decision panel empty. */
   resourceId: string | null;
   offerId: string | null;
   /** Need chosen in the resource inspector ('' = the focused or first uncovered fitting need). */
@@ -56,6 +58,7 @@ export interface UiState {
   dialog: Dialog;
   newsOpen: boolean;
   status: string;
+  pending: boolean;
 }
 
 function initialUi(): UiState {
@@ -75,13 +78,14 @@ function initialUi(): UiState {
     dialog: null,
     newsOpen: false,
     status: '',
+    pending: false,
   };
 }
 
 export const ui = createStore<UiState>(initialUi());
 
 // A new attempt (restart, back to the lobby, another mission, a resumed save): nothing selected survives.
-onGameReset(() => ui.set(initialUi()));
+onGameReset(() => { clearTimeout(statusTimer); ui.set(initialUi()); });
 
 export function useUi<S>(sel: (u: UiState) => S): S {
   return useStore(ui, sel);
@@ -111,27 +115,58 @@ function draftTasks(s: ReturnType<typeof getState>): Task[] {
   }));
 }
 
-/**
- * Snapshot of the shared state procurement reads. Selected as JSON so the station
- * re-renders only when these parts change (the host ticks 4×/s; the calendar day
- * is floored).
- */
+/** Core reducers preserve unchanged branch identities. Subscribe to the actual dependencies. */
 export function usePView(): PView {
-  const json = useGame((s) => JSON.stringify({
-    market: s.market,
-    budget: s.budget,
-    research: { limits: s.research.limits, unlocked: s.research.unlocked, projects: s.research.projects },
-    clock: { day: Math.floor(s.clock.day) },
-    planner: { plan: { launchDay: s.planner.plan.launchDay } },
-    comms: { trust: { industry: s.comms.trust.industry } },
-    drafts: draftTasks(s),
-  }));
-  return useMemo(() => JSON.parse(json) as PView, [json]);
+  const market = useGame(s => s.market);
+  const budget = useGame(s => s.budget);
+  const limits = useGame(s => s.research.limits);
+  const unlocked = useGame(s => s.research.unlocked);
+  const projects = useGame(s => s.research.projects);
+  const day = useGame(s => Math.floor(s.clock.day));
+  const launchDay = useGame(s => s.planner.plan.launchDay);
+  const rocket = useGame(s => s.planner.rocket);
+  const industry = useGame(s => s.comms.trust.industry);
+  // draftTasks reads rocket, market coverage and launchDay; it does not need calendar ticks.
+  const drafts = useMemo(() => draftTasks(getState()), [rocket, market, launchDay]);
+  return useMemo(() => ({ market, budget, research: { limits, unlocked, projects }, clock: { day },
+    planner: { plan: { launchDay } }, comms: { trust: { industry } }, drafts,
+  }), [market, budget, limits, unlocked, projects, day, launchDay, industry, drafts]);
 }
 
 export function useNews(limit = 40): NewsItem[] {
-  const json = useGame((s) => JSON.stringify(s.events.news.slice(0, limit)));
-  return useMemo(() => JSON.parse(json) as NewsItem[], [json]);
+  const news = useGame(s => s.events.news);
+  return useMemo(() => news.slice(0, limit), [news, limit]);
+}
+
+// Feedback comes from the ordered host echo, never from optimistic client state.
+let statusTimer: ReturnType<typeof setTimeout> | undefined;
+function feedback(status: string): void {
+  clearTimeout(statusTimer);
+  setUi({ status, pending: false });
+  statusTimer = setTimeout(() => setUi({ status: '' }), 12000);
+}
+onConfirmedAction(({ previous, state, action, local }) => {
+  if (!local || !ui.get().pending || !action.type.startsWith('procurement/')) return;
+  const known = new Set(previous.events.news.map(n => n.id));
+  const result = state.events.news.find(n => n.from === 'procurement' && !known.has(n.id));
+  feedback(result?.text ?? 'No change was made. Review the current availability and try again.');
+});
+syncStore.subscribe(() => {
+  if (!ui.get().pending) return;
+  const sync = syncStore.get();
+  if (!sync.connected || sync.error) feedback(sync.error || 'Connection lost. Reconnect and check the current state before trying again.');
+});
+
+/** Close review before dispatch: solo actions can be confirmed synchronously. */
+export function submitAction(action: () => void): void {
+  if (ui.get().pending) return;
+  const sync = syncStore.get();
+  if (!sync.connected) { feedback('Waiting for the host. Reconnect before making changes.'); return; }
+  clearTimeout(statusTimer);
+  setUi({ dialog: null, amendmentPreview: null, pending: true, status: 'Waiting for host confirmation…' });
+  // A snapshot may replace an unacknowledged action; never leave a permanent success or spinner.
+  statusTimer = setTimeout(() => feedback('Confirmation not received. Check the current Contracts or Research needs before trying again.'), 15000);
+  action();
 }
 
 export const PCtx = createContext<PView>(null as unknown as PView);

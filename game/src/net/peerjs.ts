@@ -11,6 +11,7 @@ import { Peer, type DataConnection, type PeerError } from 'peerjs';
 import type { ClientToHost, ClientTransport, HostToClient, HostTransport } from '../core/protocol';
 import { COMPATIBILITY_ID } from '../core/build';
 import { FrameReceiver, frames } from './framing';
+import { listeners } from './listeners';
 
 /** Namespaces our room ids on the shared public PeerJS server. */
 const ID_PREFIX = 'nasa-mission-control-26-';
@@ -23,16 +24,6 @@ const RECLAIM_TRIES = 4;
 const RECLAIM_DELAY_MS = 2500;
 
 // ------------------------------------------------------------------ helpers
-
-type Listener<A extends unknown[]> = (...args: A) => void;
-function listeners<A extends unknown[]>() {
-  const set = new Set<Listener<A>>();
-  return {
-    add(cb: Listener<A>) { set.add(cb); return () => { set.delete(cb); }; },
-    emit(...args: A) { for (const cb of [...set]) { try { cb(...args); } catch (e) { console.error('[room]', e); } } },
-    get size() { return set.size; },
-  };
-}
 
 function randomCode(): string {
   const b = crypto.getRandomValues(new Uint8Array(CODE_LEN));
@@ -76,9 +67,9 @@ const SERVER_ERRORS = new Set(['network', 'server-error', 'socket-error', 'socke
 class Link {
   isOpen = false;
   isClosed = false;
-  readonly opened = listeners<[]>();
-  readonly message = listeners<[unknown]>();
-  readonly closed = listeners<[reason: 'bye' | 'lost']>();
+  readonly opened = listeners<[]>('[room]');
+  readonly message = listeners<[unknown]>('[room]');
+  readonly closed = listeners<[reason: 'bye' | 'lost']>('[room]');
   private receiver = new FrameReceiver(value => this.message.emit(value), () => this.finish('bye'));
   private chunkCounter = 0;
   private timer: ReturnType<typeof setTimeout>;
@@ -154,13 +145,13 @@ export class RoomHost implements HostTransport {
   code = '';
   error = '';
   /** Fires on room status or player list changes (for the lobby UI). */
-  readonly changed = listeners<[]>();
+  readonly changed = listeners<[]>('[room]');
   private peer: Peer | null = null;
   private links = new Map<string, Link>();
   private playerList = new Map<string, RoomPlayer>();
-  private readonly msg = listeners<[string, ClientToHost]>();
-  private readonly join = listeners<[string]>();
-  private readonly leave = listeners<[string]>();
+  private readonly msg = listeners<[string, ClientToHost]>('[room]');
+  private readonly join = listeners<[string]>('[room]');
+  private readonly leave = listeners<[string]>('[room]');
   private closedForGood = false;
   private reclaimTries = 0;
   private serverTimer: ReturnType<typeof setTimeout> | undefined;
@@ -346,11 +337,11 @@ export class RoomClient implements ClientTransport {
   error = '';
   /** 'bye' = host closed the game on purpose; 'lost' = connection dropped. */
   closeReason: 'bye' | 'lost' | null = null;
-  readonly changed = listeners<[]>();
+  readonly changed = listeners<[]>('[room]');
   private peer: Peer;
   private link: Link | null = null;
-  private readonly msg = listeners<[HostToClient]>();
-  private readonly closeL = listeners<[]>();
+  private readonly msg = listeners<[HostToClient]>('[room]');
+  private readonly closeL = listeners<[]>('[room]');
   private early: HostToClient[] = [];
   private timer: ReturnType<typeof setTimeout>;
   private onPageHide = () => this.close();

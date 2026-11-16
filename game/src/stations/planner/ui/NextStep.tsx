@@ -42,14 +42,14 @@ function routeHint(game: PlannerGame, ev: Evaluation): string | null {
     const orbit = states.find((s): s is Extract<FlightState, { kind: 'orbit' }> => s.kind === 'orbit' && s.body === goal.body);
     if (orbit) {
       if (!hasAltitudeWindow(goal)) return null;
-      return `Next step at ${name} → ${goalOrbitChangeLabel(goal, orbit.altitudeKm)}`;
+      return `Route at ${name} → ${goalOrbitChangeLabel(goal, orbit.altitudeKm)}`;
     }
     if (states.some((s) => s.kind === 'approach' && s.body === goal.body)) {
-      return `Next step at ${name} → Enter orbit`;
+      return `Route at ${name} → Enter orbit`;
     }
     const heading = all.some((m) => m.type === 'transfer' && m.target === goal.body);
     if (goal.body !== home && !heading && all.length === 1 && launch) {
-      return `Next step at ${bodyName(home)} → Transfer to ${name}`;
+      return `Route at ${bodyName(home)} → Transfer to ${name}`;
     }
     return null;
   }
@@ -117,7 +117,7 @@ export function NextStep() {
               u.selectedBranchId = branch.id;
               u.popup = { kind: 'maneuverMenu', branchId: branch.id, screen: mapCentre() };
               });
-            }}>Next step · {branchDisplayName(game, branch)}</button>;
+            }}>Add maneuver · {branchDisplayName(game, branch)}</button>;
         })}
       </div>
       <details class="route-editor glass">

@@ -84,11 +84,11 @@ export function Catalogue() {
           </nav>
           <label class="pr-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg>
-            <input type="search" placeholder="Search parts, suppliers…" value={u.query} aria-label="Search catalogue" onInput={(e) => setUi({ query: (e.target as HTMLInputElement).value })} />
+            <input type="search" placeholder="Search Resources, suppliers…" value={u.query} aria-label="Search catalogue" onInput={(e) => setUi({ query: (e.target as HTMLInputElement).value })} />
           </label>
         </div>
       </div>
-      <div class="pr-grid">
+      <div class="pr-grid" aria-label={`${list.length} catalogue Resources`}>
         {list.map((x) => {
           const r = x.r;
           const fails = crit && sameKind(r, crit) ? fitFailures(r, crit) : null;
@@ -110,15 +110,17 @@ export function Catalogue() {
               type="button"
               class={`pr-card${related ? ' related' : ''}${x.locked.length ? ' locked' : ''}`}
               aria-pressed={u.resourceId === r.id && u.inspect === 'resource'}
+              aria-describedby={x.locked.length ? `pr-lock-${r.id}` : undefined}
               onClick={() => setUi({ resourceId: r.id, inspect: 'resource', offerId: null, delivery: null, target: '' })}
             >
               <span class="pr-card-art">
                 <Art kind={r.partKind} variant={r.variant} label={`${r.name} illustration`} />
                 <span class="pr-card-kind">{partLabel(r.partKind, r.variant)}</span>
-                {x.locked.length ? <span class="pr-card-lock" title={describeBeyond(x.locked[0], r.stats, v.research)}>Beyond research</span> : null}
+                {x.locked.length ? <span class="pr-card-lock">Beyond research</span> : null}
               </span>
               <span class="pr-card-body">
                 <h3>{r.name}</h3>
+                {x.locked.length ? <span id={`pr-lock-${r.id}`} class="pr-visually-hidden">Requires Science research: {x.locked.map(k => describeBeyond(k, r.stats, v.research)).join('; ')}. Select for details.</span> : null}
                 <span class="pr-card-stats">{fmtStats(r.partKind, r.variant, r.stats)} · {r.massT} t</span>
                 <span class={`pr-card-match${warn ? ' warn' : related || matching.length ? ' good' : ''}`}>{match}</span>
                 <span class="pr-card-bottom">

@@ -12,7 +12,7 @@ import type { GameState } from '../../core/state';
 import { MISSION } from '../../core/mission';
 import { rng } from '../../shared/events/engine';
 import { commsInFlightResults, type InFlightResult } from '../comms/logic';
-import type { Evaluation, PlaythroughResult } from './model/types';
+import type { Evaluation, PlannerGame, PlaythroughResult } from './model/types';
 import { cachedPlannerGame, evaluationOf } from './derive';
 import { playthrough } from './physics';
 
@@ -104,4 +104,22 @@ export function missionScore(result: PlaythroughResult): {
     bonusEarned: scrubbed ? 0 : extra.filter((o) => o.success).reduce((a, o) => a + weight(o.goalId), 0),
     bonusTotal: extra.reduce((a, o) => a + weight(o.goalId), 0),
   };
+}
+
+/** Why a goal failed in the playthrough: its own failure event, the plan's reason, or the failure on its branch. */
+export function goalFailureReasons(game: PlannerGame, ev: Evaluation, result: PlaythroughResult): Map<string, string> {
+  const out = new Map<string, string>();
+  const failures = result.events.filter((e) => e.kind === 'failure');
+  const scrub = failures.find((e) => e.text.startsWith('Launch scrubbed'));
+  for (const o of result.goalOutcomes) {
+    if (o.success) continue;
+    const goal = game.mission.goals.find((g) => g.id === o.goalId);
+    if (!goal) continue;
+    const r = ev.goals.find((x) => x.goalId === o.goalId);
+    const own = failures.find((e) => e.text.includes(`"${goal.name}"`));
+    const onBranch = r?.branchId ? failures.find((e) => e.branchId === r.branchId) : undefined;
+    const reason = (scrub ? 'launch scrubbed' : undefined) ?? own?.text ?? (!r?.achievable ? r?.reason : undefined) ?? onBranch?.text ?? 'Goal not achieved; review the flight log';
+    out.set(o.goalId, reason);
+  }
+  return out;
 }

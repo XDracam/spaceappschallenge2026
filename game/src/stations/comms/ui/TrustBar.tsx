@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { StakeholderId } from '../model/types';
 import { TRUST_STRAINED, TRUST_STRONG } from '../data/mission';
-import { useComms } from './store';
+import { useConfirmedGame } from '../../../core/store';
 import { SH, STAKEHOLDER_ORDER } from './common';
 import { signed } from './format';
 
@@ -37,9 +37,10 @@ function band(v: number): 'strong' | 'neutral' | 'strained' {
 }
 
 export function TrustBar() {
+  const gameKey = useConfirmedGame(s => `${s.meta.missionId}|${s.meta.seed}|${s.meta.attempt}`);
   return (
     <section class="trustbar glass">
-      {STAKEHOLDER_ORDER.map((s) => <Meter key={s} id={s} />)}
+      {STAKEHOLDER_ORDER.map((s) => <Meter key={`${gameKey}|${s}`} id={s} />)}
     </section>
   );
 }
@@ -50,7 +51,15 @@ function useTween(target: number, ms = 600): number {
   const fromRef = useRef(target);
   const shownRef = useRef(target);
   shownRef.current = shown;
+  const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    if (reduced) { setShown(target); return; }
     fromRef.current = shownRef.current;
     if (fromRef.current === target) return;
     const t0 = performance.now();
@@ -63,19 +72,21 @@ function useTween(target: number, ms = 600): number {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [target]);
-  return shown;
+  }, [target, ms, reduced]);
+  return reduced ? target : shown;
 }
 
 function Meter({ id }: { id: StakeholderId }) {
-  const value = useComms((s) => s.trust[id] ?? 0);
+  const value = useConfirmedGame((s) => s.comms.trust[id] ?? 0);
   const shown = useTween(value);
   const prev = useRef(value);
+  const [notice, setNotice] = useState('');
   const [flash, setFlash] = useState<{ d: number; k: number } | null>(null);
   useEffect(() => {
     const d = Math.round(value - prev.current);
     prev.current = value;
     if (d === 0) return;
+    setNotice(`${SH[id].label} trust ${signed(d)}: ${Math.round(value)} of 100, ${band(value)}. ${EFFECT[id][band(value)]}.`);
     setFlash({ d, k: Date.now() });
     const t = setTimeout(() => setFlash(null), 1800);
     return () => clearTimeout(t);
@@ -86,18 +97,19 @@ function Meter({ id }: { id: StakeholderId }) {
   const barColor = b === 'strained' ? 'var(--err)' : meta.color;
   return (
     <div class={`meter ${b}`} style={{ '--c': meta.color } as Record<string, string>}>
+      <span class="comms-a11y-only" role="status" aria-atomic="true">{notice}</span>
       <div class="meter-row">
-        <span class="label">{meta.label}</span>
+        <span id={`trust-label-${id}`} class="label">{meta.label}</span>
         <span class="meter-state">{b === 'strong' ? 'strong' : b === 'strained' ? 'strained' : ''}</span>
         {flash && <span key={flash.k} class={`meter-delta ${flash.d > 0 ? 'up' : 'down'}`}>{signed(flash.d)}</span>}
         <span class="meter-val num" style={{ color: b === 'strained' ? 'var(--err)' : meta.color }}>{Math.round(shown)}</span>
       </div>
-      <div class="tbar">
+      <div class="tbar" role="meter" aria-labelledby={`trust-label-${id}`} aria-describedby={`trust-effect-${id}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(value)} aria-valuetext={`${Math.round(value)} of 100, ${b}`}>
         <i style={{ width: `${Math.max(0, Math.min(100, shown))}%`, background: barColor }} />
         <span class="tick" style={{ left: `${TRUST_STRAINED}%` }} />
         <span class="tick" style={{ left: `${TRUST_STRONG}%` }} />
       </div>
-      <div class={`meter-effect${b === 'neutral' ? '' : ' live'}`}>{EFFECT[id][b]}</div>
+      <div id={`trust-effect-${id}`} class={`meter-effect${b === 'neutral' ? '' : ' live'}`}>{EFFECT[id][b]}</div>
     </div>
   );
 }

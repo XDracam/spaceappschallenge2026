@@ -20,6 +20,7 @@ Start with the [current prototype](current-prototype.md) for implemented mission
 | --- | --- |
 | [Mission feasibility and four-station verification](playtests/2026-11-16-mission-feasibility.md) | All three missions and research-failure recovery completed; fixed-seed outcomes, budgets and actual network evidence |
 | [Finishing-pass implementation](notes/2026-11-16-post-submission-implementation.md) · [verification](playtests/2026-11-16-post-submission-verification.md) | All 36 audit dispositions, concrete browser/build evidence and preserved gameplay/media |
+| [Trailer-safe anti-slop pass](notes/2026-11-16-anti-slop-pass.md) · [verification](playtests/2026-11-16-anti-slop-verification.md) | Interaction, copy and internal cleanup while retaining the submitted trailer's station compositions |
 | [Submission reference](submission-reference.md) | Current/local delivery artifacts and unknown historical source revision |
 | [AI acknowledgement](ai-and-submission.md) | Human contribution, model/tool inventory and historical preparation checklist |
 | [Third-party credits](../THIRD_PARTY.md) | Dependencies, fonts, icons, media and source references |

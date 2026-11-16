@@ -238,7 +238,7 @@ export async function acceptReply(peerId: string, code: string): Promise<string 
     await hostNet.acceptReply(peerId, code);
     return null;
   } catch (e) {
-    return e instanceof CodeError ? e.message : 'Something went wrong with this code.';
+    return e instanceof CodeError ? e.message : 'The reply could not be connected. Copy the entire reply code from the player and try again. If it still fails, remove this invite and make a new one.';
   }
 }
 
@@ -322,7 +322,7 @@ async function joinWithInvite(code: string): Promise<void> {
   try {
     net = await ClientNetwork.join(code);
   } catch (e) {
-    setJoin({ status: 'idle', error: e instanceof CodeError ? e.message : 'This invite code could not be used.' });
+    setJoin({ status: 'idle', error: e instanceof CodeError ? e.message : 'The invite could not be opened. Paste the entire MC1- invite code from the host and try again. If it still fails, ask the host to make a new invite.' });
     return;
   }
   clientNet = net;

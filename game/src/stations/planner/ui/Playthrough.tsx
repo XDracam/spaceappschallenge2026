@@ -3,7 +3,7 @@ import { ResultRecoveryActions } from '../../../shell/ResultRecoveryActions';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { actions, uiStore, useEvaluation, usePlanner, useUi } from '../state/store';
 import { formatDay, formatDuration, formatMass, formatMoney } from '../model/units';
-import type { Evaluation, PlannerGame, PlaythroughResult } from '../model/types';
+import { goalFailureReasons } from '../result';
 import { allParts } from '../model/rocketUtils';
 import { CheckIcon, CloseIcon, PauseIcon, PlayIcon, branchColor, plural } from './common';
 import { playMissionResult } from '../../../audio/gameAudio';
@@ -13,24 +13,6 @@ const SPEEDS = [
   { dps: 60, label: '2×' },
   { dps: 180, label: '6×' },
 ];
-
-/** Why a goal failed in the playthrough: its own failure event, the plan's reason, or the failure on its branch. */
-function failReasons(game: PlannerGame, ev: Evaluation, result: PlaythroughResult): Map<string, string> {
-  const out = new Map<string, string>();
-  const failures = result.events.filter((e) => e.kind === 'failure');
-  const scrub = failures.find((e) => e.text.startsWith('Launch scrubbed'));
-  for (const o of result.goalOutcomes) {
-    if (o.success) continue;
-    const goal = game.mission.goals.find((g) => g.id === o.goalId);
-    if (!goal) continue;
-    const r = ev.goals.find((x) => x.goalId === o.goalId);
-    const own = failures.find((e) => e.text.includes(`"${goal.name}"`));
-    const onBranch = r?.branchId ? failures.find((e) => e.branchId === r.branchId) : undefined;
-    const reason = (scrub ? 'launch scrubbed' : undefined) ?? own?.text ?? (!r?.achievable ? r?.reason : undefined) ?? onBranch?.text ?? failures[0]?.text ?? 'Not reached';
-    out.set(o.goalId, reason);
-  }
-  return out;
-}
 
 export function PlaythroughOverlay() {
   const pt = useUi((u) => u.playthrough);
@@ -59,7 +41,7 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
   const logRef = useRef<HTMLUListElement>(null);
   const shown = pt.result.events.filter((e) => e.day <= pt.day + 1e-9);
   const finished = pt.finished;
-  const goalFails = [...failReasons(game, ev, pt.result)];
+  const goalFails = [...goalFailureReasons(game, ev, pt.result)];
 
   useEffect(() => {
     const el = logRef.current;
@@ -131,7 +113,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
   const ok = required.filter((o) => o.success).length;
   const failures = pt.result.events.filter((e) => e.kind === 'failure').length;
   const start = game.mission.startDateISO;
-  const reasons = failReasons(game, ev, pt.result);
+  const reasons = goalFailureReasons(game, ev, pt.result);
   const scrubbed = pt.result.events.some((e) => e.kind === 'failure' && e.text.startsWith('Launch scrubbed'));
   const notDelivered = allParts(game.rocket).filter((l) => l.part.state !== 'delivered').length;
   return (
@@ -142,7 +124,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
             <div class="tb-label">Mission result</div>
             <b class="result-title">{game.mission.name}</b>
           </div>
-          <button class="btn icon-btn ghost" title="Hide (the event log stays visible)" onClick={onHide}>
+          <button class="btn icon-btn ghost" title="Hide (the event log stays visible)" aria-label="Hide mission result" onClick={onHide}>
             <CloseIcon />
           </button>
         </div>
@@ -170,6 +152,12 @@ function ResultCard({ onHide }: { onHide: () => void }) {
             );
           })}
         </ul>
+        <details class="result-evidence">
+          <summary>Full flight log · {pt.result.events.length} events</summary>
+          <ol>{pt.result.events.map((event, index) => <li key={index}>
+            <time class="num">{formatDay(event.day, start)}</time> · {event.text}
+          </li>)}</ol>
+        </details>
         <div class="result-summary">
           <div class="kv"><span>Launch</span><span class="num">{formatDay(game.plan.launchDay, start)}</span></div>
           {!scrubbed && <div class="kv"><span>Mission end</span><span class="num">{formatDay(pt.result.endDay, start)} ({formatDuration(pt.result.endDay - game.plan.launchDay)})</span></div>}

@@ -46,28 +46,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 /* ------------------------------------------------------------------ lobby */
 .shell-lobby {
   position: fixed; inset: 0; overflow-y: auto;
-  background:
-    radial-gradient(1200px 700px at 15% -10%, rgba(42, 127, 255, 0.18), transparent 60%),
-    radial-gradient(900px 600px at 110% 110%, rgba(185, 140, 255, 0.12), transparent 60%),
-    radial-gradient(1.2px 1.2px at 12% 30%, rgba(255,255,255,.55), transparent 60%),
-    radial-gradient(1px 1px at 72% 18%, rgba(255,255,255,.45), transparent 60%),
-    radial-gradient(1.4px 1.4px at 38% 78%, rgba(255,255,255,.4), transparent 60%),
-    radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,.5), transparent 60%),
-    radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,.35), transparent 60%),
-    #05080f;
+  background: #040a10;
+  --sh-accent: #b9edff; --sh-muted: #a4bdcc; --sh-border: #344955;
   scrollbar-width: thin; scrollbar-color: rgba(140, 180, 230, 0.25) transparent;
 }
-.shell-lobby-inner { max-width: 1120px; margin: 0 auto; padding: 40px 24px 48px; }
+.shell-lobby-inner { position: relative; max-width: 1480px; margin: 0 auto; padding: 40px clamp(26px, 5vw, 80px) 48px; }
 .shell-lobby h1 { font-family: var(--sh-display); font-size: 30px; font-weight: 700; letter-spacing: .02em; margin: 0; line-height: 1.1; }
 .shell-lobby h2 { font-family: var(--sh-display); font-size: 17px; font-weight: 600; margin: 0; letter-spacing: .01em; }
 .shell-lobby p { margin: 6px 0 10px; }
 
-.shell-brand { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+.shell-brand { display: flex; align-items: center; gap: 20px; margin-bottom: 58px; flex-wrap: wrap; }
 .shell-brand p { margin: 2px 0 0; }
-.shell-logo { width: 44px; height: 44px; border-radius: 50%; flex: none;
-  background: radial-gradient(circle at 35% 35%, #9fe6ff, #2a7fff 55%, #0b1c3d 75%);
-  box-shadow: var(--sh-glow), inset -6px -6px 12px rgba(0,0,0,.4); position: relative; }
-.shell-logo::after { content: ''; position: absolute; inset: -7px -12px; border: 1.5px solid rgba(63,199,255,.55); border-radius: 50%; transform: rotate(-20deg) scaleY(.38); }
 .shell-brand .shell-chip { margin-left: auto; }
 
 .shell-lead { font-size: 15px; max-width: 720px; color: #c9d7ee; }
@@ -86,14 +75,6 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .shell-input:focus, .shell-code:focus { border-color: rgba(63,199,255,.6); box-shadow: 0 0 0 3px rgba(63,199,255,.15); }
 .shell-input { font-size: 14px; }
 
-.shell-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-.shell-choice {
-  display: flex; flex-direction: column; gap: 6px; text-align: left; cursor: pointer; padding: 18px 20px;
-  background: var(--sh-glass); border: 1px solid var(--sh-border); border-radius: 16px; color: var(--sh-text);
-  backdrop-filter: blur(14px); font: inherit; transition: border-color var(--sh-t), box-shadow var(--sh-t), transform var(--sh-t);
-}
-.shell-choice:hover { border-color: rgba(63,199,255,.5); box-shadow: var(--sh-glow); transform: translateY(-1px); }
-.shell-choice:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 2px; }
 .shell-choice-title { font-family: var(--sh-display); font-size: 18px; font-weight: 600; color: var(--sh-accent); }
 .shell-choice-text { color: #b6c4dc; }
 
@@ -215,7 +196,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .shell-join .shell-field-grow { flex: 1 1 240px; max-width: 420px; }
 .shell-room-input { font-family: var(--sh-display); font-size: 22px; font-weight: 600; letter-spacing: .14em;
   text-transform: uppercase; padding: 8px 14px; }
-.shell-room-input::placeholder { color: rgba(135,150,176,.45); letter-spacing: .14em; }
+.shell-room-input::placeholder { color: #9bb3c2; letter-spacing: normal; text-transform: none; font: 400 14px/1.45 Inter, system-ui, sans-serif; }
 
 .shell-codebox { display: flex; gap: 8px; align-items: stretch; }
 .shell-code { flex: 1; min-width: 0; resize: none; font: 11.5px/1.35 ui-monospace, 'Cascadia Mono', Consolas, monospace; word-break: break-all; }
@@ -281,7 +262,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 /* ---------------------------------------------------------- mission result */
 .shell-result { position: fixed; inset: 0; z-index: 900; display: grid; place-items: center;
   background: rgba(3, 6, 12, 0.55); backdrop-filter: blur(4px); }
-.shell-result-card { width: min(560px, calc(100vw - 32px)); padding: 22px 24px; border-radius: 18px;
+.shell-result-card { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain; padding: 22px 24px; border-radius: 18px;
   background: var(--sh-glass-strong); border: 1px solid var(--sh-border); box-shadow: var(--sh-glow), 0 20px 60px rgba(0,0,0,.5); }
 .shell-result-title { font-family: var(--sh-display); font-size: 24px; margin: 4px 0 12px; }
 .shell-result-goals, .shell-result-events { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
@@ -291,7 +272,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .shell-result-events li { font-size: 12px; color: var(--sh-muted); }
 .shell-result-stats { display: flex; gap: 18px; flex-wrap: wrap; color: var(--sh-muted); padding-top: 10px; border-top: 1px solid var(--sh-line); }
 .shell-result-stats b { color: var(--sh-text); }
-.shell-result-foot { display: flex; justify-content: flex-end; margin-top: 14px; }
+.shell-result-foot { display: flex; justify-content: flex-end; margin-top: 14px; gap: 10px; flex-wrap: wrap; align-items: center; }
+.shell-result-evidence { margin: 12px 0; font-size: 12px; color: var(--sh-muted); }
+.shell-result-evidence summary { cursor: pointer; }
+.shell-result-evidence ol { padding-left: 20px; display: grid; gap: 6px; }
 .shell-result-chip { position: fixed; right: 16px; bottom: 16px; z-index: 900; padding: 8px 14px; border-radius: 999px;
   background: rgba(12, 19, 33, 0.9); border: 1px solid rgba(110, 190, 255, 0.3); color: #e8f1ff; cursor: pointer;
   font: 600 12px 'Exo 2', system-ui, sans-serif; letter-spacing: .04em; }
@@ -305,7 +289,6 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
   background: #302515; color: #ffe2a8; border: 1px solid #ad813c;
   border-radius: 8px; font: 14px/1.4 Inter, system-ui, sans-serif;
 }
-.shell-result-foot { gap: 10px; flex-wrap: wrap; align-items: center; }
 
 /* Orbital title screen; setup and station styling stays scoped separately. */
 .shell-lobby:has(.title-screen) { background: #040a10; }
@@ -339,7 +322,6 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .title-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .title-artwork { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .title-scene::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #040a1026, transparent 65%); }
-.shell-start-setup { max-width: 900px; }
 .shell-start-setup h2[tabindex]:focus { outline: none; }
 @media (min-width: 1500px) { .title-content { padding-top: 10vh; } .title-footer { padding-bottom: 30px; } }
 @media (max-width: 900px) {
@@ -372,21 +354,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #05080f; col
 .shell-goal-optional { margin-left: 8px; padding: 0 6px; border: 1px solid var(--sh-muted); border-radius: 8px; color: var(--sh-muted); font-style: normal; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* Pre-game inherits the title screen's visual language. */
-.shell-lobby { background: #040a10; --sh-accent: #b9edff; --sh-muted: #a4bdcc; --sh-border: #344955; }
 .pregame-backdrop { position: fixed; inset: 0; pointer-events: none; }
 .pregame-backdrop .title-artwork { opacity: .55; object-position: center top; }
 .pregame-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #040a10fa 0%, #040a10ed 45%, #040a1073), linear-gradient(0deg, #040a10 0%, transparent 70%); }
 .shell-lobby:has(.title-screen) > .pregame-backdrop { display: none; }
-.shell-lobby-inner:not(:has(.title-screen)) { position: relative; max-width: 1480px; padding: 40px clamp(26px, 5vw, 80px) 48px; }
-.shell-lobby .shell-brand { margin-bottom: 58px; gap: 20px; flex-wrap: wrap; }
 .shell-lobby .shell-brand h1 { font-size: 21px; letter-spacing: -.025em; line-height: 1; }
-.shell-lobby .shell-brand .shell-chip { margin-left: auto; }
 .shell-lobby .shell-chip { border-radius: 3px; background: #07131db3; border-color: #344955; color: #b8cdd8; }
 .shell-lobby .shell-chip-accent { color: #b9edff; }
 .shell-lobby .shell-chip.is-connected { color: #69e1b0; border-color: #3b7162; }
 .shell-lobby .shell-chip.is-failed { color: #ff9da5; border-color: #92505a; }
 .shell-lobby .pregame-title, .shell-lobby .pregame-intro h2 { font: 700 clamp(42px, 4.8vw, 68px)/1.02 var(--sh-display); letter-spacing: -.035em; margin: 0 0 24px; color: #f0f5f6; text-wrap: balance; }
-.shell-start-setup { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr); gap: 0 clamp(40px, 6vw, 100px); max-width: none; }
+.shell-start-setup { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr); gap: 0 clamp(40px, 6vw, 100px); }
 .shell-start-setup > .shell-brand { grid-column: 1 / -1; }
 .shell-lobby .pregame-intro > p { font-size: 20px; line-height: 1.5; color: #c0d3de; margin: 0 0 40px; }
 .shell-lobby .pregame-intro .pregame-note { font-size: 13px; margin: 22px 0 0; color: #a4bdcc; }

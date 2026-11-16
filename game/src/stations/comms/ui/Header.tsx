@@ -71,7 +71,7 @@ function BudgetChip() {
           <span class={tone ? `${tone}-text` : ''}>{formatMoney(left)}</span>
           <span class="muted"> of {formatMoney(total)}</span>
         </span>
-        <div class="budget-bar"><div class="bb-fill" style={{ width: `${Math.min(100, ratio * 100)}%` }} /></div>
+        <div class="budget-bar" role="meter" aria-label="Available shared budget" aria-valuemin={0} aria-valuemax={Math.max(1, total)} aria-valuenow={Math.max(0, Math.min(total, left))} aria-valuetext={`${formatMoney(left)} available of ${formatMoney(total)} funding`}><div class="bb-fill" style={{ width: `${Math.min(100, ratio * 100)}%` }} /></div>
       </div>
     </div>
   );

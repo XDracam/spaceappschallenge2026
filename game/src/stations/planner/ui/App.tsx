@@ -118,7 +118,6 @@ function SidePanel() {
   const open = useLocalUi((s) => s.panelOpen);
   const phase = usePlanner((g) => g.phase);
   const locked = phase !== 'planning';
-  // No Procurement panel on the planner station (D-006); 'tasks' and 'dev' fall back to Rocket.
   // Versions only while the Advanced switch is on.
   const advanced = useAdvanced();
   const shown = tab === 'versions' && advanced ? 'versions' : 'rocket';
@@ -126,7 +125,7 @@ function SidePanel() {
     <aside id="planner-side-panel" class={`side glass${open ? '' : ' closed'}`} aria-hidden={!open}>
       <div class="side-head">
         <h2 class="panel-title">{TAB_TITLE[shown]}</h2>
-        <button class="round-btn small" title="Close panel" onClick={() => localUi.update((s) => { s.panelOpen = false; })}>
+        <button class="round-btn small" title="Close panel" aria-label="Close Rocket or Versions panel" onClick={() => localUi.update((s) => { s.panelOpen = false; })}>
           <CloseIcon />
         </button>
       </div>

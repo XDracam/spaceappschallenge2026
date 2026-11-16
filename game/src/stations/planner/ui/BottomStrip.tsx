@@ -82,7 +82,7 @@ function DvCard() {
             const stages = m.burns.filter((b) => b.dvMs > 0.5).map((b) => `${stageName(b.stageId)} ${formatDv(b.dvMs)}`);
             return (
               <button key={m.maneuverId}
-                aria-pressed={m.maneuverId === selManeuver} class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${tiny ? ' zero' : ''}`}
+                aria-label={`Edit ${m.label}: ${formatDv(m.dvRequiredMs)}${m.ok ? '' : ' — fails here'}`} aria-pressed={m.maneuverId === selManeuver} class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${tiny ? ' zero' : ''}`}
                 style={{ width: tiny ? undefined : `${w}%`, '--seg': branchColor(idx) }}
                 title={`${m.label}: ${formatDv(m.dvRequiredMs)}${m.ok ? '' : ' — fails here'}${stages.length ? `\nPaid by ${stages.join(', ')}` : ''}`}
                 onClick={() => openManeuverEdit(m.maneuverId, m.branchId)}>
@@ -208,20 +208,20 @@ function GoalsCard() {
           const branch = game.plan.branches.find((b) => b.id === r?.branchId);
           if (na) {
             return (
-              <li key={g.id} class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${reason}`} role="button" tabIndex={0} onClick={() => openGoals(g.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGoals(g.id); } }}>
+              <li key={g.id}><button type="button" class={`goal na ${notPlanned ? 'not-planned' : 'blocked'}${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${reason}`} onClick={() => openGoals(g.id)}>
                 <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional">Bonus</em> : null}</span>
                 <span class="goal-status">{notPlanned ? 'Not planned' : 'Blocked'}</span>
                 <span class="goal-reason">{reason}</span>
-              </li>
+              </button></li>
             );
           }
           const cls = chanceClass(c);
           return (
-            <li key={g.id} class={`goal${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`} role="button" tabIndex={0} onClick={() => openGoals(g.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGoals(g.id); } }}>
+            <li key={g.id}><button type="button" class={`goal${g.optional ? ' is-optional' : ''}${g.optional && !all[i - 1]?.optional ? ' first-optional' : ''}`} title={`${g.name}: ${pct(c)} success chance${branch ? ` · reached by ${branchDisplayName(game, branch)}` : ''}`} onClick={() => openGoals(g.id)}>
               <span class="goal-name">{g.name}{g.optional ? <em class="goal-optional">Bonus</em> : null}</span>
               <span class="goal-bar"><span class={`gb-fill ${cls}`} style={{ width: `${Math.max(2, c * 100)}%` }} /></span>
               <span class={`goal-chance num ${cls}`}>{pct(c)}</span>
-            </li>
+            </button></li>
           );
         })}
       </ul>

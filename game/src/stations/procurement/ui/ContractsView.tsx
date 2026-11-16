@@ -102,7 +102,7 @@ export function ContractInspector() {
           <dd>{fmtDate(arrival)}{timing.needs[0]?.neededAt !== undefined && k.status !== 'cancelled' ? ` · ${marginText(timing.needs[0].margin)}` : ''}</dd>
           <dt>Reliability</dt><dd>{fmtPct(contractReliability(k))}{k.tested ? ` · tested by Science (was ${fmtPct(o.reliability)})` : k.status === 'delivered' ? ' · Science can test it' : k.status === 'active' ? testable(v, k.expectedAt) ? ' · arrives in time for a Science test' : ` · too late for a ${testDurationText()} Science test` : ''}</dd>
           <dt>Price</dt><dd>{fmtM(o.priceM)}{k.status === 'cancelled' ? ` · ${fmtM(k.refundM ?? 0)} came back` : ''}{(k.amendments ?? []).length ? ` · fees ${fmtM((k.amendments ?? []).reduce((n, a) => n + a.feeM, 0))}` : ''}</dd>
-          <dt>Signed</dt><dd>{fmtDate(k.signedAt)} · {o.source === 'catalogue' ? 'catalogue' : o.source === 'call' ? 'tender' : 'partner offer from Comms'}</dd>
+          <dt>Signed</dt><dd>{fmtDate(k.signedAt)} · {o.source === 'catalogue' ? 'catalogue' : o.source === 'call' ? 'Call offer' : 'partner offer from Comms'}</dd>
         </dl>
         {allocs.filter(a => !a.taskId || a.taskId !== taskAlloc?.taskId).map((a) => {
           const t = v.market.tasks.find((x) => x.id === a.taskId);

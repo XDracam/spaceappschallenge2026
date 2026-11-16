@@ -456,7 +456,10 @@ function RoomPlayerRow({ p, name, seats }: { p: RoomPlayer; name?: string; seats
         <span class="shell-muted">{where}</span>
         <span class="shell-spacer" />
         {p.status !== 'connecting' && (
-          <button class="shell-link" onClick={() => kickRoomPlayer(p.peerId)} title={p.status === 'connected' ? 'Disconnect this player' : 'Remove from the list'}>
+          <button class="shell-link" onClick={async () => {
+            if (p.status === 'connected' && !await requestConfirmation(`Disconnect ${name || 'this player'}? Their station will become free. They can rejoin with the room code.`, 'Disconnect player')) return;
+            kickRoomPlayer(p.peerId);
+          }} title={p.status === 'connected' ? 'Disconnect this player' : 'Remove from the list'}>
             {p.status === 'connected' ? 'Disconnect' : 'Remove'}
           </button>
         )}
@@ -491,7 +494,10 @@ function InviteCard({ inv, index, name, seats }: { inv: InviteInfo; index: numbe
         <b>{inv.status === 'connected' || inv.status === 'left' ? who : `Invite ${index}`}</b>
         <span class={`shell-chip is-${inv.status}`}>{STATUS[inv.status]}</span>
         <span class="shell-spacer" />
-        <button class="shell-link" onClick={() => cancelInvite(inv.peerId)} title={inv.status === 'connected' ? 'Disconnect this player' : 'Remove this invite'}>
+        <button class="shell-link" onClick={async () => {
+          if (inv.status === 'connected' && !await requestConfirmation(`Disconnect ${who}? Their station will become free. Make a new manual invite if they need to rejoin.`, 'Disconnect player')) return;
+          cancelInvite(inv.peerId);
+        }} title={inv.status === 'connected' ? 'Disconnect this player' : 'Remove this invite'}>
           {inv.status === 'connected' ? 'Disconnect' : 'Remove'}
         </button>
       </div>

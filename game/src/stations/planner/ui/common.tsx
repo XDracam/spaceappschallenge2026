@@ -4,7 +4,7 @@ import { useEffect } from 'preact/hooks';
 import type { BodyId, Branch, Evaluation, FlightState, PlannerGame, ManeuverResult, PartState, Vec2 } from '../model/types';
 import { onGameReset } from '../../../core/store';
 import { createStore, useStore } from '../../../core/createStore';
-import { getPlanner, uiId, uiStore } from '../state/store';
+import { getPlanner, uiId, uiStore, type SideTab } from '../state/store';
 import { bodyById } from '../data/bodies';
 import { allParts, findPart } from '../model/rocketUtils';
 import { formatMoneyM } from '../../../shared/format';
@@ -55,20 +55,8 @@ export function useLocalUi<S>(selector: (s: LocalUi) => S): S {
   return useStore(localUi, selector);
 }
 
-/** Open the right panel on a tab; clicking the tab that is already open collapses the panel. */
-export function toggleTab(tab: 'rocket' | 'tasks' | 'versions') {
-  const open = localUi.get().panelOpen;
-  const cur = uiStore.get().sideTab;
-  if (open && cur === tab) {
-    localUi.update((s) => { s.panelOpen = false; });
-    return;
-  }
-  uiStore.update((u) => { u.sideTab = tab; });
-  localUi.update((s) => { s.panelOpen = true; });
-}
-
 /** Open the right panel on a tab (never closes it; the panel's × does that). */
-export function openTab(tab: 'rocket' | 'tasks' | 'versions') {
+export function openTab(tab: SideTab) {
   uiStore.update((u) => { u.sideTab = tab; });
   localUi.update((s) => { s.panelOpen = true; });
 }

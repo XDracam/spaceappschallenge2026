@@ -56,6 +56,8 @@ export function Avatar({ character, size = 'md' }: { character?: Character; size
       {portrait ? (
         <img
           src={`${import.meta.env.BASE_URL}portraits/${portrait}`}
+          width={384}
+          height={384}
           alt=""
           title="AI-generated portrait"
           draggable={false}

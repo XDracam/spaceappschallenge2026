@@ -45,6 +45,7 @@ export function Briefing() {
   const phase = usePlanner((g) => g.phase);
   const launchDay = usePlanner((g) => g.plan.launchDay);
   const insets = useLocalUi((s) => s.insets);
+  const hasRoute = usePlanner(g => g.plan.branches.some(branch => branch.maneuvers.length > 0));
   const budgetM = usePlanner((g) => g.budget.totalM);
   const root = useRef<HTMLElement>(null);
   const clockRunning = useClock(c => c.running);
@@ -56,7 +57,6 @@ export function Briefing() {
   return (
     <div class="briefing-wrap" style={{ top: `${insets.top}px`, right: `${insets.right}px`, bottom: `${insets.bottom}px`, left: `${insets.left}px` }}>
       <section ref={root} tabIndex={-1} class="briefing glass strong" role="dialog" aria-labelledby="briefing-title">
-        <div class="tb-label">Mission briefing</div>
         <h2 id="briefing-title" class="briefing-title">Mission: {mission.name}</h2>
         <p>{mission.briefing}</p>
         <p>
@@ -67,6 +67,9 @@ export function Briefing() {
         <ul class="briefing-goals">
           {mission.goals.filter((g) => !g.optional).map((g) => <li key={g.id}>{g.name}</li>)}
         </ul>
+        <p><b>{hasRoute ? 'First action: review the route and Issues card.' : 'First action: add Launch from Earth to your route.'}</b> You can revise the route and rocket in any order.</p>
+        <details class="briefing-details">
+          <summary>Optional goals, mission details &amp; how to play</summary>
         {mission.goals.some((g) => g.optional) && (
           <>
             <div class="briefing-subhead">Optional · bonus points</div>
@@ -78,7 +81,7 @@ export function Briefing() {
         )}
         {mission.ideas?.length ? (
           <>
-            <div class="tb-label">New in this mission</div>
+            <h3 class="briefing-subhead">New in this mission</h3>
             <ul class="briefing-ideas">
               {mission.ideas.map((t) => <li key={t}>{t}</li>)}
             </ul>
@@ -90,12 +93,13 @@ export function Briefing() {
           <li>Order every part before launch (Rocket → Order parts).</li>
           <li>At the launch date the mission flies once — watch what happens.</li>
         </ol>
+        </details>
         <p class="briefing-clock">
           {clockRunning ? <>The game clock runs in real time: <b>1 real minute = {monthsPerMinute} month{monthsPerMinute === 1 ? '' : 's'}</b>.</> : <>The agency calendar is paused.</>} Launch is set
           to <b class="num">{formatDay(launchDay, start)}</b>{clockRunning ? ` (≈ ${minutes} minute${minutes === 1 ? '' : 's'} from now).` : '. The countdown resumes when the host starts the calendar.'}
         </p>
         <div class="briefing-foot">
-          <button class="pill primary" autoFocus onClick={closeBriefing}>Start planning</button>
+          <button class="pill primary" autoFocus onClick={closeBriefing}>Plan route</button>
         </div>
       </section>
     </div>

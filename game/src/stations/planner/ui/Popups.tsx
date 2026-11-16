@@ -348,7 +348,7 @@ function ManeuverEdit({ maneuverId, screen }: { maneuverId: string; screen: Vec2
             </button>
           )}
           <div class="spacer" />
-          <button class="round-btn small danger" title={isLaunch ? 'Delete the launch (removes the whole plan)' : 'Delete this step'}
+          <button class="round-btn small danger" title={isLaunch ? 'Delete the launch (removes the whole plan)' : 'Delete this step'} aria-label={isLaunch ? 'Delete the launch (removes the whole plan)' : 'Delete this step'}
             onClick={() => setConfirmDelete(true)}>
             <TrashIcon />
           </button>

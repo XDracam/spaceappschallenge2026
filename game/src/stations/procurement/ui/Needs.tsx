@@ -47,11 +47,11 @@ function ResearchChip({ v, c }: { v: PView; c: Criterion }) {
   return <span class="pr-chip warn">{waiting ? 'Beyond research · Science not started' : `Beyond research · Science until ${formatCalendarDate(dayToDate(Math.max(...(etas as number[]))), { year: false })}`}</span>;
 }
 
-/** A partner or tender offer waiting for this need: its terms are in the need's own offer list. */
+/** A partner or Call offer waiting for this need: its terms are in the need's own offer list. */
 function OfferChip({ v, t, c }: { v: PView; t: Task; c: Criterion }) {
   const extra = offersForCriterion(v, t, c).filter((a) => a.offer.source !== 'catalogue' && !a.unavailable && a.fits);
   if (!extra.length) return null;
-  return <span class="pr-chip good">{extra.length === 1 ? `${extra[0].offer.source === 'comms' ? 'Partner' : 'Tender'} offer · ${fmtM(extra[0].totalPriceM)}` : `${extra.length} new offers`}</span>;
+  return <span class="pr-chip good">{extra.length === 1 ? `${extra[0].offer.source === 'comms' ? 'Partner' : 'Call'} offer · ${fmtM(extra[0].totalPriceM)}` : `${extra.length} new offers`}</span>;
 }
 
 export function Needs({ onClose }: { onClose?: () => void } = {}) {

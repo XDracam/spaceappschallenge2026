@@ -20,8 +20,10 @@ export function StationSwitcher() {
   const closeReason = useSession((s) => s.join.closeReason);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const disconnectRef = useRef<HTMLDivElement>(null);
   useDialog({ open: role === 'client' && !connected, root: disconnectRef });
+  useDialog({ open: open && !!station && !(role === 'client' && !connected), root: panelRef, modal: false, onClose: () => setOpen(false) });
 
   // If someone else got this seat first (our optimistic claim was rejected), go back
   // to the seat we hold, or to the lobby seat picker.
@@ -37,12 +39,9 @@ export function StationSwitcher() {
     const onDown = (e: PointerEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     addEventListener('pointerdown', onDown, true);
-    addEventListener('keydown', onKey);
     return () => {
       removeEventListener('pointerdown', onDown, true);
-      removeEventListener('keydown', onKey);
     };
   }, [open]);
 
@@ -70,7 +69,7 @@ export function StationSwitcher() {
   return (
     <div class="shell-switcher" ref={rootRef} style={{ '--seat-c': info.color }}>
       {open && (
-        <div class="shell-pop" role="dialog" aria-label="Stations and players">
+        <div id="station-switcher-panel" ref={panelRef} class="shell-pop" role="dialog" aria-label="Stations and players">
           <div class="shell-pop-row shell-pop-status">
             <span class={`shell-dot is-${role === 'client' ? 'client' : role}`} />
             <span>{status}</span>
@@ -124,7 +123,7 @@ export function StationSwitcher() {
           </div>
         </div>
       )}
-      <button class={`shell-pill${open ? ' is-open' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open} title="Stations, players and connection">
+      <button class={`shell-pill${open ? ' is-open' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="station-switcher-panel" aria-haspopup="dialog" title="Stations, players and connection">
         <span class="shell-seat-bar" />
         <span class="shell-pill-name">{info.label}</span>
         <span class="shell-pill-seats" aria-label={`${players} of 4 stations taken`}>

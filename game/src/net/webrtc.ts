@@ -10,22 +10,12 @@
 import type { ClientToHost, ClientTransport, HostToClient, HostTransport } from '../core/protocol';
 import { COMPATIBILITY_ID } from '../core/build';
 import { FrameReceiver, frames } from './framing';
+import { listeners } from './listeners';
 import { CodeError, decodeCode, encodeCode } from './codes';
 
 export const ICE_SERVERS: RTCIceServer[] = [{ urls: 'stun:stun.l.google.com:19302' }];
 const ICE_GATHER_TIMEOUT_MS = 5000;
 const CONNECT_TIMEOUT_MS = 30000;
-/** Data channels reliably carry ~64 KB per message; JSON chars ≤ 3 UTF-8 bytes each. */
-
-type Listener<A extends unknown[]> = (...args: A) => void;
-function listeners<A extends unknown[]>() {
-  const set = new Set<Listener<A>>();
-  return {
-    add(cb: Listener<A>) { set.add(cb); return () => { set.delete(cb); }; },
-    emit(...args: A) { for (const cb of [...set]) { try { cb(...args); } catch (e) { console.error('[net]', e); } } },
-    get size() { return set.size; },
-  };
-}
 
 function randomId(prefix: string): string {
   const b = crypto.getRandomValues(new Uint8Array(6));
@@ -57,9 +47,9 @@ class PeerLink {
   private chunkCounter = 0;
   isOpen = false;
   isClosed = false;
-  readonly opened = listeners<[]>();
-  readonly message = listeners<[unknown]>();
-  readonly closed = listeners<[reason: 'bye' | 'lost']>();
+  readonly opened = listeners<[]>('[net]');
+  readonly message = listeners<[unknown]>('[net]');
+  readonly closed = listeners<[reason: 'bye' | 'lost']>('[net]');
 
   constructor() {
     this.pc.addEventListener('connectionstatechange', () => {
@@ -140,11 +130,11 @@ export interface InviteInfo {
 export class HostNetwork implements HostTransport {
   private links = new Map<string, PeerLink>();
   private infos = new Map<string, InviteInfo>();
-  private readonly msg = listeners<[string, ClientToHost]>();
-  private readonly join = listeners<[string]>();
-  private readonly leave = listeners<[string]>();
+  private readonly msg = listeners<[string, ClientToHost]>('[net]');
+  private readonly join = listeners<[string]>('[net]');
+  private readonly leave = listeners<[string]>('[net]');
   /** Fires whenever an invite's status changes (for the lobby UI). */
-  readonly changed = listeners<[]>();
+  readonly changed = listeners<[]>('[net]');
   private onPageHide = () => this.close();
 
   constructor() {
@@ -266,11 +256,11 @@ export type ClientStatus = 'creating' | 'waiting' | 'connected' | 'failed' | 'cl
 /** Player side: one link to the host. Implements core's ClientTransport. */
 export class ClientNetwork implements ClientTransport {
   private link = new PeerLink();
-  private readonly msg = listeners<[HostToClient]>();
-  private readonly closeL = listeners<[]>();
+  private readonly msg = listeners<[HostToClient]>('[net]');
+  private readonly closeL = listeners<[]>('[net]');
   /** Messages that arrived before anyone listened (welcome + snapshot race). */
   private early: HostToClient[] = [];
-  readonly changed = listeners<[]>();
+  readonly changed = listeners<[]>('[net]');
   status: ClientStatus = 'creating';
   peerId = '';
   replyCode = '';

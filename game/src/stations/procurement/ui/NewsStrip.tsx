@@ -8,13 +8,13 @@ export function NewsStrip() {
   const news = useNews(40);
   const open = useUi((u) => u.newsOpen);
   const status = useUi((u) => u.status);
-  const latest = news.slice(0, 2);
+  const latest = status ? [] : news.slice(0, 2);
   return (
     <footer class="pr-news">
       <button type="button" class="pr-news-toggle" aria-expanded={open} onClick={() => setUi({ newsOpen: !open })}>
         News <span class="pr-nav-count">{news.length || ''}</span>
       </button>
-      <div class="pr-news-line">
+      <div class={`pr-news-line${status ? ' has-status' : ''}`} tabIndex={status ? 0 : undefined}>
         <span class="pr-status" role="status" aria-atomic="true">{status}</span>
         {latest.map((n) => (
           <span key={n.id} class="pr-news-item"><span class="pr-news-meta">{fmtDate(n.day)} · {FROM[n.from] ?? n.from}</span> {n.text}</span>

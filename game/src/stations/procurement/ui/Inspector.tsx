@@ -3,7 +3,7 @@ import { formatCalendarDate } from '../../../shared/format';
 // fit check against a need, or the focused need with ranked suggestions.
 import type { Contract, Criterion, DeliveryOptionId, Offer, OrderDraft, Task } from '../../../core/model';
 import { contractReliability } from '../../../core/model';
-import { RESOURCES, RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
+import { RESOURCE_BY_ID, offersForResource } from '../data/catalogue';
 import { SUPPLIER_BY_ID } from '../data/suppliers';
 import { procurementActions } from '../logic';
 import {
@@ -17,7 +17,7 @@ import { testCounts, testDays } from '../../science/model/tests';
 import { Art } from './Art';
 import { focusedNeed, summarize } from './Catalogue';
 import { coverageText, criterionSummary } from './Needs';
-import { CATEGORIES, parseTarget, setUi, targetKey, useP, useUi } from './uiState';
+import { parseTarget, setUi, submitAction, targetKey, useP, useUi } from './uiState';
 import { ContractInspector } from './ContractsView';
 
 /** Arrives early enough for Science to test the part before launch (a test halves its risk of failure). */
@@ -44,7 +44,7 @@ export function OfferRow({ a, selected, suggested, onClick, showName }: {
       </span>
       <span class="pr-offer-meta">
         {showName ? a.offer.supplierName : sup?.trait ?? ''}
-        {a.offer.source !== 'catalogue' ? <span class="pr-chip">{a.offer.source === 'call' ? 'Tender' : 'Partner'}</span> : null}
+        {a.offer.source !== 'catalogue' ? <span class="pr-chip">{a.offer.source === 'call' ? 'Call offer' : 'Partner'}</span> : null}
         {suggested ? <span class="pr-chip good">Suggested</span> : null}
       </span>
       <span class="pr-offer-facts">
@@ -124,8 +124,8 @@ export function BudgetAfter({ costM, task, crit }: { costM: number; task?: Task;
 function ResourceInspector() {
   const v = useP();
   const u = useUi((x) => x);
-  const kinds = CATEGORIES.find((c) => c.id === u.category)?.kinds ?? [];
-  const r = RESOURCE_BY_ID[u.resourceId ?? ''] ?? RESOURCES.find((x) => !kinds.length || kinds.includes(x.partKind)) ?? RESOURCES[0];
+  const r = RESOURCE_BY_ID[u.resourceId ?? ''];
+  if (!r) return <div class="pr-empty"><h3>Choose a Resource or need</h3><p>Select a mission need to compare fitting Offers, or a catalogue Resource to inspect its terms.</p></div>;
   const sum = summarize(v, r);
   const candidates = openTasks(v).flatMap((t) => t.criteria.filter((c) => sameKind(r, c)).map((c) => ({ t, c })));
   // Need: explicit choice, else the focused need, else the first uncovered fitting need.
@@ -155,7 +155,7 @@ function ResourceInspector() {
   const quote = quoteOrder(v, draft);
   const switchQ = old ? quoteReplacement(v, old.id, draft) : undefined;
   const sameAsOld = !!old && old.offerSnapshot.id === selected.offer.id;
-  const block = !task ? (draftFocus ? 'The Planner has not ordered this part yet.' : 'No ordered mission need uses this part.')
+  const block = !task ? (draftFocus ? 'The Planner has not ordered this Resource yet.' : 'No ordered mission need uses this Resource.')
     : delivered ? 'This need is covered.'
     : sameAsOld ? 'This is the contracted offer.'
     : switchQ ? switchQ.unavailable : quote.unavailable || quote.failures[0] || '';
@@ -212,21 +212,21 @@ function ResourceInspector() {
           </div>
         ) : null}
         {!task ? null : old && !sameAsOld && !delivered ? (
-          <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
+          <button type="button" class="pr-btn primary wide" disabled={!!block} aria-describedby={block ? "pr-order-block" : undefined} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
             Review switch · {fmtM(switchQ!.order.totalM)}
           </button>
         ) : (
-          <button type="button" class="pr-btn primary wide" disabled={!!block} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
+          <button type="button" class="pr-btn primary wide" disabled={!!block} aria-describedby={block ? "pr-order-block" : undefined} onClick={() => reviewOffer(v, selected, task!, crit!, delivery)}>
             Review order · {fmtM(quote.totalM)}
           </button>
         )}
-        {block ? <p class="pr-note center warn">{block}</p> : <BudgetAfter costM={switchQ ? switchQ.netM : quote.totalM} task={task} crit={crit} />}
+        {block ? <p id="pr-order-block" class="pr-note center warn">{block}</p> : <BudgetAfter costM={switchQ ? switchQ.netM : quote.totalM} task={task} crit={crit} />}
       </div>
     </>
   );
 }
 
-/** A need still beyond research: wait for Science, or tender now. Both routes with their dates, prices and odds. */
+/** A need still beyond research: wait for Science, or open a Call now. Both routes with their dates, prices and odds. */
 function BuyOrDevelop({ task, crit }: { task: Task; crit: Criterion }) {
   const v = useP();
   const keys = beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research);
@@ -247,11 +247,11 @@ function BuyOrDevelop({ task, crit }: { task: Task; crit: Criterion }) {
       <dl class="pr-facts">
         <dt>Wait for Science</dt>
         <dd>{researched === undefined ? 'Science has not started it' : `research ends ${fmtDate(researched)}`}{afterResearch !== undefined ? <> · arrives ≈ {fmtDate(afterResearch)}{afterResearch > task.neededAt ? <span class="bad"> · late</span> : null} · {fmtM(fastest!.totalPriceM)} · {fmtPct(fastest!.offer.reliability)}</> : null}</dd>
-        {tender ? <><dt>Tender now</dt><dd>offers {fmtDate(call.closesAt)} · arrives ≈ {fmtDate(tender.expectedAt)}{tender.expectedAt > task.neededAt ? <span class="bad"> · late</span> : null} · ≈ {fmtM(tender.priceM)} · {fmtPct(tender.offer.reliability)}</dd></> : null}
+        {tender ? <><dt>Open a Call now</dt><dd>offers {fmtDate(call.closesAt)} · arrives ≈ {fmtDate(tender.expectedAt)}{tender.expectedAt > task.neededAt ? <span class="bad"> · late</span> : null} · ≈ {fmtM(tender.priceM)} · {fmtPct(tender.offer.reliability)}</dd></> : null}
       </dl>
       {tender && !draft ? (
-        <button type="button" class="pr-btn small" disabled={!!cov.openCall} onClick={() => procurementActions.openCall(task.id, crit.id)}>
-          {cov.openCall ? `Call open — offers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call for tenders'}
+        <button type="button" class="pr-btn small" disabled={!!cov.openCall} onClick={() => submitAction(() => procurementActions.openCall(task.id, crit.id))}>
+          {cov.openCall ? `Call open — offers ${fmtDate(cov.openCall.closesAt)}` : 'Open a Call'}
         </button>
       ) : null}
     </div>
@@ -336,7 +336,7 @@ function NeedInspector() {
           ? `No offer arrives on time: suggested is the earliest arrival${best.affordable ? '' : ', over the free budget'}.`
           : `Suggested: on time${best.rescue ? ' only with priority delivery' : ''}, ${best.affordable ? 'within budget' : 'over the free budget'}, then the lightest fitting part from its most reliable supplier.`}</p> : null}
         {cov.missing > 0 && !best && !draft && !beyondKeys(crit.partKind, crit.variant, crit.minimums, v.research).length ? (
-          <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => procurementActions.openCall(task.id, crit.id)}>
+          <button type="button" class="pr-btn wide" disabled={!!cov.openCall} onClick={() => submitAction(() => procurementActions.openCall(task.id, crit.id))}>
             {cov.openCall ? `Call open — offers ${fmtDate(cov.openCall.closesAt)}` : `No catalogue part fits · open a Call (offers ${fmtDate(callEstimate(v, crit).closesAt)})`}
           </button>
         ) : null}

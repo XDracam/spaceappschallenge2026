@@ -256,7 +256,7 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
         <b>Fuel needed for this transfer <span class="hm-title-sub">(leaving {fromName} orbit + entering {toName} orbit)</span></b>
         <div class="muted small">Each square is a departure date and travel time. Click a square to use it.</div>
       </div>
-      <button class="btn icon-btn ghost" title="Close (Esc)" onClick={() => backToEdit(maneuverId)}><CloseIcon /></button>
+      <button class="btn icon-btn ghost" title="Close (Esc)" aria-label="Close heat map" onClick={() => backToEdit(maneuverId)}><CloseIcon /></button>
     </div>
   );
 

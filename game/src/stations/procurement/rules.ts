@@ -14,7 +14,7 @@ export { DAYS_PER_MONTH };
 
 /**
  * The part of GameState procurement rules read. GameState satisfies it; the view
- * builds a JSON snapshot of it so it re-renders only when these parts change.
+ * subscribes to these branches so unrelated state changes do not redraw it.
  */
 export interface PView {
   market: Market;

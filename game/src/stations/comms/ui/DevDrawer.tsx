@@ -20,7 +20,7 @@ export function DevDrawer() {
     <aside class={`dev-drawer glass strong${open ? ' open' : ''}`} aria-hidden={!open}>
       <div class="dev-head">
         <div class="dev-title">Dev tools<div class="muted tiny">debugging the shared game state</div></div>
-        <button class="round-btn small" title="Close (Esc)" onClick={close}><CloseIcon /></button>
+        <button class="round-btn small" title="Close (Esc)" aria-label="Close developer tools" onClick={close}><CloseIcon /></button>
       </div>
       {open && (
         <div class="dev-body thin-scroll">

@@ -33,6 +33,12 @@
 .tasks-header p, .tasks-form p { margin: 4px 0 0; color: var(--sh-muted); }
 .tasks-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--sh-border); }
 .tasks-tabs { display: flex; gap: 8px; width: 100%; }
+.tasks-lenses { margin-left: auto; align-self: center; }
+.tasks-lenses summary, .tasks-form-options summary { cursor: pointer; color: var(--sh-muted); padding: 4px 0; }
+.tasks-lenses > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tasks-form-options { display: grid; gap: 12px; }
+.tasks-form-options label { margin-top: 12px; }
+.tasks-form-options[open] summary { margin-bottom: 12px; }
 .tasks-tabs [aria-pressed="true"] { background: #174b68; border-color: #66d2ff; }
 .tasks-related { display: grid; gap: 8px; margin: 14px 0; }
 .tasks-related details { padding: 8px 0; border-top: 1px solid #2a3b53; }

@@ -10,11 +10,11 @@ import { missionById } from '../../../core/mission';
 import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
-import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci, teamCapacity } from '../model/research';
+import { cancellationRefund, describeGrant, describeNeed, designNeeds, formatDate, formatValue, keyInfo, running, sci, teamCapacity, type Need } from '../model/research';
 import { facilityState, techFacilities } from '../model/needs';
 import { FacilityArt } from '../../../shell/FacilityArt';
 import { MAX_HIRED_TEAMS, hiredTeams } from '../../../core/facilities';
-import { isCovered, neededAsPrerequisite, LAYOUT, NODE_H, NODE_W, needsFor, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
+import { ancestors, isCovered, neededAsPrerequisite, LAYOUT, NODE_H, NODE_W, researchEta, routesFor, startCheck, techMonths, treeViews, type TechView } from '../model/tree';
 import { partTests, testCheck, testCounts, testDays, testDurationText } from '../model/tests';
 import type { TechStatus } from '../model/types';
 import type { GameState } from '../../../core/state';
@@ -30,18 +30,63 @@ const statusText = (v: TechView): string => (v.unavailable ? 'Not in this missio
 export function App() {
   const g = useGame((s) => s);
   const [sel, setSel] = useState<string | null>(null);
+  const [missionFocus, setMissionFocus] = useState(false);
+  const [treeFocus, setTreeFocus] = useState(Object.keys(TECH_BY_ID)[0]);
   const root = useRef<HTMLDivElement>(null);
   const views = useMemo(() => treeViews(g), [g]);
   const needs = useMemo(() => designNeeds(g).sort((a, b) => (a.researchBy ?? 1e9) - (b.researchBy ?? 1e9)), [g]);
   const slice = sci(g);
   const runs = running(g.research);
+  // Keep authored alternatives intact; recommend the next visible step along each route.
+  const routes = needs.flatMap((need, priority) => routesFor(need.key, need.value).map(goal => {
+    const path = [...ancestors(goal.id), goal.id].map(id => TECH_BY_ID[id]);
+    const remaining = path.filter(t => views[t.id].status !== 'researched');
+    const next = remaining.filter(t => views[t.id].status !== 'fog' && views[t.id].missing.length === 0);
+    const step = [...next].sort((a, b) => Number(views[a.id].unavailable) - Number(views[b.id].unavailable)
+      || Number(views[a.id].status === 'running') - Number(views[b.id].status === 'running')
+      || Number(!startCheck(g, a.id).ok) - Number(!startCheck(g, b.id).ok) || a.costM - b.costM)[0] ?? goal;
+    return { need, goal, step, priority };
+  })).sort((a, b) => Number(views[a.goal.id].unavailable) - Number(views[b.goal.id].unavailable)
+    || Number(views[a.step.id].status === 'running') - Number(views[b.step.id].status === 'running')
+    || Number(!startCheck(g, a.step.id).ok) - Number(!startCheck(g, b.step.id).ok)
+    || a.priority - b.priority || a.step.costM - b.step.costM);
+  const selected = sel;
+  const missionPath = new Set(routes.flatMap(r => [...ancestors(r.goal.id), r.goal.id]));
+  const recommendations = routes.filter((r, i, all) => all.findIndex(other => other.step.id === r.step.id) === i).slice(0, 4);
+  const relatedNeeds = (id: string) => needs.filter(n => routesFor(n.key, n.value).some(t => t.id === id || ancestors(t.id).has(id)));
+  const choose = (id: string) => { setSel(id); setTreeFocus(id); };
+  const focusNode = (id: string) => {
+    choose(id);
+    requestAnimationFrame(() => {
+      const node = root.current?.querySelector<HTMLElement>(`.sc-node[data-tech="${id}"]`);
+      node?.focus({ preventScroll: true });
+      node?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+  };
+  const moveInTree = (event: KeyboardEvent, id: string) => {
+    const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+    if (!keys.includes(event.key)) return;
+    event.preventDefault();
+    const ids = Object.keys(TECH_BY_ID);
+    if (event.key === 'Home' || event.key === 'End') return focusNode(ids[event.key === 'Home' ? 0 : ids.length - 1]);
+    const origin = LAYOUT.pos[id];
+    const horizontal = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+    const sign = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+    const candidates = ids.filter(other => other !== id).map(other => {
+      const p = LAYOUT.pos[other];
+      const forward = ((horizontal ? p.x - origin.x : p.y - origin.y)) * sign;
+      const cross = Math.abs(horizontal ? p.y - origin.y : p.x - origin.x);
+      return { id: other, forward, score: forward + cross * 3 };
+    }).filter(other => other.forward > 0).sort((a, b) => a.score - b.score);
+    if (candidates[0]) focusNode(candidates[0].id);
+  };
 
   useEffect(() => {
     const navigate = (event: Event) => {
       const link = (event as CustomEvent<{ kind: string; techId?: string; partId?: string; projectId?: string }>).detail;
       const project = link.projectId && g.research.projects.find(p => p.id === link.projectId);
       const techId = link.techId ?? (project && project.techId);
-      if (techId && TECH_BY_ID[techId]) setSel(techId);
+      if (techId && TECH_BY_ID[techId]) choose(techId);
       // The board closes and restores its trigger focus synchronously; focus the destination afterwards.
       requestAnimationFrame(() => {
         const container = root.current;
@@ -67,8 +112,7 @@ export function App() {
       <header class="sc-head">
         <h1>Science · Engineering tech tree</h1>
         <span>Teams {runs.length}/{teamCapacity(g)} · Budget available {formatMoneyM(budgetAvailableM(g.budget))} · {formatDate(g.clock.day)}</span>
-        {g.meta.phase === 'planning' && hiredTeams(g.research, g.clock.day).length < MAX_HIRED_TEAMS && !g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'team')
-          ? <button type="button" class="sc-btn small" onClick={() => scienceActions.askTeam()}>Request more research teams</button> : null}
+        <button type="button" class="sc-btn small" aria-pressed={missionFocus} onClick={() => setMissionFocus(!missionFocus)}>Focus mission routes</button>
       </header>
       <div class="sc-work">
         <aside class="sc-left">
@@ -81,20 +125,34 @@ export function App() {
             const late = n.researchBy !== undefined && (eta ?? g.clock.day) > n.researchBy;
             const routes = routesFor(n.key, n.value);
             return (
-              <div class="sc-card" key={n.key}>
+              <div class={`sc-card ${selected && relatedNeeds(selected).some(need => need.key === n.key) ? 'sc-selected-need' : ''}`} key={n.key}>
                 <strong>{describeNeed(n)}</strong>
                 <span class="muted">In the Planner's design{now === undefined ? '' : ` · researched so far: ${formatValue(now, keyInfo(n.key).unit)}`}</span>
                 {n.researchBy === undefined ? null
                   : <span class={late ? 'sc-warn' : 'muted'}>Finish by {formatDate(n.researchBy)}, or the part arrives after launch.</span>}
                 {eta !== undefined ? <span class="sc-goal">In progress · ends {formatDate(eta)}</span> : (
                   <div class="sc-links">
-                    <span class="muted">{routes.length > 1 ? 'Research one of:' : 'Research:'}</span>
-                    {routes.map((t) => <button type="button" key={t.id} onClick={() => setSel(t.id)}>{t.name} · {t.costM} M · {techMonths(t)} mo</button>)}
+                    <span class="muted">{routes.length === 0 ? 'No authored research route. Ask the Planner to revise the design or Procurement to source the part.' : routes.length > 1 ? 'Research one of:' : 'Research:'}</span>
+                    {routes.map((t) => <button type="button" key={t.id} onClick={() => focusNode(t.id)}>{t.name} · {t.costM} M · {techMonths(t)} mo</button>)}
                   </div>
                 )}
               </div>
             );
           })}
+          {recommendations.length ? <details class="sc-recommendations">
+            <summary>Recommended next steps · {recommendations.length}</summary>
+            <p class="muted small">Ready work first; inspect the cost, timing and blockers before starting.</p>
+            {recommendations.map(r => {
+              const check = startCheck(g, r.step.id);
+              const project = runs.find(p => p.techId === r.step.id);
+              return <div class="sc-recommendation" key={r.step.id}>
+                <button type="button" class="sc-link" aria-controls="sc-inspector" onClick={() => focusNode(r.step.id)}>{r.step.name}</button>
+                <span>{r.step.costM} M · {techMonths(r.step)} mo · {Math.round(r.step.chance * 100)}% success</span>
+                <span class="muted">For {describeNeed(r.need)}{r.step.id !== r.goal.id ? ` via ${r.goal.name}` : ''}</span>
+                <span class={check.ok ? 'sc-ready' : 'muted'}>{project ? `In progress · ends ${formatDate(project.endsAt)}` : check.ok ? 'Ready to start' : check.reason}</span>
+              </div>;
+            })}
+          </details> : null}
           <Teams g={g} />
           <h2 data-science-lab tabIndex={-1}>Lab</h2>
           {runs.length === 0 ? <p class="muted">No project running.</p> : null}
@@ -104,7 +162,7 @@ export function App() {
             const paused = slice.info[p.id]?.paused;
             return (
               <div class="sc-card" key={p.id} data-project={p.id} data-test={p.partId} tabIndex={-1}>
-                {p.techId ? <button type="button" class="sc-link" onClick={() => setSel(p.techId!)}><strong>{p.title}</strong></button> : <strong>{p.title}</strong>}
+                {p.techId ? <button type="button" class="sc-link" onClick={() => focusNode(p.techId!)}><strong>{p.title}</strong></button> : <strong>{p.title}</strong>}
                 <div class="sc-bar" role="progressbar" aria-label={p.title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}><i style={{ width: `${pct}%` }} /></div>
                 {p.partId
                   ? <span class={testCounts(p.endsAt, g.planner.plan.launchDay) ? 'muted' : 'sc-warn'}>ends {formatDate(p.endsAt)}{testCounts(p.endsAt, g.planner.plan.launchDay) ? '' : ': not before the launch, it will not count'}</span>
@@ -118,8 +176,9 @@ export function App() {
           })}
           <PartTests g={g} />
         </aside>
-        <main class="sc-tree" onClick={() => setSel(null)}>
-          <div class="sc-canvas" style={{ width: `${LAYOUT.width}px`, height: `${LAYOUT.height}px` }}>
+        <main class={`sc-tree ${missionFocus ? 'sc-mission-focus' : ''}`}>
+          <p id="sc-tree-help" class="shell-sr-only">Arrow keys move between technologies. Home and End move to the first and last node. Tab continues to technology details.</p>
+          <div role="group" aria-label="Engineering technology map" aria-describedby="sc-tree-help" class="sc-canvas" style={{ width: `${LAYOUT.width}px`, height: `${LAYOUT.height}px` }}>
             {LAYOUT.lanes.map((l) => (
               <div key={l.branch} class="sc-lane" style={{ top: `${l.y}px`, height: `${l.h}px`, '--c': BRANCH_COLOR[l.branch] }}>
                 <span>{BRANCH_LABEL[l.branch]}</span>
@@ -140,10 +199,11 @@ export function App() {
               const p = LAYOUT.pos[t.id];
               return (
                 <button type="button" key={t.id} data-tech={t.id}
-                  aria-pressed={sel === t.id} aria-label={`${v.status === 'fog' ? 'Unknown technology' : t.name}: ${v.lacksFacilities ? 'Needs equipment' : statusText(v)}`} title={v.status === 'fog' ? 'Unknown technology' : t.name}
-                  class={`sc-node ${v.unavailable ? 'covered' : v.status} ${sel === t.id ? 'sel' : ''} ${v.goal ? 'goal' : ''}`}
+                  tabIndex={treeFocus === t.id ? 0 : -1} onFocus={() => setTreeFocus(t.id)} onKeyDown={(event) => moveInTree(event, t.id)}
+                  aria-pressed={selected === t.id} aria-controls="sc-inspector" aria-label={`${v.status === 'fog' ? `Unknown ${BRANCH_LABEL[t.branch]} technology` : t.name}: ${v.lacksFacilities ? 'Needs equipment' : statusText(v)}${v.goal ? ', current mission route' : ''}${selected === t.id ? ', selected' : ''}`} title={v.status === 'fog' ? 'Unknown technology' : t.name}
+                  class={`sc-node ${v.unavailable ? 'covered' : v.status} ${selected === t.id ? 'sel' : ''} ${v.goal ? 'goal' : ''} ${missionPath.has(t.id) || v.status === 'running' ? 'mission-relevant' : ''}`}
                   style={{ left: `${p.x - NODE_W / 2}px`, top: `${p.y - NODE_H / 2}px`, width: `${NODE_W}px`, height: `${NODE_H}px`, '--c': BRANCH_COLOR[t.branch] }}
-                  onClick={(e) => { e.stopPropagation(); setSel(t.id); }}>
+                  onClick={() => choose(t.id)}>
                   <b>{v.status === 'fog' ? '?' : t.name}</b>
                   <small>{v.goal ? '★ goal · ' : ''}{!v.unavailable && v.status === 'available' && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) ? 'Ready · prerequisite' : v.lacksFacilities ? 'Needs equipment' : statusText(v)}</small>
                 </button>
@@ -151,7 +211,7 @@ export function App() {
             })}
           </div>
         </main>
-        <aside class="sc-right" aria-label="Technology details"><Inspector id={sel} views={views} /></aside>
+        <aside id="sc-inspector" class="sc-right" aria-label="Technology details"><Inspector id={selected} views={views} onSelect={focusNode} needs={needs} /></aside>
       </div>
       <footer class="sc-news">
         {g.events.news.filter((n) => n.from === 'science' || n.affects.includes('science')).slice(0, 3).map((n) => <span key={n.id}>• {n.text}</span>)}
@@ -264,29 +324,29 @@ function Teams({ g }: { g: GameState }) {
   );
 }
 
-function Inspector({ id, views }: { id: string | null; views: Record<string, TechView> }) {
+function Inspector({ id, views, onSelect, needs }: { id: string | null; views: Record<string, TechView>; onSelect: (id: string) => void; needs: Need[] }) {
   const g = useGame((s) => s);
   if (!id) return <p class="muted">Select a tech. Several routes can lead to the same result: compare their cost, time and risk.</p>;
   const t = TECH_BY_ID[id];
   const v = views[id];
   if (v.status === 'fog') return <><h2>Unknown technology</h2><p class="muted">Research nearby techs to learn what lies here.</p></>;
   const chk = startCheck(g, id);
-  const reqs = needsFor(t, designNeeds(g));
+  const reqs = needs.filter(n => routesFor(n.key, n.value).some(goal => goal.id === id || ancestors(goal.id).has(id)));
   const months = techMonths(t);
   return (
     <>
-      <h2>{t.name}</h2>
+      <h2 id="sc-inspector-title">{t.name}</h2>
       <p class="muted">{BRANCH_LABEL[t.branch]} · {statusText(v)}</p>
       <p>{t.blurb}</p>
       {t.gives.length ? <><h3>Result</h3><ul>{t.gives.map((x, i) => <li key={i}>{describeGrant(x)}</li>)}</ul></> : <p class="muted">Opens further techs.</p>}
-      {reqs.length ? <p class="sc-goal">★ The mission needs this: {reqs.map(describeNeed).join('; ')}</p> : null}
+      {reqs.length ? <p class="sc-goal">For the current design: {reqs.map(describeNeed).join('; ')}</p> : null}
       {!v.unavailable && isCovered(t, g.research) && neededAsPrerequisite(g, t.id) && v.status !== 'researched'
         ? <p class="muted">Its results are already within research. Research it to satisfy later technology prerequisites; it will not raise these limits again.</p> : null}
       {reqs.some(n => n.researchBy !== undefined && g.clock.day + months * DAYS_PER_MONTH > n.researchBy)
         ? <p class="sc-warn">This route finishes after the current order-by date. Ask the Planner to move launch, or choose a faster research route.</p> : null}
       <h3>Requires</h3>
       {t.requires.length === 0 ? <p class="muted">Nothing.</p> : (
-        <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} {views[r].status === 'fog' ? '?' : TECH_BY_ID[r].name}</li>)}</ul>
+        <ul>{t.requires.map((r) => <li key={r}>{views[r].status === 'researched' ? '✓' : '○'} <button type="button" class="sc-link" onClick={() => onSelect(r)}>{views[r].status === 'fog' ? 'Unknown technology' : TECH_BY_ID[r].name}</button></li>)}</ul>
       )}
       {techFacilities(id).length && v.status !== 'researched' ? <Equipment g={g} techId={id} /> : null}
       {v.blocked ? <p class={v.unavailable ? 'muted' : 'sc-warn'}>{v.blockedWhy}</p> : null}

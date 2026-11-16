@@ -129,9 +129,14 @@ export function TaskBoard() {
         </header>
         <div class="tasks-toolbar">
           <nav class="tasks-tabs" aria-label="Coordination views">
-            <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'tasks'} onClick={() => setView('tasks')}>Tasks</button>
-            <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'schedule'} onClick={() => setView('schedule')}>Schedule</button>
-            <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'overview'} onClick={() => setView('overview')}>Mission overview</button>
+            <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'tasks'} onClick={() => setView('tasks')}>Action queue · {actionable.length}</button>
+            <details class="tasks-lenses">
+              <summary>{view === 'schedule' ? 'Schedule' : view === 'overview' ? 'Mission overview' : 'Other views'}</summary>
+              <div>
+                <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'schedule'} onClick={() => setView('schedule')}>Schedule</button>
+                <button type="button" class="shell-btn shell-btn-sm" aria-pressed={view === 'overview'} onClick={() => setView('overview')}>Mission overview</button>
+              </div>
+            </details>
           </nav>
           {view === 'tasks' && <>
           <label class="tasks-switch"><input type="checkbox" role="switch" aria-label="Only tasks I can solve" checked={forMe} onChange={event => setForMe(event.currentTarget.checked)} /><span>{forMe ? 'Tasks I can solve' : 'All tasks'}</span></label>
@@ -156,7 +161,9 @@ export function TaskBoard() {
           </>}
           {view === 'overview' && <MissionOverview entries={board.overview} canOpen={canOpen} openWork={openWork} />}
           {view === 'tasks' && <>
-          {visible.length === 0 && <p class="tasks-empty">{forMe ? 'No shared tasks need action from your station right now. Review All tasks or Mission overview, or create a request.' : 'No tasks in this view. Create a task to record a shared need.'}</p>}
+          {visible.length === 0 && <p class="tasks-empty">{forMe
+            ? `No shared tasks need action from your station right now. Review All tasks or Mission overview${playing ? ', or create a request' : ''}.`
+            : playing ? 'No tasks in this view. Create a task to record a shared need.' : 'No tasks in this view. Review Mission overview or include history.'}</p>}
           {taskList(active)}
           {!!waiting.length && <details class="tasks-waiting"><summary>Waiting / in progress · {waiting.length}</summary><p class="tasks-meta">No station action is needed now. Dates and progress remain available below.</p>{taskList(waiting)}</details>}
           </>}
@@ -285,6 +292,8 @@ function TaskForm({ task, draft, station, onCancel, onSaved }: { task?: Coordina
     <label>Desired outcome & details<textarea ref={detailsInput} name="task-details" autoComplete="off" required maxLength={1000} rows={4} value={description} onInput={event => setDescription(event.currentTarget.value)} aria-describedby="task-detail-help" /></label>
     <p id="task-detail-help">Include the item or decision, quantity, requirements, recipient and need date where relevant. Give the receiving role enough information to act.</p>
     <label>Responsible station<select name="task-assignee" value={assignee} onChange={event => setAssignee(event.currentTarget.value as StationId)}>{STATIONS.map(role => <option key={role} value={role}>{STATION_INFO[role].label}</option>)}</select></label>
+    <details class="tasks-form-options" open={!!task || invalidDate || invalidParent}>
+    <summary>Request options{purpose !== 'request' ? ` · ${purpose}` : ''}{parentNeedId ? ' · linked need' : ''}{neededDate ? ` · due ${neededDate}` : ''}</summary>
     <label>Purpose<select name="task-purpose" value={purpose} onChange={event => setPurpose(event.currentTarget.value as typeof purpose)}>
       <option value="request">Shared request</option><option value="funding">Funding</option>
       {(purpose === 'timing' || purpose === 'equipment') && <option value={purpose}>{purpose === 'timing' ? 'Timing (contextual request)' : 'Equipment (existing request)'}</option>}
@@ -296,6 +305,7 @@ function TaskForm({ task, draft, station, onCancel, onSaved }: { task?: Coordina
     </select></label>
     <p id="task-parent-help">Linked requests appear with that need. If it is withdrawn or unavailable, the request remains standalone. Funding requests stay in the funding group.</p>
     <label>Needed by (YYYY-MM-DD, optional)<input type="text" name="task-needed" autoComplete="off" placeholder="2030-06-30" value={neededDate} onInput={event => setNeededDate(event.currentTarget.value)} /></label>
+    </details>
     {invalidDate && <p role="alert">Enter a valid date on or after the mission start, using YYYY-MM-DD, or leave it blank.</p>}
     {invalidParent && <p role="alert">The selected need is no longer available. Choose another need or keep this request standalone.</p>}
     {stale && <p role="alert">This task changed while you were editing. Cancel and reopen its latest version.</p>}

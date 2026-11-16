@@ -5,15 +5,15 @@
 //  - signOffer: price (catalogue × comms price modifiers) is committed at signing if
 //    the available Budget covers it; expectedAt = day + lead time + active
 //    deliveryDelay modifiers. Catalogue Offers are reusable; Call/comms Offers are
-//    single-use. Catalogue Resources beyond research cannot be signed (tender only).
+//    single-use. Catalogue Resources beyond research cannot be signed (Call offers only).
 //  - Delivery at expectedAt: committed → spent, allocations reserved → available.
 //  - cancelContract: refund = price × (1 − cancellationPct) × time remaining / lead
 //    time (rules.ts refundM). committed −= price, spent += price − refund.
 //  - Calls close ~1 month after opening; authored templates (data/calls.ts) become
 //    Offers built to the criterion's minimums; beyond research: 1.5–3× cost, less reliable.
 import { defineActions, onTick, type ActionCtx } from '../../core/actions';
-import { budgetAvailableM, DAYS_PER_MONTH } from '../../core/state';
-import { FACILITY_BY_ID, MAX_HIRED_TEAMS, RENT_MONTHS, TEAM_OFFER_BY_ID, hiredTeams } from '../../core/facilities';
+import { DAYS_PER_MONTH } from '../../core/state';
+import { quoteSupport } from './support';
 import { pushNews, setFlag } from '../../core/coreActions';
 import type { Call, Contract, Criterion, StationId, Task, OrderDraft, DeliveryOptionId } from '../../core/model';
 import type { GameState } from '../../core/state';
@@ -179,53 +179,33 @@ export const procurementActions = defineActions('procurement', {
    * join up); a purchase is kept for good. Closes Science's open request for it.
    */
   leaseFacility(s, ctx, facilityId: string, months: number | 'buy') {
-    if (s.meta.phase !== 'planning') return;
-    const f = FACILITY_BY_ID[facilityId];
-    if (!f) return;
+    const quote = quoteSupport(s, { type: 'facility', facilityId, months });
+    if (quote.blocked) { reject(s, ctx, quote.blocked); return; }
+    const { name, costM, from, until } = quote;
     s.research.facilities ??= [];
     s.research.supplyRequests ??= [];
-    const mine = s.research.facilities.filter((l) => l.facilityId === facilityId);
-    if (mine.some((l) => l.until === undefined)) return; // already owned
-    let costM: number;
-    let from = ctx.day + f.leadDays;
-    let until: number | undefined;
-    if (months === 'buy') {
-      if (f.buyM === undefined) return;
-      costM = f.buyM;
-      from = ctx.day + f.leadDays * 2;
-    } else {
-      if (!RENT_MONTHS.includes(months)) return;
-      costM = money(f.rentPerMonthM * months);
-      const covered = mine.map((l) => l.until ?? 0).filter((u) => u > from);
-      if (covered.length) from = Math.max(...covered);
-      until = from + months * DAYS_PER_MONTH;
-    }
-    if (costM > budgetAvailableM(s.budget) + 1e-9) return;
     s.budget.spentM = money(s.budget.spentM + costM);
     s.research.facilities.push({ id: ctx.newId('lease'), facilityId, from, ...(until !== undefined ? { until } : {}), costM });
     for (const q of s.research.supplyRequests) {
       if (q.status === 'open' && q.kind === 'facility' && q.facilityId === facilityId) { q.status = 'done'; q.doneAt = ctx.day; }
     }
     news(s, ctx, months === 'buy'
-      ? `Procurement bought a ${f.name.toLowerCase()} for Science (${fmtM(costM)}), ready ${fmtDate(from)}.`
-      : `Procurement rented a ${f.name.toLowerCase()} for Science for ${months} months (${fmtM(costM)}), ready ${fmtDate(from)}.`, ['science']);
+      ? `Procurement bought a ${name.toLowerCase()} for Science (${fmtM(costM)}), ready ${fmtDate(from)}.`
+      : `Procurement rented a ${name.toLowerCase()} for Science for ${months} months (${fmtM(costM)}), ready ${fmtDate(from)}.`, ['science']);
   },
 
   /** Hire a research team for Science (D-032). Cost is spent at once. Closes the oldest open team request. */
   hireTeam(s, ctx, offerId: string) {
-    if (s.meta.phase !== 'planning') return;
-    const o = TEAM_OFFER_BY_ID[offerId];
-    if (!o) return;
+    const quote = quoteSupport(s, { type: 'team', offerId });
+    if (quote.blocked) { reject(s, ctx, quote.blocked); return; }
+    const { costM, from, until } = quote;
     s.research.teams ??= [];
     s.research.supplyRequests ??= [];
-    if (hiredTeams(s.research, ctx.day).length >= MAX_HIRED_TEAMS) return;
-    if (o.feeM > budgetAvailableM(s.budget) + 1e-9) return;
-    s.budget.spentM = money(s.budget.spentM + o.feeM);
-    const from = ctx.day + o.leadDays;
-    s.research.teams.push({ id: ctx.newId('team'), offerId, from, ...(o.months !== undefined ? { until: from + o.months * DAYS_PER_MONTH } : {}), costM: o.feeM });
+    s.budget.spentM = money(s.budget.spentM + costM);
+    s.research.teams.push({ id: ctx.newId('team'), offerId, from, ...(until !== undefined ? { until } : {}), costM });
     const q = s.research.supplyRequests.find((x) => x.kind === 'team' && x.status === 'open');
     if (q) { q.status = 'done'; q.doneAt = ctx.day; }
-    news(s, ctx, `Procurement hired a ${o.months !== undefined ? `${o.months}-month` : 'permanent'} research team for Science (${fmtM(o.feeM)}), at work ${fmtDate(from)}.`, ['science']);
+    news(s, ctx, `Procurement hired a ${until !== undefined ? `${Math.round((until - from) / DAYS_PER_MONTH)}-month` : 'permanent'} research team for Science (${fmtM(costM)}), at work ${fmtDate(from)}.`, ['science']);
   },
 
   /**
@@ -255,7 +235,7 @@ export const procurementActions = defineActions('procurement', {
     news(s,ctx,`Delivery amended: ${k.offerSnapshot.resource.name}, ${fmtDate(from)} → ${fmtDate(q.expectedAt)}, fee ${fmtM(q.feeM)}.`,affects);
     refreshLate(s,ctx);
   },
-  /** Invite tenders for a Task criterion; Offers arrive when the Call closes (~1 month). */
+  /** Open a Call for a Task criterion; Offers arrive when the Call closes (~1 month). */
   openCall(s, ctx, taskId: string, criterionId: string) {
     if (s.meta.phase !== 'planning') return;
     const { task, crit } = findCriterion(s, taskId, criterionId);
