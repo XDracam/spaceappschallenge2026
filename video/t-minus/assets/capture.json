@@ -1,0 +1,46 @@
+{
+  "video": "/home/dracam/Documents/ChatGPT/NASA/video/t-minus/raw/page@6e720c1673500df2e6dfb1f5f0cdb025.webm",
+  "marks": [
+    {
+      "name": "title",
+      "at": 3.747
+    },
+    {
+      "name": "problem",
+      "at": 7.486
+    },
+    {
+      "name": "science-before",
+      "at": 11.133
+    },
+    {
+      "name": "science",
+      "at": 13.208
+    },
+    {
+      "name": "procurement",
+      "at": 16.704
+    },
+    {
+      "name": "contract",
+      "at": 19.938
+    },
+    {
+      "name": "comms",
+      "at": 23.073
+    },
+    {
+      "name": "ready",
+      "at": 26.811
+    },
+    {
+      "name": "flight",
+      "at": 30.117
+    },
+    {
+      "name": "result",
+      "at": 35.428
+    }
+  ],
+  "t0": 1794782027626
+}

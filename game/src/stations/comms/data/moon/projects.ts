@@ -22,7 +22,7 @@ export const PROJECTS: ProjectDef[] = [
     costM: 5, months: 1,
     startTrust: [],
     effects: [trust('government', 10), trust('industry', 5)],
-    result: 'Moon Night: a senator drilled through the bucket and the table. Suppliers networked aggressively.',
+    result: 'Moon Night: a senator drilled through the bucket and the table. Government and supplier relations improve.',
   },
 
   // --------------------------------------------------------- campaigns
@@ -94,7 +94,7 @@ export const PROJECTS: ProjectDef[] = [
     startTrust: [],
     requires: { stakeholder: 'partners', min: 50 },
     effects: [trust('partners', 5), pace(30, 2)],
-    result: "Northgate's technicians join the lab: research and part tests run 30 % faster for two months.",
+    result: "Northgate's technicians join the lab: research and part tests run 30% faster for two months.",
     partnerCharacterId: 'salo',
   },
 ];

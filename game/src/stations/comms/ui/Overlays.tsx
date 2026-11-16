@@ -1,29 +1,38 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
+import { createStore, useStore } from '../../../core/createStore';
+import { useDialog } from '../../../shared/useDialog';
 import { useGame } from '../../../core/store';
 import { commsInFlightResults } from '../logic';
-import { uiStore, useComms, useFlightLost, useScrubbed } from './store';
+import { uiStore, useComms, useFlightLost, useMission, useScrubbed } from './store';
 import { SH, STAKEHOLDER_ORDER, signedPct } from './common';
 
 const SEEN_KEY = 'comms.briefing.seen';
-
-function briefingSeen(): boolean {
-  try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
+const briefingStore = createStore({ open: false, missionId: '' });
+const seenKey = (missionId: string) => `${SEEN_KEY}.${missionId}`;
+function briefingSeen(missionId: string): boolean {
+  try { return localStorage.getItem(seenKey(missionId)) === '1'; } catch { return false; }
 }
-function markSeen() {
-  try { localStorage.setItem(SEEN_KEY, '1'); } catch { /* storage unavailable */ }
+export function openBriefing() {
+  briefingStore.set({ ...briefingStore.get(), open: true });
 }
 
-/** One-time first-load briefing (the shared calendar keeps running). */
+/** The briefing is remembered per mission; opening it never changes the calendar. */
 export function Briefing() {
-  const [open, setOpen] = useState(() => !briefingSeen());
-  if (!open) return null;
+  const { open } = useStore(briefingStore, s => s);
+  const mission = useMission();
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (briefingStore.get().missionId !== mission.id) briefingStore.set({ open: !briefingSeen(mission.id), missionId: mission.id });
+  }, [mission.id]);
   const close = () => {
-    markSeen();
-    setOpen(false);
+    try { localStorage.setItem(seenKey(mission.id), '1'); } catch { /* storage unavailable */ }
+    briefingStore.set({ open: false, missionId: mission.id });
   };
+  useDialog({ open, root, onClose: close });
+  if (!open) return null;
   return (
     <div class="modal-backdrop briefing-backdrop">
-      <div class="modal glass strong briefing" role="dialog" aria-label="Briefing">
+      <div ref={root} tabIndex={-1} class="modal glass strong briefing" role="dialog" aria-modal="true" aria-label="Briefing">
         <div class="tb-label">Communications · briefing</div>
         <div class="briefing-title display">You are the agency's voice</div>
         <p>
@@ -43,6 +52,9 @@ export function Briefing() {
 
 /** Centred card after launch: in-flight events resolved from trust at launch. */
 export function LaunchedCard() {
+  const root = useRef<HTMLDivElement>(null);
+  const close = () => uiStore.update(u => { u.launchCardClosed = true; });
+  useDialog({ open: true, root, onClose: close });
   // Resolved at launch (or from the current state if comms has not ticked since the launch).
   // A scrubbed launch never flew, and a flight that lost every goal ended before them: no in-flight events to show.
   const scrubbed = useScrubbed();
@@ -54,7 +66,7 @@ export function LaunchedCard() {
   const label = scrubbed ? 'Launch scrubbed' : lost ? 'Flight lost' : 'Mission launched';
   return (
     <div class="modal-backdrop launched-backdrop">
-      <div class={`modal glass strong launched-card${ended ? ' scrubbed' : ''}`} role="dialog" aria-label={label}>
+      <div ref={root} tabIndex={-1} class={`modal glass strong launched-card${ended ? ' scrubbed' : ''}`} role="dialog" aria-modal="true" aria-label={label}>
         <div class={`tb-label ${ended ? 'err-text' : 'ok-text'}`}>{label}</div>
         <div class="briefing-title display">{scrubbed ? 'The rocket never left the pad.' : lost ? 'The flight ended before your relationships could count.' : 'Your relationships carry into the flight.'}</div>
         <div class="launch-trust">
@@ -75,7 +87,7 @@ export function LaunchedCard() {
           ))}
         </ul>
         <div class="briefing-foot">
-          <button class="pill primary" onClick={() => uiStore.update((u) => { u.launchCardClosed = true; })}>Close</button>
+          <button class="pill primary" onClick={close}>Close</button>
         </div>
       </div>
     </div>

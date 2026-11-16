@@ -8,6 +8,7 @@ import { HostLeft } from './Lobby';
 import { STATION_INFO } from './stations';
 import { backToStart, connectedPlayerCount, playerName, useSession } from './session';
 import { requestConfirmation } from '../shared/confirmation';
+import { useDialog } from '../shared/useDialog';
 
 export function StationSwitcher() {
   const seats = useGame((s) => s.meta.seats);
@@ -19,6 +20,8 @@ export function StationSwitcher() {
   const closeReason = useSession((s) => s.join.closeReason);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const disconnectRef = useRef<HTMLDivElement>(null);
+  useDialog({ open: role === 'client' && !connected, root: disconnectRef });
 
   // If someone else got this seat first (our optimistic claim was rejected), go back
   // to the seat we hold, or to the lobby seat picker.
@@ -45,7 +48,7 @@ export function StationSwitcher() {
 
   if (role === 'client' && !connected) {
     return (
-      <div class="shell-overlay" role="dialog" aria-modal="true">
+      <div ref={disconnectRef} class="shell-overlay" role="dialog" aria-modal="true" aria-label="Connection interrupted">
         <HostLeft reason={closeReason} />
       </div>
     );

@@ -2,7 +2,8 @@
 // animated playthrough; this card is for procurement, science and comms).
 // Same result on every browser: computeMissionResult is deterministic.
 import { ResultRecoveryActions } from './ResultRecoveryActions';
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
+import { useDialog } from '../shared/useDialog';
 import { MISSION } from '../core/mission';
 import { getState, useGame } from '../core/store';
 import { computeMissionResult, missionScore } from '../stations/planner/result';
@@ -12,6 +13,8 @@ export function ResultOverlay() {
   const phase = useGame((s) => s.meta.phase);
   const inFlight = useGame((s) => s.comms.inFlight);
   const [hidden, setHidden] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  useDialog({ open: phase !== 'planning' && phase !== 'lobby' && !hidden, root, onClose: () => setHidden(true) });
   if (phase === 'planning' || phase === 'lobby') return null;
   // Re-evaluates when phase / in-flight results change; memoised inside.
   void inFlight;
@@ -35,7 +38,7 @@ export function ResultOverlay() {
   const failures = result.events.filter((e) => e.kind === 'failure');
   const notes = result.events.filter((e) => e.kind === 'info' && e.branchId === '');
   return (
-    <div class="shell-overlay shell-result" role="dialog" aria-label="Mission result">
+    <div ref={root} class="shell-overlay shell-result" role="dialog" aria-modal="true" aria-label="Mission result">
       <div class="shell-result-card">
         <div class="shell-label">Mission result</div>
         <h2 class="shell-result-title">

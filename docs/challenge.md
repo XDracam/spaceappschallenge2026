@@ -1,5 +1,9 @@
 # Challenge reference
 
+## Review status update — November 16, 2026
+
+The official-page observations below retain their November 14/15 dates. The [CML paper review](reviews/2026-11-14-cml-paper.md) subsequently records review/use of that resource; the other resource-table entries remain research leads unless another record establishes use. The [submission preparation](submission-text.md) and [video script](submission-video-script.md) record the later submission/judging guidance used during preparation. No external guidance was freshly reverified by this documentation pass. The user has confirmed submission; receipt, acceptance and exact uploaded source revision are not established here. See [submission reference](submission-reference.md).
+
 ## Source and verification
 
 - [Official challenge: Space Mission Design Game](https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/)
@@ -34,4 +38,4 @@ These links were verified as listed on the Resources tab. Their underlying conte
 
 Licensing was checked November 15, 2026 against the [official 2026 participant terms](https://www.spaceappschallenge.org/legal/) (updated August 7, 2026): original content must be freely available without restriction or OSI open source; Apache 2.0 is NASA's default when no specific OSI license is selected. Third-party materials need appropriate license documentation, and every resource used must be cited in submission references. The project now uses Apache 2.0 under D-025. This check does not establish complete submission compliance.
 
-Submission portal deliverables, judging criteria, team registration, and deadlines remain unchecked. Verify them from their owning sources before making submission commitments.
+At initial setup, submission portal deliverables, judging criteria, team registration and deadlines had not been checked. Later preparation records are linked in the status update above; team registration and judging acceptance are not established by this document.

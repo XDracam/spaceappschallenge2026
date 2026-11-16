@@ -1,5 +1,6 @@
 import { useGame } from '../../../core/store';
 import { DAYS_PER_MONTH, uiStore, useBudgetLeft, useFlightLost, useGoalsAchieved, useLaunched, useMission, useScrubbed, useStartISO, useToday, useUi } from './store';
+import { openBriefing } from './Overlays';
 import { GearIcon } from './common';
 import { formatDay, formatDuration, formatMoney, formatRealTime } from './format';
 
@@ -9,10 +10,10 @@ export function Header() {
   const mission = useMission();
   return (
     <header class="header">
-      <div class="brand">
+      <button type="button" class="brand" onClick={openBriefing} aria-label="Show Communications briefing" title="Show Communications briefing">
         <div class="wordmark">COMMUNICATIONS</div>
         <div class="brand-sub">{mission.name}</div>
-      </div>
+      </button>
       <div class="spacer" />
       <div class="chips">
         <TodayChip />

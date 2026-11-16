@@ -88,7 +88,7 @@ export const PLAYER_EVENTS: EventDef[] = [
         'The public appreciates the candour. Feld appreciates nothing about it.'),
       option('cover', 'Quietly reassure the senator yourself.',
         [trust('industry', 5), trust('government', -5)],
-        'Duarte accepts your explanation with the warmth of a tax form. Feld sends a fruit basket.'),
+        'Duarte wants the recovery schedule in writing. Feld would prefer to discuss the fruit basket he sent.'),
     ],
     ignored: {
       effects: [trust('industry', -5), delay(1, 'next')],
@@ -174,13 +174,13 @@ export const PLAYER_EVENTS: EventDef[] = [
     options: [
       option('joint-lab', 'Open a joint lab (science research speeds up).',
         [trust('partners', 10), pace(25, 3)],
-        'Twenty researchers arrive with laptops and opinions. Science research runs noticeably faster.', 10),
+        'Northgate assigns twenty researchers to the instrument work. Science research runs noticeably faster.', 10),
       option('agency-credit', 'Accept, but keep the credit for the agency.',
         [trust('partners', -5), trust('public', 5), pace(20, 2)],
         'The help is real and so is the resentment. Salo starts adding footnotes to everything.'),
       option('decline', 'Thank them; the team is already full.',
         [trust('partners', -5)],
-        'Salo takes her twenty researchers to a rival program. They send a polite card.'),
+        'Salo takes her twenty researchers to a rival programme. They send a polite card.'),
     ],
     ignored: {
       effects: [trust('partners', -5)],
@@ -312,13 +312,13 @@ export const TRIGGER_EVENTS: EventDef[] = [
     options: [
       option('with-strings', 'Take 60 M and the district line (procurement pays more).',
         [budget(60), trust('government', 5), price(15, 4)],
-        'The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.'),
+        'The committee adds 60 M. Procurement prices rise 15% for four months under the district-sourcing terms.'),
       option('no-strings', 'Ask for 30 M with no strings attached.',
         [budget(30), trust('government', -5)],
-        'Duarte delivers, with a small speech about gratitude. Every station gets 30 M more.'),
+        'Duarte delivers, with a small speech about gratitude. The shared budget gains 30 M.'),
       option('decline', 'Decline: the mission is funded well enough.',
         [trust('public', 5), trust('government', -10)],
-        'Good-government groups applaud. Duarte has never been declined before and finds it educational.'),
+        'Good-government groups applaud. Duarte closes the funding file rather firmly.'),
     ],
     ignored: {
       effects: [trust('government', -5)],

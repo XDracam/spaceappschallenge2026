@@ -1,0 +1,3274 @@
+{
+  "seed": 20261120,
+  "phase": "launched",
+  "day": 398,
+  "budget": {
+    "fundingTotalM": 272,
+    "spentM": 250.4,
+    "committedM": 0
+  },
+  "available": 21.599999999999994,
+  "launch": 398,
+  "buys": [
+    {
+      "partId": "part-l3",
+      "title": "Kerosene / oxygen engine",
+      "offerId": "cat-e-ker-4500-tallis",
+      "priceM": 58.3,
+      "signDay": 0,
+      "arrival": 244
+    },
+    {
+      "partId": "part-l4",
+      "title": "Kerosene / oxygen tank",
+      "offerId": "cat-t-ker-260-tallis",
+      "priceM": 2.7,
+      "signDay": 0,
+      "arrival": 183
+    },
+    {
+      "partId": "part-l6",
+      "title": "Hydrogen / oxygen engine",
+      "offerId": "cat-e-hyd-120-commons",
+      "priceM": 25,
+      "signDay": 0,
+      "arrival": 152
+    },
+    {
+      "partId": "part-l7",
+      "title": "Hydrogen / oxygen tank",
+      "offerId": "cat-t-hyd-22-commons",
+      "priceM": 1.2,
+      "signDay": 0,
+      "arrival": 91
+    },
+    {
+      "partId": "part-l10",
+      "title": "Storable hypergolic tank",
+      "offerId": "cat-t-hyp-16-commons",
+      "priceM": 0.6,
+      "signDay": 0,
+      "arrival": 91
+    },
+    {
+      "partId": "part-l12",
+      "title": "Solar panels",
+      "offerId": "cat-p-sol-06-commons",
+      "priceM": 2.2,
+      "signDay": 0,
+      "arrival": 91
+    },
+    {
+      "partId": "part-l13",
+      "title": "Antenna",
+      "offerId": "cat-a-120-commons",
+      "priceM": 2.5,
+      "signDay": 0,
+      "arrival": 91
+    },
+    {
+      "partId": "part-l14",
+      "title": "Landing legs",
+      "offerId": "cat-l-25-commons",
+      "priceM": 5.8,
+      "signDay": 0,
+      "arrival": 91
+    },
+    {
+      "partId": "part-l9",
+      "title": "Storable hypergolic engine",
+      "offerId": "cat-e-hyp-5-commons",
+      "priceM": 2.7,
+      "signDay": 50,
+      "arrival": 202
+    },
+    {
+      "partId": "part-l11",
+      "title": "Surface lab",
+      "offerId": "cat-i-lab-45-meridian",
+      "priceM": 70.2,
+      "signDay": 165,
+      "arrival": 348
+    }
+  ],
+  "answers": [
+    {
+      "day": 15,
+      "eventId": "mo-why-the-moon",
+      "option": "ice",
+      "answered": true
+    },
+    {
+      "day": 38,
+      "eventId": "mo-district-supplier",
+      "option": "decline",
+      "answered": true
+    },
+    {
+      "day": 45,
+      "eventId": "mo-site-team-needs-data",
+      "option": "share-early",
+      "answered": true
+    },
+    {
+      "day": 50,
+      "eventId": "mo-northgate-drill-team",
+      "option": "joint-lab",
+      "answered": true
+    },
+    {
+      "day": 73,
+      "eventId": "mo-rock-from-space",
+      "option": "publish",
+      "answered": true
+    },
+    {
+      "day": 75,
+      "eventId": "mo-budget-review",
+      "option": "water",
+      "answered": true
+    },
+    {
+      "day": 98,
+      "eventId": "mo-titanium-price-spike",
+      "option": "fixed-price",
+      "answered": true
+    },
+    {
+      "day": 120,
+      "eventId": "mo-meridian-tracking",
+      "option": "sign",
+      "answered": true
+    },
+    {
+      "day": 143,
+      "eventId": "mo-weapon-conspiracy",
+      "option": "livestream",
+      "answered": true
+    },
+    {
+      "day": 166,
+      "eventId": "mo-late-delivery",
+      "option": "bonus",
+      "answered": true
+    },
+    {
+      "day": 166,
+      "eventId": "mo-budget-audit",
+      "option": "accountants",
+      "answered": true
+    },
+    {
+      "day": 189,
+      "eventId": "mo-vacuum-chamber-slot",
+      "option": "book",
+      "answered": true
+    },
+    {
+      "day": 201,
+      "eventId": "mo-launch-moved",
+      "option": "explain",
+      "answered": true
+    },
+    {
+      "day": 224,
+      "eventId": "mo-leaked-cost-memo",
+      "option": "confirm",
+      "answered": true
+    },
+    {
+      "day": 250,
+      "eventId": "mo-machinist-strike",
+      "option": "co-fund",
+      "answered": true
+    },
+    {
+      "day": 270,
+      "eventId": "mo-launch-readiness",
+      "option": "candid",
+      "answered": true
+    },
+    {
+      "day": 293,
+      "eventId": "mo-schematics-leak",
+      "option": "review-fixes",
+      "answered": true
+    },
+    {
+      "day": 320,
+      "eventId": "mo-infrastructure-leftovers",
+      "option": "credit-her",
+      "answered": true
+    },
+    {
+      "day": 330,
+      "eventId": "mo-still-on-the-ground",
+      "option": "new-date",
+      "answered": true
+    },
+    {
+      "day": 353,
+      "eventId": "mo-rival-lander-crash",
+      "option": "tests",
+      "answered": true
+    },
+    {
+      "day": 383,
+      "eventId": "mo-surplus-upper-stage-engine",
+      "option": "take",
+      "answered": true
+    }
+  ],
+  "research": [
+    {
+      "id": "moon-hypergolic-1",
+      "title": "Hypergolic injector tuning",
+      "techId": "hypergolic-tuning",
+      "costM": 8,
+      "startedAt": 0,
+      "endsAt": 49.092000000000056,
+      "status": "succeeded",
+      "successChance": 0.95,
+      "effects": [
+        {
+          "kind": "researchLimit",
+          "key": "engine.hypergolic.isp",
+          "value": 335
+        }
+      ]
+    },
+    {
+      "id": "moon-lab-1",
+      "title": "Lab automation",
+      "techId": "lab-automation",
+      "costM": 14,
+      "startedAt": 0,
+      "endsAt": 72.97000000000013,
+      "status": "failed",
+      "successChance": 0.85,
+      "effects": [
+        {
+          "kind": "researchLimit",
+          "key": "instrument.surfaceLab.performance",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "id": "moon-test-1",
+      "title": "Test: Landing legs",
+      "partId": "part-l14",
+      "costM": 1.2,
+      "startedAt": 91,
+      "endsAt": 122.228,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-2",
+      "title": "Test: Solar panels",
+      "partId": "part-l12",
+      "costM": 1,
+      "startedAt": 91,
+      "endsAt": 122.228,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-3",
+      "title": "Test: Antenna",
+      "partId": "part-l13",
+      "costM": 1,
+      "startedAt": 123,
+      "endsAt": 159.528,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-4",
+      "title": "Test: Upper stage tank",
+      "partId": "part-l7",
+      "costM": 1,
+      "startedAt": 123,
+      "endsAt": 159.528,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-5",
+      "title": "Test: Upper stage engine",
+      "partId": "part-l6",
+      "costM": 5,
+      "startedAt": 160,
+      "endsAt": 195.12800000000007,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-6",
+      "title": "Test: Descent stage tank",
+      "partId": "part-l10",
+      "costM": 1,
+      "startedAt": 160,
+      "endsAt": 195.12800000000007,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-7",
+      "title": "Test: Booster tank",
+      "partId": "part-l4",
+      "costM": 1,
+      "startedAt": 196,
+      "endsAt": 226.32800000000034,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    },
+    {
+      "id": "moon-test-8",
+      "title": "Test: Descent stage engine",
+      "partId": "part-l9",
+      "costM": 1,
+      "startedAt": 202,
+      "endsAt": 232.32800000000034,
+      "status": "succeeded",
+      "successChance": 1,
+      "effects": []
+    }
+  ],
+  "evaluation": {
+    "goals": [
+      {
+        "goalId": "goal-moon-orbit",
+        "achievable": true,
+        "successChance": 0.9586341052381578,
+        "branchId": "branch-root",
+        "factors": [
+          {
+            "partId": "part-l3",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l4",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l6",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l7",
+            "p": 0.9964999999999999
+          },
+          {
+            "partId": "part-l9",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l10",
+            "p": 0.9964999999999999
+          }
+        ]
+      },
+      {
+        "goalId": "goal-moon-land",
+        "achievable": true,
+        "successChance": 0.9490477641857763,
+        "branchId": "branch-root",
+        "factors": [
+          {
+            "partId": "part-l3",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l4",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l6",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l7",
+            "p": 0.9964999999999999
+          },
+          {
+            "partId": "part-l9",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l10",
+            "p": 0.9964999999999999
+          },
+          {
+            "partId": "part-l14",
+            "p": 0.99
+          }
+        ]
+      },
+      {
+        "goalId": "goal-moon-ice",
+        "achievable": true,
+        "successChance": 0.9161681230265305,
+        "branchId": "branch-root",
+        "factors": [
+          {
+            "partId": "part-l3",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l4",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l6",
+            "p": 0.985
+          },
+          {
+            "partId": "part-l7",
+            "p": 0.9964999999999999
+          },
+          {
+            "partId": "part-l9",
+            "p": 0.9975
+          },
+          {
+            "partId": "part-l10",
+            "p": 0.9964999999999999
+          },
+          {
+            "partId": "part-l14",
+            "p": 0.99
+          },
+          {
+            "partId": "part-l11",
+            "p": 0.98
+          },
+          {
+            "partId": "part-l12",
+            "p": 0.9924999999999999
+          },
+          {
+            "partId": "part-l13",
+            "p": 0.9924999999999999
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "mass": 309.98900000000003,
+    "cost": 171.2,
+    "branches": [
+      {
+        "branchId": "branch-root",
+        "maneuvers": [
+          {
+            "maneuverId": "moon-launch",
+            "branchId": "branch-root",
+            "type": "launch",
+            "label": "Launch to 200 km",
+            "dvRequiredMs": 9400,
+            "dvAvailableBeforeMs": 15597.317130699728,
+            "ok": true,
+            "startDay": 398,
+            "endDay": 398,
+            "stateBefore": {
+              "kind": "surface",
+              "body": "earth",
+              "day": 398
+            },
+            "stateAfter": {
+              "kind": "orbit",
+              "body": "earth",
+              "altitudeKm": 200,
+              "day": 398
+            },
+            "burns": [
+              {
+                "stageId": "stage-l2",
+                "dvMs": 5726.248329974705
+              },
+              {
+                "stageId": "stage-l5",
+                "dvMs": 3673.7516700252954
+              }
+            ],
+            "issues": [],
+            "twr": 1.4797802384287027
+          },
+          {
+            "maneuverId": "moon-transfer",
+            "branchId": "branch-root",
+            "type": "transfer",
+            "label": "Transfer to Moon",
+            "dvRequiredMs": 3133.143032602017,
+            "dvAvailableBeforeMs": 6197.317130699783,
+            "ok": true,
+            "startDay": 398,
+            "endDay": 402.97782136279625,
+            "stateBefore": {
+              "kind": "orbit",
+              "body": "earth",
+              "altitudeKm": 200,
+              "day": 398
+            },
+            "stateAfter": {
+              "kind": "approach",
+              "body": "moon",
+              "day": 402.97782136279625,
+              "vInf": {
+                "x": -0.35686840336822684,
+                "y": -0.7511421976526699
+              },
+              "from": "earth"
+            },
+            "burns": [
+              {
+                "stageId": "stage-l5",
+                "dvMs": 3133.143032602017
+              }
+            ],
+            "issues": []
+          },
+          {
+            "maneuverId": "moon-insertion",
+            "branchId": "branch-root",
+            "type": "insertion",
+            "label": "Enter Moon orbit",
+            "dvRequiredMs": 821.8023372784291,
+            "dvAvailableBeforeMs": 3063.305826983409,
+            "ok": true,
+            "startDay": 402.97782136279625,
+            "endDay": 402.97782136279625,
+            "stateBefore": {
+              "kind": "approach",
+              "body": "moon",
+              "day": 402.97782136279625,
+              "vInf": {
+                "x": -0.35686840336822684,
+                "y": -0.7511421976526699
+              },
+              "from": "earth"
+            },
+            "stateAfter": {
+              "kind": "orbit",
+              "body": "moon",
+              "altitudeKm": 100,
+              "day": 402.97782136279625
+            },
+            "burns": [
+              {
+                "stageId": "stage-l5",
+                "dvMs": 270.6091520632408
+              },
+              {
+                "stageId": "stage-l8",
+                "dvMs": 551.1931852151884
+              }
+            ],
+            "issues": []
+          },
+          {
+            "maneuverId": "moon-land",
+            "branchId": "branch-root",
+            "type": "land",
+            "label": "Land on Moon",
+            "dvRequiredMs": 1870,
+            "dvAvailableBeforeMs": 2241.503489704982,
+            "ok": true,
+            "startDay": 402.97782136279625,
+            "endDay": 402.97782136279625,
+            "stateBefore": {
+              "kind": "orbit",
+              "body": "moon",
+              "altitudeKm": 100,
+              "day": 402.97782136279625
+            },
+            "stateAfter": {
+              "kind": "surface",
+              "body": "moon",
+              "day": 402.97782136279625
+            },
+            "burns": [
+              {
+                "stageId": "stage-l8",
+                "dvMs": 1870
+              }
+            ],
+            "issues": [],
+            "twr": 1.3825891860449644
+          }
+        ],
+        "finalState": {
+          "kind": "surface",
+          "body": "moon",
+          "day": 402.97782136279625
+        },
+        "stageBands": [
+          {
+            "stageId": "stage-l2",
+            "stageName": "Booster",
+            "ownerName": "Rocket",
+            "dvUsedMs": 5726.248329974705,
+            "dvTotalMs": 5726.248329974705
+          },
+          {
+            "stageId": "stage-l5",
+            "stageName": "Upper stage",
+            "ownerName": "Rocket",
+            "dvUsedMs": 7077.503854690553,
+            "dvTotalMs": 7077.503854690553
+          },
+          {
+            "stageId": "stage-l8",
+            "stageName": "Descent stage",
+            "ownerName": "Lunar lander",
+            "dvUsedMs": 2421.1931852151884,
+            "dvTotalMs": 2792.6966749201697
+          }
+        ],
+        "dvRequiredTotalMs": 15224.945369880446,
+        "dvAvailableTotalMs": 15596.448859585427
+      }
+    ]
+  },
+  "score": {
+    "achieved": 3,
+    "total": 3,
+    "scrubbed": false,
+    "optionalAchieved": 0,
+    "optionalTotal": 0,
+    "bonusEarned": 0,
+    "bonusTotal": 0
+  },
+  "result": {
+    "events": [
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-launch",
+        "day": 398,
+        "kind": "maneuver",
+        "text": "Launch from Earth"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-transfer",
+        "day": 398,
+        "kind": "maneuver",
+        "text": "Transfer to Moon departs"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-transfer",
+        "day": 402.97782136279625,
+        "kind": "maneuver",
+        "text": "Arrived at Moon"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-insertion",
+        "day": 402.97782136279625,
+        "kind": "maneuver",
+        "text": "In orbit around Moon"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-insertion",
+        "day": 402.97782136279625,
+        "kind": "goal",
+        "text": "Goal achieved: Reach lunar orbit"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-land",
+        "day": 402.97782136279625,
+        "kind": "maneuver",
+        "text": "Landed on Moon"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-land",
+        "day": 402.97782136279625,
+        "kind": "goal",
+        "text": "Goal achieved: Land on the Moon"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "moon-land",
+        "day": 402.97782136279625,
+        "kind": "goal",
+        "text": "Goal achieved: Drill for water ice"
+      },
+      {
+        "day": 423,
+        "branchId": "",
+        "kind": "info",
+        "text": "Surface operations funding: Stable operations funding gives the drill team better support for its work."
+      },
+      {
+        "day": 423,
+        "branchId": "",
+        "kind": "info",
+        "text": "Tracking the descent: Partner tracking gives the flight team better support during descent."
+      },
+      {
+        "day": 423,
+        "branchId": "",
+        "kind": "info",
+        "text": "Descent engine software patch: Responsive supplier support improves confidence in the descent engine."
+      },
+      {
+        "day": 423,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Rehearsed landing: The moved launch cut rehearsals short, leaving the landing team less prepared."
+      }
+    ],
+    "goalOutcomes": [
+      {
+        "goalId": "goal-moon-orbit",
+        "success": true
+      },
+      {
+        "goalId": "goal-moon-land",
+        "success": true
+      },
+      {
+        "goalId": "goal-moon-ice",
+        "success": true
+      }
+    ],
+    "endDay": 432.97782136279625
+  },
+  "trust": {
+    "government": 70,
+    "industry": 70,
+    "public": 95,
+    "partners": 95
+  },
+  "summaries": [
+    {
+      "day": 20,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 30,
+        "committedM": 98.3
+      },
+      "trust": {
+        "government": 50,
+        "industry": 50,
+        "public": 60,
+        "partners": 50
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "running",
+          "ends": 54.792
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "running",
+          "ends": 91.32000000000001
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "active",
+          "arrival": 91
+        }
+      ]
+    },
+    {
+      "day": 40,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 33,
+        "committedM": 98.3
+      },
+      "trust": {
+        "government": 55,
+        "industry": 55,
+        "public": 60,
+        "partners": 55
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "running",
+          "ends": 52.09200000000003
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "running",
+          "ends": 88.62000000000003
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "active",
+          "arrival": 91
+        }
+      ]
+    },
+    {
+      "day": 60,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 37,
+        "committedM": 101
+      },
+      "trust": {
+        "government": 60,
+        "industry": 55,
+        "public": 60,
+        "partners": 70
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "running",
+          "ends": 80.12000000000009
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 80,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 43,
+        "committedM": 101
+      },
+      "trust": {
+        "government": 55,
+        "industry": 60,
+        "public": 70,
+        "partners": 75
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "active",
+          "arrival": 91
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 100,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 57.5,
+        "committedM": 88.7
+      },
+      "trust": {
+        "government": 55,
+        "industry": 50,
+        "public": 70,
+        "partners": 75
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "running",
+          "ends": 124.978
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "running",
+          "ends": 124.978
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 120,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 57.5,
+        "committedM": 88.7
+      },
+      "trust": {
+        "government": 50,
+        "industry": 50,
+        "public": 70,
+        "partners": 85
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "running",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "running",
+          "ends": 122.228
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 140,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 59.5,
+        "committedM": 88.7
+      },
+      "trust": {
+        "government": 50,
+        "industry": 50,
+        "public": 70,
+        "partners": 85
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "running",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "running",
+          "ends": 159.528
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "active",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 160,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 90.5,
+        "committedM": 63.7
+      },
+      "trust": {
+        "government": 50,
+        "industry": 50,
+        "public": 75,
+        "partners": 85
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "running",
+          "ends": 196.528
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "running",
+          "ends": 196.528
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        }
+      ]
+    },
+    {
+      "day": 180,
+      "phase": "planning",
+      "launch": 300,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 101.5,
+        "committedM": 133.9
+      },
+      "trust": {
+        "government": 55,
+        "industry": 55,
+        "public": 75,
+        "partners": 90
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "running",
+          "ends": 196.528
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "running",
+          "ends": 196.528
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "active",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 200,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 110.2,
+        "committedM": 131.2
+      },
+      "trust": {
+        "government": 55,
+        "industry": 55,
+        "public": 75,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "running",
+          "ends": 231.72800000000004
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "active",
+          "arrival": 202
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 220,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 113.9,
+        "committedM": 128.5
+      },
+      "trust": {
+        "government": 60,
+        "industry": 55,
+        "public": 75,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "running",
+          "ends": 227.72800000000026
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "running",
+          "ends": 234.9280000000002
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 240,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 113.9,
+        "committedM": 128.5
+      },
+      "trust": {
+        "government": 55,
+        "industry": 55,
+        "public": 80,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "active",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 260,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 180.2,
+        "committedM": 70.2
+      },
+      "trust": {
+        "government": 55,
+        "industry": 65,
+        "public": 80,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 280,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 180.2,
+        "committedM": 70.2
+      },
+      "trust": {
+        "government": 60,
+        "industry": 65,
+        "public": 85,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 300,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 260,
+        "spentM": 180.2,
+        "committedM": 70.2
+      },
+      "trust": {
+        "government": 60,
+        "industry": 65,
+        "public": 85,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "active",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 320,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 272,
+        "spentM": 250.4,
+        "committedM": 0
+      },
+      "trust": {
+        "government": 65,
+        "industry": 65,
+        "public": 85,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "delivered",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 340,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 272,
+        "spentM": 250.4,
+        "committedM": 0
+      },
+      "trust": {
+        "government": 70,
+        "industry": 65,
+        "public": 85,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "delivered",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 360,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 272,
+        "spentM": 250.4,
+        "committedM": 0
+      },
+      "trust": {
+        "government": 70,
+        "industry": 65,
+        "public": 95,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "delivered",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 380,
+      "phase": "planning",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 272,
+        "spentM": 250.4,
+        "committedM": 0
+      },
+      "trust": {
+        "government": 70,
+        "industry": 65,
+        "public": 95,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "delivered",
+          "arrival": 317.56
+        }
+      ]
+    },
+    {
+      "day": 398,
+      "phase": "launched",
+      "launch": 398,
+      "budget": {
+        "fundingTotalM": 272,
+        "spentM": 250.4,
+        "committedM": 0
+      },
+      "trust": {
+        "government": 70,
+        "industry": 70,
+        "public": 95,
+        "partners": 95
+      },
+      "projects": [
+        {
+          "id": "moon-hypergolic-1",
+          "tech": "hypergolic-tuning",
+          "status": "succeeded",
+          "ends": 49.092000000000056
+        },
+        {
+          "id": "moon-lab-1",
+          "tech": "lab-automation",
+          "status": "failed",
+          "ends": 72.97000000000013
+        },
+        {
+          "id": "moon-test-1",
+          "part": "part-l14",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-2",
+          "part": "part-l12",
+          "status": "succeeded",
+          "ends": 122.228
+        },
+        {
+          "id": "moon-test-3",
+          "part": "part-l13",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-4",
+          "part": "part-l7",
+          "status": "succeeded",
+          "ends": 159.528
+        },
+        {
+          "id": "moon-test-5",
+          "part": "part-l6",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-6",
+          "part": "part-l10",
+          "status": "succeeded",
+          "ends": 195.12800000000007
+        },
+        {
+          "id": "moon-test-7",
+          "part": "part-l4",
+          "status": "succeeded",
+          "ends": 226.32800000000034
+        },
+        {
+          "id": "moon-test-8",
+          "part": "part-l9",
+          "status": "succeeded",
+          "ends": 232.32800000000034
+        }
+      ],
+      "contracts": [
+        {
+          "id": "contract-21",
+          "offer": "cat-e-ker-4500-tallis",
+          "status": "delivered",
+          "arrival": 244
+        },
+        {
+          "id": "contract-24",
+          "offer": "cat-t-ker-260-tallis",
+          "status": "delivered",
+          "arrival": 183,
+          "tested": true
+        },
+        {
+          "id": "contract-27",
+          "offer": "cat-e-hyd-120-commons",
+          "status": "delivered",
+          "arrival": 152,
+          "tested": true
+        },
+        {
+          "id": "contract-30",
+          "offer": "cat-t-hyd-22-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-33",
+          "offer": "cat-t-hyp-16-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-36",
+          "offer": "cat-p-sol-06-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-39",
+          "offer": "cat-a-120-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-42",
+          "offer": "cat-l-25-commons",
+          "status": "delivered",
+          "arrival": 91,
+          "tested": true
+        },
+        {
+          "id": "contract-58",
+          "offer": "cat-e-hyp-5-commons",
+          "status": "delivered",
+          "arrival": 202,
+          "tested": true
+        },
+        {
+          "id": "contract-81",
+          "offer": "cat-i-lab-45-meridian",
+          "status": "delivered",
+          "arrival": 317.56
+        }
+      ]
+    }
+  ]
+}

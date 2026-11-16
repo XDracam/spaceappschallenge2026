@@ -49,7 +49,7 @@ export const PLAYER_EVENTS: EventDef[] = [
         'The public appreciates the candour. Feld appreciates nothing about it.'),
       option('cover', 'Quietly reassure the landing-site team yourself.',
         [trust('industry', 5), trust('government', -5)],
-        'Kessler accepts your explanation with the warmth of a lunar night. Feld sends a fruit basket.'),
+        'Kessler asks for a revised delivery schedule. Feld is relieved to stay out of that meeting.'),
     ],
     ignored: {
       effects: [trust('industry', -5), delay(1, 'next')],
@@ -89,10 +89,10 @@ export const PLAYER_EVENTS: EventDef[] = [
     options: [
       option('audit', 'Order an independent audit (a delivery slips a month).',
         [trust('public', 5), trust('industry', -5), delay(1, 'next')],
-        'The auditors find shortcuts and fix them. The part arrives late but shakes properly.', 5),
+        'The audit reassures the public; the next delivery slips a month. Science still needs to test the part to reduce its failure risk.', 5),
       option('test-clauses', 'Have procurement add test clauses (prices rise).',
         [trust('public', 5), price(10, 3)],
-        'New contracts now require test reports. Suppliers price in the extra paperwork.'),
+        'Test clauses reassure the public. Procurement prices rise 10% for three months; Science still needs to test delivered parts to reduce their failure risk.'),
       option('defend', "Defend the supplier's record publicly.",
         [trust('industry', 5), trust('public', -10)],
         "The supplier is grateful. Okafor runs the engineer's interview anyway, with your quote beneath it."),
@@ -135,7 +135,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     options: [
       option('joint-lab', 'Open a joint lab (science research speeds up).',
         [trust('partners', 10), pace(25, 2)],
-        'Ten students arrive with laptops and opinions. Science research runs noticeably faster.', 4),
+        'Northgate sends a drill-and-oven team. Science research runs noticeably faster.', 4),
       option('agency-credit', 'Accept, but keep the credit for the agency.',
         [trust('partners', -5), trust('public', 5), pace(15, 2)],
         'The help is real and so is the resentment. Salo starts adding footnotes to everything.'),
@@ -253,13 +253,13 @@ export const TRIGGER_EVENTS: EventDef[] = [
     options: [
       option('with-strings', 'Take 30 M and the district line (procurement pays more).',
         [budget(30), trust('government', 5), price(15, 4)],
-        'The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.'),
+        'The committee adds 30 M. District-sourcing terms raise Procurement prices 15% for four months.'),
       option('no-strings', 'Ask for 15 M with no strings attached.',
         [budget(15), trust('government', -5)],
-        'Duarte delivers, with a small speech about gratitude. Every station gets 15 M more.'),
+        'Duarte delivers, with a small speech about gratitude. The shared budget gains 15 M.'),
       option('decline', 'Decline: the mission is funded well enough.',
         [trust('public', 5), trust('government', -10)],
-        'Good-government groups applaud. Duarte has never been declined before and finds it educational.'),
+        'Good-government groups applaud. Duarte withdraws the offer and asks how you plan to fund the remaining work.'),
     ],
     ignored: {
       effects: [trust('government', -5)],

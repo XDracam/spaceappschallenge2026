@@ -1,5 +1,13 @@
 # Concept brief
 
+## Current prototype — November 16, 2026
+
+The integrated game has four connected stations, three authored missions, real-time preparation and a seeded goal-by-goal resolution. D-015/D-027 select networking, D-020 the engineering research tree, D-025 the license and D-029 recovery. D-015 permits fewer players to use unclaimed stations. See [current prototype](current-prototype.md) for implemented behavior and [decisions](decisions.md) for accepted direction. Broader personnel/campaign and human-engagement questions remain open.
+
+## Original concept exploration — November 14, 2026
+
+The material below preserves the initial brainstorm. Statements that platform, connections or success rules were open describe that drafting stage; they do not override subsequent decisions.
+
 **Stage:** prototype and brainstorming. Sources: [kickoff](notes/2026-11-14-kickoff.md), [follow-up](notes/2026-11-14-brainstorm.md), and [personnel and roles notes](notes/2026-11-14-personnel-tasks-roles.md). Game mechanics below are ideas to explore, not settled rules; the authored-content baseline is recorded separately.
 
 ## Core design focus

@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useGame } from '../../../core/store';
 import { requestConfirmation } from '../../../shared/confirmation';
 import { composeTask } from '../../../shared/taskDraft';
+import { formatMoneyM, formatMissionDate } from '../../../shared/format';
+import { missionById } from '../../../core/mission';
 import { DAYS_PER_MONTH, budgetAvailableM } from '../../../core/state';
 import { scienceActions } from '../logic';
 import { BRANCH_COLOR, BRANCH_LABEL, TECH_BY_ID } from '../data/techs';
@@ -64,7 +66,7 @@ export function App() {
     <div class="sc-app" ref={root}>
       <header class="sc-head">
         <h1>Science · Engineering tech tree</h1>
-        <span>Teams {runs.length}/{teamCapacity(g)} · Budget available {budgetAvailableM(g.budget).toFixed(0)} M · {formatDate(g.clock.day)}</span>
+        <span>Teams {runs.length}/{teamCapacity(g)} · Budget available {formatMoneyM(budgetAvailableM(g.budget))} · {formatDate(g.clock.day)}</span>
         {g.meta.phase === 'planning' && hiredTeams(g.research, g.clock.day).length < MAX_HIRED_TEAMS && !g.research.supplyRequests?.some((q) => q.status === 'open' && q.kind === 'team')
           ? <button type="button" class="sc-btn small" onClick={() => scienceActions.askTeam()}>Request more research teams</button> : null}
       </header>
@@ -72,7 +74,7 @@ export function App() {
         <aside class="sc-left">
           <p class="muted">Research the design’s needs, then tell Procurement what is ready. Test delivered parts before launch; ask the Planner for more time after a failure.</p>
           <h2 data-science-home tabIndex={-1}>The mission needs</h2>
-          {needs.length === 0 ? <p class="muted">Nothing. Every part in the Planner's design is within research.</p> : null}
+          {needs.length === 0 ? <p class="muted">No research needed for the current design.</p> : null}
           {needs.map((n) => {
             const now = n.value === undefined ? undefined : g.research.limits[n.key];
             const eta = researchEta(g.research.projects, n.key, n.value);
@@ -102,8 +104,8 @@ export function App() {
             const paused = slice.info[p.id]?.paused;
             return (
               <div class="sc-card" key={p.id} data-project={p.id} data-test={p.partId} tabIndex={-1}>
-                <button type="button" class="sc-link" onClick={() => p.techId && setSel(p.techId)}><strong>{p.title}</strong></button>
-                <div class="sc-bar"><i style={{ width: `${pct}%` }} /></div>
+                {p.techId ? <button type="button" class="sc-link" onClick={() => setSel(p.techId!)}><strong>{p.title}</strong></button> : <strong>{p.title}</strong>}
+                <div class="sc-bar" role="progressbar" aria-label={p.title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}><i style={{ width: `${pct}%` }} /></div>
                 {p.partId
                   ? <span class={testCounts(p.endsAt, g.planner.plan.launchDay) ? 'muted' : 'sc-warn'}>ends {formatDate(p.endsAt)}{testCounts(p.endsAt, g.planner.plan.launchDay) ? '' : ': not before the launch, it will not count'}</span>
                   : <span class="muted">{paused ? 'Paused by Comms · ' : ''}ends {formatDate(p.endsAt)} · {Math.round(p.successChance * 100)} % success</span>}
@@ -138,6 +140,7 @@ export function App() {
               const p = LAYOUT.pos[t.id];
               return (
                 <button type="button" key={t.id} data-tech={t.id}
+                  aria-pressed={sel === t.id} aria-label={`${v.status === 'fog' ? 'Unknown technology' : t.name}: ${v.lacksFacilities ? 'Needs equipment' : statusText(v)}`} title={v.status === 'fog' ? 'Unknown technology' : t.name}
                   class={`sc-node ${v.unavailable ? 'covered' : v.status} ${sel === t.id ? 'sel' : ''} ${v.goal ? 'goal' : ''}`}
                   style={{ left: `${p.x - NODE_W / 2}px`, top: `${p.y - NODE_H / 2}px`, width: `${NODE_W}px`, height: `${NODE_H}px`, '--c': BRANCH_COLOR[t.branch] }}
                   onClick={(e) => { e.stopPropagation(); setSel(t.id); }}>
@@ -148,10 +151,11 @@ export function App() {
             })}
           </div>
         </main>
-        <aside class="sc-right"><Inspector id={sel} views={views} /></aside>
+        <aside class="sc-right" aria-label="Technology details"><Inspector id={sel} views={views} /></aside>
       </div>
       <footer class="sc-news">
         {g.events.news.filter((n) => n.from === 'science' || n.affects.includes('science')).slice(0, 3).map((n) => <span key={n.id}>• {n.text}</span>)}
+        <span class="shell-sr-only" role="status" aria-atomic="true">{g.events.news.find((n) => n.from === 'science' || n.affects.includes('science'))?.text ?? ''}</span>
       </footer>
     </div>
   );
@@ -202,7 +206,7 @@ function PartTests({ g }: { g: GameState }) {
             return (
               <span class={`sc-row ${late ? 'sc-warn' : 'muted'}`} key={t.partId} data-test={t.partId} tabIndex={-1}>
                 <span>{t.name} · {pct(t.reliability)}</span>
-                <span>{formatDate(t.arrivesAt ?? 0).slice(0, -5)}</span>
+                <span>{formatMissionDate(t.arrivesAt ?? 0, missionById(g.meta.missionId).startDateISO, { year: false })}</span>
               </span>
             );
           })}
@@ -251,7 +255,7 @@ function Teams({ g }: { g: GameState }) {
     <>
       <h2>Teams</h2>
       <div class="sc-card">
-        <span>{teamCapacity(g)} at work · {sci(g).slots} own{hired.length ? ` · ${hired.length} hired` : ''}</span>
+        <span>{running(g.research).length} of {teamCapacity(g)} teams working · {sci(g).slots} own{hired.length ? ` · ${hired.length} hired` : ''}</span>
         {hired.map((t) => <span class="muted small" key={t.id}>{t.from > g.clock.day ? `Starts ${formatDate(t.from)}` : 'Hired team'}{t.until === undefined ? ' · permanent' : ` · until ${formatDate(t.until)}`}</span>)}
         <button type="button" class="sc-btn small" disabled={asked || full || g.meta.phase !== 'planning'}
           onClick={() => scienceActions.askTeam()}>{asked ? 'Requested: waiting for Procurement' : full ? 'No more teams to hire' : 'Request more research teams'}</button>

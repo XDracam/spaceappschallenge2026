@@ -7,6 +7,7 @@ import { createStore, useStore } from '../../../core/createStore';
 import { getPlanner, uiId, uiStore } from '../state/store';
 import { bodyById } from '../data/bodies';
 import { allParts, findPart } from '../model/rocketUtils';
+import { formatMoneyM } from '../../../shared/format';
 import { formatDay } from '../model/units';
 
 export const BRANCH_COLORS = ['#3fc7ff', '#b98cff', '#ffaa5c', '#3fe0a0'];
@@ -230,7 +231,7 @@ export function formatRealTime(seconds: number): string {
 
 /** Whole millions: "195 M", "1.20 B". */
 export function fmtMoneyShort(m: number): string {
-  return Math.abs(m) >= 1000 ? `${(m / 1000).toFixed(2)} B` : `${Math.round(m)} M`;
+  return formatMoneyM(m, { decimals: 0, billions: true });
 }
 
 /** "1 part" / "3 parts". */

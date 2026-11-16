@@ -17,7 +17,7 @@ export function Conversation() {
 
   if (!inst) {
     return (
-      <section class="talk glass">
+      <section id="comms-conversation" class="talk glass" aria-label="Selected conversation">
         <div class="talk-empty">
           <div class="calm-ring"><span /></div>
           <div class="display calm-title">All quiet</div>
@@ -29,13 +29,13 @@ export function Conversation() {
   }
   if (!def) {
     return (
-      <section class="talk glass">
+      <section id="comms-conversation" class="talk glass" aria-label="Selected conversation">
         <div class="talk-empty"><p class="muted">Unknown event “{inst.eventId}”.</p></div>
       </section>
     );
   }
   return (
-    <section class="talk glass">
+    <section id="comms-conversation" class="talk glass" aria-label="Selected conversation">
       <TalkBody key={inst.instanceId} inst={inst} def={def} />
     </section>
   );
@@ -118,7 +118,7 @@ function TalkBody({ inst, def }: { inst: EventInstance; def: EventDef }) {
             const isChosen = o.id === inst.chosenOptionId;
             if (!isOpen && !isChosen) return null;
             return (
-              <button key={o.id} class={`opt${isChosen ? ' chosen' : ''}`} disabled={disabled && !isChosen}
+              <button key={o.id} class={`opt${isChosen ? ' chosen' : ''}`} aria-pressed={isChosen} disabled={disabled && !isChosen}
                 title={tooExpensive && isOpen ? `Needs ${formatMoney(o.costM!)}; only ${formatMoney(budget)} left` : undefined}
                 onClick={() => {
                   if (!disabled) actions.answer(inst.instanceId, o.id);

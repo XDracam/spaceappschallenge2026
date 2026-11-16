@@ -7,8 +7,10 @@
 //    with exactly the host's state.
 import type { Action } from './actions';
 import { applyAction, setDispatchHook } from './actions';
-import type { ClientTransport, HostToClient, HostTransport } from './protocol';
-import type { StationId } from './model';
+import { validClientMessage, validHostMessage, type ClientTransport, type HostTransport } from './protocol';
+import { COMPATIBILITY_ID } from './build';
+import { record, validAction } from './validation';
+import { STATIONS, type StationId } from './model';
 import { createGame, type GameState } from './state';
 import { createStore, useStore } from './createStore';
 import { MISSION, setActiveMission } from './mission';
@@ -22,6 +24,7 @@ interface SyncState {
   /** Station this browser is currently viewing/acting as (null = lobby / not seated). */
   station: StationId | null;
   connected: boolean;
+  error?: string | null;
 }
 
 /** What the UI renders: confirmed state (+ pending actions on clients). */
@@ -107,26 +110,37 @@ function rebuildView(): void {
 /** Local dispatch used by every defineActions() dispatcher. */
 function dispatch(type: string, args: unknown[]): void {
   const action: Action = { type, args: structuredClone(args), by: by() };
+  if (!validAction(action)) {
+    syncStore.update(s => { s.error = 'That action could not be read. Please try again.'; });
+    return;
+  }
   const { role } = syncStore.get();
   if (role === 'client') {
+    if (!syncStore.get().connected || pending.length >= 128) {
+      syncStore.update(s => { s.error = 'Waiting for the host. Reconnect before making more changes.'; });
+      return;
+    }
     const id = `${syncStore.get().peerId}:${++pendingCounter}`;
     pending.push({ id, action });
     client?.send({ t: 'action', id, action });
     rebuildView();
     return;
   }
-  applyAsHost(action, syncStore.get().peerId);
+  if (!applyAsHost(action, syncStore.get().peerId)) syncStore.update(s => { s.error = 'That action could not be applied. Your confirmed game is unchanged.'; });
 }
 
-function applyAsHost(action: Action, origin: string, id?: string): void {
+function applyAsHost(action: Action, origin: string, id?: string): boolean {
   const previous = confirmed;
-  confirmed = applyAction(confirmed, action);
+  let next: GameState;
+  try { next = applyAction(confirmed, action); } catch (error) { console.warn('[core] action rejected', error); return false; }
+  confirmed = next;
   confirmedGameStore.set(confirmed);
   seq++;
   gameStore.set(confirmed);
   host?.broadcast({ t: 'applied', seq, action, origin, ...(id ? { id } : {}) });
   notifyConfirmed(previous, action, origin === syncStore.get().peerId);
   for (const l of hostListeners) l(confirmed);
+  return true;
 }
 
 setDispatchHook(dispatch);
@@ -149,7 +163,7 @@ export function startSolo(state: GameState): void {
   pending = [];
   host = null;
   client = null;
-  syncStore.set({ role: 'solo', peerId: 'host', station: syncStore.get().station, connected: true });
+  syncStore.set({ role: 'solo', peerId: 'host', station: syncStore.get().station, connected: true, error: null });
   gameStore.set(confirmed);
 }
 
@@ -157,20 +171,48 @@ export function startSolo(state: GameState): void {
 export function startHost(transport: HostTransport): void {
   host = transport;
   client = null;
-  syncStore.update((s) => { s.role = 'host'; s.peerId = 'host'; s.connected = true; });
+  syncStore.update((s) => { s.role = 'host'; s.peerId = 'host'; s.connected = true; s.error = null; });
+  const compatiblePeers = new Set<string>();
   transport.onPeerJoin((peerId) => {
     if (host !== transport) return;
-    transport.sendTo(peerId, { t: 'welcome', peerId });
-    transport.sendTo(peerId, { t: 'snapshot', seq, state: confirmed });
+    transport.sendTo(peerId, { t: 'welcome', peerId, compatibility: COMPATIBILITY_ID });
   });
   transport.onMessage((peerId, msg) => {
     if (host !== transport) return;
-    if (msg.t === 'action') applyAsHost({ ...msg.action }, peerId, msg.id);
-    else if (msg.t === 'resync') transport.sendTo(peerId, { t: 'snapshot', seq, state: confirmed });
+    const raw: unknown = msg;
+    if (!validClientMessage(raw)) {
+      const id = record(raw) && typeof raw.id === 'string' && raw.id.length <= 160 ? raw.id : undefined;
+      transport.sendTo(peerId, { t: 'rejected', id, reason: 'The host could not read that action. Reload both tabs if this continues.' });
+      return;
+    }
+    if (msg.t === 'hello') {
+      if (msg.compatibility !== COMPATIBILITY_ID) {
+        compatiblePeers.delete(peerId);
+        transport.sendTo(peerId, { t: 'rejected', fatal: true, reason: 'Your game version differs from the host. Save the host game, then reload both tabs and rejoin.' });
+      } else {
+        compatiblePeers.add(peerId);
+        transport.sendTo(peerId, { t: 'snapshot', seq, state: confirmed });
+      }
+      return;
+    }
+    if (!compatiblePeers.has(peerId)) return;
+    if (msg.t === 'action') {
+      const actor = STATIONS.find(st => confirmed.meta.seats[st].claimedBy === peerId);
+      const claim = msg.action.type === 'core/claimSeat' && msg.action.args[1] === peerId;
+      const namespace = msg.action.type.split('/')[0];
+      if (!claim && (!actor || namespace !== actor && namespace !== 'coordination')) {
+        transport.sendTo(peerId, { t: 'rejected', id: msg.id, reason: 'That action belongs to the host or another station.' });
+        return;
+      }
+      if (!applyAsHost({ ...msg.action, by: actor ?? 'host' }, peerId, msg.id)) {
+        transport.sendTo(peerId, { t: 'rejected', id: msg.id, reason: 'The host could not apply that action. Your confirmed game is unchanged.' });
+      }
+    } else if (msg.t === 'resync') transport.sendTo(peerId, { t: 'snapshot', seq, state: confirmed });
   });
   // A player who leaves (tab closed, connection lost) frees their seat for others.
   transport.onPeerLeave((peerId) => {
     if (host !== transport) return;
+    compatiblePeers.delete(peerId);
     applyAsHost({ type: 'core/releaseSeat', args: [peerId], by: 'host' }, 'host');
   });
 }
@@ -180,20 +222,42 @@ export function startClient(transport: ClientTransport): void {
   client = transport;
   host = null;
   pending = [];
-  syncStore.update((s) => { s.role = 'client'; s.connected = true; });
-  transport.onMessage((msg: HostToClient) => {
+  syncStore.update((s) => { s.role = 'client'; s.connected = true; s.error = null; });
+  let compatible = false;
+  let adoptedSnapshot = false;
+  transport.onMessage((msg) => {
     if (client !== transport) return;
+    if (!validHostMessage(msg)) {
+      adoptedSnapshot = false;
+      compatible = false;
+      pending = [];
+      syncStore.update(s => { s.connected = false; s.error = 'The host sent an unreadable game version. Reload both tabs and rejoin.'; });
+      return;
+    }
     if (msg.t === 'welcome') {
-      syncStore.update((s) => { s.peerId = msg.peerId; });
+      adoptedSnapshot = false;
+      compatible = msg.compatibility === COMPATIBILITY_ID;
+      syncStore.update((s) => { s.peerId = msg.peerId; s.connected = compatible; s.error = compatible ? null : 'Your game version differs from the host. Save the host game, then reload both tabs and rejoin.'; });
+    } else if (msg.t === 'rejected') {
+      if (msg.id) pending = pending.filter(p => p.id !== msg.id);
+      if (msg.fatal) { compatible = false; adoptedSnapshot = false; pending = []; }
+      syncStore.update(s => { s.error = msg.reason; if (msg.fatal) s.connected = false; });
+      rebuildView();
     } else if (msg.t === 'snapshot') {
+      if (!compatible) return;
       setActiveMission(msg.state.meta.missionId);
       confirmed = msg.state;
+      adoptedSnapshot = true;
       confirmedGameStore.set(confirmed);
       seq = msg.seq;
       // Pending actions the host never saw are dropped on resync.
       pending = [];
       rebuildView();
     } else if (msg.t === 'applied') {
+      // A welcome establishes compatibility, not the baseline for replay. Live
+      // broadcasts can arrive while hello travels; the first snapshot includes
+      // them and must be adopted before any action produces state or feedback.
+      if (!compatible || !adoptedSnapshot) return;
       if (msg.seq !== seq + 1) {
         transport.send({ t: 'resync' });
         return;

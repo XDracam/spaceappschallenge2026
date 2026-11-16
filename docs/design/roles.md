@@ -1,5 +1,13 @@
 # Roles and interactions
 
+## Current station responsibilities — November 16, 2026
+
+Planning configures the mission and publishes needs; Procurement acquires and allocates hardware, facilities and teams; Science researches an engineering tree and tests delivered hardware; Communications handles stakeholder messages and projects. Shared Tasks support required cross-role coordination (D-021–D-024), and D-015 permits switching to unclaimed stations with fewer players. See [current prototype](../current-prototype.md) and [Science implementation](../../game/src/stations/science/README.md).
+
+## Original role brainstorm — November 14, 2026
+
+The following alternatives and uncertainty were recorded before integration and the D-020 engineering-tree decision. They remain design provenance, not a present implementation inventory.
+
 These are brainstorming areas from the [kickoff](../notes/2026-11-14-kickoff.md), [follow-up](../notes/2026-11-14-brainstorm.md), and [personnel and roles notes](../notes/2026-11-14-personnel-tasks-roles.md), not a fixed role split. Player setup is decided in [D-012](../decisions.md#d-012--four-players-on-four-separate-stations): four players by default, one station each from a separate seat, with no switching or sharing during game time. Which responsibilities each station covers is still being worked out here. The key requirement is meaningful concurrent activity for every role (D-004).
 
 A [procurement-facing action map](../../procurement/role-actions.md) records the current proposed actions and their effects.

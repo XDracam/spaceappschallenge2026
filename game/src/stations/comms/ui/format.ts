@@ -1,6 +1,10 @@
 // UI formatting: the engine's helpers (src/state/format.ts) plus a few UI-only ones.
 
-export { formatDay, formatDuration, formatMoney } from '../state/format';
+import { formatMissionDate, formatMoneyM } from '../../../shared/format';
+export { formatDuration } from '../state/format';
+export const formatDay = formatMissionDate;
+/** Budget summaries keep tenths of a million; commitments never round to whole M. */
+export const formatMoney = (value: number) => formatMoneyM(value, { billions: true });
 
 /** Signed number with a real minus: "+5", "−3", "+2 mo". */
 export function signed(n: number, unit = ''): string {

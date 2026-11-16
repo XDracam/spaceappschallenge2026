@@ -1,3 +1,4 @@
+import { useDialog } from '../../../shared/useDialog';
 import { ResultRecoveryActions } from '../../../shell/ResultRecoveryActions';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { actions, uiStore, useEvaluation, usePlanner, useUi } from '../state/store';
@@ -79,11 +80,11 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
         <div class="spacer" />
         {!finished && (
           <div class="inline">
-            <button class="btn icon-btn" title={pt.playing ? 'Pause' : 'Play'} onClick={() => set((p) => { p.playing = !p.playing; })}>
+            <button class="btn icon-btn" title={pt.playing ? 'Pause' : 'Play'} aria-label={pt.playing ? 'Pause playback' : 'Play playback'} onClick={() => set((p) => { p.playing = !p.playing; })}>
               {pt.playing ? <PauseIcon /> : <PlayIcon />}
             </button>
             {SPEEDS.map((s) => (
-              <button key={s.dps} class={`btn small${pt.daysPerSecond === s.dps ? ' active' : ''}`} title={`${s.dps} days per second`}
+              <button key={s.dps} class={`btn small${pt.daysPerSecond === s.dps ? ' active' : ''}`} title={`${s.dps} days per second`} aria-pressed={pt.daysPerSecond === s.dps}
                 onClick={() => set((p) => { p.daysPerSecond = s.dps; })}>
                 {s.label}
               </button>
@@ -117,6 +118,8 @@ function PlaybackPanel({ onShowResult }: { onShowResult?: () => void }) {
 }
 
 function ResultCard({ onHide }: { onHide: () => void }) {
+  const root = useRef<HTMLDivElement>(null);
+  useDialog({ open: true, root, onClose: onHide });
   const pt = useUi((u) => u.playthrough)!;
   const game = usePlanner((g) => g);
   const ev = useEvaluation();
@@ -133,7 +136,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
   const notDelivered = allParts(game.rocket).filter((l) => l.part.state !== 'delivered').length;
   return (
     <div class="modal-backdrop result-backdrop">
-      <div class="modal result-card">
+      <div ref={root} tabIndex={-1} class="modal result-card" role="dialog" aria-modal="true" aria-label="Mission result">
         <div class="popup-head">
           <div class="popup-title">
             <div class="tb-label">Mission result</div>
@@ -172,7 +175,7 @@ function ResultCard({ onHide }: { onHide: () => void }) {
           {!scrubbed && <div class="kv"><span>Mission end</span><span class="num">{formatDay(pt.result.endDay, start)} ({formatDuration(pt.result.endDay - game.plan.launchDay)})</span></div>}
           <div class="kv"><span>Launch mass</span><span class="num">{formatMass(ev.totalMassT)}</span></div>
           <div class="kv"><span>Agency spend</span><span class="num">{formatMoney(game.budget.spentM + game.budget.committedM)} of {formatMoney(game.budget.totalM)}</span></div>
-          {!scrubbed && <div class="kv"><span>Part failures</span><span class={`num${failures ? ' err-text' : ''}`}>{failures}</span></div>}
+          {!scrubbed && <div class="kv"><span>Failure events</span><span class={`num${failures ? ' err-text' : ''}`}>{failures}</span></div>}
         </div>
         <div class="popup-foot">
           <ResultRecoveryActions planner />

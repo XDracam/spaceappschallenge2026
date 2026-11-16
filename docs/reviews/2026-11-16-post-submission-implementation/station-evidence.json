@@ -1,0 +1,1442 @@
+{
+  "before": {
+    "missions": [
+      {
+        "mission": "weather-geo",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 180
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-w2",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 6144.708799959551
+                },
+                {
+                  "stageId": "stage-w5",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 3333.417404306574
+                },
+                {
+                  "stageId": "stage-w8",
+                  "stageName": "Apogee engine",
+                  "ownerName": "Weather satellite",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 3619.54129498671
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 13097.667499252835
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-geo",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km)"
+            },
+            {
+              "goalId": "goal-imagery",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            },
+            {
+              "goalId": "goal-ozone",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            },
+            {
+              "goalId": "goal-rain",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-w3"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-w4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-w6"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-w7"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-w9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-w10"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Orbital camera beyond research: Performance 4.5 > limit 4",
+              "partId": "part-w11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Orbital camera: not procured yet",
+              "partId": "part-w11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-w12"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Antenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps",
+              "partId": "part-w13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-w13"
+            }
+          ],
+          "totalMassT": 91.30939705882352,
+          "totalCostM": 87.13801470588237,
+          "uncontractedCostM": 87.13801470588237
+        }
+      },
+      {
+        "mission": "moon-lander",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 300
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-l2",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 5720.853316020937
+                },
+                {
+                  "stageId": "stage-l5",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 7773.863245894917
+                },
+                {
+                  "stageId": "stage-l8",
+                  "stageName": "Descent stage",
+                  "ownerName": "Lunar lander",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1610.8024891253197
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 15105.519051041174
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-moon-orbit",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Moon orbit"
+            },
+            {
+              "goalId": "goal-moon-land",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land on Moon"
+            },
+            {
+              "goalId": "goal-moon-ice",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land the instrument on Moon"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-l3"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-l4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-l6"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-l7"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Storable hypergolic engine beyond research: Isp 312 s > limit 310 s",
+              "partId": "part-l9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-l9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-l10"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Surface lab beyond research: Performance 4.5 > limit 3.2",
+              "partId": "part-l11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Surface lab: not procured yet",
+              "partId": "part-l11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-l12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-l13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Landing legs: not procured yet",
+              "partId": "part-l14"
+            }
+          ],
+          "totalMassT": 305.05167058823525,
+          "totalCostM": 140.33323529411763,
+          "uncontractedCostM": 140.33323529411763
+        }
+      },
+      {
+        "mission": "mars-orbiter-lander",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 230
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-m3",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 5438.599712269111
+                },
+                {
+                  "stageId": "stage-m6",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 6294.546846005463
+                },
+                {
+                  "stageId": "stage-m9",
+                  "stageName": "Orbiter propulsion",
+                  "ownerName": "Orbiter",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1628.9028155277074
+                },
+                {
+                  "stageId": "stage-m15",
+                  "stageName": "Descent stage",
+                  "ownerName": "Lander",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1068.9036766088705
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 14430.953050411152
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-orbit",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Mars orbit"
+            },
+            {
+              "goalId": "goal-orbit-data",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Mars orbit with the instrument"
+            },
+            {
+              "goalId": "goal-land",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land on Mars"
+            },
+            {
+              "goalId": "goal-surface-data",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land the instrument on Mars"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-m4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-m5"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-m7"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-m8"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-m10"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-m11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-m16"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-m17"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Orbital camera beyond research: Performance 4 > limit 3",
+              "partId": "part-m12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Orbital camera: not procured yet",
+              "partId": "part-m12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-m13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-m14"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Surface lab: not procured yet",
+              "partId": "part-m18"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-m19"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-m20"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Landing legs: not procured yet",
+              "partId": "part-m21"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Heat shield: not procured yet",
+              "partId": "part-m22"
+            }
+          ],
+          "totalMassT": 296.7203970588236,
+          "totalCostM": 195.12301470588235,
+          "uncontractedCostM": 195.12301470588235
+        }
+      }
+    ],
+    "geo": {
+      "branches": [
+        {
+          "branchId": "branch-root",
+          "maneuvers": [
+            {
+              "maneuverId": "review-launch",
+              "branchId": "branch-root",
+              "type": "launch",
+              "label": "Launch to 200 km",
+              "dvRequiredMs": 9400,
+              "dvAvailableBeforeMs": 13097.667499252835,
+              "ok": true,
+              "startDay": 180,
+              "endDay": 180,
+              "stateBefore": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 180
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 180
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w2",
+                  "dvMs": 6144.708799959551
+                },
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 3255.2912000404494
+                }
+              ],
+              "issues": [],
+              "twr": 2.1211389483361476
+            },
+            {
+              "maneuverId": "review-geo",
+              "branchId": "branch-root",
+              "type": "changeOrbit",
+              "label": "Change orbit to 35786 km",
+              "dvRequiredMs": 3934.580791224474,
+              "dvAvailableBeforeMs": 3697.66749925278,
+              "ok": false,
+              "startDay": 180,
+              "endDay": 180.2190233257883,
+              "stateBefore": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 180
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 35786,
+                "day": 180.2190233257883
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 78.12620426611552
+                },
+                {
+                  "stageId": "stage-w8",
+                  "dvMs": 3619.5412949866645
+                }
+              ],
+              "issues": [
+                {
+                  "severity": "error",
+                  "code": "dv",
+                  "message": "Out of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.",
+                  "branchId": "branch-root",
+                  "maneuverId": "review-geo"
+                }
+              ]
+            }
+          ],
+          "finalState": {
+            "kind": "orbit",
+            "body": "earth",
+            "altitudeKm": 35786,
+            "day": 180.2190233257883
+          },
+          "stageBands": [
+            {
+              "stageId": "stage-w2",
+              "stageName": "Booster",
+              "ownerName": "Rocket",
+              "dvUsedMs": 6144.708799959551,
+              "dvTotalMs": 6144.708799959551
+            },
+            {
+              "stageId": "stage-w5",
+              "stageName": "Upper stage",
+              "ownerName": "Rocket",
+              "dvUsedMs": 3333.417404306565,
+              "dvTotalMs": 3333.417404306565
+            },
+            {
+              "stageId": "stage-w8",
+              "stageName": "Apogee engine",
+              "ownerName": "Weather satellite",
+              "dvUsedMs": 3619.5412949866645,
+              "dvTotalMs": 3619.5412949866645
+            }
+          ],
+          "dvRequiredTotalMs": 13334.580791224475,
+          "dvAvailableTotalMs": 13097.667499252779,
+          "failedAtManeuverId": "review-geo"
+        }
+      ],
+      "goals": [
+        {
+          "goalId": "goal-geo",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-imagery",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-ozone",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-rain",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        }
+      ],
+      "issues": [
+        {
+          "severity": "error",
+          "code": "dv",
+          "message": "Out of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.",
+          "branchId": "branch-root",
+          "maneuverId": "review-geo"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Kerosene / oxygen engine: not procured yet",
+          "partId": "part-w3"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Kerosene / oxygen tank: not procured yet",
+          "partId": "part-w4"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Hydrogen / oxygen engine: not procured yet",
+          "partId": "part-w6"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Hydrogen / oxygen tank: not procured yet",
+          "partId": "part-w7"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Storable hypergolic engine: not procured yet",
+          "partId": "part-w9"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Storable hypergolic tank: not procured yet",
+          "partId": "part-w10"
+        },
+        {
+          "severity": "warning",
+          "code": "research",
+          "message": "Orbital camera beyond research: Performance 4.5 > limit 4",
+          "partId": "part-w11"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Orbital camera: not procured yet",
+          "partId": "part-w11"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Solar panels: not procured yet",
+          "partId": "part-w12"
+        },
+        {
+          "severity": "warning",
+          "code": "research",
+          "message": "Antenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps",
+          "partId": "part-w13"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Antenna: not procured yet",
+          "partId": "part-w13"
+        }
+      ],
+      "totalMassT": 91.30939705882352,
+      "totalCostM": 87.13801470588237,
+      "uncontractedCostM": 87.13801470588237
+    },
+    "tickTiming": {
+      "medianMs": 0,
+      "p95Ms": 0.10000000149011612
+    },
+    "font": true,
+    "planner": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "Next step · Weather satellite\nEdit route & mission tips\nNext: fix 1 problem — see Issues\nMISSION PLANNER\nWeather satellite\nROCKET\nTODAY\n1 Jan 2030\npaused\nBUDGET\n210 M available\n≈ 87 M to buy\nLAUNCH · CHANGE ▾\n30 Jun 2030 · in 6 mo (paused)\n9 parts not ordered\nRocket\nΔv\n13.1 of 13.3 km/s needed\n0.24 km/s short at Change orbit to 35786 km\n→ Bigger upper-stage tank\nWeather satellite\nOrbital camera\nSolar panels\nkW\nAntenna\nkbps\nApogee engineStorable hypergolic\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nUpper stageHydrogen / oxygen\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nBoosterKerosene / oxygen\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nSpacecraft\nRocket stage\nAdvanced\nOrder 9 parts\nΔV BUDGET\nMargin\n−0.24\nkm/s\nneeds 13.33 of 13.10 km/s\nLaunch\nOrbit change\nGOALS\nchance of success\nReach geostationary orbit\nBLOCKED\nThe plan fails before this goal is reached\nSend weather images\nBLOCKED\nThe plan fails before this goal is reached\nMeasure ozone and aerosolsBONUS\nBLOCKED\nThe plan fails before this goal is reached\nSound rain and cloud layers with radarBONUS\nBLOCKED\nThe plan fails before this goal is reached\nISSUES\n1 error\n2 warnings\n9 parts not ordered — launch will be scrubbed\nOut of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.\nOrbital camera beyond research: Performance 4.5 > limit 4\nAntenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps\nMission Planner\nPaused\n▴\nEffects\n40%\nMusic\n15%\nTasks\n0"
+    },
+    "science": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "Science · Engineering tech tree\nTeams 0/2 · Budget available 210 M · 1 Jan 2030\nRequest more research teams\n\nResearch the design’s needs, then tell Procurement what is ready. Test delivered parts before launch; ask the Planner for more time after a failure.\n\nThe mission needs\nOrbital camera performance ≥ 4.5\nIn the Planner's design · researched so far: 4\nFinish by 31 Mar 2030, or the part arrives after launch.\nResearch one of:\nLarger sensor arrays · 9 M · 2 mo\nAdaptive optics · 12 M · 2.5 mo\nAntenna data rate at 1 AU ≥ 600 kbps\nIn the Planner's design · researched so far: 200 kbps\nFinish by 30 Apr 2030, or the part arrives after launch.\nResearch one of:\nKa-band downlink · 10 M · 2 mo\nLarger deployable dish · 12 M · 2.5 mo\nTeams\n2 at work · 2 own\nRequest more research teams\nLab\n\nNo project running.\n\nPart tests\n\nA team tests a delivered part for 1 mo and halves its risk of failure. A test counts if it ends before the launch on 30 Jun 2030.\n\nNot under contract: Booster engine, Booster tank, Upper stage engine, Upper stage tank, Apogee engine, Apogee engine tank, Orbital camera, Solar panels, Antenna.\n\nPROPULSION\nPOWER\nINSTRUMENTS\nANTENNA AND DATA\nPROTECTION\nChemical propulsion\nResearched\nStaged combustion upgrade\nReady to start\nHigh-pressure turbopumps\nReady to start\nHypergolic injector tuning\nReady to start\nExtendable nozzle\nNeeds earlier techs\nRegenerative cooling\nNeeds earlier techs\n?\nUnknown\nXenon feed system\nReady to start\nIon power processing unit\nNeeds earlier techs\nGridded ion engine\nNeeds earlier techs\n?\nUnknown\nSolar arrays\nResearched\nHigh-voltage solar arrays\nReady to start\nTriple-junction cells\nReady to start\nLightweight deployable panels\nNeeds earlier techs\nConcentrator arrays\nNeeds earlier techs\n?\nUnknown\nRadioisotope heat source\nNot in this mission\nThermoele"
+    },
+    "procurement": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "PROCUREMENT\nPARTS\nRESEARCH NEEDS\nCONTRACTS & SCHEDULE\nMISSION\nWeather satellite\nTODAY\n1 Jan 2030\nLAUNCH 30 JUN 2030\nT−180 d\nAVAILABLE BUDGET\n210 M\nCommitted\n0 M\nSpent\n0 M\nFunding\n210 M\nMission needs\n9 drafts\nYour procurement loop\nStill to buy ≈ 98.5 M · 112 M spare\n\nThe Planner's design · 9 parts, not ordered yet. Study the offers now; you can sign once they are ordered.\n\nDraft\nKerosene / oxygen engine\n≥ 1,900 kN · ≥ 300 s\nOrder by 28 Feb\nDraft\nKerosene / oxygen tank\n≥ 80 t\nOrder by 28 Feb\nDraft\nHydrogen / oxygen engine\n≥ 110 kN · ≥ 445 s\nOrder by 31 Mar\nDraft\nStorable hypergolic engine\n≥ 0.5 kN · ≥ 315 s\nOrder by 31 Mar\nDraft\nOrbital camera\n≥ 4.5\nBeyond research · Science not started\nOrder by 31 Mar\nDraft\nHydrogen / oxygen tank\n≥ 2 t\nOrder by 30 Apr\nDraft\nStorable hypergolic tank\n≥ 0.7 t\nOrder by 30 Apr\nDraft\nSolar panels\n≥ 1.2 kW\nOrder by 30 Apr\nDraft\nAntenna\n≥ 600 kbps\nBeyond research · Science not started\nOrder by 30 Apr\nDev · add Tasks from rocket\nCatalogue\n77 Resources from 6 suppliers\nAll\nEngines\nTanks\nInstruments\nPower\nAntennas\nLanding & entry\nProtection\nSolid engine\nThumper S-600\n600 kN · 250 s · 0.76 t\n4.9 M from\nEarliest Sep 2030\n97–99.5 % reliable\nSolid engine\nGranite S-2500\n2,500 kN · 262 s · 2.733 t\n14.5 M from\nEarliest May 2030\n99–99.5 % reliable\nSolid engine\nBeyond research\nBasalt S-9000\n9,000 kN · 280 s · 10.4 t\n—\nScience must research it\n99.5–99.5 % reliable\nKerosene / oxygen engine\nKestrel KL-90\n90 kN · 318 s · 0.334 t\n11 M from\nEarliest Mar 2030\n97.5–98 % reliable\nKerosene / oxygen engine\nTaiga KL-1000\n1,000 kN · 302 s · 1.565 t\n16 M from\nEarliest May 2030\n96–98.5 % reliable\nKerosene / oxygen engine\nTaiga KL-2000\n2,000 kN · 305 s · 2.975 t\n25.3 M from\nEarliest Mar 2030\n96–98.5 % reliable\nKerosene / oxygen engine\nBoreal KL-2000H\n2,000 kN · 330 s · 3.3"
+    },
+    "comms": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "COMMUNICATIONS\nWeather satellite\nTODAY\n1 Jan 2030\ncalendar stopped\nBUDGET\n210 M of 210 M\nLAUNCH\n30 Jun 2030 · in 6 mo\ncalendar stopped\nDEV\nGOVERNMENT\n50\nAbove 70: more funding offers\nINDUSTRY\n50\nAbove 70: orders −10 % price and time\nPUBLIC / MEDIA\n50\nAbove 70: event budget cuts halved\nPARTNERS\n50\nAbove 70: more partner deals\nINBOX\n✉\nNo messages. Start a project to build relationships.\nAll quiet\n\nNo one is waiting for an answer. New messages arrive on the agency calendar, about one a month.\n\nMeanwhile, start a project on the right: trust at launch decides the in-flight events.\n\nPROJECTS · 0 OF 2\n+ Start a project\n+ Start a project\nIN FLIGHT · DECIDED AT LAUNCH\nscore 25/50\n✗\nOperations contract\nGovernment above 60 (now 50)\n−2 %\n✗\nFirst image downlink\nMeridian's dish booked or Partners above 60 (now 50)\n−2 %\n✓\nThruster glitch during the orbit raise\nIndustry above 45 (now 50) and no cheapest-bid contract\n+3 %\n✓\nArrival at the geostationary slot\nlaunch date never moved\n+2 %\nNet now +1 %: each failed goal gets a 1 % chance to be saved in flight.\nNEWS\nNo news yet. Outcomes that affect the team appear here for every station.\nCommunications\nPaused\n▴\nEffects\n40%\nMusic\n15%\nTasks\n0"
+    },
+    "errors": []
+  },
+  "after": {
+    "missions": [
+      {
+        "mission": "weather-geo",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 180
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-w2",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 6144.708799959551
+                },
+                {
+                  "stageId": "stage-w5",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 3333.417404306574
+                },
+                {
+                  "stageId": "stage-w8",
+                  "stageName": "Apogee engine",
+                  "ownerName": "Weather satellite",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 3619.54129498671
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 13097.667499252835
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-geo",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km)"
+            },
+            {
+              "goalId": "goal-imagery",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            },
+            {
+              "goalId": "goal-ozone",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            },
+            {
+              "goalId": "goal-rain",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach geostationary orbit (35,786 km) with the instrument"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-w3"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-w4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-w6"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-w7"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-w9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-w10"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Orbital camera beyond research: Performance 4.5 > limit 4",
+              "partId": "part-w11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Orbital camera: not procured yet",
+              "partId": "part-w11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-w12"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Antenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps",
+              "partId": "part-w13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-w13"
+            }
+          ],
+          "totalMassT": 91.30939705882352,
+          "totalCostM": 87.13801470588237,
+          "uncontractedCostM": 87.13801470588237
+        }
+      },
+      {
+        "mission": "moon-lander",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 300
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-l2",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 5720.853316020937
+                },
+                {
+                  "stageId": "stage-l5",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 7773.863245894917
+                },
+                {
+                  "stageId": "stage-l8",
+                  "stageName": "Descent stage",
+                  "ownerName": "Lunar lander",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1610.8024891253197
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 15105.519051041174
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-moon-orbit",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Moon orbit"
+            },
+            {
+              "goalId": "goal-moon-land",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land on Moon"
+            },
+            {
+              "goalId": "goal-moon-ice",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land the instrument on Moon"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-l3"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-l4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-l6"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-l7"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Storable hypergolic engine beyond research: Isp 312 s > limit 310 s",
+              "partId": "part-l9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-l9"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-l10"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Surface lab beyond research: Performance 4.5 > limit 3.2",
+              "partId": "part-l11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Surface lab: not procured yet",
+              "partId": "part-l11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-l12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-l13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Landing legs: not procured yet",
+              "partId": "part-l14"
+            }
+          ],
+          "totalMassT": 305.05167058823525,
+          "totalCostM": 140.33323529411763,
+          "uncontractedCostM": 140.33323529411763
+        }
+      },
+      {
+        "mission": "mars-orbiter-lander",
+        "evaluation": {
+          "branches": [
+            {
+              "branchId": "branch-root",
+              "maneuvers": [],
+              "finalState": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 230
+              },
+              "stageBands": [
+                {
+                  "stageId": "stage-m3",
+                  "stageName": "Booster",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 5438.599712269111
+                },
+                {
+                  "stageId": "stage-m6",
+                  "stageName": "Upper stage",
+                  "ownerName": "Rocket",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 6294.546846005463
+                },
+                {
+                  "stageId": "stage-m9",
+                  "stageName": "Orbiter propulsion",
+                  "ownerName": "Orbiter",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1628.9028155277074
+                },
+                {
+                  "stageId": "stage-m15",
+                  "stageName": "Descent stage",
+                  "ownerName": "Lander",
+                  "dvUsedMs": 0,
+                  "dvTotalMs": 1068.9036766088705
+                }
+              ],
+              "dvRequiredTotalMs": 0,
+              "dvAvailableTotalMs": 14430.953050411152
+            }
+          ],
+          "goals": [
+            {
+              "goalId": "goal-orbit",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Mars orbit"
+            },
+            {
+              "goalId": "goal-orbit-data",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not reach Mars orbit with the instrument"
+            },
+            {
+              "goalId": "goal-land",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land on Mars"
+            },
+            {
+              "goalId": "goal-surface-data",
+              "achievable": false,
+              "successChance": 0,
+              "reason": "The plan does not land the instrument on Mars"
+            }
+          ],
+          "issues": [
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen engine: not procured yet",
+              "partId": "part-m4"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Kerosene / oxygen tank: not procured yet",
+              "partId": "part-m5"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen engine: not procured yet",
+              "partId": "part-m7"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Hydrogen / oxygen tank: not procured yet",
+              "partId": "part-m8"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-m10"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-m11"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic engine: not procured yet",
+              "partId": "part-m16"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Storable hypergolic tank: not procured yet",
+              "partId": "part-m17"
+            },
+            {
+              "severity": "warning",
+              "code": "research",
+              "message": "Orbital camera beyond research: Performance 4 > limit 3",
+              "partId": "part-m12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Orbital camera: not procured yet",
+              "partId": "part-m12"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-m13"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-m14"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Surface lab: not procured yet",
+              "partId": "part-m18"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Solar panels: not procured yet",
+              "partId": "part-m19"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Antenna: not procured yet",
+              "partId": "part-m20"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Landing legs: not procured yet",
+              "partId": "part-m21"
+            },
+            {
+              "severity": "info",
+              "code": "delivery",
+              "message": "Heat shield: not procured yet",
+              "partId": "part-m22"
+            }
+          ],
+          "totalMassT": 296.7203970588236,
+          "totalCostM": 195.12301470588235,
+          "uncontractedCostM": 195.12301470588235
+        }
+      }
+    ],
+    "geo": {
+      "branches": [
+        {
+          "branchId": "branch-root",
+          "maneuvers": [
+            {
+              "maneuverId": "review-launch",
+              "branchId": "branch-root",
+              "type": "launch",
+              "label": "Launch to 200 km",
+              "dvRequiredMs": 9400,
+              "dvAvailableBeforeMs": 13097.667499252835,
+              "ok": true,
+              "startDay": 180,
+              "endDay": 180,
+              "stateBefore": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 180
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 180
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w2",
+                  "dvMs": 6144.708799959551
+                },
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 3255.2912000404494
+                }
+              ],
+              "issues": [],
+              "twr": 2.1211389483361476
+            },
+            {
+              "maneuverId": "review-geo",
+              "branchId": "branch-root",
+              "type": "changeOrbit",
+              "label": "Change orbit to 35786 km",
+              "dvRequiredMs": 3934.580791224474,
+              "dvAvailableBeforeMs": 3697.66749925278,
+              "ok": false,
+              "startDay": 180,
+              "endDay": 180.2190233257883,
+              "stateBefore": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 180
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 35786,
+                "day": 180.2190233257883
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 78.12620426611552
+                },
+                {
+                  "stageId": "stage-w8",
+                  "dvMs": 3619.5412949866645
+                }
+              ],
+              "issues": [
+                {
+                  "severity": "error",
+                  "code": "dv",
+                  "message": "Out of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.",
+                  "branchId": "branch-root",
+                  "maneuverId": "review-geo"
+                }
+              ]
+            }
+          ],
+          "finalState": {
+            "kind": "orbit",
+            "body": "earth",
+            "altitudeKm": 35786,
+            "day": 180.2190233257883
+          },
+          "stageBands": [
+            {
+              "stageId": "stage-w2",
+              "stageName": "Booster",
+              "ownerName": "Rocket",
+              "dvUsedMs": 6144.708799959551,
+              "dvTotalMs": 6144.708799959551
+            },
+            {
+              "stageId": "stage-w5",
+              "stageName": "Upper stage",
+              "ownerName": "Rocket",
+              "dvUsedMs": 3333.417404306565,
+              "dvTotalMs": 3333.417404306565
+            },
+            {
+              "stageId": "stage-w8",
+              "stageName": "Apogee engine",
+              "ownerName": "Weather satellite",
+              "dvUsedMs": 3619.5412949866645,
+              "dvTotalMs": 3619.5412949866645
+            }
+          ],
+          "dvRequiredTotalMs": 13334.580791224475,
+          "dvAvailableTotalMs": 13097.667499252779,
+          "failedAtManeuverId": "review-geo"
+        }
+      ],
+      "goals": [
+        {
+          "goalId": "goal-geo",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-imagery",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-ozone",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        },
+        {
+          "goalId": "goal-rain",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan fails before this goal is reached"
+        }
+      ],
+      "issues": [
+        {
+          "severity": "error",
+          "code": "dv",
+          "message": "Out of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.",
+          "branchId": "branch-root",
+          "maneuverId": "review-geo"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Kerosene / oxygen engine: not procured yet",
+          "partId": "part-w3"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Kerosene / oxygen tank: not procured yet",
+          "partId": "part-w4"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Hydrogen / oxygen engine: not procured yet",
+          "partId": "part-w6"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Hydrogen / oxygen tank: not procured yet",
+          "partId": "part-w7"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Storable hypergolic engine: not procured yet",
+          "partId": "part-w9"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Storable hypergolic tank: not procured yet",
+          "partId": "part-w10"
+        },
+        {
+          "severity": "warning",
+          "code": "research",
+          "message": "Orbital camera beyond research: Performance 4.5 > limit 4",
+          "partId": "part-w11"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Orbital camera: not procured yet",
+          "partId": "part-w11"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Solar panels: not procured yet",
+          "partId": "part-w12"
+        },
+        {
+          "severity": "warning",
+          "code": "research",
+          "message": "Antenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps",
+          "partId": "part-w13"
+        },
+        {
+          "severity": "info",
+          "code": "delivery",
+          "message": "Antenna: not procured yet",
+          "partId": "part-w13"
+        }
+      ],
+      "totalMassT": 91.30939705882352,
+      "totalCostM": 87.13801470588237,
+      "uncontractedCostM": 87.13801470588237
+    },
+    "tickTiming": {
+      "medianMs": 0.09999999776482582,
+      "p95Ms": 0.20000000298023224
+    },
+    "font": true,
+    "planner": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "Next step · Weather satellite\nEdit route & mission tips\nNext: fix 1 problem — see Issues\nMISSION PLANNER\nWeather satellite\nROCKET\nTODAY\n1 Jan 2030\npaused\nBUDGET\n210 M available\n≈ 87 M to buy\nLAUNCH · CHANGE ▾\n30 Jun 2030 · in 6 mo (paused)\n9 parts not ordered\nRocket\nΔv\n13.1 of 13.3 km/s needed\n0.24 km/s short at Change orbit to 35786 km\n→ Bigger upper-stage tank\nWeather satellite\nOrbital camera\nSolar panels\nkW\nAntenna\nkbps\nApogee engineStorable hypergolic\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nUpper stageHydrogen / oxygen\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nBoosterKerosene / oxygen\nPush (thrust)\nkN\nEfficiency (Isp)\ns\nFuel\nt\nSpacecraft\nRocket stage\nAdvanced\nOrder 9 parts\nΔV BUDGET\nMargin\n−0.24\nkm/s\nneeds 13.33 of 13.10 km/s\nLaunch\nOrbit change\nGOALS\nchance of success\nReach geostationary orbit\nBLOCKED\nThe plan fails before this goal is reached\nSend weather images\nBLOCKED\nThe plan fails before this goal is reached\nMeasure ozone and aerosolsBONUS\nBLOCKED\nThe plan fails before this goal is reached\nSound rain and cloud layers with radarBONUS\nBLOCKED\nThe plan fails before this goal is reached\nISSUES\n1 error\n2 warnings\n9 parts not ordered — launch will be scrubbed\nOut of fuel: short by 236.91 m/s (needs 3934.58 m/s, has 3697.67 m/s). Add fuel to an upper stage.\nOrbital camera beyond research: Performance 4.5 > limit 4\nAntenna beyond research: Data rate at 1 AU 600 kbps > limit 200 kbps\nMission Planner\nPaused\n▴\nEffects\n40%\nMusic\n15%\nTasks\n0"
+    },
+    "science": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "Science · Engineering tech tree\nTeams 0/2 · Budget available 210 M · 1 Jan 2030\nRequest more research teams\n\nResearch the design’s needs, then tell Procurement what is ready. Test delivered parts before launch; ask the Planner for more time after a failure.\n\nThe mission needs\nOrbital camera performance ≥ 4.5\nIn the Planner's design · researched so far: 4\nFinish by 31 Mar 2030, or the part arrives after launch.\nResearch one of:\nLarger sensor arrays · 9 M · 2 mo\nAdaptive optics · 12 M · 2.5 mo\nAntenna data rate at 1 AU ≥ 600 kbps\nIn the Planner's design · researched so far: 200 kbps\nFinish by 30 Apr 2030, or the part arrives after launch.\nResearch one of:\nKa-band downlink · 10 M · 2 mo\nLarger deployable dish · 12 M · 2.5 mo\nTeams\n0 of 2 teams working · 2 own\nRequest more research teams\nLab\n\nNo project running.\n\nPart tests\n\nA team tests a delivered part for 1 mo and halves its risk of failure. A test counts if it ends before the launch on 30 Jun 2030.\n\nNot under contract: Booster engine, Booster tank, Upper stage engine, Upper stage tank, Apogee engine, Apogee engine tank, Orbital camera, Solar panels, Antenna.\n\nPROPULSION\nPOWER\nINSTRUMENTS\nANTENNA AND DATA\nPROTECTION\nChemical propulsion\nResearched\nStaged combustion upgrade\nReady to start\nHigh-pressure turbopumps\nReady to start\nHypergolic injector tuning\nReady to start\nExtendable nozzle\nNeeds earlier techs\nRegenerative cooling\nNeeds earlier techs\n?\nUnknown\nXenon feed system\nReady to start\nIon power processing unit\nNeeds earlier techs\nGridded ion engine\nNeeds earlier techs\n?\nUnknown\nSolar arrays\nResearched\nHigh-voltage solar arrays\nReady to start\nTriple-junction cells\nReady to start\nLightweight deployable panels\nNeeds earlier techs\nConcentrator arrays\nNeeds earlier techs\n?\nUnknown\nRadioisotope heat source\nNot in this missio"
+    },
+    "procurement": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "PROCUREMENT\nPARTS\nRESEARCH NEEDS\nCONTRACTS & SCHEDULE\nMISSION\nWeather satellite\nTODAY\n1 Jan 2030\nLAUNCH 30 JUN 2030\nT−180 d\nAVAILABLE BUDGET\n210 M\nCommitted\n0 M\nSpent\n0 M\nFunding\n210 M\nMission needs\n9 drafts\nYour procurement loop\nStill to buy ≈ 98.5 M · 111.5 M spare\n\nThe Planner's design · 9 parts, not ordered yet. Study the offers now; you can sign once they are ordered.\n\nDraft\nKerosene / oxygen engine\n≥ 1,900 kN · ≥ 300 s\nOrder by 28 Feb\nDraft\nKerosene / oxygen tank\n≥ 80 t\nOrder by 28 Feb\nDraft\nHydrogen / oxygen engine\n≥ 110 kN · ≥ 445 s\nOrder by 31 Mar\nDraft\nStorable hypergolic engine\n≥ 0.5 kN · ≥ 315 s\nOrder by 31 Mar\nDraft\nOrbital camera\n≥ 4.5\nBeyond research · Science not started\nOrder by 31 Mar\nDraft\nHydrogen / oxygen tank\n≥ 2 t\nOrder by 30 Apr\nDraft\nStorable hypergolic tank\n≥ 0.7 t\nOrder by 30 Apr\nDraft\nSolar panels\n≥ 1.2 kW\nOrder by 30 Apr\nDraft\nAntenna\n≥ 600 kbps\nBeyond research · Science not started\nOrder by 30 Apr\nDev · add Tasks from rocket\nCatalogue\n77 Resources from 6 suppliers\nAll\nEngines\nTanks\nInstruments\nPower\nAntennas\nLanding & entry\nProtection\nSolid engine\nThumper S-600\n600 kN · 250 s · 0.76 t\n4.9 M from\nEarliest Sep 2030\n97–99.5 % reliable\nSolid engine\nGranite S-2500\n2,500 kN · 262 s · 2.733 t\n14.5 M from\nEarliest May 2030\n99–99.5 % reliable\nSolid engine\nBeyond research\nBasalt S-9000\n9,000 kN · 280 s · 10.4 t\n—\nScience must research it\n99.5–99.5 % reliable\nKerosene / oxygen engine\nKestrel KL-90\n90 kN · 318 s · 0.334 t\n11 M from\nEarliest Mar 2030\n97.5–98 % reliable\nKerosene / oxygen engine\nTaiga KL-1000\n1,000 kN · 302 s · 1.565 t\n16 M from\nEarliest May 2030\n96–98.5 % reliable\nKerosene / oxygen engine\nTaiga KL-2000\n2,000 kN · 305 s · 2.975 t\n25.3 M from\nEarliest Mar 2030\n96–98.5 % reliable\nKerosene / oxygen engine\nBoreal KL-2000H\n2,000 kN · 330 s · 3"
+    },
+    "comms": {
+      "dimensions": {
+        "width": 1920,
+        "scrollWidth": 1920,
+        "bodyWidth": 1920
+      },
+      "text": "COMMUNICATIONS\nWeather satellite\nTODAY\n1 Jan 2030\ncalendar stopped\nBUDGET\n210 M of 210 M\nLAUNCH\n30 Jun 2030 · in 6 mo\ncalendar stopped\nDEV\nGOVERNMENT\n50\nAbove 70: more funding offers\nINDUSTRY\n50\nAbove 70: orders −10 % price and time\nPUBLIC / MEDIA\n50\nAbove 70: event budget cuts halved\nPARTNERS\n50\nAbove 70: more partner deals\nINBOX\n✉\nNo messages. Start a project to build relationships.\nAll quiet\n\nNo one is waiting for an answer. New messages arrive on the agency calendar, about one a month.\n\nMeanwhile, start a project on the right: trust at launch decides the in-flight events.\n\nPROJECTS · 0 OF 2\n+ Start a project\n+ Start a project\nIN FLIGHT · DECIDED AT LAUNCH\nscore 25/50\n✗\nOperations contract\nGovernment above 60 (now 50)\n−2 %\n✗\nFirst image downlink\nMeridian's dish booked or Partners above 60 (now 50)\n−2 %\n✓\nThruster glitch during the orbit raise\nIndustry above 45 (now 50) and no cheapest-bid contract\n+3 %\n✓\nArrival at the geostationary slot\nlaunch date never moved\n+2 %\nNet now +1 %: if the flight survives, physically achievable goals lost to part reliability each get a 1 % recovery chance.\nNEWS\nNo news yet. Outcomes that affect the team appear here for every station.\nCOMMUNICATIONS · BRIEFING\nYou are the agency's voice\n\nKeep government, industry, the public and partners on side.\n\nAnswer messages before their deadline — ignored ones resolve on their own, usually badly. Each answer shows what it will change, for which teammate, and until when.\n\nRun two projects at a time: build trust, raise money, win parts, research and test help for your teammates.\n\nTrust at launch decides the in-flight events that can save or lose a goal (right panel), and counts in the score.\n\nSTART\nCommunications\nPaused\n▴\nEffects\n40%\nMusic\n15%\nTasks\n0"
+    },
+    "errors": []
+  }
+}

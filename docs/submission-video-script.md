@@ -1,5 +1,7 @@
 # T-Minus — 29-second submission video
 
+> **Historical recording plan.** The script's “not yet validated” statements describe its drafting stage. A later local T-Minus export and production captures are retained; [submission reference](submission-reference.md) identifies the actual local video, credits and verification limits. This script is not the final export's validation record.
+
 Prepared November 15, 2026 for the NASA Space Apps “Space Mission Design Game” challenge. This is a recording script, reviewed by an independent sceptical subagent. Footage and the exported video have not been validated.
 
 ## Voiceover — copy and record

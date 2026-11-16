@@ -12,6 +12,7 @@ import { STATION_INFO } from './stations';
 import { TitleScene } from './TitleScene';
 import { LobbyIcon } from './LobbyIcon';
 import { requestConfirmation } from '../shared/confirmation';
+import { saveLoadIssue } from '../core/persist';
 import {
   acceptReply, backToStart, cancelInvite, cancelJoin, connectedPlayerCount, createInvite, hasSavedGame,
   hostEnterMission, hostNewGame, hostChooseMission, hostTakeSeat, isManualCode, joinGame, kickRoomPlayer, playerTakeSeat,
@@ -58,40 +59,57 @@ function Step({ n, title, children, done }: { n: number | string; title: string;
   );
 }
 
-async function copyText(text: string): Promise<void> {
+async function copyText(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
+    return true;
   } catch {
     const ta = document.createElement('textarea');
     ta.value = text;
+    ta.setAttribute('aria-hidden', 'true');
+    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+    const previous = document.activeElement as HTMLElement | null;
     document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
+    try {
+      ta.select();
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      ta.remove();
+      previous?.focus();
+    }
   }
 }
 
-/** A button that copies `text` and says so for two seconds. */
-function CopyButton({ text, label, primary }: { text: string; label: string; primary?: boolean }) {
-  const [copied, setCopied] = useState(false);
+function useCopy(text: string) {
+  const [result, setResult] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(() => setResult('idle'), [text]);
   const copy = async () => {
-    await copyText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (timer.current) clearTimeout(timer.current);
+    const copied = await copyText(text);
+    setResult(copied ? 'copied' : 'failed');
+    if (copied) timer.current = setTimeout(() => setResult('idle'), 2000);
   };
-  return <button class={`shell-btn${primary ? ' shell-btn-primary' : ''}`} onClick={copy}>{copied ? 'Copied ✓' : label}</button>;
+  return { result, copy };
+}
+
+/** A button that reports whether the browser actually copied the code. */
+function CopyButton({ text, label, primary }: { text: string; label: string; primary?: boolean }) {
+  const { result, copy } = useCopy(text);
+  return <span class="shell-copy-action"><button class={`shell-btn${primary ? ' shell-btn-primary' : ''}`} onClick={copy}>{result === 'copied' ? 'Copied ✓' : label}</button>
+    <span class={result === 'failed' ? 'shell-error' : 'shell-sr-only'} role="status">{result === 'failed' ? 'Copy failed. Select the code or link and copy it manually.' : result === 'copied' ? 'Copied to clipboard.' : ''}</span>
+    {result === 'failed' && <input class="shell-code" aria-label={`${label}: select and copy manually`} readOnly value={text} onFocus={event => event.currentTarget.select()} />}
+  </span>;
 }
 
 function CodeBox({ code, label }: { code: string; label: string }) {
   const ref = useRef<HTMLTextAreaElement>(null);
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    await copyText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const { result, copy } = useCopy(code);
   return (
-    <div class="shell-codebox">
+    <div class={`shell-codebox${result === 'failed' ? ' has-copy-error' : ''}`}>
       <textarea
         ref={ref}
         class="shell-code"
@@ -101,7 +119,8 @@ function CodeBox({ code, label }: { code: string; label: string }) {
         rows={3}
         onFocus={(e) => (e.currentTarget as HTMLTextAreaElement).select()}
       />
-      <button class="shell-btn shell-btn-primary" onClick={copy}>{copied ? 'Copied ✓' : 'Copy code'}</button>
+      <button class="shell-btn shell-btn-primary" onClick={copy}>{result === 'copied' ? 'Copied ✓' : 'Copy code'}</button>
+      <span class={result === 'failed' ? 'shell-error' : 'shell-sr-only'} role="status">{result === 'failed' ? 'Copy failed. Select the code and copy it manually.' : result === 'copied' ? 'Copied to clipboard.' : ''}</span>
     </div>
   );
 }
@@ -171,6 +190,11 @@ function dayLabel(day: number): string {
   return `day ${Math.floor(day)}`;
 }
 
+async function beginNewMission(id: string) {
+  if (saveLoadIssue.get() && !await requestConfirmation('Starting a new game replaces the unreadable local save. Download its saved record first if you want to keep it. Replace it and host a new mission?', 'Replace saved game')) return;
+  hostNewGame(id);
+}
+
 // ------------------------------------------------------------------ start
 
 /** Lobby copy per mission (one line each); the first mission in MISSIONS is the default. */
@@ -181,7 +205,7 @@ const MISSION_CARD: Record<string, { tag: string; text: string }> = {
   },
   'moon-lander': {
     tag: 'Next step',
-    text: 'One lander to the Moon: leave Earth, brake into lunar orbit, land and drill for ice. Medium game.',
+    text: 'Land on the Moon. Drill for ice.',
   },
   'mars-orbiter-lander': {
     tag: 'Harder',
@@ -200,7 +224,16 @@ function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; cur
           const card = MISSION_CARD[m.id];
           const on = m.id === pick;
           return (
-            <button key={m.id} class={`shell-mission${on ? ' is-on' : ''}`} role="radio" aria-checked={on} onClick={() => setPick(m.id)}>
+            <button key={m.id} class={`shell-mission${on ? ' is-on' : ''}`} role="radio" aria-checked={on} tabIndex={on ? 0 : -1} onClick={() => setPick(m.id)} onKeyDown={event => {
+              const index = MISSIONS.findIndex(mission => mission.id === pick);
+              const next = event.key === 'Home' ? 0 : event.key === 'End' ? MISSIONS.length - 1
+                : ['ArrowRight', 'ArrowDown'].includes(event.key) ? (index + 1) % MISSIONS.length
+                  : ['ArrowLeft', 'ArrowUp'].includes(event.key) ? (index + MISSIONS.length - 1) % MISSIONS.length : -1;
+              if (next < 0) return;
+              event.preventDefault();
+              setPick(MISSIONS[next].id);
+              (event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next])?.focus();
+            }}>
               <span class="shell-mission-head">
                 <LobbyIcon name={m.id === 'weather-geo' ? 'weather' : m.id === 'moon-lander' ? 'moon' : 'mars'} />
                 <span class="shell-mission-heading">
@@ -215,7 +248,7 @@ function MissionPicker({ onBack, current, onChoose }: { onBack?: () => void; cur
         })}
       </div>
       <div class="shell-mission-actions">
-        <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => onChoose ? onChoose(chosen.id) : hostNewGame(chosen.id)}>
+        <button class="shell-btn shell-btn-primary shell-btn-big" onClick={() => onChoose ? onChoose(chosen.id) : beginNewMission(chosen.id)}>
           <span>{onChoose ? 'Select' : 'Host'} “{chosen.name}”</span><MenuArrow />
         </button>
         {onBack && <button class="shell-link" onClick={onBack}>← Back</button>}
@@ -249,7 +282,7 @@ function StartScreen() {
         <Brand />
         <div class="pregame-intro">
           <h2 ref={heading} tabIndex={-1}>Your next<br />mission<span class="title-period">.</span></h2>
-          <p>Choose your destination.<br />Bring a crew. Make it fly.</p>
+          <p>Choose your destination.<br />Review the mission objectives.</p>
           <PlayerName />
           <p class="pregame-note">Bring a crew, or play solo.</p>
         </div>
@@ -284,7 +317,7 @@ function StartScreen() {
           <div style={{ '--role-color': STATION_INFO.science.color }}><LobbyIcon name="science" /><b>Science</b><span>Advance the science.</span></div>
           <div style={{ '--role-color': STATION_INFO.comms.color }}><LobbyIcon name="comms" /><b>Communications</b><span>Win support.</span></div>
         </div>
-        <div class="title-credits"><span>Made for NASA Space Apps 2026</span><span>Plan together. Launch together.</span></div>
+        <div class="title-credits"><span>Made for NASA Space Apps 2026 · <a href={`${import.meta.env.BASE_URL}credits/`} target="_blank" rel="noopener" aria-label="Credits (opens in a new tab)">Credits</a></span><span>Plan together. Launch together.</span></div>
       </footer>
     </main>
   );
@@ -504,6 +537,8 @@ function JoinScreen() {
   const prefill = useSession((s) => s.joinPrefill);
   const role = useSync((s) => s.role);
   const peerId = useSync((s) => s.peerId);
+  const connected = useSync((s) => s.connected);
+  const syncError = useSync((s) => s.error);
   const seats = useGame((s) => s.meta.seats);
   const phase = useGame((s) => s.meta.phase);
   const [code, setCode] = useState(prefill);
@@ -513,7 +548,7 @@ function JoinScreen() {
     e.preventDefault();
     if (code.trim()) joinGame(code);
   };
-  const ready = role === 'client' && join.status === 'connected' && join.hasSnapshot;
+  const ready = role === 'client' && connected && !syncError && join.status === 'connected' && join.hasSnapshot;
   const mine = ready ? STATIONS.find((st) => seats[st].claimedBy === peerId) : undefined;
 
   // Into the station once seated and the mission is running.
@@ -521,7 +556,7 @@ function JoinScreen() {
     if (ready && mine && phase !== 'lobby') setLocalStation(mine);
   }, [ready, mine, phase]);
 
-  if (join.status === 'closed') {
+  if (join.status === 'closed' || (role === 'client' && !connected && syncError)) {
     return (
       <>
         <Brand tag="Disconnected" />
@@ -641,17 +676,18 @@ function JoinScreen() {
 
 export function HostLeft({ reason }: { reason: 'bye' | 'lost' | null }) {
   const roomCode = useSession((s) => (s.join.mode === 'room' ? s.join.roomCode : ''));
+  const syncError = useSync(s => s.error);
   return (
     <div class="shell-hostleft">
-      <h2>{reason === 'lost' ? 'Connection to the host lost' : 'Host left the game'}</h2>
-      <p class="shell-muted">
+      <h2>{syncError ? 'Unable to join this game' : reason === 'lost' ? 'Connection to the host lost' : 'Host left the game'}</h2>
+      {syncError ? <p class="shell-muted" role="alert">{syncError}</p> : <p class="shell-muted">
         {reason === 'lost'
           ? 'The connection to the host dropped. '
           : 'The host closed or reloaded the game. '}
         {roomCode
           ? `If a local save succeeded in the host's browser, ask the host to continue that game, then rejoin room ${formatRoomCode(roomCode)}.`
           : "If a local save succeeded in the host's browser, ask the host to continue that game, then send you a new invite code to join again."}
-      </p>
+      </p>}
       <div class="shell-room-actions">
         {roomCode && <button class="shell-btn shell-btn-primary" onClick={rejoinRoom}>Rejoin {formatRoomCode(roomCode)}</button>}
         <button class={`shell-btn${roomCode ? '' : ' shell-btn-primary'}`} onClick={backToStart}>Back to lobby</button>

@@ -1,0 +1,37 @@
+{
+  "sourceReference": "6fed21a (tracked game source; no pre-existing game changes at implementation start)",
+  "differences": [
+    {
+      "path": "/evaluation/goals/2/reason",
+      "before": "The plan does not reach geostationary orbit: orbit at 200 km, needs 35,786 \u00b1 2,000 km",
+      "after": "No spacecraft there carries a spectrometer with performance \u2265 5"
+    },
+    {
+      "path": "/evaluation/goals/3/reason",
+      "before": "The plan does not reach geostationary orbit: orbit at 200 km, needs 35,786 \u00b1 2,000 km",
+      "after": "No spacecraft there carries a sounding radar with performance \u2265 3"
+    },
+    {
+      "path": "/result/events/4/text",
+      "before": "Operations contract: The operations contract is renewed one quarter at a time. The ground team works short-handed.",
+      "after": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+    },
+    {
+      "path": "/result/events/5/text",
+      "before": "First image downlink: The first downlink pass is missed and the image arrives a day late. Mallory announces it anyway.",
+      "after": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+    },
+    {
+      "path": "/result/events/6/text",
+      "before": "Thruster glitch during the orbit raise: The supplier's team sends a thruster software patch within hours. The orbit raise finishes on schedule.",
+      "after": "Thruster glitch during the orbit raise: The supplier's prompt thruster support improves the orbit-raise team's readiness."
+    },
+    {
+      "path": "/result/events/7/text",
+      "before": "Arrival at the geostationary slot: The moved launch left less rehearsal time. An extra trim burn eats into the station-keeping fuel.",
+      "after": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+    }
+  ],
+  "onlyExplanationStringsChanged": true,
+  "allNumericBooleanAndOutcomeLeavesEqual": true
+}

@@ -372,6 +372,17 @@ Identifier alignment: the unpublished audit-fix entry was assigned D-027 locally
 - Identifier alignment after merging concurrent work: published Science facilities retain D-032 and I-098; audio moves to D-035 and I-101. The station-theme entry remains D-033 and is superseded here.
 - Related: I-099, D-028, D-031–D-033.
 
+## D-036 — Implement the post-submission audit within the submitted experience
+
+- Date: 2026-11-16.
+- Status: accepted user direction; implemented with verification and per-item disposition recorded separately.
+- Source: user asked to coordinate subagents to work in all audit feedback cleanly, in context, idiomatically and without introducing problems, following the [post-submission audit](reviews/2026-11-16-post-submission-audit.md).
+- Decision: implement the audit's gameplay-preserving documentation, authored-copy, interaction/accessibility, release/tooling and reliability improvements. Keep the accepted visual identity, supplied media, selected grounded satire, procurement vocabulary and non-linear planning. Preserve the final submission video.
+- Boundaries: retain all gameplay numbers, goals, mission availability, grants, prerequisites, event conditions/effects, outcome probabilities and score rules. The audit's ion-thrust anomaly and other mechanical proposals remain deferred. Explanation corrections describe the existing outcome rather than changing it. Profile before invasive performance refactors; do not implement an unmeasured rewrite merely to close an audit item.
+- Implementation scope: coordinated specialist work in the existing checkout; no commit, push, tag or deployment requested. Historical original notes remain unchanged; later corrections/status are separate dated records or index annotations.
+- Evidence: [implementation and verification record](notes/2026-11-16-post-submission-implementation.md) will distinguish completed work, checks actually performed and remaining evidence limits. No tests are added or run under the project rule; compiler/build, static equivalence checks and browser walkthroughs are separate verification methods.
+- Related: D-005, D-006, D-014–D-015, D-020–D-025, D-027–D-035, I-102.
+
 ## Future decision template
 
 ```markdown

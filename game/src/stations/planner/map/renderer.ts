@@ -311,11 +311,17 @@ export class MapRenderer {
   private animTimer = 0;
   /** Animation clock (s), sampled at draw time. */
   private time = 0;
+  private reducedMotion = false;
 
   constructor(private canvas: HTMLCanvasElement, private container: HTMLElement) {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('2D canvas not available');
     this.ctx = ctx;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotion = () => { this.reducedMotion = motion.matches; this.request(); };
+    this.reducedMotion = motion.matches;
+    motion.addEventListener('change', updateMotion);
+    this.cleanups.push(() => motion.removeEventListener('change', updateMotion));
 
     const ro = new ResizeObserver(() => this.resize());
     ro.observe(container);
@@ -591,7 +597,7 @@ export class MapRenderer {
       oy: fr.y + fr.h / 2 + this.panY,
       scale: fitScale(center, fitPx) * this.zoom,
     };
-    this.time = performance.now() / 1000;
+    this.time = this.reducedMotion ? 0 : performance.now() / 1000;
     this.animating = false;
     const { day, why } = this.resolveDay(game, ui, clock.day, center, evaluation);
     const F: Frame = {
@@ -637,7 +643,7 @@ export class MapRenderer {
 
   /** Pulse / twinkle: redraw at most ANIM_FPS while something animates and the tab is visible. */
   private scheduleAnimation() {
-    if (!this.animating || this.animTimer || document.visibilityState !== 'visible') return;
+    if (this.reducedMotion || !this.animating || this.animTimer || document.visibilityState !== 'visible') return;
     this.animTimer = window.setTimeout(() => {
       this.animTimer = 0;
       this.request();
@@ -1176,7 +1182,7 @@ export class MapRenderer {
     let pulse = 0;
     if (end) {
       this.animating = true;
-      pulse = 0.5 + 0.5 * Math.sin(this.time * 2.4);
+      pulse = this.reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(this.time * 2.4);
     }
 
     ctx.save();
@@ -1344,7 +1350,7 @@ export class MapRenderer {
     const { ctx } = F;
     const key = `pill:${p.branchId}`;
     const hot = this.hover?.key === key || this.hover?.key === `end:${p.branchId}`;
-    const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.4);
+    const pulse = this.reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(this.time * 2.4);
     this.animating = true;
     ctx.save();
     ctx.globalAlpha = hot ? 1 : p.alpha;

@@ -75,7 +75,10 @@ export function setAudioPreferences(patch: Partial<Preferences>): void {
     }
   });
   const { muted, effects, music: musicVolume } = audioState.get();
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ muted, effects, music: musicVolume })); }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ muted, effects, music: musicVolume }));
+    if (audioState.get().storageFailed) audioState.update(s => { s.storageFailed = false; });
+  }
   catch { audioState.update(s => { s.storageFailed = true; }); }
   if (muted || effects === 0) stopEffect();
   updateLevels();

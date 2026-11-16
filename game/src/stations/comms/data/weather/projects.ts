@@ -21,7 +21,7 @@ export const PROJECTS: ProjectDef[] = [
     costM: 5, months: 1,
     startTrust: [],
     effects: [trust('government', 10), trust('industry', 5)],
-    result: 'Storm Night: two senators tried the hurricane simulator and lost their notes. Suppliers networked aggressively.',
+    result: 'Storm Night: two senators lost their notes in the hurricane simulator. Government and supplier relations improve.',
   },
   {
     id: 'wx-school-weather-stations',
@@ -71,7 +71,7 @@ export const PROJECTS: ProjectDef[] = [
     // station reads it (R1115m-r01-08). What it really does: the in-flight "First image
     // downlink" goes well (data/weather/inFlight.ts).
     effects: [trust('partners', 5), setFlag(FLAG_GROUND_STATION)],
-    result: "Meridian's dish is booked for the first passes: the first image will be caught on the first try.",
+    result: "Meridian's dish is booked for the first passes, improving support for the first image downlink.",
     partnerCharacterId: 'moreau',
   },
   {
@@ -117,7 +117,7 @@ export const PROJECTS: ProjectDef[] = [
     startTrust: [],
     requires: { stakeholder: 'partners', min: 50 },
     effects: [trust('partners', 5), pace(30, 2)],
-    result: "Northgate's technicians join the lab: research and part tests run 30 % faster for two months.",
+    result: "Northgate's technicians join the lab: research and part tests run 30% faster for two months.",
     partnerCharacterId: 'salo',
   },
 ];

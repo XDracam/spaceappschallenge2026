@@ -1,0 +1,2927 @@
+{
+  "mission": "moon-lander",
+  "seed": 20261116,
+  "initialization": "Normal fresh game with this fixed seed. Enter Planning as host and pause calendar, then execute the recorded role-owned actions through normal dispatchers. Core ticks are host calendar steps. These are verification/facilitator spoilers, not a runtime mission generator.",
+  "actions": [
+    {
+      "type": "planner/setPartStat",
+      "args": [
+        "part-l3",
+        "thrustKN",
+        4500
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/setPartStat",
+      "args": [
+        "part-l3",
+        "isp",
+        320
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/setPartStat",
+      "args": [
+        "part-l10",
+        "fuelT",
+        1.6
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/addManeuver",
+      "args": [
+        "branch-root",
+        {
+          "id": "moon-launch",
+          "type": "launch",
+          "body": "earth",
+          "altitudeKm": 200
+        }
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/addManeuver",
+      "args": [
+        "branch-root",
+        {
+          "id": "moon-transfer",
+          "type": "transfer",
+          "target": "moon",
+          "departDay": 300,
+          "travelDays": 5
+        }
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/addManeuver",
+      "args": [
+        "branch-root",
+        {
+          "id": "moon-insertion",
+          "type": "insertion",
+          "altitudeKm": 100,
+          "aerocapture": false
+        }
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/addManeuver",
+      "args": [
+        "branch-root",
+        {
+          "id": "moon-land",
+          "type": "land"
+        }
+      ],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "planner/orderAllParts",
+      "args": [],
+      "actor": "planner",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-e-ker-4500-tallis",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-1",
+            "criterionId": "crit-2"
+          }
+        },
+        "[{\"offerId\":\"cat-e-ker-4500-tallis\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-1\",\"criterionId\":\"crit-2\"}},1,null,58.3,244,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-t-ker-260-tallis",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-3",
+            "criterionId": "crit-4"
+          }
+        },
+        "[{\"offerId\":\"cat-t-ker-260-tallis\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-3\",\"criterionId\":\"crit-4\"}},1,null,2.7,183,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-e-hyd-120-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-5",
+            "criterionId": "crit-6"
+          }
+        },
+        "[{\"offerId\":\"cat-e-hyd-120-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-5\",\"criterionId\":\"crit-6\"}},1,null,25,152,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-t-hyd-22-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-7",
+            "criterionId": "crit-8"
+          }
+        },
+        "[{\"offerId\":\"cat-t-hyd-22-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-7\",\"criterionId\":\"crit-8\"}},1,null,1.2,91,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-t-hyp-16-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-11",
+            "criterionId": "crit-12"
+          }
+        },
+        "[{\"offerId\":\"cat-t-hyp-16-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-11\",\"criterionId\":\"crit-12\"}},1,null,0.6,91,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-p-sol-06-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-15",
+            "criterionId": "crit-16"
+          }
+        },
+        "[{\"offerId\":\"cat-p-sol-06-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-15\",\"criterionId\":\"crit-16\"}},1,null,2.2,91,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-a-120-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-17",
+            "criterionId": "crit-18"
+          }
+        },
+        "[{\"offerId\":\"cat-a-120-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-17\",\"criterionId\":\"crit-18\"}},1,null,2.5,91,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-l-25-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-19",
+            "criterionId": "crit-20"
+          }
+        },
+        "[{\"offerId\":\"cat-l-25-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-19\",\"criterionId\":\"crit-20\"}},1,null,5.8,91,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 0
+    },
+    {
+      "type": "science/startTech",
+      "args": [
+        "moon-hypergolic-1",
+        "hypergolic-tuning"
+      ],
+      "actor": "science",
+      "confirmedDay": 0
+    },
+    {
+      "type": "science/startTech",
+      "args": [
+        "moon-lab-1",
+        "lab-automation"
+      ],
+      "actor": "science",
+      "confirmedDay": 0
+    },
+    {
+      "type": "comms/startProject",
+      "args": [
+        "mo-moon-night-gala"
+      ],
+      "actor": "comms",
+      "confirmedDay": 0
+    },
+    {
+      "type": "comms/startProject",
+      "args": [
+        "mo-northgate-test-crew"
+      ],
+      "actor": "comms",
+      "confirmedDay": 0
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        1
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        2
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        3
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        4
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        5
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        6
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        7
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        8
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        9
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        10
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        11
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        12
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        13
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        14
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        15
+      ],
+      "actor": "planner",
+      "confirmedDay": 15
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-49",
+        "ice"
+      ],
+      "actor": "comms",
+      "confirmedDay": 15
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        16
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        17
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        18
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        19
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        20
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        21
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        22
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        23
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        24
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        25
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        26
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        27
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        28
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        29
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        30
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        31
+      ],
+      "actor": "planner",
+      "confirmedDay": 31
+    },
+    {
+      "type": "comms/startProject",
+      "args": [
+        "mo-supplier-roundtable"
+      ],
+      "actor": "comms",
+      "confirmedDay": 31
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        32
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        33
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        34
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        35
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        36
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        37
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        38
+      ],
+      "actor": "planner",
+      "confirmedDay": 38
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-53",
+        "co-fund"
+      ],
+      "actor": "comms",
+      "confirmedDay": 38
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        39
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        40
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        41
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        42
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        43
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        44
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        45
+      ],
+      "actor": "planner",
+      "confirmedDay": 45
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-55",
+        "share-early"
+      ],
+      "actor": "comms",
+      "confirmedDay": 45
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        46
+      ],
+      "actor": "planner",
+      "confirmedDay": 50
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        47
+      ],
+      "actor": "planner",
+      "confirmedDay": 50
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        48
+      ],
+      "actor": "planner",
+      "confirmedDay": 50
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        49
+      ],
+      "actor": "planner",
+      "confirmedDay": 50
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        50
+      ],
+      "actor": "planner",
+      "confirmedDay": 50
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-57",
+        "joint-lab"
+      ],
+      "actor": "comms",
+      "confirmedDay": 50
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-e-hyp-5-commons",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-9",
+            "criterionId": "crit-10"
+          }
+        },
+        "[{\"offerId\":\"cat-e-hyp-5-commons\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-9\",\"criterionId\":\"crit-10\"}},1,null,2.7,152,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 50
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        51
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        52
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        53
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        54
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        55
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        56
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        57
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        58
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        59
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        60
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        61
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        62
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        63
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        64
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        65
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        66
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        67
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        68
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        69
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        70
+      ],
+      "actor": "planner",
+      "confirmedDay": 70
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        71
+      ],
+      "actor": "planner",
+      "confirmedDay": 73
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        72
+      ],
+      "actor": "planner",
+      "confirmedDay": 73
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        73
+      ],
+      "actor": "planner",
+      "confirmedDay": 73
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-64",
+        "fixed-price"
+      ],
+      "actor": "comms",
+      "confirmedDay": 73
+    },
+    {
+      "type": "procurement/signOrder",
+      "args": [
+        {
+          "offerId": "cat-i-lab-45-meridian",
+          "quantity": 1,
+          "delivery": "standard",
+          "destination": {
+            "kind": "task",
+            "taskId": "task-13",
+            "criterionId": "crit-14"
+          }
+        },
+        "[{\"offerId\":\"cat-i-lab-45-meridian\",\"quantity\":1,\"delivery\":\"standard\",\"destination\":{\"kind\":\"task\",\"taskId\":\"task-13\",\"criterionId\":\"crit-14\"}},1,null,63.2,183,false,\"\",[],[1,300,0]]"
+      ],
+      "actor": "procurement",
+      "confirmedDay": 73
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        74
+      ],
+      "actor": "planner",
+      "confirmedDay": 74
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-68",
+        "accountants"
+      ],
+      "actor": "comms",
+      "confirmedDay": 74
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        75
+      ],
+      "actor": "planner",
+      "confirmedDay": 75
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-70",
+        "water"
+      ],
+      "actor": "comms",
+      "confirmedDay": 75
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        76
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        77
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        78
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        79
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        80
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        81
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        82
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        83
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        84
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        85
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        86
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        87
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        88
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        89
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        90
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        91
+      ],
+      "actor": "planner",
+      "confirmedDay": 91
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-1",
+        "part-l14"
+      ],
+      "actor": "science",
+      "confirmedDay": 91
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-2",
+        "part-l12"
+      ],
+      "actor": "science",
+      "confirmedDay": 91
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        92
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        93
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        94
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        95
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        96
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        97
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        98
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        99
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        100
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        101
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        102
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        103
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        104
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        105
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        106
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        107
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        108
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        109
+      ],
+      "actor": "planner",
+      "confirmedDay": 109
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-76",
+        "confirm"
+      ],
+      "actor": "comms",
+      "confirmedDay": 109
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        110
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        111
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        112
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        113
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        114
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        115
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        116
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        117
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        118
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        119
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        120
+      ],
+      "actor": "planner",
+      "confirmedDay": 120
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-77",
+        "sign"
+      ],
+      "actor": "comms",
+      "confirmedDay": 120
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        121
+      ],
+      "actor": "planner",
+      "confirmedDay": 123
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        122
+      ],
+      "actor": "planner",
+      "confirmedDay": 123
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        123
+      ],
+      "actor": "planner",
+      "confirmedDay": 123
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-3",
+        "part-l13"
+      ],
+      "actor": "science",
+      "confirmedDay": 123
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-4",
+        "part-l7"
+      ],
+      "actor": "science",
+      "confirmedDay": 123
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        124
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        125
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        126
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        127
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        128
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        129
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        130
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        131
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        132
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        133
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        134
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        135
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        136
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        137
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        138
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        139
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        140
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        141
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        142
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        143
+      ],
+      "actor": "planner",
+      "confirmedDay": 143
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-80",
+        "accept"
+      ],
+      "actor": "comms",
+      "confirmedDay": 143
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        144
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        145
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        146
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        147
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        148
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        149
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        150
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        151
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        152
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        153
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        154
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        155
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        156
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        157
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        158
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        159
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        160
+      ],
+      "actor": "planner",
+      "confirmedDay": 160
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-5",
+        "part-l6"
+      ],
+      "actor": "science",
+      "confirmedDay": 160
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-6",
+        "part-l10"
+      ],
+      "actor": "science",
+      "confirmedDay": 160
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        161
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        162
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        163
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        164
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        165
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        166
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        167
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        168
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        169
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        170
+      ],
+      "actor": "planner",
+      "confirmedDay": 170
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-85",
+        "book"
+      ],
+      "actor": "comms",
+      "confirmedDay": 170
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        171
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        172
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        173
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        174
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        175
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        176
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        177
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        178
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        179
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        180
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        181
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        182
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        183
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        184
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        185
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        186
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        187
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        188
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        189
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        190
+      ],
+      "actor": "planner",
+      "confirmedDay": 190
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        191
+      ],
+      "actor": "planner",
+      "confirmedDay": 193
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        192
+      ],
+      "actor": "planner",
+      "confirmedDay": 193
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        193
+      ],
+      "actor": "planner",
+      "confirmedDay": 193
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-7",
+        "part-l4"
+      ],
+      "actor": "science",
+      "confirmedDay": 193
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        194
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        195
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        196
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        197
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        198
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        199
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        200
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        201
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        202
+      ],
+      "actor": "planner",
+      "confirmedDay": 202
+    },
+    {
+      "type": "science/startTest",
+      "args": [
+        "moon-test-8",
+        "part-l9"
+      ],
+      "actor": "science",
+      "confirmedDay": 202
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        203
+      ],
+      "actor": "planner",
+      "confirmedDay": 207
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        204
+      ],
+      "actor": "planner",
+      "confirmedDay": 207
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        205
+      ],
+      "actor": "planner",
+      "confirmedDay": 207
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        206
+      ],
+      "actor": "planner",
+      "confirmedDay": 207
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        207
+      ],
+      "actor": "planner",
+      "confirmedDay": 207
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-91",
+        "decline"
+      ],
+      "actor": "comms",
+      "confirmedDay": 207
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        208
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        209
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        210
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        211
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        212
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        213
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        214
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        215
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        216
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        217
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        218
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        219
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        220
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        221
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        222
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        223
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        224
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        225
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        226
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        227
+      ],
+      "actor": "planner",
+      "confirmedDay": 227
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        228
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        229
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        230
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        231
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        232
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        233
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        234
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        235
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        236
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        237
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        238
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        239
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        240
+      ],
+      "actor": "planner",
+      "confirmedDay": 240
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-94",
+        "livestream"
+      ],
+      "actor": "comms",
+      "confirmedDay": 240
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        241
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        242
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        243
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        244
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        245
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        246
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        247
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        248
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        249
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        250
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        251
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        252
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        253
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        254
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        255
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        256
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        257
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        258
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        259
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        260
+      ],
+      "actor": "planner",
+      "confirmedDay": 260
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        261
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        262
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        263
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        264
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        265
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        266
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        267
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        268
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        269
+      ],
+      "actor": "planner",
+      "confirmedDay": 269
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-97",
+        "tests"
+      ],
+      "actor": "comms",
+      "confirmedDay": 269
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        270
+      ],
+      "actor": "planner",
+      "confirmedDay": 270
+    },
+    {
+      "type": "comms/answer",
+      "args": [
+        "ev-98",
+        "candid"
+      ],
+      "actor": "comms",
+      "confirmedDay": 270
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        271
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        272
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        273
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        274
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        275
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        276
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        277
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        278
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        279
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        280
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        281
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        282
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        283
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        284
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        285
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        286
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        287
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        288
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        289
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        290
+      ],
+      "actor": "planner",
+      "confirmedDay": 290
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        291
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        292
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        293
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        294
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        295
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        296
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        297
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        298
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        299
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    },
+    {
+      "type": "core/tick",
+      "args": [
+        300
+      ],
+      "actor": "planner",
+      "confirmedDay": 300
+    }
+  ]
+}

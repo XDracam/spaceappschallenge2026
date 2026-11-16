@@ -22,3 +22,5 @@ https://dataverse.jpl.nasa.gov/dataset.xhtml?persistentId=hdl:2014/44299
 Conceptual reference use; no claim of observational NASA data ingestion or NASA/JPL validation of the simulation.
 
 Other credits: https://github.com/XDracam/spaceappschallenge2026/blob/main/THIRD_PARTY.md
+
+Narration model/tool provenance and retained terms: https://github.com/XDracam/spaceappschallenge2026/blob/main/video/NARRATION.md

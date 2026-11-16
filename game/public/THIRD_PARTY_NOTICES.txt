@@ -1,4 +1,4 @@
-SPACE MISSION DESIGN GAME — THIRD-PARTY NOTICES
+T-MINUS — THIRD-PARTY NOTICES
 Prepared November 15, 2026.
 
 Original project material is Apache-2.0. Third-party material retains its
@@ -31,7 +31,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-GOOGLE FONTS — loaded externally, not modified or bundled here
+GOOGLE FONTS — Exo 2 and Inter self-hosted unmodified; IBM Plex Mono used by historical mockups
 Exo 2 — game and mockups
 Copyright 2013 The Exo 2 Project Authors (https://github.com/googlefonts/Exo-2.0)
 Source/license: https://github.com/google/fonts/blob/main/ofl/exo2/OFL.txt

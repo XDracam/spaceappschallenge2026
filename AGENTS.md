@@ -22,7 +22,7 @@
 
 ## Implementation
 
-- Mission planning and the separate procurement prototype select web, TypeScript and HTML canvas. The planner uses Preact for panels. See D-009 for procurement. D-012 sets four separate player stations with no switching or sharing during game time. How stations connect and the project license remain open. Establish relevant unresolved choices before scaffolding their dependencies.
+- The integrated prototype uses web, TypeScript, Preact panels and HTML canvas under D-009/D-015. One host browser owns shared state; PeerJS room codes connect WebRTC peers, with manual codes as fallback (D-027). Original project material is Apache 2.0 under D-025; separate third-party terms remain in force. Four players each hold a station under D-012; D-015 permits switching to unclaimed stations with fewer players. Read `docs/current-prototype.md` for the current implementation and distinguish remaining design research from resolved dependencies.
 - Keep implementation proportional to the prototype question in `docs/prototype.md`.
 - Preserve existing work. Do not commit or push unless requested.
 - Check the actual changes and relevant behavior before handoff; report what was verified and any remaining limitations. Do not add or run tests unless the user asks.

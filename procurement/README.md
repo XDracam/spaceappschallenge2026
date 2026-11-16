@@ -1,5 +1,13 @@
 # Procurement prototype — working sketch
 
+## Current station — November 16, 2026
+
+The integrated station is [`game/src/stations/procurement/`](../game/src/stations/procurement/). It compares catalogue/Call offers, signs and allocates contracts, changes delivery terms and purchases facilities/teams for Science. Contracts remain the inventory. The shared board follows D-021–D-024. See [current prototype](../docs/current-prototype.md), [integration](../docs/design/integration.md) and the accepted D-017–D-019 scope.
+
+The standalone sketch, pre-D-018 implementation and illustrative mockup below are preserved history. Their prices, personnel examples, Call timings and retired graph-Science equipment do not define the current game. The [order concept](order-concept.md) records D-018's target; D-020 superseded the old Science graph/recipe flow.
+
+## Historical specification and experiments
+
 **Status:** brainstorming and assistant proposal, November 14, 2026. The vocabulary is selected in [D-006](../docs/decisions.md#d-006--procurement-terminology). Gameplay and implementation details remain proposals. The user's direction is to explore their procurement role in this separate directory, with no shared base yet and integration later. See the [source note](../docs/notes/2026-11-14-procurement-prototype.md).
 
 The proposed entity vocabulary and message payloads are recorded in the [interface draft](interfaces.md).

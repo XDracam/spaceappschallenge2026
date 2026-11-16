@@ -1,6 +1,7 @@
 // Confirmation dialogs: sign an order, switch a need to another offer, speed up a delivery, cancel a contract.
 // Facts are rechecked live against the current shared state while the dialog is open.
-import { useEffect } from 'preact/hooks';
+import { useRef } from 'preact/hooks';
+import { useDialog } from '../../../shared/useDialog';
 import { procurementActions } from '../logic';
 import { contractReliability, type Contract, type OrderDraft, type Task } from '../../../core/model';
 import {
@@ -13,14 +14,10 @@ import { setUi, useP, useUi } from './uiState';
 export function Dialog() {
   const v = useP();
   const d = useUi((u) => u.dialog);
-  useEffect(() => {
-    if (!d) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setUi({ dialog: null }); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [d]);
-  if (!d) return null;
+  const root = useRef<HTMLElement>(null);
   const close = () => setUi({ dialog: null, amendmentPreview: null });
+  useDialog({ open: !!d, root, onClose: close });
+  if (!d) return null;
   let body = null;
 
   if (d.type === 'order') body = <OrderReview draft={d.draft} token={d.token} close={close} />;
@@ -71,7 +68,7 @@ export function Dialog() {
 
   return (
     <div class="pr-backdrop" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-      <section class="pr-dialog" role="dialog" aria-modal="true" aria-labelledby="pr-dialog-title">{body}</section>
+      <section ref={root} tabIndex={-1} class="pr-dialog" role="dialog" aria-modal="true" aria-labelledby="pr-dialog-title">{body}</section>
     </div>
   );
 }

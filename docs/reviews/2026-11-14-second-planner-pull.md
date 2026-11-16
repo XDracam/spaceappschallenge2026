@@ -1,5 +1,7 @@
 # Second mission-planner pull review — November 14, 2026
 
+> Archive navigation update, November 16, 2026: the eight standalone source links are retained below as historical paths. Their modern locations are [RocketTab](../../game/src/stations/planner/ui/RocketTab.tsx), [Mars mission](../../game/src/stations/planner/data/missions/marsOrbiterLander.ts), [planner UI store](../../game/src/stations/planner/state/store.ts), [part information](../../game/src/stations/planner/ui/partInfo.tsx), [next-step UI](../../game/src/stations/planner/ui/NextStep.tsx), and [planner types](../../game/src/stations/planner/model/types.ts). Shared state now also lives in [core](../../game/src/core/state.ts). These mappings help navigation; today's source is not evidence of what the earlier review inspected.
+
 Reviewed six incoming commits after `7d12226`, ending at `1051783`, against procurement commit `ea60f30`. The incoming work adds the planner application, a player-station decision, interface documentation and UI revisions. This review inspected source and design notes. Planner runtime, build and reported critic scores were not independently validated in this pass.
 
 ## What we can learn
@@ -10,7 +12,7 @@ The user's incoming decision sets four people at separate stations and seats, wi
 
 This supports keeping our catalogue and spending decisions in procurement while exposing useful status to the other stations. It also makes simultaneous useful work more important. Station occupancy alone cannot establish that its player has something interesting to do.
 
-Sources include the [verbatim station decision](../notes/2026-11-14-player-stations.md), [planner UX notes](../../mission-planner/notes/2026-11-14-ux-review.md), and [planner Rocket rows](../../mission-planner/app/src/ui/RocketTab.tsx).
+Sources include the [verbatim station decision](../notes/2026-11-14-player-stations.md), [planner UX notes](../../mission-planner/notes/2026-11-14-ux-review.md), and planner Rocket rows (`mission-planner/app/src/ui/RocketTab.tsx`, path at review time).
 
 ### Deadline pressure has a mission consequence
 
@@ -18,7 +20,7 @@ The user chose a mission completion deadline. The authored Mars mission uses day
 
 For procurement, a late cheaper part can lead to a later launch or a more costly faster mission plan, while the completion deadline gives planning a reason to care. This is stronger context for talking about a delivery tradeoff. The procurement station should show the dates supplied by planning and let that player evaluate the flight consequences.
 
-Sources include the [deadline feedback](../../mission-planner/notes/2026-11-14-ui-feedback.md#deadline), [authored mission](../../mission-planner/app/src/data/missions/marsOrbiterLander.ts), and [clock handling](../../mission-planner/app/src/state/store.ts).
+Sources include the [deadline feedback](../../mission-planner/notes/2026-11-14-ui-feedback.md#deadline), authored mission (`mission-planner/app/src/data/missions/marsOrbiterLander.ts`, path at review time), and clock handling (`mission-planner/app/src/state/store.ts`, path at review time).
 
 ### Explain consequences where decisions happen
 
@@ -26,7 +28,7 @@ Incoming revisions show order readiness on part rows, expose why a goal is block
 
 For procurement, useful transfers are concise missing/late explanations and dates beside the affected Resource or Contract. Our existing promised/ready distinction, specific fit gaps and changed-confirmation review already exercise that direction. Avoid turning the planner's one-next-step hint into an automatic spending priority for procurement's several simultaneous needs.
 
-Sources include [UX notes](../../mission-planner/notes/2026-11-14-ux-review.md), [part labels](../../mission-planner/app/src/ui/partInfo.tsx), [readiness display](../../mission-planner/app/src/ui/RocketTab.tsx), and [next-step logic](../../mission-planner/app/src/ui/NextStep.tsx).
+Sources include [UX notes](../../mission-planner/notes/2026-11-14-ux-review.md), part labels (`mission-planner/app/src/ui/partInfo.tsx`, path at review time), readiness display (`mission-planner/app/src/ui/RocketTab.tsx`, path at review time), and next-step logic (`mission-planner/app/src/ui/NextStep.tsx`, path at review time).
 
 ### Remove equivalent choices
 
@@ -42,7 +44,7 @@ The planner implements Preact panels and a canvas map. Its part-need record carr
 
 These give us real planner-facing examples when a shared interface is designed. The planner's data shape remains scoped to its current part workflow. Our wider Resource catalogue, personnel, research requisites and split Allocations require a broader model or mapping.
 
-Sources include the [interface document](../../mission-planner/procurement-interface.md), [runtime types](../../mission-planner/app/src/model/types.ts), [build choices](../../mission-planner/notes/2026-11-14-build-decisions.md), and [planner store](../../mission-planner/app/src/state/store.ts).
+Sources include the [interface document](../../mission-planner/procurement-interface.md), runtime types (`mission-planner/app/src/model/types.ts`, path at review time), [build choices](../../mission-planner/notes/2026-11-14-build-decisions.md), and planner store (`mission-planner/app/src/state/store.ts`, path at review time).
 
 ## Gaps to preserve for integration
 

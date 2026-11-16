@@ -1,10 +1,10 @@
 # Procurement interface
 
-**User direction (2026-11-14):** the planner defines the task, contract, and related data formats and documents them here; the procurement module adopts or changes them later. Source of truth in code: [`app/src/model/types.ts`](app/src/model/types.ts) (`ProcurementTask`, `Contract`).
+**User direction (2026-11-14):** the planner defines the task, contract, and related data formats and documents them here; the procurement module adopts or changes them later. Historical source path: `app/src/model/types.ts` (`ProcurementTask`, `Contract`). That standalone schema is preserved below; current shared runtime records are in [`game/src/core/model.ts`](../game/src/core/model.ts), with planner types in [`game/src/stations/planner/model/types.ts`](../game/src/stations/planner/model/types.ts).
 
 Units: mass t, thrust kN, Isp s, power kW, data rate kbps, money M (millions), time = agency calendar day (day 0 = mission start).
 
-Integration note from the second pull review — [D-008](../docs/decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) selects shared role-neutral Tasks and contract-only inventory. The shapes below document the current planner-local runtime. Its routed-task, cancellation and ownership wording needs reconciliation before becoming a shared interface. See the [review](../docs/reviews/2026-11-14-second-planner-pull.md#gaps-to-preserve-for-integration).
+Integration note from the second pull review — [D-008](../docs/decisions.md#d-008--procurement-alignment-after-incoming-mission-planner-work) selects shared role-neutral Tasks and contract-only inventory. The shapes below document the planner-local runtime at the time of the November 14 review. Its routed-task, cancellation and ownership wording needs reconciliation before becoming a shared interface. See the [review](../docs/reviews/2026-11-14-second-planner-pull.md#gaps-to-preserve-for-integration).
 
 ## Task — planner → procurement
 

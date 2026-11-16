@@ -17,7 +17,6 @@ import {
   localUi, newId, rememberPopupFocus, restorePopupFocus,
 } from './common';
 import { Heatmap, kms, pickCheapest, transferTotal } from './Heatmap';
-import './popups.css';
 
 /** Close the popup and forget the selected maneuver, so its ghost trajectory disappears. */
 function closeAll() {

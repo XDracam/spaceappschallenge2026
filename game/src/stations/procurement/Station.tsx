@@ -1,7 +1,6 @@
 // procurement station root view (rendered inside <div class="st-procurement">).
 // Port of procurement/mockups/catalogue-full-hd.html adapted to the shared state
 // and a ~1440×900 screen: needs | catalogue (or Contracts) | decision panel.
-import './procurement.css';
 import { ArtDefs } from './ui/Art';
 import { Header } from './ui/Header';
 import { Needs } from './ui/Needs';

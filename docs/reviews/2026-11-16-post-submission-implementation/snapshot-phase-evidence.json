@@ -1,0 +1,12 @@
+{
+  "browser": "151.0.7922.34",
+  "beforeSnapshot": {
+    "phase": "lobby",
+    "events": 0,
+    "resync": 0
+  },
+  "afterSnapshot": {
+    "phase": "planning",
+    "events": 1
+  }
+}

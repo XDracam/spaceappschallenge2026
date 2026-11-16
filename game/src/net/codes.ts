@@ -27,6 +27,7 @@ export async function decodeCode(raw: string): Promise<CodePayload> {
   // Tolerate whitespace, line breaks and quotes picked up by chat apps.
   const text = raw.replace(/[\s"'`<>]/g, '');
   if (!text) throw new CodeError('Paste a code first.');
+  if (text.length > 200000) throw new CodeError('This code is too long. Ask the host for a new invite.');
   let bytes: Uint8Array;
   try {
     if (text.startsWith(PREFIX_RAW)) {
@@ -50,7 +51,22 @@ export async function decodeCode(raw: string): Promise<CodePayload> {
 
 async function pipe(bytes: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> {
   const out = new Blob([bytes]).stream().pipeThrough(stream);
-  return new Uint8Array(await new Response(out).arrayBuffer());
+  const reader = out.getReader();
+  const chunks: Uint8Array[] = [];
+  let length = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      length += value.length;
+      if (length > 1024 * 1024) { await reader.cancel(); throw new CodeError('This code is too large. Ask the host for a new invite.'); }
+      chunks.push(value);
+    }
+  } finally { reader.releaseLock(); }
+  const result = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) { result.set(chunk, offset); offset += chunk.length; }
+  return result;
 }
 
 function toBase64Url(bytes: Uint8Array): string {

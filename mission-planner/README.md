@@ -1,6 +1,14 @@
 # Mission planner module
 
-All work for the mission planning role lives in this folder: specification, notes, and later implementation. This document specifies the final system; it does not describe staged versions.
+## Current station — November 16, 2026
+
+The integrated planner lives in [`game/src/stations/planner/`](../game/src/stations/planner/). Its mission registry currently includes Weather satellite, Lunar ice lander and Mars orbiter + lander. Planning remains non-linear, publishes shared part needs, evaluates contracted hardware and triggers the final playthrough at the planned launch date. Fresh-attempt retry/mission selection follows D-029. See [current prototype](../docs/current-prototype.md) and [integration](../docs/design/integration.md).
+
+The specification and original build choices below preserve design provenance. Statements about future modules, dev stand-ins and the original two-mission scope describe earlier stages. Current code, not the old planner-local interface draft, owns shared runtime types.
+
+## Original specification and implementation notes
+
+This folder preserves the planning specification and source notes. Current implementation is linked above; the original baseline below remains design history.
 
 Labels: **user direction** = stated by the user. **Proposal** = suggested by the assistant. Source notes are in [notes/](notes/).
 

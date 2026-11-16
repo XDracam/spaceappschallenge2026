@@ -37,11 +37,11 @@ export const POOL_EVENTS: EventDef[] = [
     eligible: trustBelow('government', 60),
     characterId: 'duarte',
     title: 'Treasury wants money back',
-    message: 'Treasury wants to claw back unspent money from every program. Yours looks very unspent. I can soften it, but not for free.',
+    message: 'Treasury wants to claw back unspent money from every programme. Yours looks very unspent. I can soften it, but not for free.',
     options: [
       option('accept', 'Accept a 10 M cut quietly.',
         [budget(-10), trust('government', 5)],
-        'Duarte calls you "a team player". Every station has 10 M less.'),
+        'Duarte calls you "a team player". The shared budget has 10 M less.'),
       option('fight', 'Rally forecast fans against the cut.',
         [budget(-5), trust('public', 5), trust('government', -10)],
         "TV meteorologists take your side on air. The cut shrinks to 5 M, and so does Duarte's patience."),
@@ -62,13 +62,13 @@ export const POOL_EVENTS: EventDef[] = [
     options: [
       option('with-strings', 'Take 25 M and the district line (procurement pays more).',
         [budget(25), trust('government', 5), price(10, 3)],
-        'The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.'),
+        'The committee adds 25 M. District-sourcing terms raise Procurement prices 10% for three months.'),
       option('no-strings', 'Ask for 15 M with no strings attached.',
         [budget(15), trust('government', -5)],
-        'Duarte delivers, with a small speech about gratitude. Every station gets 15 M more.'),
+        'Duarte delivers, with a small speech about gratitude. The shared budget gains 15 M.'),
       option('decline', 'Decline: the mission is funded well enough.',
         [trust('public', 5), trust('government', -10)],
-        'Good-government groups applaud. Duarte has never been declined before and finds it educational.'),
+        'Good-government groups applaud. Duarte asks you to keep the refusal on file for the next budget hearing.'),
     ],
     ignored: {
       effects: [trust('government', -5)],
@@ -203,7 +203,7 @@ export const POOL_EVENTS: EventDef[] = [
     eligible: trustAbove('partners', 45),
     characterId: 'moreau',
     title: 'A spare imager, never flown',
-    message: 'We built a spare imager for our own weather satellite, and it never flew. It is sitting in a crate with a very sad label. Would procurement like it at cost?',
+    message: 'Our spare weather imager is fully tested, never flown and still in storage. Would Procurement like it at cost?',
     options: [
       option('take', 'Pass the offer to procurement.',
         [trust('partners', 5), offer({
@@ -212,7 +212,7 @@ export const POOL_EVENTS: EventDef[] = [
           note: "Meridian's spare weather imager, built and tested, never flown.",
           stats: { performance: 5 }, massT: 0.05,
         })],
-        "Procurement finds a finished imager in its offers list. Moreau's label now says 'happy'."),
+        "Meridian releases the spare imager. Procurement can review the offer at cost."),
       option('decline', 'Thank him; we are building our own.',
         [trust('partners', -5)],
         'Moreau understands. The crate goes back on the shelf.'),

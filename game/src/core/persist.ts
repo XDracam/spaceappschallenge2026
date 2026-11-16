@@ -2,12 +2,32 @@
 import { getState, onHostState, syncStore } from './store';
 import { createStore } from './createStore';
 import { STATE_VERSION, type GameState } from './state';
+import { validGameState } from './validation';
 import { initialScienceSlice } from '../stations/science/slice';
 import { contentOf, missionConstraintFlag } from '../stations/comms/state/world';
 
 const KEY = 'mission-control.save.v1';
 let timer: ReturnType<typeof setTimeout> | null = null;
 let latest: GameState | null = null;
+
+export const saveLoadIssue = createStore<string | null>(null);
+function loadIssue(message: string | null): void {
+  if (saveLoadIssue.get() !== message) saveLoadIssue.set(message);
+}
+
+/** Preserve an unreadable record for the player before an explicit reset. */
+export function downloadSavedRecord(): boolean {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return false;
+    const url = URL.createObjectURL(new Blob([raw], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = 't-minus-local-save.json';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch { return false; }
+}
 
 export const persistenceStatus = createStore<'idle' | 'saved' | 'failed'>('idle');
 
@@ -30,6 +50,8 @@ export function startPersistence(): void {
 }
 
 function save(s: GameState): boolean {
+  // Never replace an unreadable record until the player explicitly resets it.
+  if (saveLoadIssue.get()) { persistenceStatus.set('failed'); return false; }
   try {
     localStorage.setItem(KEY, JSON.stringify(s));
     persistenceStatus.set('saved');
@@ -43,7 +65,7 @@ function save(s: GameState): boolean {
 export function loadSaved(): GameState | null {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return null;
+    if (!raw) { loadIssue(null); return null; }
     const s = JSON.parse(raw) as GameState;
     const originalVersion = s?.version;
     if (s?.version === 1) migrateV1(s);
@@ -67,14 +89,17 @@ export function loadSaved(): GameState | null {
       s.research.supplyRequests ??= [];
       s.version = 8;
     }
-    if (s?.version !== STATE_VERSION || !s.meta) return null;
+    if (s?.version !== STATE_VERSION || !s.meta) throw new Error('Unsupported save format');
     // Saves from before mission selection were Mars games.
     s.meta.missionId ??= 'mars-orbiter-lander';
     if (!Number.isInteger(s.meta.attempt) || s.meta.attempt < 1) s.meta.attempt = 1;
     if (!Array.isArray(s.meta.attempts)) s.meta.attempts = [];
     if (originalVersion < 7) recoverConstraintRequests(s);
+    if (!validGameState(s)) throw new Error('Incomplete save');
+    loadIssue(null);
     return s;
   } catch {
+    loadIssue('The local save could not be read. Download a copy before resetting it; the existing record has been kept.');
     return null;
   }
 }
@@ -96,6 +121,11 @@ function recoverConstraintRequests(s: GameState): void {
 export function clearSaved(): void {
   try {
     localStorage.removeItem(KEY);
+    latest = null;
+    if (timer) clearTimeout(timer);
+    timer = null;
+    loadIssue(null);
+    persistenceStatus.set('idle');
   } catch {
     /* ignore */
   }

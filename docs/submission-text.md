@@ -1,5 +1,7 @@
 # T-Minus — submission text
 
+> **Preparation artifact, not a current feature inventory.** This November 15 draft was prepared for the form; the exact submitted text has not been independently inspected. The user confirmed submission on November 16. It describes two missions; [current source](current-prototype.md) registers three. Preserve this draft and its historical checklist rather than silently rewriting the submitted-description history. [Artifact reference](submission-reference.md) records the known delivery materials.
+
 Prepared November 15, 2026. Copy the text beneath each field heading into the corresponding submission field. The final team checklist is internal and should not be pasted into the form.
 
 ## Project Name

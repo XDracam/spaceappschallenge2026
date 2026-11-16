@@ -1,0 +1,297 @@
+[
+  {
+    "seed": 20261116,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 960,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261117,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 960,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261118,
+    "launch": 1017,
+    "budget": {
+      "fundingTotalM": 1005,
+      "spentM": 315.2,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "failed",
+        "endsAt": 115.15999999999991
+      },
+      {
+        "id": "mars-camera-2",
+        "status": "succeeded",
+        "endsAt": 232.1600000000003
+      }
+    ],
+    "lastDelivery": 385,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 1299,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261119,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 980,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261120,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 960,
+      "spentM": 309.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261121,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 960,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261122,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 960,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 3,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261123,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 935,
+      "spentM": 282.6,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261124,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 985,
+      "spentM": 299.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 121.76
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  },
+  {
+    "seed": 20261125,
+    "launch": 230,
+    "budget": {
+      "fundingTotalM": 935,
+      "spentM": 309.1,
+      "committedM": 0
+    },
+    "projects": [
+      {
+        "id": "mars-camera-1",
+        "status": "succeeded",
+        "endsAt": 115.15999999999991
+      }
+    ],
+    "lastDelivery": 213,
+    "score": {
+      "achieved": 4,
+      "total": 4,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "endDay": 527,
+    "physicalGoals": 4,
+    "errors": []
+  }
+]

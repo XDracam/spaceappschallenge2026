@@ -1,0 +1,282 @@
+{
+  "compatibilityIds": [
+    "2:a1e762555707304af29b"
+  ],
+  "files": [
+    {
+      "path": "LICENSE.txt",
+      "bytes": 9142,
+      "sha256": "a5e9f9b1575301c7a7a03508fdaa2e05a918cc17fd21c6e898096a96d6a34f61"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.txt",
+      "bytes": 36854,
+      "sha256": "8d4a09fa3891382e6198a4ff904a73cc4d348390c2852862f22025c213ed748a"
+    },
+    {
+      "path": "assets/FacilityArt-Bu3-cShK.js",
+      "bytes": 11403,
+      "sha256": "1dec65eb23e6dbfa31f8232bdc8d93b0fc804c66dfe803450c950e5c3677cbc8"
+    },
+    {
+      "path": "assets/Station-B9ZgK7W3.js",
+      "bytes": 83274,
+      "sha256": "f920b735864fa0f8bd027c0bfc969402fccb6d1dbc0fc64eaa3e49584378f1f3"
+    },
+    {
+      "path": "assets/Station-BCUU8ale.js",
+      "bytes": 132764,
+      "sha256": "dffa7f4503d3c518c1554e5cf6e254329f161b54729293ddc2a1b570b5ec097b"
+    },
+    {
+      "path": "assets/Station-CROJxEAm.js",
+      "bytes": 14205,
+      "sha256": "887488daa64e708ddca52d7f7dfee08ddc4906c3cd162674720e06c8b5ea6b76"
+    },
+    {
+      "path": "assets/Station-CdF4oyxC.js",
+      "bytes": 23884,
+      "sha256": "42a7fa3a67dd78eb1a9cce7a044fcc689e21bfe693e7d4c6d05191f1e285d564"
+    },
+    {
+      "path": "assets/index-D4YdQGJH.js",
+      "bytes": 540055,
+      "sha256": "125db41a4dc6143e8cad2cc2289660acb3fa43c3d74adb8eecb7fda6ee3ea449"
+    },
+    {
+      "path": "assets/index-DZkCf4Fe.css",
+      "bytes": 170375,
+      "sha256": "3027a3cf1bdd43ba7add1bca6e239eddc0339b99d4303b2fab18f9e4449fd63d"
+    },
+    {
+      "path": "assets/title-earth-HXz_59q4.webp",
+      "bytes": 104844,
+      "sha256": "1a0ffbd4f04da24e83846c6dd9f915b6ad2bda35248449955b5bf3d65b1406ca"
+    },
+    {
+      "path": "audio/CREDITS.txt",
+      "bytes": 2459,
+      "sha256": "6b1f8a8664f743738e47404ea1ee93716c8270bb40d9441bd1686ff76da527e2"
+    },
+    {
+      "path": "audio/achievement.mp3",
+      "bytes": 216639,
+      "sha256": "9e38c888ce0bf246d5083a3b9614e8b2189a98b43f323e46c6722efecccbaf50"
+    },
+    {
+      "path": "audio/attention.mp3",
+      "bytes": 2204,
+      "sha256": "915fc46f7befc41c85699d6dc13ef0cda86e26244b2b5919f62764f8ddd61c28"
+    },
+    {
+      "path": "audio/completion.mp3",
+      "bytes": 4706,
+      "sha256": "443838a0fb03bf513213b6b10d22ac4ff0c54af6e836f954fc3c98bd0ef5f5ad"
+    },
+    {
+      "path": "audio/confirmation.mp3",
+      "bytes": 1686,
+      "sha256": "b62fe7df0c91c325b444d3fc80b32b18e566359dd1f6c83ace1bb57e4a622861"
+    },
+    {
+      "path": "audio/launch.mp3",
+      "bytes": 165931,
+      "sha256": "5a997857ab9ce05ce6b6ec8049b6a5ca175c87fccbf6a1915915e1e21b7735af"
+    },
+    {
+      "path": "audio/licenses/achievement-cynic-source.html.txt",
+      "bytes": 32140,
+      "sha256": "fcb513c226c43deaf4bc640e4682d61bd50a2318ecb51b7d42a0ac9cf073d4d2"
+    },
+    {
+      "path": "audio/licenses/kenney-interface-CC0.txt",
+      "bytes": 553,
+      "sha256": "cefbf7ebb51b02ecf4748b1112d5c6a2d04aa0ea82e885e74680b62ea6d3a712"
+    },
+    {
+      "path": "audio/licenses/nasa-source.json",
+      "bytes": 3267,
+      "sha256": "228762d13fad0605a9af2b905dd50d5805f3d87bfa2ee367e1e8a80b8359a730"
+    },
+    {
+      "path": "audio/licenses/the-magnificent-cosmos.html.txt",
+      "bytes": 29412,
+      "sha256": "d5ec5e0fcd42cea6aaf30a547f11391709bddf9d729286752d012636d84c52bd"
+    },
+    {
+      "path": "audio/music.mp3",
+      "bytes": 2837405,
+      "sha256": "affcebe2a6d87067ddaf46c267fc7fba9475a63638514134de3a9b07d372f2f8"
+    },
+    {
+      "path": "audio/selected.json",
+      "bytes": 8873,
+      "sha256": "b17468349206a59bf48f60e6b1a8ac52cb16384bbb9b7071490bf0747d58c9d2"
+    },
+    {
+      "path": "audio/setback.mp3",
+      "bytes": 4650,
+      "sha256": "cdcf964e72f3291235b06887abf5375e949b6a3920ce630c55f7a83d509f525b"
+    },
+    {
+      "path": "credits/index.html",
+      "bytes": 3158,
+      "sha256": "eb9125673b10c9c8cf2dc8d26220c6266c7b0132b5434fb03074121ed42be65d"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 473,
+      "sha256": "eb17db26f0a498970c0fc79da947feb596513b18adc53fb5d0d98e8578d34769"
+    },
+    {
+      "path": "fonts/Exo-2-OFL.txt",
+      "bytes": 4386,
+      "sha256": "7f95a8eeecc6904ffc81cd10cc8ebc7fcee72a67922924bf45f02dff03b88127"
+    },
+    {
+      "path": "fonts/Inter-OFL.txt",
+      "bytes": 4377,
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "fonts/fonts.css",
+      "bytes": 831,
+      "sha256": "74031848c019e52d9faccc96d2440a74d51da6e6d1919c68aa8f40a50a6e5b2b"
+    },
+    {
+      "path": "fonts/google-1.ttf",
+      "bytes": 143916,
+      "sha256": "62a90bba9ce91c973c9cb615606be67ccc9bd96084e00e52f0921ba13cc5b35d"
+    },
+    {
+      "path": "fonts/google-2.ttf",
+      "bytes": 143896,
+      "sha256": "d29a80ec96f88b2ea92ad574b7ddf53044e77e7ee3498668a930a55add9efcb0"
+    },
+    {
+      "path": "fonts/google-3.ttf",
+      "bytes": 324820,
+      "sha256": "1b08e7fc267a5c7e1d614100f604b83e7e8a0be241f0f288faa2b3ac93a683ba"
+    },
+    {
+      "path": "fonts/google-4.ttf",
+      "bytes": 325304,
+      "sha256": "8c883f63b2c4157d997319f2c8bc6995ed4357ef371940d31ca159004a4aae63"
+    },
+    {
+      "path": "fonts/google-5.ttf",
+      "bytes": 326048,
+      "sha256": "e7a1aaf7eda9f2fad4131725fa556265ec75ca7b2d756260173a040363e8d4f7"
+    },
+    {
+      "path": "fonts/sources.json",
+      "bytes": 1376,
+      "sha256": "90f541e9eef42906ac857c20b18db8ca853417f11a940f4a9482c215f2594401"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1303,
+      "sha256": "3138df023e2c9619422c4b2036ca76f24988cd5bb583e93aa2c8f3894cf8c03d"
+    },
+    {
+      "path": "portraits/brandt.webp",
+      "bytes": 21896,
+      "sha256": "34937d9a96afbd120d9de588c1f0a6e3f16c0de46b961ae780882a65dd56a274"
+    },
+    {
+      "path": "portraits/castellanos.webp",
+      "bytes": 27068,
+      "sha256": "9e05078b519c5ff8d031ebe25184c14b520863d0d7e9b47248779ba87001ccbb"
+    },
+    {
+      "path": "portraits/duarte.webp",
+      "bytes": 22140,
+      "sha256": "da51b02cf73b648a64fffca2a6bb135c484f7030b028d3c552e913c5252025ae"
+    },
+    {
+      "path": "portraits/feld.webp",
+      "bytes": 16650,
+      "sha256": "a08c37fa26246ed5921a87427892158fa56e9be47dcf07b99d70021959fa4fb0"
+    },
+    {
+      "path": "portraits/haddad.webp",
+      "bytes": 21418,
+      "sha256": "df0c3e2096fbe26ceb67069d4c39630f8c9127039a6e6b19b250648248bc77e5"
+    },
+    {
+      "path": "portraits/harlan.webp",
+      "bytes": 20832,
+      "sha256": "fbfbae28cb8f54abe600c0e0db5f8a660797b72523eb4aa74ddd63ae5ca6a6b7"
+    },
+    {
+      "path": "portraits/kowalski.webp",
+      "bytes": 21158,
+      "sha256": "c2ea7d3554f946c767e6c418fb8ccfe6f7e4ef302eb5f3f5362f096beff02f1d"
+    },
+    {
+      "path": "portraits/lindqvist.webp",
+      "bytes": 22814,
+      "sha256": "87e59a9d8accbaca02bc8a48d5c5ef62f5194c4effd7d6c48f78aaeaa9d08a79"
+    },
+    {
+      "path": "portraits/moreau.webp",
+      "bytes": 19446,
+      "sha256": "6751e8aba76c59317069a958ac600bfedcddc3547db2fe69e368dc44f499532e"
+    },
+    {
+      "path": "portraits/okafor.webp",
+      "bytes": 18054,
+      "sha256": "f5399fd20e187ce2947cbf8b33ee06f00d7521bdc3cc5e8a3771b0d25c372447"
+    },
+    {
+      "path": "portraits/osei.webp",
+      "bytes": 16036,
+      "sha256": "d3a481c1ac9920a99043eb7ec0a66145fa4b5f7df769a226ac556e901d4cacd7"
+    },
+    {
+      "path": "portraits/raman.webp",
+      "bytes": 22724,
+      "sha256": "07760d7a506771e8c5c919ab8d8240494c28feb48fc17bc040799b604d22d868"
+    },
+    {
+      "path": "portraits/reyes.webp",
+      "bytes": 23708,
+      "sha256": "067f039320e8444c1998137817e8f63fc6188d4934233ca1cd1a71394a874d02"
+    },
+    {
+      "path": "portraits/salo.webp",
+      "bytes": 24248,
+      "sha256": "22f7eeca400cd79a08a8b91796052a1f00250cc5574666f26c45f896144846ef"
+    },
+    {
+      "path": "portraits/whitfield.webp",
+      "bytes": 29238,
+      "sha256": "5d6337af34fed79cf0199206d5fa82711cad9fd9cc3cbc3bd8b03c8a1f16eec7"
+    },
+    {
+      "path": "social-title.webp",
+      "bytes": 104844,
+      "sha256": "1a0ffbd4f04da24e83846c6dd9f915b6ad2bda35248449955b5bf3d65b1406ca"
+    },
+    {
+      "path": "submission/T-Minus-Submission.mp4",
+      "bytes": 16777426,
+      "sha256": "c297c588f2a5dc876396943788cb272d7f3e5d55932e2395fc03e9e6ae3fcf35"
+    },
+    {
+      "path": "submission/credits.txt",
+      "bytes": 2533,
+      "sha256": "7ddd9f36fe6bbf05c45ecf6056475ffa8b2a70803f8841a820ecf0f439a7c30c"
+    },
+    {
+      "path": "submission/index.html",
+      "bytes": 2484,
+      "sha256": "191b5880136d351874f5e785706d65e8d3dc933e256eec2f2eccc621ec52c4b9"
+    },
+    {
+      "path": "submission/poster.jpg",
+      "bytes": 162234,
+      "sha256": "c4dfd6714f27492e27eb6ec7155591af15c8f2ddc81d9ae5ca46f49766d410a7"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "seed": 20261116,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 314,
+    "spentM": 196.6,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261117,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 382,
+    "spentM": 207.7,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261118,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 380,
+    "spentM": 209.1,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261119,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 321,
+    "spentM": 196.6,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": false,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261120,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 314,
+    "spentM": 203.6,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261121,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 387,
+    "spentM": 209.3,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": false,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261122,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 319,
+    "spentM": 196.6,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261123,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 314,
+    "spentM": 192.5,
+    "fundingM": 225,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261124,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 324,
+    "spentM": 196.2,
+    "fundingM": 255,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  },
+  {
+    "seed": 20261125,
+    "launch": 390,
+    "partCount": 11,
+    "allDelivered": true,
+    "lastArrival": 321,
+    "spentM": 203.6,
+    "fundingM": 225,
+    "withinOriginal210M": true,
+    "allGoalsAchieved": true,
+    "evaluatorErrors": []
+  }
+]

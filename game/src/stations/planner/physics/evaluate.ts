@@ -524,6 +524,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
     let failReason: string | undefined;
     let reachedBlocked = false;
     let reachedNoInstrument = false;
+    let reachedCorrectAltitude = false;
     let reachedLate = false;
     /** Altitude of an orbit at the goal body that missed the goal's altitude window. */
     let wrongAltitudeKm: number | undefined;
@@ -556,6 +557,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
           wrongAltitudeKm ??= s.altitudeKm;
           continue;
         }
+        reachedCorrectAltitude = true;
         if (step.blocked) { reachedBlocked = true; continue; }
         const base = product(bi.factors.slice(0, step.factorCount));
         const scs = step.scIds.map((id) => scById.get(id)).filter((x): x is Spacecraft => !!x);
@@ -618,7 +620,7 @@ export function evaluateFull(game: PlannerGame): { evaluation: Evaluation; inter
       if (!goal.optional) lateGoals.push(goal.name);
     }
     if (!reason && reachedBlocked) reason = 'The plan fails before this goal is reached';
-    if (!reason && wrongAltitudeKm !== undefined && hasAltitudeWindow(goal)) reason = altitudeMissText(goal, wrongAltitudeKm);
+    if (!reason && !reachedCorrectAltitude && wrongAltitudeKm !== undefined && hasAltitudeWindow(goal)) reason = altitudeMissText(goal, wrongAltitudeKm);
     if (!reason && reachedNoInstrument && goal.instrument) {
       reason = `No spacecraft there carries a ${INSTRUMENTS[goal.instrument].name.toLowerCase()} with performance ≥ ${goal.minPerformance ?? 0}`;
     }

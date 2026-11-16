@@ -1,4 +1,3 @@
-import './panels.css';
 import { requestConfirmation } from '../../../shared/confirmation';
 import type { ComponentChildren } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -109,11 +108,11 @@ function AddMenu({ groups, title, label }: { groups: AddGroup[]; title: string; 
   return (
     <div class="add-menu" ref={pop.ref} onClick={stop}>
       {label ? (
-        <button class={`pill small rt-add-btn${pop.open ? ' active' : ''}`} title={title} onClick={pop.toggle}>
+        <button class={`pill small rt-add-btn${pop.open ? ' active' : ''}`} title={title} aria-expanded={pop.open} onClick={pop.toggle}>
           <PlusIcon /> {label}
         </button>
       ) : (
-        <button class={`round-btn small rt-add-round${pop.open ? ' active' : ''}`} title={title} aria-label={title} onClick={pop.toggle}>
+        <button class={`round-btn small rt-add-round${pop.open ? ' active' : ''}`} title={title} aria-label={title} aria-expanded={pop.open} onClick={pop.toggle}>
           <PlusIcon />
         </button>
       )}
@@ -155,7 +154,7 @@ function RowMenu({ entries, title }: { entries: MenuEntry[]; title: string }) {
   const pop = usePopover();
   return (
     <div class="add-menu" ref={pop.ref} onClick={stop}>
-      <button class={`pm-dots${pop.open ? ' active' : ''}`} title={title} aria-label={title} onClick={pop.toggle}>⋯</button>
+      <button class={`pm-dots${pop.open ? ' active' : ''}`} title={title} aria-label={title} aria-expanded={pop.open} onClick={pop.toggle}>⋯</button>
       {pop.open && (
         <div class={`popover glass strong pm-menu pm-row-menu${pop.up ? ' up' : ''}`}>
           {entries.map((e, i) => ('header' in e ? (

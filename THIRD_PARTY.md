@@ -11,8 +11,7 @@ MIT notice, PeerJS's and its bundled dependencies' MIT/BSD-3-Clause notices, all
 three fonts' copyrights and SIL OFL 1.1 terms, the existing Lucide notice,
 build-tool credits and caniuse-lite attribution/license terms. Vite copies
 this file to `THIRD_PARTY_NOTICES.txt` at the deployed site's root. `LICENSE.txt`
-contains the project's Apache-2.0 terms. The fonts are loaded from Google Fonts;
-no font files are checked in. Lucide and IBM Plex Mono are used in the earlier
+contains the project's Apache-2.0 terms. The game self-hosts unmodified Exo 2 (600/700) and Inter (400/500/600) from the exact Google Fonts stylesheet previously requested by the game. Source URLs, retrieval date and hashes are in [font sources](game/public/fonts/sources.json); [Exo 2](game/public/fonts/Exo-2-OFL.txt) and [Inter](game/public/fonts/Inter-OFL.txt) retain SIL OFL 1.1. IBM Plex Mono remains externally loaded by historical mockups. Lucide and IBM Plex Mono are used in the earlier
 procurement mockup, rather than the integrated game's runtime.
 
 AI-generated images: the Communications character portraits
@@ -190,4 +189,10 @@ PeerJS and its four bundled dependencies were added later for D-027.
 
 The user-selected runtime sounds and full music track are documented in [selected audio credits](game/public/audio/CREDITS.txt) and [source/license metadata](game/public/audio/selected.json). They retain CC0 1.0 or NASA public-domain terms, separately from the original game's Apache 2.0 license.
 
-The comparison tool also retains candidate previews under CC0 1.0, CC BY 3.0, and NASA public-domain terms. See the [per-file credits and preview edits](game/public/audio-audit/CREDITS.md), [candidate metadata](game/public/audio-audit/candidates.json), and source/license evidence in `game/public/audio-audit/licenses/`. CC BY candidates require retaining creator credit, source/license links and edit disclosure if selected later.
+The comparison tool also retains candidate previews under CC0 1.0, CC BY 3.0, and NASA public-domain terms. See the [per-file credits and preview edits](dev/audio-audit/CREDITS.md), [candidate metadata](dev/audio-audit/candidates.json), and source/license evidence in `dev/audio-audit/licenses/`. CC BY candidates require retaining creator credit, source/license links and edit disclosure if selected later.
+
+## Submission narration and sharing assets
+
+The submission narration uses Voicebox with Supertonic 3 (M2 in the final trailer; F1 in the superseded draft). [Narration provenance](video/NARRATION.md) distinguishes the model's OpenRAIL-M terms from the sample-code MIT license and records what generation settings remain unknown. No model weights are shipped.
+
+`game/public/social-title.webp` is an unchanged byte-for-byte copy of the labelled title artwork above. `game/public/favicon.svg` is an original neutral orbit icon authored with AI assistance, identified in its SVG description. It contains no NASA insignia. The audio audition workbench is now a [development archive](dev/audio-audit/README.md), excluded from production.

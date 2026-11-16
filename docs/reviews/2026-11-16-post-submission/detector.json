@@ -1,0 +1,38 @@
+[
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/home/dracam/Documents/ChatGPT/NASA/game/src/stations/comms/ui/styles.css",
+    "line": 399,
+    "snippet": "border-left: 3px solid var(--c)",
+    "importedBy": [
+      "Station.tsx"
+    ]
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/home/dracam/Documents/ChatGPT/NASA/game/src/stations/procurement/procurement.css",
+    "line": 384,
+    "snippet": "border-left-width: 3px"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/home/dracam/Documents/ChatGPT/NASA/game/src/stations/science/ui/styles.css",
+    "line": 25,
+    "snippet": "border-left-width:4px",
+    "importedBy": [
+      "Station.tsx"
+    ]
+  }
+]

@@ -1,0 +1,680 @@
+[
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 63,
+    "old": "Treasury wants to claw back unspent money from every science program. Yours looks very unspent. I can soften it, but not for free.",
+    "new": "Treasury wants to claw back unspent money from every science programme. Yours looks very unspent. I can soften it, but not for free."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 67,
+    "old": "Duarte calls you \"a team player\". Every station has 25 M less.",
+    "new": "Duarte calls you \"a team player\". The shared budget has 25 M less."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 230,
+    "old": "I have an internal memo saying your lander is twenty percent over budget. I'd like your side before it runs tomorrow.",
+    "new": "A leaked memo warns your lander could overrun its budget. I'd like your response before publication."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 232,
+    "old": "Confirm it and explain the reasons.",
+    "new": "Explain the cost risks and current estimates."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 278,
+    "old": "Our spectrometer team built an instrument with no spacecraft to fly on. Carry it on your orbiter and we'll share every byte. Our ministry will contribute to costs.",
+    "new": "Our spectrometer team needs a research partner while we seek a flight for its instrument. Work with them alongside your orbiter team; our ministry will contribute to your mission."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 280,
+    "old": "Fly it in the orbiter's margin; Meridian pays 20 M.",
+    "new": "Join the research partnership; Meridian contributes 20 M."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "line": 282,
+    "old": "Meridian wires 20 M and ships a crate. The engineers find room; Duarte finds it foreign.",
+    "new": "Meridian contributes 20 M to the shared budget. The partnership leaves the flight payload unchanged; Duarte still objects to the foreign involvement."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "line": 15,
+    "old": "Promise the first detailed maps of Mars' buried ice.",
+    "new": "Promise detailed maps to help identify future landing sites."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "line": 40,
+    "old": "The committee praises your 'fiscal maturity'. Every station now has 30 M less to be mature with.",
+    "new": "The committee praises your 'fiscal maturity'. The shared budget now has 30 M less to be mature with."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "line": 82,
+    "old": "My students built a 3 kg microphone to record the Martian wind. They have been sleeping in the lab for months. Will your lander carry it?",
+    "new": "My students built a 3 kg microphone for a future Mars mission. They want to present the work alongside your lander programme. Will you back them?"
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "line": 84,
+    "old": "Say yes: the microphone rides in the lander's spare-mass margin.",
+    "new": "Back the student project through the mission outreach programme."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "line": 86,
+    "old": "The students cry on camera. The lander engineers find 3 kg of margin, mostly by staring at it.",
+    "new": "The students present their microphone with the mission team. Partner and public trust rise; the flight payload is unchanged."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 91,
+    "old": "Duarte accepts your explanation with the warmth of a tax form. Feld sends a fruit basket.",
+    "new": "Duarte wants the recovery schedule in writing. Feld would prefer to discuss the fruit basket he sent."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 177,
+    "old": "Twenty researchers arrive with laptops and opinions. Science research runs noticeably faster.",
+    "new": "Northgate assigns twenty researchers to the instrument work. Science research runs noticeably faster."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 183,
+    "old": "Salo takes her twenty researchers to a rival program. They send a polite card.",
+    "new": "Salo takes her twenty researchers to a rival programme. They send a polite card."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 315,
+    "old": "The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.",
+    "new": "The committee adds 60 M. Procurement prices rise 15% for four months under the district-sourcing terms."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 318,
+    "old": "Duarte delivers, with a small speech about gratitude. Every station gets 30 M more.",
+    "new": "Duarte delivers, with a small speech about gratitude. The shared budget gains 30 M."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "line": 321,
+    "old": "Good-government groups applaud. Duarte has never been declined before and finds it educational.",
+    "new": "Good-government groups applaud. Duarte closes the funding file rather firmly."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 12,
+    "old": "The committee renews operations funding without a fight. Extra imaging orbits are scheduled.",
+    "new": "Stable operations funding gives the imaging team better support."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 13,
+    "old": "Operations funding is trimmed in the next budget. Imaging passes are rationed.",
+    "new": "Uncertain operations funding leaves the imaging team with less support."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 20,
+    "old": "Partner dishes track the lander through a tricky relay window. No data is lost.",
+    "new": "Partner dishes improve support for the lander's difficult relay windows."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 21,
+    "old": "No partner dish is free during a busy week. Some lander data waits, and some is lost.",
+    "new": "Limited partner dish availability makes the lander's relay coverage less certain."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 28,
+    "old": "The engine supplier's team sends a software patch for a sticky valve within hours.",
+    "new": "The engine supplier's prompt support improves the cruise team's readiness for valve trouble."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 29,
+    "old": "The supplier's support line puts mission control on hold. The valve glitch costs a week of margin.",
+    "new": "The supplier's support line puts mission control on hold, leaving the cruise team with less help for valve trouble."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 36,
+    "old": "University partners spot the cause of the instrument noise and send a new calibration.",
+    "new": "University calibration support improves confidence in the instrument data."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 37,
+    "old": "The science team diagnoses the instrument noise alone. It takes weeks of lost observations.",
+    "new": "Without university support, the science team faces instrument-noise concerns alone."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 44,
+    "old": "The flight team rehearsed this exact trajectory for months. Insertion goes by the book.",
+    "new": "Months of trajectory rehearsal improve the flight team's readiness for Mars orbit insertion."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/inFlight.ts",
+    "line": 45,
+    "old": "The moved launch left less rehearsal time. An extra correction burn eats into the margins.",
+    "new": "The moved launch left less rehearsal time and more uncertainty about Mars orbit insertion."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "line": 42,
+    "old": "Treasury wants to claw back unspent money from every science program. Yours looks very unspent. I can soften it, but not for free.",
+    "new": "Treasury wants to claw back unspent money from every science programme. Yours looks very unspent. I can soften it, but not for free."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "line": 46,
+    "old": "Duarte calls you \"a team player\". Every station has 10 M less.",
+    "new": "Duarte calls you \"a team player\". The shared budget has 10 M less."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "line": 186,
+    "old": "I have an internal memo saying your lander is twenty percent over budget. I'd like your side before it runs tomorrow.",
+    "new": "A leaked memo warns your lander could overrun its budget. I'd like your response before publication."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "line": 188,
+    "old": "Confirm it and explain the reasons.",
+    "new": "Explain the cost risks and current estimates."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "line": 286,
+    "old": "The lander parts get a cold, airless spa week. Science's research and part tests run faster for two months.",
+    "new": "Northgate reserves the chamber. Research and part tests run 20% faster for two months; Science still needs to start each part test."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTimeline.ts",
+    "line": 64,
+    "old": "The committee praises your restraint. Every station now has 10 M less to be restrained with.",
+    "new": "The committee praises your restraint. The shared budget now has 10 M less to be restrained with."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 52,
+    "old": "Kessler accepts your explanation with the warmth of a lunar night. Feld sends a fruit basket.",
+    "new": "Kessler asks for a revised delivery schedule. Feld is relieved to stay out of that meeting."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 92,
+    "old": "The auditors find shortcuts and fix them. The part arrives late but shakes properly.",
+    "new": "The audit reassures the public; the next delivery slips a month. Science still needs to test the part to reduce its failure risk."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 95,
+    "old": "New contracts now require test reports. Suppliers price in the extra paperwork.",
+    "new": "Test clauses reassure the public. Procurement prices rise 10% for three months; Science still needs to test delivered parts to reduce their failure risk."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 138,
+    "old": "Ten students arrive with laptops and opinions. Science research runs noticeably faster.",
+    "new": "Northgate sends a drill-and-oven team. Science research runs noticeably faster."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 256,
+    "old": "The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.",
+    "new": "The committee adds 30 M. District-sourcing terms raise Procurement prices 15% for four months."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 259,
+    "old": "Duarte delivers, with a small speech about gratitude. Every station gets 15 M more.",
+    "new": "Duarte delivers, with a small speech about gratitude. The shared budget gains 15 M."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "line": 262,
+    "old": "Good-government groups applaud. Duarte has never been declined before and finds it educational.",
+    "new": "Good-government groups applaud. Duarte withdraws the offer and asks how you plan to fund the remaining work."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 12,
+    "old": "The committee funds every day of surface operations. The drill gets its full schedule.",
+    "new": "Stable operations funding gives the drill team better support for its work."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 13,
+    "old": "Surface operations are funded week by week. The drill team rations its runs.",
+    "new": "Week-by-week operations funding leaves the drill team with less support."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 20,
+    "old": "A partner dish follows the whole descent. The flight team sees every second of it.",
+    "new": "Partner tracking gives the flight team better support during descent."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 21,
+    "old": "The lander drops out of contact for forty seconds during the descent. Nobody breathes.",
+    "new": "Limited partner tracking leaves the flight team less confident about descent coverage."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 28,
+    "old": "The engine supplier sends a throttle patch a day before landing. It works first time.",
+    "new": "Responsive supplier support improves confidence in the descent engine."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 29,
+    "old": "The supplier's support line is closed for the weekend. The landing flies on the old throttle table.",
+    "new": "The supplier's support line is closed for the weekend. The descent team has less help with throttle concerns."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 36,
+    "old": "The flight team rehearsed this descent for months. The lander touches down by the book.",
+    "new": "Months of descent rehearsal improve the landing team's readiness."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/inFlight.ts",
+    "line": 37,
+    "old": "The moved launch cut the rehearsals short. The descent uses more fuel hovering than planned.",
+    "new": "The moved launch cut rehearsals short, leaving the landing team less prepared."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/projects.ts",
+    "line": 25,
+    "old": "Moon Night: a senator drilled through the bucket and the table. Suppliers networked aggressively.",
+    "new": "Moon Night: a senator drilled through the bucket and the table. Government and supplier relations improve."
+  },
+  {
+    "file": "game/src/stations/comms/data/moon/projects.ts",
+    "line": 97,
+    "old": "Northgate's technicians join the lab: research and part tests run 30 % faster for two months.",
+    "new": "Northgate's technicians join the lab: research and part tests run 30% faster for two months."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 40,
+    "old": "Treasury wants to claw back unspent money from every program. Yours looks very unspent. I can soften it, but not for free.",
+    "new": "Treasury wants to claw back unspent money from every programme. Yours looks very unspent. I can soften it, but not for free."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 44,
+    "old": "Duarte calls you \"a team player\". Every station has 10 M less.",
+    "new": "Duarte calls you \"a team player\". The shared budget has 10 M less."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 65,
+    "old": "The money arrives with a ribbon on it. Procurement discovers the ribbon is made of price increases.",
+    "new": "The committee adds 25 M. District-sourcing terms raise Procurement prices 10% for three months."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 68,
+    "old": "Duarte delivers, with a small speech about gratitude. Every station gets 15 M more.",
+    "new": "Duarte delivers, with a small speech about gratitude. The shared budget gains 15 M."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 71,
+    "old": "Good-government groups applaud. Duarte has never been declined before and finds it educational.",
+    "new": "Good-government groups applaud. Duarte asks you to keep the refusal on file for the next budget hearing."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 206,
+    "old": "We built a spare imager for our own weather satellite, and it never flew. It is sitting in a crate with a very sad label. Would procurement like it at cost?",
+    "new": "Our spare weather imager is fully tested, never flown and still in storage. Would Procurement like it at cost?"
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "line": 215,
+    "old": "Procurement finds a finished imager in its offers list. Moreau's label now says 'happy'.",
+    "new": "Meridian releases the spare imager. Procurement can review the offer at cost."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsTimeline.ts",
+    "line": 64,
+    "old": "The committee praises your restraint. Every station now has 15 M less to be restrained with.",
+    "new": "The committee praises your restraint. The shared budget now has 15 M less to be restrained with."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/eventsTriggered.ts",
+    "line": 134,
+    "old": "Ten students arrive with laptops and opinions. Science research runs noticeably faster.",
+    "new": "Northgate students join the cloud-imaging work. Science research runs noticeably faster."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 12,
+    "old": "The weather service signs a long operations contract without haggling. The ground team stays fully staffed.",
+    "new": "A stable operations contract gives the ground team better support for the weather mission."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 13,
+    "old": "The operations contract is renewed one quarter at a time. The ground team works short-handed.",
+    "new": "Quarter-by-quarter operations funding leaves the ground team with less support."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 20,
+    "old": "A partner dish catches the first full-disk image on the first try. It leads every evening forecast.",
+    "new": "Partner tracking improves support for the first full-disk image downlink."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 21,
+    "old": "The first downlink pass is missed and the image arrives a day late. Mallory announces it anyway.",
+    "new": "Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 28,
+    "old": "The supplier's team sends a thruster software patch within hours. The orbit raise finishes on schedule.",
+    "new": "The supplier's prompt thruster support improves the orbit-raise team's readiness."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 29,
+    "old": "The supplier's support line puts mission control on hold. The orbit raise takes an extra week of margin.",
+    "new": "The supplier's support line puts mission control on hold, leaving the orbit-raise team less prepared."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 36,
+    "old": "The flight team rehearsed this orbit raise for months. The satellite drifts into its slot by the book.",
+    "new": "Months of orbit-raise rehearsal improve the flight team's readiness."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/inFlight.ts",
+    "line": 37,
+    "old": "The moved launch left less rehearsal time. An extra trim burn eats into the station-keeping fuel.",
+    "new": "The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/projects.ts",
+    "line": 24,
+    "old": "Storm Night: two senators tried the hurricane simulator and lost their notes. Suppliers networked aggressively.",
+    "new": "Storm Night: two senators lost their notes in the hurricane simulator. Government and supplier relations improve."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/projects.ts",
+    "line": 74,
+    "old": "Meridian's dish is booked for the first passes: the first image will be caught on the first try.",
+    "new": "Meridian's dish is booked for the first passes, improving support for the first image downlink."
+  },
+  {
+    "file": "game/src/stations/comms/data/weather/projects.ts",
+    "line": 120,
+    "old": "Northgate's technicians join the lab: research and part tests run 30 % faster for two months.",
+    "new": "Northgate's technicians join the lab: research and part tests run 30% faster for two months."
+  },
+  {
+    "file": "game/src/stations/planner/data/missions/marsOrbiterLander.ts",
+    "line": 33,
+    "old": "Put an orbiter around Mars to map it from orbit, and land a lander that runs surface science. ",
+    "new": "Send an orbiter to map Mars and a lander to conduct surface science. "
+  },
+  {
+    "file": "game/src/stations/planner/data/missions/moonLander.ts",
+    "line": 52,
+    "old": "Land a lander near the Moon's south pole and drill for water ice, so the crewed programme can choose where its ",
+    "new": "Land a robotic spacecraft near the Moon's south pole and drill for water ice, so the crewed programme can choose where its "
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 25,
+    "old": "High-energy composite propellant — beyond current solid-motor research.",
+    "new": "High-energy composite propellant for heavy solid boosters."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 31,
+    "old": "Full-flow prototype — exceeds current kerolox Isp research.",
+    "new": "Full-flow prototype with high specific impulse (Isp)."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 37,
+    "old": "Advanced injector — beyond current hydrolox Isp research.",
+    "new": "Advanced hydrogen injector for high specific impulse (Isp)."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 43,
+    "old": "High-pressure chamber — beyond current hypergolic research.",
+    "new": "High-pressure chamber for efficient storable propulsion."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 44,
+    "old": "Gridded xenon thruster. Ion propulsion is not yet unlocked.",
+    "new": "Gridded xenon thruster for efficient, low-thrust transfers."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 45,
+    "old": "High-power ion thruster. Needs ion research.",
+    "new": "High-power gridded ion thruster."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 63,
+    "old": "Xenon pressure vessel. Needs ion research.",
+    "new": "Xenon pressure vessel for electric propulsion."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 64,
+    "old": "Large xenon vessel. Needs ion research.",
+    "new": "Large xenon vessel for electric propulsion."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 70,
+    "old": "Telescope-class camera — beyond current optics research.",
+    "new": "Telescope-class orbital camera."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 73,
+    "old": "Subsurface sounding radar. Needs radar research.",
+    "new": "Subsurface sounding radar."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 74,
+    "old": "Long-wavelength radar. Needs radar research.",
+    "new": "Long-wavelength sounding radar."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 77,
+    "old": "Full analytical suite — beyond current surface-lab research.",
+    "new": "Full analytical suite for surface samples."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 84,
+    "old": "Roll-out mega-array — beyond current solar research.",
+    "new": "Large roll-out solar array."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 85,
+    "old": "Radioisotope generator. RTGs are not yet unlocked.",
+    "new": "Compact radioisotope generator."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 86,
+    "old": "Large radioisotope generator. Needs RTG research.",
+    "new": "Large radioisotope generator."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 92,
+    "old": "Ka-band system — beyond current communications research.",
+    "new": "High-throughput Ka-band communications system."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 109,
+    "old": "Graded-Z shielding — beyond current research.",
+    "new": "Graded-Z shielding for spacecraft electronics."
+  },
+  {
+    "file": "game/src/stations/procurement/data/catalogue.ts",
+    "line": 115,
+    "old": "Venus-class protection — beyond current research.",
+    "new": "High-temperature protection for Venus-class surface conditions."
+  },
+  {
+    "file": "game/src/stations/science/data/flavour.ts",
+    "line": 3,
+    "old": "The prototype failed its first long test.",
+    "new": "The research attempt did not meet its target."
+  },
+  {
+    "file": "game/src/stations/science/data/flavour.ts",
+    "line": 4,
+    "old": "The numbers came out lower than the model promised.",
+    "new": "The results fell short of the design target."
+  },
+  {
+    "file": "game/src/stations/science/data/flavour.ts",
+    "line": 5,
+    "old": "A supplier could not deliver the test material.",
+    "new": "The work did not establish the required capability."
+  },
+  {
+    "file": "game/src/stations/science/data/flavour.ts",
+    "line": 6,
+    "old": "The team found a flaw late and had to start over.",
+    "new": "The design needs further work before it can be qualified."
+  },
+  {
+    "file": "game/src/stations/science/data/flavour.ts",
+    "line": 7,
+    "old": "The results were not repeatable.",
+    "new": "The attempt did not produce a qualified result."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 29,
+    "old": "Today's solid, kerosene, hydrogen and storable engines.",
+    "new": "The agency's established solid, kerosene, hydrogen and storable engines."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 62,
+    "old": "Silicon and gallium arsenide panels as flown today.",
+    "new": "Established silicon and gallium arsenide solar panels."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 76,
+    "old": "The best cells known: very light and very efficient, and hard to make.",
+    "new": "Lightweight, efficient cells that are difficult to manufacture."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 89,
+    "old": "Cameras, spectrometers and the surface lab as flown today.",
+    "new": "The agency's established cameras, spectrometers and surface lab."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 139,
+    "old": "A laser link. Much more data, and it needs a frequency and landing licence from partners.",
+    "new": "A high-throughput laser link. Needs partner approval for ground-station access."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 143,
+    "old": "Steers the beam electronically. Combines the best coding with the laser link.",
+    "new": "Electronic beam steering and improved link control increase data throughput."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 152,
+    "old": "Layers of water and polymer around the crew-critical electronics.",
+    "new": "Layers of water and polymer protect critical spacecraft electronics."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 157,
+    "old": "Improved ablator",
+    "new": "High-temperature insulation"
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 158,
+    "old": "A tougher heat shield material for the entry capsule.",
+    "new": "Insulation that helps spacecraft equipment operate on hot surfaces."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 160,
+    "old": "Dual-layer ablator",
+    "new": "Layered thermal barriers"
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 161,
+    "old": "A dense outer layer over a light insulating layer.",
+    "new": "Layered barriers reduce heat reaching equipment during surface operations."
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 163,
+    "old": "Reusable thermal protection",
+    "new": "Surface thermal protection"
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "line": 164,
+    "old": "Tiles that survive several entries. Heavy testing needed.",
+    "new": "Advanced materials extend operations on very hot surfaces. Heavy testing needed."
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "old": "Students want a ride to Mars",
+    "new": "Students seek mission support",
+    "line": 81
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "old": "A ride for our spectrometer",
+    "new": "A partner for our spectrometer",
+    "line": 277
+  },
+  {
+    "file": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "old": "Decline the hardware but join their science team.",
+    "new": "Join the science meetings only; decline funding and hardware.",
+    "line": 283
+  },
+  {
+    "file": "game/src/stations/science/data/techs.ts",
+    "old": "Shielding and ablators",
+    "new": "Shielding and thermal control",
+    "line": 147
+  }
+]

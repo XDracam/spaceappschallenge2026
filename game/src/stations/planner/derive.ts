@@ -5,7 +5,7 @@
 // Contracted parts use the contract's real stats, mass and reliability.
 import { contractReliability, type Contract, type Task } from '../../core/model';
 import type { GameState } from '../../core/state';
-import { MISSION } from '../../core/mission';
+import { missionById } from '../../core/mission';
 import type { Evaluation, Part, PartContract, PartState, PlannerGame, Rocket } from './model/types';
 import { allParts } from './model/rocketUtils';
 import { evaluate } from './physics';
@@ -145,7 +145,7 @@ export function partContracts(s: GameState): PartContract[] {
 export function plannerGame(s: GameState): PlannerGame {
   const b = s.budget;
   return {
-    mission: MISSION,
+    mission: missionById(s.meta.missionId),
     rocket: effectiveRocket(s),
     plan: s.planner.plan,
     contracts: partContracts(s),
@@ -166,7 +166,7 @@ export function plannerKey(s: GameState): string {
   const allocs = s.market.allocations.filter((a) => taskIds.has(a.taskId));
   const cids = new Set(allocs.map((a) => a.contractId));
   return JSON.stringify([
-    s.planner, s.research.limits, s.research.unlocked, tasks, allocs,
+    s.meta.missionId, s.planner, s.research.limits, s.research.unlocked, tasks, allocs,
     s.market.contracts.filter((c) => cids.has(c.id)), s.budget, s.meta.phase, s.events.flags.includes('service.groundStation'),
   ]);
 }

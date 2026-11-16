@@ -1,6 +1,7 @@
 // Pure procurement rules shared by the reducers (logic.ts) and the view (Station.tsx):
 // prices with comms modifiers, research gating, fit checks, coverage, refunds.
 // No UI imports, no randomness.
+import { formatMissionDate, formatMoneyM } from '../../shared/format';
 import type { Allocation, Budget, Call, Contract, Criterion, Market, Offer, PartKind, Task } from '../../core/model';
 import type { GameState } from '../../core/state';
 import { budgetAvailableM } from '../../core/state';
@@ -48,8 +49,7 @@ export function dayToDate(day: number): Date {
   return new Date(Date.parse(`${MISSION.startDateISO}T00:00:00Z`) + Math.floor(day) * 86_400_000);
 }
 export function fmtDate(day: number): string {
-  const d = dayToDate(day);
-  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  return formatMissionDate(day, MISSION.startDateISO);
 }
 export function fmtMonth(day: number): string {
   const d = dayToDate(day);
@@ -61,9 +61,8 @@ export function fmtDuration(days: number): string {
   return `${Math.round((days / DAYS_PER_MONTH) * 10) / 10} mo`;
 }
 export function fmtM(v: number): string {
-  if (Math.abs(v) >= 100) return `${Math.round(v)} M`;
   if (v > 0 && v < 0.05) return '< 0.1 M';
-  return `${round1(v)} M`;
+  return formatMoneyM(v);
 }
 export function fmtPct(v: number): string {
   return `${Math.round(v * 1000) / 10} %`;
@@ -167,7 +166,7 @@ export function unavailableReason(s: PView, offer: Offer): string {
 }
 
 export function expectedArrival(s: PView, offer: Offer): number {
-  return s.clock.day + leadTimeDays(s, offer) + deliveryShiftDays(s);
+  return orderArrival(s, offer, 1);
 }
 
 /** Lead time now, adjusted by industry trust. */
@@ -289,7 +288,7 @@ export function assessOffer(s: PView, offer: Offer, task?: Task, c?: Criterion, 
   let fastest: OfferAssessment['fastest'];
   for (const o of deliveryOptions(offer)) {
     if (o.daysFactor >= 1) continue;
-    const at = s.clock.day + Math.round(leadTimeDays(s, offer) * o.daysFactor) + deliveryShiftDays(s);
+    const at = orderArrival(s, offer, o.daysFactor);
     fastestAt = Math.min(fastestAt, at);
     if (!fastest || at < fastest.expectedAt) fastest = { delivery: o.id, expectedAt: at, totalPriceM: round1(total * o.priceFactor) };
     if (late && at <= neededAt && (!rescue || at < rescue.expectedAt)) rescue = { delivery: o.id, expectedAt: at, totalPriceM: round1(total * o.priceFactor) };
@@ -310,6 +309,11 @@ export function assessOffer(s: PView, offer: Offer, task?: Task, c?: Criterion, 
     affordable: (rescue?.totalPriceM ?? total) <= budgetAvailableM(s.budget) + 1e-9,
     unavailable: unavailableReason(s, offer),
   };
+}
+
+/** Same whole-day commitment rule for standard/priority previews and signed orders. */
+function orderArrival(s: PView, offer: Offer, daysFactor: number): number {
+  return Math.floor(s.clock.day) + Math.round(leadTimeDays(s, offer) * daysFactor) + deliveryShiftDays(s);
 }
 
 /** Every Offer of the criterion's part kind/variant (catalogue + calls + comms), ranked. */
@@ -430,7 +434,7 @@ export function quoteOrder(s: PView, draft: OrderDraft): OrderQuote {
   }
   const totalM = offer && option ? round1((offer.source === 'catalogue' ? offer.priceM * priceMultiplier(s) : offer.priceM / Math.max(1, offer.quantity)) * qty * option.priceFactor) : 0;
   const leadDays = offer && option ? Math.round(leadTimeDays(s, offer) * option.daysFactor) + deliveryShiftDays(s) : 0;
-  const expectedAt = offer && option ? Math.floor(s.clock.day) + leadDays : 0;
+  const expectedAt = offer && option ? orderArrival(s, offer, option.daysFactor) : 0;
   if (totalM > budgetAvailableM(s.budget) + 1e-9) unavailable = 'Insufficient available funds';
   const late = neededAt !== undefined && expectedAt > neededAt;
   // The quote is the lead time, not the calendar date: it stays valid while the days pass and

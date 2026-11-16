@@ -1,3 +1,4 @@
+import { formatMoneyM } from '../../../shared/format';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { requestConfirmation } from '../../../shared/confirmation';
 import { actions, getClock, getPlanner, getEvaluation, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
@@ -49,7 +50,7 @@ function NavPills() {
       {NAV.filter((n) => advanced || n.id !== 'versions').map((n) => {
         const active = open && (tab === 'versions' && advanced ? 'versions' : 'rocket') === n.id;
         return (
-          <button key={n.id} class={`nav-pill${active ? ' active' : ''}`}
+          <button key={n.id} class={`nav-pill${active ? ' active' : ''}`} aria-expanded={active} aria-controls="planner-side-panel"
             title={active ? `${n.label} is open (× on the panel closes it)` : `Open ${n.label}`} onClick={() => openTab(n.id)}>
             {n.label}
           </button>
@@ -93,7 +94,7 @@ function BudgetChip() {
   const tone = avail < 0 || ratio > 1 ? 'err' : ratio > 0.9 ? 'warn' : '';
   return (
     <div class={`chip-box budget-chip${tone ? ` ${tone}` : ''}`}
-      title={`Agency budget ${fmtMoneyShort(budget.totalM)}: ${fmtMoneyShort(budget.spentM)} spent, ${fmtMoneyShort(budget.committedM)} committed to contracts, ${fmtMoneyShort(avail)} available. Parts not contracted yet cost about ${fmtMoneyShort(toBuy)}.`}>
+      title={`Agency budget ${formatMoneyM(budget.totalM)}: ${formatMoneyM(budget.spentM)} spent, ${formatMoneyM(budget.committedM)} committed to contracts, ${formatMoneyM(avail)} available. Parts not contracted yet cost about ${formatMoneyM(toBuy)}.`}>
       <div class="chip-stack">
         <span class="chip-label">Budget</span>
         <span class="chip-value num">

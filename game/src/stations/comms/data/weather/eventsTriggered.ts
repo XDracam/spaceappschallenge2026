@@ -131,7 +131,7 @@ export const PLAYER_EVENTS: EventDef[] = [
     options: [
       option('joint-lab', 'Open a joint lab (science research speeds up).',
         [trust('partners', 10), pace(25, 2)],
-        'Ten students arrive with laptops and opinions. Science research runs noticeably faster.', 4),
+        'Northgate students join the cloud-imaging work. Science research runs noticeably faster.', 4),
       option('agency-credit', 'Accept, but keep the credit for the agency.',
         [trust('partners', -5), trust('public', 5), pace(15, 2)],
         'The help is real and so is the resentment. Salo starts adding footnotes to everything.'),

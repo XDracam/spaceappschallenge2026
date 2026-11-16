@@ -3,7 +3,13 @@
 - Status: planned / completed / stopped
 - Facilitator:
 - Participants / roles (use aliases if appropriate):
-- Prototype version or files:
+- Source commit / build identifier (or unknown):
+- Working-tree changes / retained diff fingerprint (or clean / unknown):
+- Prototype files / save schema version (if applicable):
+- Browser / version / operating system / viewport (if applicable):
+- Seed / saved starting state / clock speed (if applicable, or unknown):
+- Evidence files and retention: repository / public URL / private-local / ephemeral / unavailable:
+- Evidence owner or retained artifact location (if applicable):
 - Scenario and rules:
 - Related ideas and questions:
 - Question this experiment investigates:

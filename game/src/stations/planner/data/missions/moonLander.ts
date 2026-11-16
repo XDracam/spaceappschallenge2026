@@ -49,7 +49,7 @@ export const MOON_LANDER: MissionDef = {
   id: 'moon-lander',
   name: 'Lunar ice lander',
   briefing:
-    "Land a lander near the Moon's south pole and drill for water ice, so the crewed programme can choose where its " +
+    "Land a robotic spacecraft near the Moon's south pole and drill for water ice, so the crewed programme can choose where its " +
     'first crew lands. All goals must be achieved by the mission deadline.',
   // The planner's briefing lists these under "New in this mission", one sentence each.
   ideas: [

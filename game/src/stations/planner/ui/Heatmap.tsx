@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useDialog } from '../../../shared/useDialog';
 import type { BodyId, FlightState } from '../model/types';
 import { actions, uiStore, useEvaluation, usePlanner } from '../state/store';
 import { transferGrid, transferRanges } from '../physics';
@@ -122,6 +123,8 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
   const before = result?.stateBefore;
   const from = before?.kind === 'orbit' ? (before as OrbitState) : undefined;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dialogRoot = useRef<HTMLDivElement>(null);
+  useDialog({ open: true, root: dialogRoot, onClose: () => backToEdit(maneuverId) });
   const [hover, setHover] = useState<{ ix: number; iy: number } | null>(null);
 
   const ranges = from && m ? transferRanges(from.body, m.target, from.day) : null;
@@ -260,7 +263,7 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
   if (!m || !from || !grid) {
     return (
       <div class="modal-backdrop" onClick={() => backToEdit(maneuverId)}>
-        <div class="modal heatmap" onClick={(e) => e.stopPropagation()}>
+        <div ref={dialogRoot} tabIndex={-1} class="modal heatmap" role="dialog" aria-modal="true" aria-label="Transfer fuel heatmap" onClick={(e) => e.stopPropagation()}>
           {head}
           <p class="empty">{!m ? 'Not a transfer.' : 'The departure orbit is not computed yet, so no heat map is available.'}</p>
         </div>
@@ -301,7 +304,7 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
 
   return (
     <div class="modal-backdrop" onClick={() => backToEdit(maneuverId)}>
-      <div class="modal heatmap" onClick={(e) => e.stopPropagation()}>
+      <div ref={dialogRoot} tabIndex={-1} class="modal heatmap" role="dialog" aria-modal="true" aria-label="Transfer fuel heatmap" onClick={(e) => e.stopPropagation()}>
         {head}
         <div class="hm-body">
           <div class="hm-yaxis">
@@ -311,7 +314,26 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
             ))}
           </div>
           <div class="hm-plot">
-            <canvas ref={canvasRef} width={W} height={H} class="hm-canvas"
+            <canvas ref={canvasRef} width={W} height={H} class="hm-canvas" tabIndex={0} role="group"
+              aria-label="Transfer candidates. Arrow keys inspect departure and travel time; Enter or Space uses the selected candidate."
+              aria-describedby="heatmap-candidate"
+              onFocus={() => setHover(current => current ?? {
+                ix: grid.departDays.reduce((best, d, i, a) => Math.abs(d - m.departDay) < Math.abs(a[best] - m.departDay) ? i : best, 0),
+                iy: grid.travelDays.reduce((best, d, i, a) => Math.abs(d - m.travelDays) < Math.abs(a[best] - m.travelDays) ? i : best, 0),
+              })}
+              onKeyDown={e => {
+                const c = hover ?? { ix: 0, iy: 0 };
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  set({ departDay: grid.departDays[c.ix], travelDays: grid.travelDays[c.iy] });
+                } else if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) {
+                  e.preventDefault();
+                  setHover({
+                    ix: e.key === 'Home' ? 0 : e.key === 'End' ? NX - 1 : clamp(c.ix + (e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0), 0, NX - 1),
+                    iy: clamp(c.iy + (e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0), 0, NY - 1),
+                  });
+                }
+              }}
               onMouseMove={(e) => setHover(cellAt(e))} onMouseLeave={() => setHover(null)}
               onClick={(e) => {
                 const c = cellAt(e);
@@ -362,10 +384,10 @@ export function Heatmap({ maneuverId }: { maneuverId: string }) {
                 </button>
               </div>
             )}
-            <div class="hm-hover">
+            <div id="heatmap-candidate" class="hm-hover" role="status" aria-atomic="true">
               {hover && (
                 <>
-                  <span class="muted">Cursor: </span>
+                  <span class="muted">Candidate: </span>
                   <span class="num">
                     {formatDay(grid.departDays[hover.ix], startISO)} · {formatDuration(grid.travelDays[hover.iy])} · {hv !== undefined && Number.isFinite(hv) ? kms(hv) : 'no solution'}
                   </span>

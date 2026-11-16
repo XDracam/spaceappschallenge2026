@@ -1,5 +1,7 @@
 # Next steps (handoff, 2026-11-15 about 21:50)
 
+> **Historical handoff — superseded.** These November 15 package/branch instructions are preserved as evidence, not the current task list. Recovery, room-code joining and the Lunar mission exist in current source. Do not repeat these merges or rebuild these packages from this handoff. Read the [current prototype](../docs/current-prototype.md), [post-submission audit](../docs/reviews/2026-11-16-post-submission-audit.md) and current user authorization before new work.
+
 Work was split into packages built by separate agents in their own checkouts, each judged by an independent agent before it may go to `main`. Rules: `briefs/package.md`. Reports and verdicts: `packages/`.
 
 ## On main

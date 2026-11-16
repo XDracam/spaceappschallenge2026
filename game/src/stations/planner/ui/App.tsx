@@ -35,6 +35,7 @@ export function App() {
   const mapRef = useRef<HTMLDivElement>(null);
   const panelOpen = useLocalUi((s) => s.panelOpen);
   const hasPlayback = useUi((u) => !!u.playthrough);
+  const playbackRunning = useUi((u) => !!u.playthrough?.playing && !u.playthrough.finished);
   const launched = usePlanner((g) => g.phase === 'launched');
 
   useEffect(() => syncPlaythrough(launched), [launched]);
@@ -49,6 +50,7 @@ export function App() {
 
   // Playthrough animation clock (the agency calendar itself is host-driven, core/clock.ts).
   useEffect(() => {
+    if (!playbackRunning) return;
     let raf = 0;
     let last = 0;
     const frame = (t: number) => {
@@ -59,7 +61,7 @@ export function App() {
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [playbackRunning]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -121,7 +123,7 @@ function SidePanel() {
   const advanced = useAdvanced();
   const shown = tab === 'versions' && advanced ? 'versions' : 'rocket';
   return (
-    <aside class={`side glass${open ? '' : ' closed'}`} aria-hidden={!open}>
+    <aside id="planner-side-panel" class={`side glass${open ? '' : ' closed'}`} aria-hidden={!open}>
       <div class="side-head">
         <h2 class="panel-title">{TAB_TITLE[shown]}</h2>
         <button class="round-btn small" title="Close panel" onClick={() => localUi.update((s) => { s.panelOpen = false; })}>

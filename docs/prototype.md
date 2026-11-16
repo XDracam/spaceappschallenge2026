@@ -1,6 +1,6 @@
 # Prototype exploration
 
-**Status:** proposals only. No experiment or playable software has been selected or run. The project is in the prototype phase and the concept remains a brainstorm.
+**Status:** historical first-experiment proposals, drafted November 14, 2026. The game is now playable; see [current prototype](current-prototype.md) and [evidence availability](evidence-availability.md). The proposals below are retained as exploration, not the implementation plan.
 
 ## Central question
 
@@ -30,4 +30,4 @@ A paper exercise and a shared planning sheet were earlier assistant suggestions 
 - Which surprises feel interesting or arbitrary?
 - Does failure support the intended experience and the chosen progression experiment?
 
-Record actual observations, limitations, and proposed revisions using the [playtest template](playtests/TEMPLATE.md). No observations have been recorded yet.
+Record actual observations, limitations, and proposed revisions using the [playtest template](playtests/TEMPLATE.md). At the time these proposals were drafted, no observations had been recorded. Later dated records are linked from the [history index](history/README.md).

@@ -15,7 +15,7 @@ export function NewsStrip() {
         News <span class="pr-nav-count">{news.length || ''}</span>
       </button>
       <div class="pr-news-line">
-        {status ? <span class="pr-status">{status}</span> : null}
+        <span class="pr-status" role="status" aria-atomic="true">{status}</span>
         {latest.map((n) => (
           <span key={n.id} class="pr-news-item"><span class="pr-news-meta">{fmtDate(n.day)} · {FROM[n.from] ?? n.from}</span> {n.text}</span>
         ))}

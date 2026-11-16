@@ -1,0 +1,40 @@
+{
+  "reducedMotion": {
+    "canvasStable": true,
+    "hash": "5d11aac44157f3508759b3f18415d00ff88ddec682c7b17015d7865e0a2e32f3"
+  },
+  "heatmap": {
+    "old": "Candidate: 21 Oct 2030 · 8 mo · 7.10 km/s · arrive 30 Jun 2031",
+    "next": "Candidate: 6 Nov 2030 · 9 mo · 8.06 km/s · arrive 27 Jul 2031",
+    "plan": {
+      "id": "review-transfer",
+      "type": "transfer",
+      "target": "mars",
+      "departDay": 309,
+      "travelDays": 263
+    }
+  },
+  "nested": {
+    "top": "Cancel",
+    "underlyingInert": true,
+    "after": {
+      "focus": "Back",
+      "inOrder": true,
+      "inert": false
+    }
+  },
+  "errors": [],
+  "playback": {
+    "moving": 189.99599999999998,
+    "pause1": 195,
+    "pause2": 195,
+    "resumed": 207.996
+  },
+  "compatibility": {
+    "role": "client",
+    "peerId": "p-6m3j1g5m",
+    "station": null,
+    "connected": false,
+    "error": "Your game version differs from the host. Save the host game, then reload both tabs and rejoin."
+  }
+}

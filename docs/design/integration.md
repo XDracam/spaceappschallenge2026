@@ -45,6 +45,14 @@ The host applies actions in arrival order and broadcasts each with a sequence nu
 
 Calendar: only the host runs the clock (`core/clock.ts`), dispatching `core/tick` four times a second; `tick` steps day by day and calls every station's `onTick` handler in registration order (planner, procurement, science, comms). The host attempts to save state to localStorage (`core/persist.ts`); a local status store exposes failure and a Retry save action. This status is local to the host and not part of replicated game state.
 
+### Boundary checks and recovery (D-036)
+
+The host derives a remote action's author from that connection's claimed seat. A peer can claim its own free seat, act through its station namespace and use the shared coordination actions; calendar, mission recovery and other host controls remain host-only. `core/validation.ts` validates action arguments and saved/snapshot representation before reducers or UI consume them. Invalid actions receive a rejection so the sender can discard its optimistic copy and show an in-app explanation. This is input and ownership checking, not an account or authentication service.
+
+`core/build.ts` identifies the protocol and production source/content build. Both transports exchange compatibility before a client adopts a snapshot; incompatible tabs receive reload/rejoin guidance. `net/framing.ts` supplies the shared bounded, expiring chunk receiver. Broker reconnection has a deadline and retry/manual-code recovery while existing healthy channels continue.
+
+Unreadable local saves remain intact until an explicit reset or replacement. The shell offers a raw-record download and in-app confirmation instead of silently overwriting them. The [November 16 verification record](../playtests/2026-11-16-post-submission-verification.md) distinguishes actual two-browser observations from the limits of these safeguards.
+
 ## Cross-station contracts
 
 **Planner → procurement (D-006 terms; planner keeps its UI words):**
@@ -82,6 +90,8 @@ Under D-029, result recovery remains inside the hosted session: host-only Retry 
 ## Styling
 
 Stations share the glass sci-fi look (planner `styles.css` tokens). Each station's CSS must be scoped under `.st-<id>`; only `shell/shell.css` styles `html`, `body` and the shell.
+
+Station view JavaScript loads lazily, while reducer registration remains eager. Existing station styles (including Planner panels/popups) load in their established order from `main.tsx`, before the shell corner overrides, so code splitting does not change the accepted appearance. `shared/useDialog.ts` handles the focus/inert lifecycle of existing modal surfaces, including nested confirmations; the partial-screen Planner briefing remains nonmodal when opened on its own.
 ## Request association and navigation under D-024
 
 Shared requests optionally store `parentNeedId` (a market Task ID) and `neededAt`. These optional fields preserve older saves without a schema-version change. Creation and editing validate new parent references; retained orphan references remain editable, and an empty options object removes the association/date. Author/assignee authorization and revision checks remain in the reducer. The board derives parent grouping and Schedule without persisting another task lifecycle. Typed `actionKinds` and per-role `links` replace action-copy-based routing. Attached entries keep their own navigation; the parent offers one primary destination per role.

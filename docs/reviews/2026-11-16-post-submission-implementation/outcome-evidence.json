@@ -1,0 +1,621 @@
+{
+  "before": {
+    "result": {
+      "events": [
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-launch",
+          "day": 347,
+          "kind": "maneuver",
+          "text": "Launch from Earth"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347,
+          "kind": "maneuver",
+          "text": "Change orbit to 35786 km"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347.2190233257883,
+          "kind": "goal",
+          "text": "Goal achieved: Reach geostationary orbit"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347.2190233257883,
+          "kind": "goal",
+          "text": "Goal achieved: Send weather images"
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "Operations contract: The operations contract is renewed one quarter at a time. The ground team works short-handed."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "First image downlink: The first downlink pass is missed and the image arrives a day late. Mallory announces it anyway."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "info",
+          "text": "Thruster glitch during the orbit raise: The supplier's team sends a thruster software patch within hours. The orbit raise finishes on schedule."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time. An extra trim burn eats into the station-keeping fuel."
+        }
+      ],
+      "goalOutcomes": [
+        {
+          "goalId": "goal-geo",
+          "success": true
+        },
+        {
+          "goalId": "goal-imagery",
+          "success": true
+        },
+        {
+          "goalId": "goal-ozone",
+          "success": false
+        },
+        {
+          "goalId": "goal-rain",
+          "success": false
+        }
+      ],
+      "endDay": 377.2190233257883
+    },
+    "evaluation": {
+      "branches": [
+        {
+          "branchId": "branch-root",
+          "maneuvers": [
+            {
+              "maneuverId": "tr-launch",
+              "branchId": "branch-root",
+              "type": "launch",
+              "label": "Launch to 200 km",
+              "dvRequiredMs": 9400,
+              "dvAvailableBeforeMs": 15449.688065659444,
+              "ok": true,
+              "startDay": 348,
+              "endDay": 348,
+              "stateBefore": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 348
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 348
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w2",
+                  "dvMs": 6041.498930321854
+                },
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 3358.5010696781465
+                }
+              ],
+              "issues": [],
+              "twr": 1.4735436003426752
+            },
+            {
+              "maneuverId": "tr-geo",
+              "branchId": "branch-root",
+              "type": "changeOrbit",
+              "label": "Change orbit to 35786 km",
+              "dvRequiredMs": 3934.580791224474,
+              "dvAvailableBeforeMs": 6049.688065659536,
+              "ok": true,
+              "startDay": 348,
+              "endDay": 348.2190233257883,
+              "stateBefore": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 348
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 35786,
+                "day": 348.2190233257883
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 2423.752622721909
+                },
+                {
+                  "stageId": "stage-w8",
+                  "dvMs": 1510.828168502565
+                }
+              ],
+              "issues": []
+            }
+          ],
+          "finalState": {
+            "kind": "orbit",
+            "body": "earth",
+            "altitudeKm": 35786,
+            "day": 348.2190233257883
+          },
+          "stageBands": [
+            {
+              "stageId": "stage-w2",
+              "stageName": "Booster",
+              "ownerName": "Rocket",
+              "dvUsedMs": 6041.498930321854,
+              "dvTotalMs": 6041.498930321854
+            },
+            {
+              "stageId": "stage-w5",
+              "stageName": "Upper stage",
+              "ownerName": "Rocket",
+              "dvUsedMs": 5782.253692400056,
+              "dvTotalMs": 5782.253692400056
+            },
+            {
+              "stageId": "stage-w8",
+              "stageName": "Apogee engine",
+              "ownerName": "Weather satellite",
+              "dvUsedMs": 1510.828168502565,
+              "dvTotalMs": 3625.9354429376276
+            }
+          ],
+          "dvRequiredTotalMs": 13334.580791224475,
+          "dvAvailableTotalMs": 15449.688065659537
+        }
+      ],
+      "goals": [
+        {
+          "goalId": "goal-geo",
+          "achievable": true,
+          "successChance": 0.9232535972285436,
+          "branchId": "branch-root",
+          "factors": [
+            {
+              "partId": "part-w3",
+              "p": 0.975
+            },
+            {
+              "partId": "part-w4",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w6",
+              "p": 0.97
+            },
+            {
+              "partId": "part-w7",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w9",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w10",
+              "p": 0.993
+            }
+          ]
+        },
+        {
+          "goalId": "goal-imagery",
+          "achievable": true,
+          "successChance": 0.8957632597442651,
+          "branchId": "branch-root",
+          "factors": [
+            {
+              "partId": "part-w3",
+              "p": 0.975
+            },
+            {
+              "partId": "part-w4",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w6",
+              "p": 0.97
+            },
+            {
+              "partId": "part-w7",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w9",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w10",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w11",
+              "p": 0.98
+            },
+            {
+              "partId": "part-w12",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w13",
+              "p": 0.995
+            }
+          ]
+        },
+        {
+          "goalId": "goal-ozone",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan does not reach geostationary orbit: orbit at 200 km, needs 35,786 ± 2,000 km"
+        },
+        {
+          "goalId": "goal-rain",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "The plan does not reach geostationary orbit: orbit at 200 km, needs 35,786 ± 2,000 km"
+        }
+      ],
+      "issues": [],
+      "totalMassT": 138.35600000000002,
+      "totalCostM": 98.5,
+      "uncontractedCostM": 0
+    },
+    "score": {
+      "achieved": 2,
+      "total": 2,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 2,
+      "bonusEarned": 0,
+      "bonusTotal": 100
+    },
+    "phase": "launched",
+    "contracts": 9
+  },
+  "after": {
+    "result": {
+      "events": [
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-launch",
+          "day": 347,
+          "kind": "maneuver",
+          "text": "Launch from Earth"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347,
+          "kind": "maneuver",
+          "text": "Change orbit to 35786 km"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347.2190233257883,
+          "kind": "goal",
+          "text": "Goal achieved: Reach geostationary orbit"
+        },
+        {
+          "branchId": "branch-root",
+          "maneuverId": "tr-geo",
+          "day": 347.2190233257883,
+          "kind": "goal",
+          "text": "Goal achieved: Send weather images"
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "info",
+          "text": "Thruster glitch during the orbit raise: The supplier's prompt thruster support improves the orbit-raise team's readiness."
+        },
+        {
+          "day": 367,
+          "branchId": "",
+          "kind": "failure",
+          "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+        }
+      ],
+      "goalOutcomes": [
+        {
+          "goalId": "goal-geo",
+          "success": true
+        },
+        {
+          "goalId": "goal-imagery",
+          "success": true
+        },
+        {
+          "goalId": "goal-ozone",
+          "success": false
+        },
+        {
+          "goalId": "goal-rain",
+          "success": false
+        }
+      ],
+      "endDay": 377.2190233257883
+    },
+    "evaluation": {
+      "branches": [
+        {
+          "branchId": "branch-root",
+          "maneuvers": [
+            {
+              "maneuverId": "tr-launch",
+              "branchId": "branch-root",
+              "type": "launch",
+              "label": "Launch to 200 km",
+              "dvRequiredMs": 9400,
+              "dvAvailableBeforeMs": 15449.688065659444,
+              "ok": true,
+              "startDay": 348,
+              "endDay": 348,
+              "stateBefore": {
+                "kind": "surface",
+                "body": "earth",
+                "day": 348
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 348
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w2",
+                  "dvMs": 6041.498930321854
+                },
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 3358.5010696781465
+                }
+              ],
+              "issues": [],
+              "twr": 1.4735436003426752
+            },
+            {
+              "maneuverId": "tr-geo",
+              "branchId": "branch-root",
+              "type": "changeOrbit",
+              "label": "Change orbit to 35786 km",
+              "dvRequiredMs": 3934.580791224474,
+              "dvAvailableBeforeMs": 6049.688065659536,
+              "ok": true,
+              "startDay": 348,
+              "endDay": 348.2190233257883,
+              "stateBefore": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 200,
+                "day": 348
+              },
+              "stateAfter": {
+                "kind": "orbit",
+                "body": "earth",
+                "altitudeKm": 35786,
+                "day": 348.2190233257883
+              },
+              "burns": [
+                {
+                  "stageId": "stage-w5",
+                  "dvMs": 2423.752622721909
+                },
+                {
+                  "stageId": "stage-w8",
+                  "dvMs": 1510.828168502565
+                }
+              ],
+              "issues": []
+            }
+          ],
+          "finalState": {
+            "kind": "orbit",
+            "body": "earth",
+            "altitudeKm": 35786,
+            "day": 348.2190233257883
+          },
+          "stageBands": [
+            {
+              "stageId": "stage-w2",
+              "stageName": "Booster",
+              "ownerName": "Rocket",
+              "dvUsedMs": 6041.498930321854,
+              "dvTotalMs": 6041.498930321854
+            },
+            {
+              "stageId": "stage-w5",
+              "stageName": "Upper stage",
+              "ownerName": "Rocket",
+              "dvUsedMs": 5782.253692400056,
+              "dvTotalMs": 5782.253692400056
+            },
+            {
+              "stageId": "stage-w8",
+              "stageName": "Apogee engine",
+              "ownerName": "Weather satellite",
+              "dvUsedMs": 1510.828168502565,
+              "dvTotalMs": 3625.9354429376276
+            }
+          ],
+          "dvRequiredTotalMs": 13334.580791224475,
+          "dvAvailableTotalMs": 15449.688065659537
+        }
+      ],
+      "goals": [
+        {
+          "goalId": "goal-geo",
+          "achievable": true,
+          "successChance": 0.9232535972285436,
+          "branchId": "branch-root",
+          "factors": [
+            {
+              "partId": "part-w3",
+              "p": 0.975
+            },
+            {
+              "partId": "part-w4",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w6",
+              "p": 0.97
+            },
+            {
+              "partId": "part-w7",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w9",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w10",
+              "p": 0.993
+            }
+          ]
+        },
+        {
+          "goalId": "goal-imagery",
+          "achievable": true,
+          "successChance": 0.8957632597442651,
+          "branchId": "branch-root",
+          "factors": [
+            {
+              "partId": "part-w3",
+              "p": 0.975
+            },
+            {
+              "partId": "part-w4",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w6",
+              "p": 0.97
+            },
+            {
+              "partId": "part-w7",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w9",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w10",
+              "p": 0.993
+            },
+            {
+              "partId": "part-w11",
+              "p": 0.98
+            },
+            {
+              "partId": "part-w12",
+              "p": 0.995
+            },
+            {
+              "partId": "part-w13",
+              "p": 0.995
+            }
+          ]
+        },
+        {
+          "goalId": "goal-ozone",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "No spacecraft there carries a spectrometer with performance ≥ 5"
+        },
+        {
+          "goalId": "goal-rain",
+          "achievable": false,
+          "successChance": 0,
+          "reason": "No spacecraft there carries a sounding radar with performance ≥ 3"
+        }
+      ],
+      "issues": [],
+      "totalMassT": 138.35600000000002,
+      "totalCostM": 98.5,
+      "uncontractedCostM": 0
+    },
+    "score": {
+      "achieved": 2,
+      "total": 2,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 2,
+      "bonusEarned": 0,
+      "bonusTotal": 100
+    },
+    "phase": "launched",
+    "contracts": 9
+  },
+  "numeric": {
+    "value": "not a number",
+    "invalid": "true",
+    "message": "Enter a number for Performance from 1.0 to 10.0. Do not include units.",
+    "afterEscape": "4.5"
+  },
+  "plannerStyle": {
+    "radius": "6px",
+    "font": "\"Exo 2\", \"Segoe UI\", system-ui, sans-serif"
+  },
+  "scienceStyle": {
+    "radius": "4px",
+    "font": "Arial",
+    "background": "rgb(29, 58, 42)"
+  },
+  "thermalLabel": {
+    "full": "High-temperature insulation",
+    "name": "High-temperature insulation"
+  },
+  "commsHelp": true,
+  "commsProjectFocus": {
+    "text": "",
+    "inside": true
+  },
+  "production": {
+    "noDev": 0,
+    "fontRequests": [
+      "http://127.0.0.1:5201/fonts/fonts.css",
+      "http://127.0.0.1:5201/fonts/google-2.ttf",
+      "http://127.0.0.1:5201/fonts/google-3.ttf",
+      "http://127.0.0.1:5201/fonts/google-4.ttf",
+      "http://127.0.0.1:5201/fonts/google-1.ttf",
+      "http://127.0.0.1:5201/fonts/google-5.ttf"
+    ],
+    "remoteFonts": [],
+    "numericRadius": "6px",
+    "scienceRadius": "4px"
+  },
+  "errors": []
+}

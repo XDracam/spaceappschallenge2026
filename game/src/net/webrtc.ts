@@ -8,14 +8,14 @@
 //   { "~": "c", id, i, n, d }  one chunk of a message longer than CHUNK_THRESHOLD chars
 //   { "~": "bye" }             the other side is leaving on purpose (tab closed, left)
 import type { ClientToHost, ClientTransport, HostToClient, HostTransport } from '../core/protocol';
+import { COMPATIBILITY_ID } from '../core/build';
+import { FrameReceiver, frames } from './framing';
 import { CodeError, decodeCode, encodeCode } from './codes';
 
 export const ICE_SERVERS: RTCIceServer[] = [{ urls: 'stun:stun.l.google.com:19302' }];
 const ICE_GATHER_TIMEOUT_MS = 5000;
 const CONNECT_TIMEOUT_MS = 30000;
 /** Data channels reliably carry ~64 KB per message; JSON chars ≤ 3 UTF-8 bytes each. */
-const CHUNK_THRESHOLD = 20000;
-const CHUNK_SIZE = 16000;
 
 type Listener<A extends unknown[]> = (...args: A) => void;
 function listeners<A extends unknown[]>() {
@@ -53,7 +53,7 @@ function gatherIce(pc: RTCPeerConnection): Promise<void> {
 class PeerLink {
   readonly pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
   private dc: RTCDataChannel | null = null;
-  private chunks = new Map<string, string[]>();
+  private receiver = new FrameReceiver(value => this.message.emit(value), () => this.finish('bye'));
   private chunkCounter = 0;
   isOpen = false;
   isClosed = false;
@@ -89,47 +89,15 @@ class PeerLink {
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
     try {
-      if (wire.length <= CHUNK_THRESHOLD) {
-        dc.send(wire);
-        return;
-      }
-      const id = String(++this.chunkCounter);
-      const n = Math.ceil(wire.length / CHUNK_SIZE);
-      for (let i = 0; i < n; i++) {
-        dc.send(JSON.stringify({ '~': 'c', id, i, n, d: wire.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE) }));
-      }
+      for (const frame of frames(wire, String(++this.chunkCounter))) dc.send(frame);
     } catch (e) {
       console.warn('[net] send failed', e);
+      this.finish('lost');
     }
   }
 
   private receive(data: unknown): void {
-    if (typeof data !== 'string') return;
-    let obj: Record<string, unknown>;
-    try {
-      obj = JSON.parse(data);
-    } catch {
-      return;
-    }
-    if (obj && obj['~'] === 'c') {
-      const { id, i, n, d } = obj as { id: string; i: number; n: number; d: string };
-      let parts = this.chunks.get(id);
-      if (!parts) this.chunks.set(id, (parts = new Array<string>(n)));
-      parts[i] = d;
-      for (let k = 0; k < n; k++) if (parts[k] === undefined) return;
-      this.chunks.delete(id);
-      try {
-        this.message.emit(JSON.parse(parts.join('')));
-      } catch (e) {
-        console.warn('[net] bad chunked message', e);
-      }
-      return;
-    }
-    if (obj && obj['~'] === 'bye') {
-      this.finish('bye');
-      return;
-    }
-    this.message.emit(obj);
+    if (!this.receiver.receive(data)) this.finish('lost');
   }
 
   /** Close on purpose; tells the other side first if the channel is open. */
@@ -144,6 +112,7 @@ class PeerLink {
   private finish(reason: 'bye' | 'lost', local = false): void {
     if (this.isClosed) return;
     this.isClosed = true;
+    this.receiver.clear();
     const wasOpen = this.isOpen;
     this.isOpen = false;
     // Let the bye frame flush before tearing down.
@@ -314,7 +283,7 @@ export class ClientNetwork implements ClientTransport {
     addEventListener('pagehide', this.onPageHide);
     this.link.pc.addEventListener('datachannel', (e) => this.link.attach(e.channel));
     this.link.message.add((m) => {
-      if (this.msg.size === 0) this.early.push(m as HostToClient);
+      if (this.msg.size === 0) { if (this.early.length < 8) this.early.push(m as HostToClient); else this.close(); }
       else this.msg.emit(m as HostToClient);
     });
     this.link.opened.add(() => this.setStatus('connected'));
@@ -358,7 +327,7 @@ export class ClientNetwork implements ClientTransport {
   }
 
   send(msg: ClientToHost): void {
-    if (this.link.isOpen) this.link.send(msg);
+    if (this.link.isOpen) this.link.send(msg.t === 'hello' ? { ...msg, compatibility: COMPATIBILITY_ID } : msg);
   }
   onMessage(cb: (msg: HostToClient) => void): () => void {
     const off = this.msg.add(cb);

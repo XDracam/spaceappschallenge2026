@@ -1,7 +1,7 @@
 export const meta = {
   name: 'overnight-playtest',
-  description: 'Loop until morning: four naive agents play the game, findings are triaged, small fixes and one root rework per round are made, gated and committed on the playtest branch',
-  whenToUse: 'Unattended polishing run in a dedicated git worktree. Never run it in a checkout someone is working in.',
+  description: 'Historical mechanics-editing workflow (requires renewed authorization). Loop until morning: four naive agents play the game, findings are triaged, small fixes and one root rework per round are made, gated and committed on the playtest branch',
+  whenToUse: 'Only with a new explicit authorization for gameplay changes and autonomous commits; never for post-submission presentation-only work. Requires a clean dedicated worktree.',
   phases: [
     { title: 'Preflight', detail: 'dedicated worktree, clean tree, right branch' },
     { title: 'Start', detail: 'build the game and open four stations' },
@@ -16,8 +16,12 @@ export const meta = {
 }
 
 // args: {
+//   authorizeGameplayChanges, authorizeAutonomousCommits: true only with new explicit user authorization
+//   authorizationNote: exact current authorization/scope; historical notes do not authorize another run
+//   authorizePublication: true only if publishing was separately explicitly authorized
+//   pushToMain: opt-in rebase/push to main; deploys the site, false by default
 //   repo:       absolute path of the dedicated worktree (forward slashes)
-//   branch:     branch that worktree is on; the loop commits there and never pushes
+//   branch:     branch that worktree is on; commits locally, and publishes only with pushToMain plus separate explicit publication authorization
 //   avoid:      absolute path of the team's own checkout, which no agent may touch
 //   stamp:      prefix for round ids, e.g. "1115"
 //   seed:       optional { round, reworkPick }: a round already played and triaged; its findings are worked on before round 1.
@@ -38,6 +42,11 @@ export const meta = {
 //   playerModel: model for the players (default "sonnet")
 // }
 const A = args ?? {}
+// The original pre-submission run is not continuing authorization for future edits.
+if (A.authorizeGameplayChanges !== true || A.authorizeAutonomousCommits !== true || typeof A.authorizationNote !== 'string' || !A.authorizationNote.trim()) {
+  throw new Error('Historical workflow disabled by default: it changes gameplay and makes commits. Requires new explicit user authorization, recorded in authorizationNote, with authorizeGameplayChanges and authorizeAutonomousCommits true. It is not a presentation-only workflow.')
+}
+if (A.pushToMain === true && A.authorizePublication !== true) throw new Error('pushToMain additionally requires explicit new publication authorization (authorizePublication: true).')
 const REPO = A.repo
 const BRANCH = A.branch
 if (!REPO || !BRANCH || !A.stamp) throw new Error('args.repo, args.branch and args.stamp are required')
@@ -59,6 +68,7 @@ const PT_CLI = `${PT}/harness/pt.mjs`
 const TRAILER = 'Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>'
 
 const WHERE =
+  `Current user authorization: ${A.authorizationNote}. ` +
   `You work only in the git checkout at "${REPO}" (branch "${BRANCH}"). Use absolute paths, and "git -C "${REPO}" …" for git. ` +
   (A.avoid ? `A second checkout of the same project exists at "${A.avoid}": it belongs to the team. Never read from it, write to it or run a command in it. ` : '') +
   `Never switch branches. Never push, except where a step tells you to.`
@@ -321,7 +331,7 @@ for (let i = 1; i <= MAX_ROUNDS; i++) {
     reverted = await agent(
       `${WHERE}\nTriage of round ${runId} judged these commits to have harmed play: ${triage.revertCommits.join(', ')}. Reasons: ${triage.verdicts}\n` +
       `Only commits whose subject starts with "Playtest " may be reverted; skip any other hash and say so. For each, newest first: git -C "${REPO}" revert --no-edit <hash>. If one conflicts: git -C "${REPO}" revert --abort, skip it and say so.\n` +
-      `Then in "${REPO}/game" run npx tsc --noEmit. If it fails, undo your reverts (git -C "${REPO}" reset --hard to the HEAD you started from) and answer ok false.\n` +
+      `Then in "${REPO}/game" run npx tsc --noEmit. If it fails, stop without discarding any work; report the failed revert checks and starting HEAD for manual recovery, and answer ok false.\n` +
       `Append to "${PT}/changes.md" a heading "## ${runId} — reverted" with one line per reverted commit and the reason; commit that file (subject "Playtest ${runId}: note reverts", body ending with: ${TRAILER}).\n` +
       (PUSH ? `If tsc passed, publish: git -C "${REPO}" fetch origin, git -C "${REPO}" rebase origin/main (on conflict: git -C "${REPO}" rebase --abort and do not push), then git -C "${REPO}" push origin HEAD:main (never --force).\n` : '') +
       `head: git -C "${REPO}" rev-parse --short HEAD.`,

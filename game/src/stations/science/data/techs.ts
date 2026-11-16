@@ -1,4 +1,4 @@
-// Authored tech tree for the Mars orbiter + lander mission (D-005). Every name, cost, duration,
+// Authored tech tree shared by all missions (D-005). Every name, cost, duration,
 // chance and prerequisite is a balancing placeholder. Techs grant planner research limits
 // or unlocks (keys `kind.variant.stat` and `kind.variant`, as in mission-planner/procurement-interface.md).
 // Where two techs grant the same value they are alternative routes to the same goal.
@@ -26,7 +26,7 @@ export const BRANCH_ORDER: Branch[] = ['propulsion', 'power', 'instruments', 'an
 
 export const TECHS: Tech[] = [
   // ---------------------------------------------------------------- propulsion
-  start('chem-base', 'Chemical propulsion', 'propulsion', 'Today\'s solid, kerosene, hydrogen and storable engines.'),
+  start('chem-base', 'Chemical propulsion', 'propulsion', 'The agency\'s established solid, kerosene, hydrogen and storable engines.'),
   tech('staged-combustion', 'Staged combustion upgrade', 'propulsion', ['chem-base'],
     'Burns the exhaust of the pre-burner in the main chamber. More Isp from the same propellant.',
     [limit('engine.kerolox.isp', 350)], 10, 4, 0.9),
@@ -59,7 +59,7 @@ export const TECHS: Tech[] = [
     [limit('engine.ion.isp', 4200)], 30, 7, 0.7),
 
   // --------------------------------------------------------------------- power
-  start('solar-base', 'Solar arrays', 'power', 'Silicon and gallium arsenide panels as flown today.'),
+  start('solar-base', 'Solar arrays', 'power', 'Established silicon and gallium arsenide solar panels.'),
   tech('hv-arrays', 'High-voltage solar arrays', 'power', ['solar-base'],
     'Wiring that carries power at higher voltage with less loss.',
     [limit('power.solar.outputKW', 18)], 10, 4, 0.9),
@@ -73,7 +73,7 @@ export const TECHS: Tech[] = [
     'Mirrors focus light on small, expensive cells.',
     [limit('power.solar.outputKW', 24)], 24, 6, 0.8),
   tech('metamorphic', 'Inverted metamorphic cells', 'power', ['light-panels', 'concentrators'],
-    'The best cells known: very light and very efficient, and hard to make.',
+    'Lightweight, efficient cells that are difficult to manufacture.',
     [limit('power.solar.outputKW', 30)], 42, 9, 0.65),
   tech('rtg-heat-source', 'Radioisotope heat source', 'power', ['solar-base'],
     'Qualifies a plutonium-238 heat source for flight. Needs the government to approve nuclear material.',
@@ -86,7 +86,7 @@ export const TECHS: Tech[] = [
     [limit('power.rtg.outputKW', 3)], 38, 9, 0.7),
 
   // --------------------------------------------------------------- instruments
-  start('instr-base', 'Flight instruments', 'instruments', 'Cameras, spectrometers and the surface lab as flown today.'),
+  start('instr-base', 'Flight instruments', 'instruments', 'The agency\'s established cameras, spectrometers and surface lab.'),
   tech('large-sensor', 'Larger sensor arrays', 'instruments', ['instr-base'],
     'Bigger detectors for the same camera body. More pixels per image.',
     [limit('instrument.camera.performance', 7)], 9, 4, 0.9),
@@ -136,32 +136,32 @@ export const TECHS: Tech[] = [
     'Error coding that adapts to the link quality and wastes less bandwidth.',
     [limit('antenna.standard.dataRateKbps', 5000)], 14, 4, 0.9),
   tech('optical-terminal', 'Optical communications terminal', 'antenna', ['ka-band'],
-    'A laser link. Much more data, and it needs a frequency and landing licence from partners.',
+    'A high-throughput laser link. Needs partner approval for ground-station access.',
     [limit('antenna.standard.dataRateKbps', 6000)], 30, 7, 0.75,
     { gate: { by: 'partners', why: 'A laser link needs a licence from partner agencies.' } }),
   tech('phased-array', 'Phased-array antenna', 'antenna', ['adaptive-coding', 'optical-terminal'],
-    'Steers the beam electronically. Combines the best coding with the laser link.',
+    'Electronic beam steering and improved link control increase data throughput.',
     [limit('antenna.standard.dataRateKbps', 8000)], 36, 8, 0.7),
 
   // ---------------------------------------------------------------- protection
-  start('shield-base', 'Shielding and ablators', 'protection', 'Aluminium shielding and standard ablative heat protection.'),
+  start('shield-base', 'Shielding and thermal control', 'protection', 'Aluminium shielding and standard ablative heat protection.'),
   tech('poly-shield', 'Polyethylene composite shield', 'protection', ['shield-base'],
     'Hydrogen-rich plastic that blocks cosmic rays better than metal.',
     [limit('radShield.standard.level', 5)], 10, 4, 0.9),
   tech('layered-shield', 'Layered hydrogen shield', 'protection', ['poly-shield'],
-    'Layers of water and polymer around the crew-critical electronics.',
+    'Layers of water and polymer protect critical spacecraft electronics.',
     [limit('radShield.standard.level', 6)], 20, 6, 0.8),
   tech('magnetic-deflector', 'Magnetic deflector', 'protection', ['layered-shield'],
     'A field that bends charged particles away. Untested outside the lab.',
     [limit('radShield.standard.level', 7)], 48, 10, 0.55),
-  tech('better-ablator', 'Improved ablator', 'protection', ['shield-base'],
-    'A tougher heat shield material for the entry capsule.',
+  tech('better-ablator', 'High-temperature insulation', 'protection', ['shield-base'],
+    'Insulation that helps spacecraft equipment operate on hot surfaces.',
     [limit('heatProtection.standard.level', 4)], 10, 4, 0.9),
-  tech('dual-layer', 'Dual-layer ablator', 'protection', ['better-ablator'],
-    'A dense outer layer over a light insulating layer.',
+  tech('dual-layer', 'Layered thermal barriers', 'protection', ['better-ablator'],
+    'Layered barriers reduce heat reaching equipment during surface operations.',
     [limit('heatProtection.standard.level', 5)], 20, 6, 0.8),
-  tech('reusable-tps', 'Reusable thermal protection', 'protection', ['dual-layer'],
-    'Tiles that survive several entries. Heavy testing needed.',
+  tech('reusable-tps', 'Surface thermal protection', 'protection', ['dual-layer'],
+    'Advanced materials extend operations on very hot surfaces. Heavy testing needed.',
     [limit('heatProtection.standard.level', 6)], 36, 9, 0.65),
 ];
 

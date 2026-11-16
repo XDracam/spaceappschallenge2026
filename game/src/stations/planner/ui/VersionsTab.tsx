@@ -59,7 +59,7 @@ export function VersionsTab() {
       <div class="list-head">
         <span class="label">{versions.length} saved</span>
         <div class="spacer" />
-        <button class={`pill small${compare ? ' active' : ''}`} onClick={() => setCompare(!compare)} disabled={versions.length === 0}
+        <button class={`pill small${compare ? ' active' : ''}`} aria-pressed={compare} onClick={() => setCompare(!compare)} disabled={versions.length === 0}
           title="Compare mass, cost and goal chances side by side">
           Compare
         </button>

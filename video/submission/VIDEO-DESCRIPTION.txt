@@ -1,0 +1,21 @@
+Mission Control — NASA Space Apps 2026: Space Mission Design Game
+
+A cooperative browser game about spacecraft design, research, procurement and partnerships within one shared budget and schedule.
+
+Play: https://missioncontrol.dractec.com/
+Source: https://github.com/XDracam/spaceappschallenge2026
+
+Footage shows a prepared design comparison and the actual game’s live planning evaluation. The displayed chances are predictions, not results from a completed mission. Research, procurement and delivery remain necessary before launch. Station views are recorded locally by one operator; this video is not evidence of a human four-player playtest.
+
+AI disclosure: The human team created the concept and designed the gameplay. All original project code was written by OpenAI Codex and Anthropic Claude. All project images were generated with ChatGPT Images. This video’s narration was synthesized locally using Voicebox and its Supertonic 3 model. The video script, captions and editing automation were AI-generated under human direction.
+
+Music: “The Magnificent Cosmos” by Adiutorium, CC0.
+https://opengameart.org/content/the-magnificent-cosmos
+https://creativecommons.org/publicdomain/zero/1.0/
+Excerpted, mixed below narration and faded for this video. Music is the actual game music, not AI-generated for this video.
+
+Conceptual design reference: Randii R. Wessen, Chester Borden, John Ziemer and Johnny Kwok, Space Mission Concept Development Using Concept Maturity Levels, JPL / California Institute of Technology.
+https://dataverse.jpl.nasa.gov/dataset.xhtml?persistentId=hdl:2014/44299
+The paper informed design discussions; this does not claim observational NASA data ingestion or JPL validation of the game.
+
+Other project credits: https://github.com/XDracam/spaceappschallenge2026/blob/main/THIRD_PARTY.md

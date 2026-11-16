@@ -1,8 +1,9 @@
 // Left column: the mission's needs (open Tasks, and the Planner's draft parts before the order) with coverage.
+import { formatCalendarDate } from '../../../shared/format';
 import type { Criterion, Task } from '../../../core/model';
 import { procurementActions } from '../logic';
 import {
-  beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, taskCode,
+  beyondKeys, budgetAvailableM, criterionCoverage, deliveryShiftDays, dayToDate, fmtDate, fmtM, fmtStatValue, leadTimeDays, offersForCriterion, openTasks, taskCode,
   stillToBuy, type Coverage, type PView,
 } from '../rules';
 import { researchEta } from '../../science/model/tree';
@@ -43,7 +44,7 @@ function ResearchChip({ v, c }: { v: PView; c: Criterion }) {
   if (!keys.length) return null;
   const etas = keys.map((k) => researchEta(v.research.projects, k, k.split('.')[2] ? c.minimums[k.split('.')[2]] : undefined));
   const waiting = etas.some((e) => e === undefined);
-  return <span class="pr-chip warn">{waiting ? 'Beyond research · Science not started' : `Beyond research · Science until ${fmtDate(Math.max(...(etas as number[]))).slice(0, -5)}`}</span>;
+  return <span class="pr-chip warn">{waiting ? 'Beyond research · Science not started' : `Beyond research · Science until ${formatCalendarDate(dayToDate(Math.max(...(etas as number[]))), { year: false })}`}</span>;
 }
 
 /** A partner or tender offer waiting for this need: its terms are in the need's own offer list. */
@@ -77,7 +78,7 @@ export function Needs({ onClose }: { onClose?: () => void } = {}) {
   const click = (t: Task, c: Criterion) => (isFocused(t, c) && !onClose ? setUi({ focus: null, inspect: 'resource' }) : focusNeed(t, c));
   const orderByText = (orderBy: number | undefined, t: Task) => orderBy === undefined
     ? <span class="muted">Needed {fmtDate(t.neededAt)}</span>
-    : <span class={orderBy < today ? 'bad' : orderBy - today < 30 ? 'warn' : 'muted'}>Order by {fmtDate(orderBy).slice(0, -5)}</span>;
+    : <span class={orderBy < today ? 'bad' : orderBy - today < 30 ? 'warn' : 'muted'}>Order by {formatCalendarDate(dayToDate(orderBy), { year: false })}</span>;
   return (
     <aside class="pr-panel pr-needs" aria-label="Mission needs">
       <div class="pr-section-head"><h2>Mission needs</h2><span class="pr-count">{rows.length || (drafts.length ? `${drafts.length} drafts` : '')}</span>{onClose ? <button type="button" class="pr-text-btn" aria-label="Close mission needs" onClick={onClose}>Close</button> : null}</div>

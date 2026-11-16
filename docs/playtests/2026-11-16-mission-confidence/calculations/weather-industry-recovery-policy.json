@@ -1,0 +1,684 @@
+[
+  {
+    "seed": 20261116,
+    "funding": 255,
+    "spent": 196.6,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 131,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 40.6,
+        "arrival": 314,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        130.95,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261117,
+    "funding": 255,
+    "spent": 207.7,
+    "hardwareOrders": 11,
+    "testsSucceeded": 10,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 217,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 33.8,
+        "arrival": 382,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        131.85,
+        "failed"
+      ],
+      [
+        132,
+        216.35,
+        "succeeded"
+      ]
+    ],
+    "projects": [
+      [
+        132,
+        [
+          "wx-storm-night-gala"
+        ]
+      ],
+      [
+        132,
+        [
+          "wx-feldwerk-upper-stage"
+        ]
+      ],
+      [
+        163,
+        [
+          "wx-storm-night-gala"
+        ]
+      ]
+    ]
+  },
+  {
+    "seed": 20261118,
+    "funding": 255,
+    "spent": 209.1,
+    "hardwareOrders": 11,
+    "testsSucceeded": 10,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 197,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 37.2,
+        "arrival": 380,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        130,
+        196.95,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261119,
+    "funding": 255,
+    "spent": 196.6,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": false
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": false
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": false
+      },
+      {
+        "goalId": "goal-rain",
+        "success": false
+      }
+    ],
+    "failureEvents": [
+      {
+        "branchId": "branch-root",
+        "maneuverId": "mnv-weather-2",
+        "day": 390,
+        "kind": "failure",
+        "text": "Apogee engine tank failed during Change orbit to 35786 km"
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 138,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 40.6,
+        "arrival": 321,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        137.25,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261120,
+    "funding": 255,
+    "spent": 203.6,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 131,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 37.2,
+        "arrival": 314,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        130.95,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261121,
+    "funding": 255,
+    "spent": 209.3,
+    "hardwareOrders": 11,
+    "testsSucceeded": 10,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": false
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": false
+      },
+      {
+        "goalId": "goal-rain",
+        "success": false
+      }
+    ],
+    "failureEvents": [
+      {
+        "branchId": "branch-root",
+        "maneuverId": "mnv-weather-2",
+        "day": 390.2190233257883,
+        "kind": "failure",
+        "text": "Weather satellite Solar panels failed: \"Send weather images\" lost"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "mnv-weather-2",
+        "day": 390.2190233257883,
+        "kind": "failure",
+        "text": "Weather satellite Solar panels failed: \"Measure ozone and aerosols\" lost"
+      },
+      {
+        "branchId": "branch-root",
+        "maneuverId": "mnv-weather-2",
+        "day": 390.2190233257883,
+        "kind": "failure",
+        "text": "Weather satellite Solar panels failed: \"Sound rain and cloud layers with radar\" lost"
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 222,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 30.4,
+        "arrival": 387,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        130.95,
+        "failed"
+      ],
+      [
+        131,
+        207.1,
+        "succeeded"
+      ]
+    ],
+    "projects": [
+      [
+        131,
+        [
+          "wx-storm-night-gala"
+        ]
+      ],
+      [
+        131,
+        [
+          "wx-feldwerk-upper-stage"
+        ]
+      ],
+      [
+        162,
+        [
+          "wx-storm-night-gala"
+        ]
+      ],
+      [
+        193,
+        [
+          "wx-storm-night-gala"
+        ]
+      ]
+    ]
+  },
+  {
+    "seed": 20261122,
+    "funding": 255,
+    "spent": 196.6,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 136,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 40.6,
+        "arrival": 319,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        135.6,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261123,
+    "funding": 225,
+    "spent": 192.5,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 131,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 37.2,
+        "arrival": 314,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        130.95,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261124,
+    "funding": 255,
+    "spent": 196.2,
+    "hardwareOrders": 11,
+    "testsSucceeded": 10,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 141,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 37.2,
+        "arrival": 324,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        69,
+        140.45,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  },
+  {
+    "seed": 20261125,
+    "funding": 225,
+    "spent": 203.6,
+    "hardwareOrders": 11,
+    "testsSucceeded": 11,
+    "allGoalFeasible": true,
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "radarOrders": [
+      {
+        "day": 138,
+        "part": "part-2",
+        "resource": "Deepsound R3",
+        "offer": "cat-i-rad-3-meridian",
+        "delivery": "standard",
+        "cost": 37.2,
+        "arrival": 321,
+        "reliability": 0.98
+      }
+    ],
+    "radarResearch": [
+      [
+        64,
+        137.7,
+        "succeeded"
+      ]
+    ],
+    "projects": []
+  }
+]

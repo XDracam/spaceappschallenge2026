@@ -1,0 +1,1143 @@
+{
+  "date": "2026-11-16",
+  "baseCommit": "6fed21a06c91290106870252713e004ad4c39b77",
+  "scope": "Current game source/public and package/build inputs; excludes node_modules/dist and unrelated working files. This is a post-submission candidate, not a submitted-source claim.",
+  "fingerprint": "cd2bb5e9464918e54666be2d271a542cd4c36c8a607b5255d12b4cbced85ce07",
+  "files": [
+    {
+      "path": "game/src/audio/SoundSettings.tsx",
+      "bytes": 1551,
+      "sha256": "86d160eac883ed1d640b343382df7d679095278036f14378682038cf57e21919"
+    },
+    {
+      "path": "game/src/audio/gameAudio.ts",
+      "bytes": 11090,
+      "sha256": "ff4decdf128ad7e001fc886198996d16200211b65d61d51f0d69d1fb8e9a537c"
+    },
+    {
+      "path": "game/src/audio/sound-settings.css",
+      "bytes": 2626,
+      "sha256": "b198f9f18cf657e175823480ebf2fe4a524d2151bc0782bea7416a9bccc3ebd5"
+    },
+    {
+      "path": "game/src/core/actions.ts",
+      "bytes": 5418,
+      "sha256": "e9ecafd1e08a13fd3426e5d7541f5450c12b3e430b0decfdd6d9c5ab0bbb0a08"
+    },
+    {
+      "path": "game/src/core/build.ts",
+      "bytes": 258,
+      "sha256": "2e5ec02e4a068953470a2822668efb07c28fd6f1be556e10af50dc55ecb776c5"
+    },
+    {
+      "path": "game/src/core/clock.ts",
+      "bytes": 762,
+      "sha256": "72e2236c2b5084918ebe6ff632b1220568e6ccbb5805085c37904ef3c2cd58d0"
+    },
+    {
+      "path": "game/src/core/coordination.ts",
+      "bytes": 53715,
+      "sha256": "84f53520ff21d1e57275ea9202d5946ef5ee3aaa34aa1aaf78f0fec290a43126"
+    },
+    {
+      "path": "game/src/core/coreActions.ts",
+      "bytes": 7244,
+      "sha256": "7501c05d8e53cca26b16af02163ca8f8ccf2071f8844920275445b9ff28dc7de"
+    },
+    {
+      "path": "game/src/core/createStore.ts",
+      "bytes": 1459,
+      "sha256": "5a5388d3a2c863d38426a43574183bc1df18a27dde1036754b6ccdbddcc0bf06"
+    },
+    {
+      "path": "game/src/core/facilities.ts",
+      "bytes": 5730,
+      "sha256": "16a70ccf3f897e68996375f982e3a931edd900e13bb362f0bdf048b0f37cd12a"
+    },
+    {
+      "path": "game/src/core/mission.ts",
+      "bytes": 1245,
+      "sha256": "6e2539af384bfaf92646f687cb4238b3e0a004061fa694ea4c8add5dd276ceeb"
+    },
+    {
+      "path": "game/src/core/model.ts",
+      "bytes": 11171,
+      "sha256": "a3991cb958cd860b3dfc8d7a0adbbef72bfa3e0292ce886074c3ebae1d549e68"
+    },
+    {
+      "path": "game/src/core/persist.ts",
+      "bytes": 7689,
+      "sha256": "423ff5942a8a6777bcfb1bc66d054a57e02731b3238e2307b8691cd0c2a26e2b"
+    },
+    {
+      "path": "game/src/core/playtestHook.ts",
+      "bytes": 1500,
+      "sha256": "e8f6586c9751c28aea5beea91183377f5e8ab226663f497fdd657fccd8588cf7"
+    },
+    {
+      "path": "game/src/core/protocol.ts",
+      "bytes": 2711,
+      "sha256": "a63b92cd97741434fa695449f3fa5a24eb8760cffe181a6444082e0764aa8d86"
+    },
+    {
+      "path": "game/src/core/registerStations.ts",
+      "bytes": 403,
+      "sha256": "4ca63215a4a6fac774e7837e11e5004af3bc5a669a6a0cf2a7f706326f745c6e"
+    },
+    {
+      "path": "game/src/core/score.ts",
+      "bytes": 4627,
+      "sha256": "2405d1f30b437021df135900ce421e265f1474ea3789fa1b815137914aed6795"
+    },
+    {
+      "path": "game/src/core/state.ts",
+      "bytes": 2483,
+      "sha256": "a20bf46a7ebee04b27f2266e90ad2d9c736c81148599ff3b1e02c21f1b36c620"
+    },
+    {
+      "path": "game/src/core/store.ts",
+      "bytes": 12242,
+      "sha256": "3da02af26f8477b552a9492eefe79b744269c37b8837db56b9d26019d18e139f"
+    },
+    {
+      "path": "game/src/core/validation.ts",
+      "bytes": 14702,
+      "sha256": "650131fa1bbd5d86fbb3af22119c49a2f5f5de42bf833e7f23401879a29ee121"
+    },
+    {
+      "path": "game/src/main.tsx",
+      "bytes": 961,
+      "sha256": "60499988d5f9d4cef7434851760f779ef75a7a523135ae0b574cd3faaaa8f42c"
+    },
+    {
+      "path": "game/src/net/codes.ts",
+      "bytes": 3662,
+      "sha256": "0adfa39daa3e961bbdf802d27b2840c0d52e52a06e16ddde4ee21388efa563cc"
+    },
+    {
+      "path": "game/src/net/framing.ts",
+      "bytes": 2967,
+      "sha256": "361811753b37d7d2e7109892cc15d4c03c207e01701a3a364385f28c5a1df46a"
+    },
+    {
+      "path": "game/src/net/peerjs.ts",
+      "bytes": 17117,
+      "sha256": "8dae75567c66eb5159a9c740cfd24dbb95a317288a2998b46e1a6801d592760c"
+    },
+    {
+      "path": "game/src/net/webrtc.ts",
+      "bytes": 13709,
+      "sha256": "95f938ea0238d289c002480bbae80ec8df05a1cd0bb2ed61d6e65bdbbf437f64"
+    },
+    {
+      "path": "game/src/shared/confirmation.ts",
+      "bytes": 794,
+      "sha256": "08e0b83f7dca212b68102a0b680582112195964e83a06db19efd931593b2c134"
+    },
+    {
+      "path": "game/src/shared/events/engine.ts",
+      "bytes": 5091,
+      "sha256": "1d8f9a4844eefdaf57d1e70ef5553b854804c4e38311845ced5cd6d72caa252a"
+    },
+    {
+      "path": "game/src/shared/events/types.ts",
+      "bytes": 7149,
+      "sha256": "a22e2ef4b872482964b8fe154f2b0ac522d0076bc4bc31d918fea8997658894e"
+    },
+    {
+      "path": "game/src/shared/format.ts",
+      "bytes": 1479,
+      "sha256": "3726e4e08e3a89a23c74f509263e9b52db232c7a211ac3e3af440df2ae49c9ae"
+    },
+    {
+      "path": "game/src/shared/taskDraft.ts",
+      "bytes": 510,
+      "sha256": "3c5043db067ed94df0c608af16c0bce2f9f1f4ee2e6b930f35bb7fbe59881539"
+    },
+    {
+      "path": "game/src/shared/useDialog.ts",
+      "bytes": 3967,
+      "sha256": "bebce76029f471e65f9c97a8f8713ff7d40e998adaafe895e9361f64a3e2bd63"
+    },
+    {
+      "path": "game/src/shared/uuid.ts",
+      "bytes": 601,
+      "sha256": "a736acc6382481b5d8b390d147ce17126d7a16bd221ca33965087b10298f5221"
+    },
+    {
+      "path": "game/src/shell/App.tsx",
+      "bytes": 5313,
+      "sha256": "03f5f74a9485637a2cc276c3846d40b6417b827ca2503f98e3b98f307ad988e6"
+    },
+    {
+      "path": "game/src/shell/ConfirmationPanel.tsx",
+      "bytes": 1234,
+      "sha256": "62e72f46d805b0f79f8728ab837de43c9838b125b70b472805f307a980f24c4b"
+    },
+    {
+      "path": "game/src/shell/FacilityArt.tsx",
+      "bytes": 11736,
+      "sha256": "93d6c6de075d9c30fc12711cd06f7f27d277055bd01764ac939cc760255e0aa8"
+    },
+    {
+      "path": "game/src/shell/Lobby.tsx",
+      "bytes": 31223,
+      "sha256": "301909b2ee73938d7b8c85a6d00deed5d6d45b3ef04db39a9d63bf86a8d2ca30"
+    },
+    {
+      "path": "game/src/shell/LobbyIcon.tsx",
+      "bytes": 1470,
+      "sha256": "c00e56119954e61c0529dc0cd7b3e3c671c6219511610b7cd7328dfb75e464ae"
+    },
+    {
+      "path": "game/src/shell/ResultOverlay.tsx",
+      "bytes": 4033,
+      "sha256": "b51f84c97928dea007a12e7b880bf70584b46fe22ab413a7cc5c19baf82530ed"
+    },
+    {
+      "path": "game/src/shell/ResultRecoveryActions.tsx",
+      "bytes": 729,
+      "sha256": "0fa9ea51a547c077ab5db4c0b01ccf8c389d6fe98b65be0ad1ed535d8063b823"
+    },
+    {
+      "path": "game/src/shell/StationSwitcher.tsx",
+      "bytes": 6731,
+      "sha256": "7456e708025f2cae1835964189af1d68506ecaabcb40e1f41f34f07fdfdbe692"
+    },
+    {
+      "path": "game/src/shell/TaskBoard.tsx",
+      "bytes": 24092,
+      "sha256": "be7f772c2d72b2f2879bfed9c98befcbe19b5f718c62130afdd7ef3c87c355a7"
+    },
+    {
+      "path": "game/src/shell/TitleScene.tsx",
+      "bytes": 259,
+      "sha256": "e7dfc815a46a6d6ce92858fbbdd93c8943839499855ccf429a3ec231906827ff"
+    },
+    {
+      "path": "game/src/shell/assets/title-earth.webp",
+      "bytes": 104844,
+      "sha256": "1a0ffbd4f04da24e83846c6dd9f915b6ad2bda35248449955b5bf3d65b1406ca"
+    },
+    {
+      "path": "game/src/shell/session.ts",
+      "bytes": 12745,
+      "sha256": "3877dd21c7313aed505361bed59ff35ce83bcf6ed31deca93258736eb9c7304a"
+    },
+    {
+      "path": "game/src/shell/shell.css",
+      "bytes": 38005,
+      "sha256": "6d56f5900494c17d98d07a94cacb2cabc28011f5a5a1f86e4c2e4f50e396c91c"
+    },
+    {
+      "path": "game/src/shell/station-corners.css",
+      "bytes": 1327,
+      "sha256": "7dfc555bf0e8bb2c1261851ee4344c1fc82349250094e234038873aad7092c54"
+    },
+    {
+      "path": "game/src/shell/stations.ts",
+      "bytes": 899,
+      "sha256": "7a19087248aca04750bf3631e88f880319e6f36c390de252757a4e493427d9c7"
+    },
+    {
+      "path": "game/src/shell/tasks.css",
+      "bytes": 5484,
+      "sha256": "3c3755ed071f45740abbdda5c588ed19c9e9fbee2f9f5777f32f94970c600c0c"
+    },
+    {
+      "path": "game/src/stations/comms/Station.tsx",
+      "bytes": 180,
+      "sha256": "72c570cd60d2adddef592b9800e4192d2f50c29ac32f6576e79a968cd182956f"
+    },
+    {
+      "path": "game/src/stations/comms/data/characters.ts",
+      "bytes": 3630,
+      "sha256": "931cb3f5b5241a3613e3ee54a2c12439c2d3c10e67ffb0ecff36427fafeadc4e"
+    },
+    {
+      "path": "game/src/stations/comms/data/content.ts",
+      "bytes": 3614,
+      "sha256": "a75a0eb4ab13c8686d8b11d107e1eb568f7845adfcb7206b1c34cfecf973890c"
+    },
+    {
+      "path": "game/src/stations/comms/data/helpers.ts",
+      "bytes": 5502,
+      "sha256": "07d06cf217522cfff69b4be6634ae52072d7eb5b3777c0e5857d94551204c26e"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/eventsPool.ts",
+      "bytes": 17844,
+      "sha256": "f4181cd69a771734cf1dfd88e4c2aa146ce597468173e9548cf33a54f7b1a242"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+      "bytes": 10303,
+      "sha256": "fb71cf54045a4c8b8a2bf7bae6ddae8fbb492db29a1454d54435f5affb864da1"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+      "bytes": 17936,
+      "sha256": "a60b2bc47f0e7396dc0e2e9bfc6540445c624ecbf489b8ca514ca38eb1b21f4e"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/inFlight.ts",
+      "bytes": 2495,
+      "sha256": "24a60511920d43dcbcdb785315757839e1b4fa6dea30eda5e2c21669d4cb826c"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/index.ts",
+      "bytes": 319,
+      "sha256": "57b1b5dcdc7530485e730964f0fb37b3ebfc2a4eb9e1a0f04c877b683582e50d"
+    },
+    {
+      "path": "game/src/stations/comms/data/mars/projects.ts",
+      "bytes": 8552,
+      "sha256": "a259956dbc0c9ad2a1e6e39bcb52c3d69044d0e1ad1c9d29710a24709576b80b"
+    },
+    {
+      "path": "game/src/stations/comms/data/mission.ts",
+      "bytes": 1082,
+      "sha256": "eb8011ee0d97df3108319bf78f2bdf7e1f7681465284668e7cf3172702fb0136"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/eventsPool.ts",
+      "bytes": 14556,
+      "sha256": "48193720479a71b3ce22e8ea1f863f587968e758914b53407345781ccf7b2588"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/eventsTimeline.ts",
+      "bytes": 8209,
+      "sha256": "33bcc8b61a24b32b4968fecf9b70e74c26f196e58da536c36dfbfba4ebe94d54"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+      "bytes": 14610,
+      "sha256": "9f21b5fc1c6d6ec6aeec218650dbd7757623df217163669c2cf5281c50dd6c78"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/inFlight.ts",
+      "bytes": 2011,
+      "sha256": "42b405956fa5b1cefbf7ab19ea765d2fd8e04319fa500ed17d4ca06f13e29b20"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/index.ts",
+      "bytes": 314,
+      "sha256": "483078df9027e3bebdedb3626c4602f02d375bca045ebf9e8af146f0aa4b0c2b"
+    },
+    {
+      "path": "game/src/stations/comms/data/moon/projects.ts",
+      "bytes": 4781,
+      "sha256": "b4fafb039ae4b8528b570e6231ba993afc2c9775d7d6aa89aea64d672fd4a3b8"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/eventsPool.ts",
+      "bytes": 12595,
+      "sha256": "444298956999a1f9314610a7d5a61546b627f237ab7907922b4133f44f23aa93"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/eventsTimeline.ts",
+      "bytes": 8180,
+      "sha256": "48af58edca33171af34b25b01cf82225782cdb22856396fd9cbfb1dec89e7317"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/eventsTriggered.ts",
+      "bytes": 11974,
+      "sha256": "06b8f9c7d948ee44e92c3cfdbe0ee59033fba3d37a31c2bac37289a58d50c98f"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/inFlight.ts",
+      "bytes": 2112,
+      "sha256": "366be9334da033807a72ab16713b3c3ebfafd212c9fe2b0e345df0359089a0cd"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/index.ts",
+      "bytes": 331,
+      "sha256": "e6c3664da5545f9a1009c22e24ff1bd95f2920207666032347b9f7e3fdaa86f4"
+    },
+    {
+      "path": "game/src/stations/comms/data/weather/projects.ts",
+      "bytes": 5979,
+      "sha256": "f7181b112e0c1166f36e067fee3b93ce9a79b580156b2aa86e467b9b044a08dd"
+    },
+    {
+      "path": "game/src/stations/comms/logic.ts",
+      "bytes": 2143,
+      "sha256": "48cda564a476f0266d1c1ceaa29511d3b296e3291322c457c98e55f3f7d05bad"
+    },
+    {
+      "path": "game/src/stations/comms/model/types.ts",
+      "bytes": 1535,
+      "sha256": "da7d80e8713dfe73132ee65210a9128cac18de3b08f4810af09322c66f6b459c"
+    },
+    {
+      "path": "game/src/stations/comms/slice.ts",
+      "bytes": 1569,
+      "sha256": "0b570528eaaece52069b622be3cfffeb2b99fc5c68430464b202782d09daa697"
+    },
+    {
+      "path": "game/src/stations/comms/state/format.ts",
+      "bytes": 3699,
+      "sha256": "466c514415cf7c7776b47409ee474ef0073923f71419f06aa8b016cf806b93b2"
+    },
+    {
+      "path": "game/src/stations/comms/state/world.ts",
+      "bytes": 26323,
+      "sha256": "748ca23d9c92950eecbba40cad912023f64dcbd07a56869063020073608ab37d"
+    },
+    {
+      "path": "game/src/stations/comms/ui/App.tsx",
+      "bytes": 1462,
+      "sha256": "8174b5ebcd0dfd9fd52351b31258b390daff855fd976746f7ab00d52b4ea0302"
+    },
+    {
+      "path": "game/src/stations/comms/ui/Conversation.tsx",
+      "bytes": 6590,
+      "sha256": "9a18cfbe2a7a4b4ec976fd1c8a80dabcce83f454dc04047bc6d24cfd2a2a30a9"
+    },
+    {
+      "path": "game/src/stations/comms/ui/DevDrawer.tsx",
+      "bytes": 4516,
+      "sha256": "b184b1c13d55efdc10b3463b2e06e529e49fd56d111c610fa17e5fad8d16c3bc"
+    },
+    {
+      "path": "game/src/stations/comms/ui/Header.tsx",
+      "bytes": 4809,
+      "sha256": "71fc6b068de9805c400b3911efc68835dba32bc4ab634752a93a87558c307816"
+    },
+    {
+      "path": "game/src/stations/comms/ui/Inbox.tsx",
+      "bytes": 5897,
+      "sha256": "68c4f4ef21afbde89b044820bb8dda5d8807aab9fe916804810bf07e2beaf825"
+    },
+    {
+      "path": "game/src/stations/comms/ui/NewsFeed.tsx",
+      "bytes": 1954,
+      "sha256": "4834b8db5206664b66e8c20a558fbf49fa7cf39b0ab944d2c6959fb93e05a4e5"
+    },
+    {
+      "path": "game/src/stations/comms/ui/Overlays.tsx",
+      "bytes": 5061,
+      "sha256": "8cdf9f70e16c46c43d9c24d1245f84f9876c5d37352d3252b021a338cbe42e38"
+    },
+    {
+      "path": "game/src/stations/comms/ui/Projects.tsx",
+      "bytes": 11859,
+      "sha256": "b7af0bbdfab742624c4d6272219e1e2240ce40684ef2a5b1cefe85f4983c4b4d"
+    },
+    {
+      "path": "game/src/stations/comms/ui/TrustBar.tsx",
+      "bytes": 3896,
+      "sha256": "7322df5f27b12a4c1be94c158ad0bc0ce8158e9fff83df186d847448d17d8f8a"
+    },
+    {
+      "path": "game/src/stations/comms/ui/common.tsx",
+      "bytes": 15493,
+      "sha256": "27205fa3f428dad10f81e22c3ddaf529c7df37efc4a3ed57c5b77060c5de9d8e"
+    },
+    {
+      "path": "game/src/stations/comms/ui/format.ts",
+      "bytes": 1133,
+      "sha256": "f02e0a6460e2a0315121cc946ef326e012760af42382e97d297baeb8aea4e23e"
+    },
+    {
+      "path": "game/src/stations/comms/ui/store.ts",
+      "bytes": 5539,
+      "sha256": "de418fe5a51632fec777082cbdf7e3f342fc4432be5d28eaef106ec888b5dd0a"
+    },
+    {
+      "path": "game/src/stations/comms/ui/styles.css",
+      "bytes": 38037,
+      "sha256": "5bae00cb6b30829a2873088cdd2aaecab8065a064b2246f6c34ac0a18280262e"
+    },
+    {
+      "path": "game/src/stations/planner/Station.tsx",
+      "bytes": 322,
+      "sha256": "e4819c6baad541bd184a9de0d810968f32269ce55d1bfd4e5ef80e8f2e84bd15"
+    },
+    {
+      "path": "game/src/stations/planner/data/bodies.ts",
+      "bytes": 6656,
+      "sha256": "b8c5f6beda2f9933743fa801d9e48609308cd0077fc6c81c4160c7d426ecc945"
+    },
+    {
+      "path": "game/src/stations/planner/data/missions/marsOrbiterLander.ts",
+      "bytes": 4372,
+      "sha256": "db77961a75eb6ae6132ed30d978e69cd71e45f4e6c1504f19ab3c01919af7b61"
+    },
+    {
+      "path": "game/src/stations/planner/data/missions/moonLander.ts",
+      "bytes": 6141,
+      "sha256": "2b2e8b6f1369b6687ab1a699e6ffdf31ceae57c9e2356f94724576b4d8550737"
+    },
+    {
+      "path": "game/src/stations/planner/data/missions/weatherGeo.ts",
+      "bytes": 7060,
+      "sha256": "1191e7d1baaf832c30be5b901e2555600dfca7ee32bf64a26d5531fe752a62be"
+    },
+    {
+      "path": "game/src/stations/planner/data/parts.ts",
+      "bytes": 12443,
+      "sha256": "cae9a829daf8355b4af83cc968d8d934b5cc5cad57d9c7496e23b84dfd67e389"
+    },
+    {
+      "path": "game/src/stations/planner/data/propulsion.ts",
+      "bytes": 2381,
+      "sha256": "c10fc8a8e7462413827e93ac44c04414c5ef3a85a0747c176c201aeda88ed511"
+    },
+    {
+      "path": "game/src/stations/planner/derive.ts",
+      "bytes": 10299,
+      "sha256": "8bad75d33b92cbda0c3bff9bdf909e3378a6840e9354dd772e9e455b7d1889ae"
+    },
+    {
+      "path": "game/src/stations/planner/fix.ts",
+      "bytes": 6767,
+      "sha256": "69465c91eda57a96fb44f0b6f864253edb47cc536d26da5fcee8a1b32e574689"
+    },
+    {
+      "path": "game/src/stations/planner/logic.ts",
+      "bytes": 17981,
+      "sha256": "f97b0666495088f0ae133c300b6368c8bd60e6170b4dafae55fe7c6105a6c96f"
+    },
+    {
+      "path": "game/src/stations/planner/map/MapCanvas.tsx",
+      "bytes": 2098,
+      "sha256": "a580965fbf09525a9796c2a33b7a8e96e00702fdf67dc7e605a18c7d79152cf5"
+    },
+    {
+      "path": "game/src/stations/planner/map/projection.ts",
+      "bytes": 1549,
+      "sha256": "a25c4784e540abc0bfa9ec0943ad898411dfb922adf89afee61f105c6d7066de"
+    },
+    {
+      "path": "game/src/stations/planner/map/renderer.ts",
+      "bytes": 65741,
+      "sha256": "c53375577fe469cec5a7d14e8f15970d6c0ad46e2c8f08163abd59ad40bf3d30"
+    },
+    {
+      "path": "game/src/stations/planner/map/sprites.ts",
+      "bytes": 10776,
+      "sha256": "91a99cc4abc985358d0afd6a381c92b52c565987cc2b2ac8730269a3f6fc777f"
+    },
+    {
+      "path": "game/src/stations/planner/map/style.ts",
+      "bytes": 2216,
+      "sha256": "5875dfe23c6655037dd44af785883f5b6920d8bb08bcf89451b8fcba56b2790b"
+    },
+    {
+      "path": "game/src/stations/planner/model/rocketUtils.ts",
+      "bytes": 2468,
+      "sha256": "01f1a0137c3e86713d08fc30046ff292810ba56f6c68f0459a4dc835724b0809"
+    },
+    {
+      "path": "game/src/stations/planner/model/types.ts",
+      "bytes": 16396,
+      "sha256": "38f2904765d03038ce20ecdf22da41261cf2ebca77cdaf233dfc19d117933371"
+    },
+    {
+      "path": "game/src/stations/planner/model/units.ts",
+      "bytes": 1813,
+      "sha256": "768a2b76bfda9a84a66aa6a3cd689ceabcab194f2d69c5619c1ade893db67167"
+    },
+    {
+      "path": "game/src/stations/planner/physics/ephemeris.ts",
+      "bytes": 2857,
+      "sha256": "1f818acf04c9301e5addf05b5fed5cb246e0af2ee66178fb9471de5e20cb6078"
+    },
+    {
+      "path": "game/src/stations/planner/physics/evaluate.ts",
+      "bytes": 34875,
+      "sha256": "b433363590a998160b679616c6f1c8aee8a1489ff25f4aa0d8fb4502d9e1a172"
+    },
+    {
+      "path": "game/src/stations/planner/physics/goals.ts",
+      "bytes": 2363,
+      "sha256": "23e3f8ea7c4e5993be7c7697455f2b27d3162ed279da47d0c45c3f581636b43c"
+    },
+    {
+      "path": "game/src/stations/planner/physics/index.ts",
+      "bytes": 1749,
+      "sha256": "8ad61a281e6bdd5e0a3972921d6fba2b1e79ab7ce105c9da8524c88afa138c7b"
+    },
+    {
+      "path": "game/src/stations/planner/physics/kepler.ts",
+      "bytes": 2168,
+      "sha256": "1313adaff0e83e0dd37906c7d829bde975fb0211faded77c6dc2b9bfa1cbf875"
+    },
+    {
+      "path": "game/src/stations/planner/physics/labels.ts",
+      "bytes": 1507,
+      "sha256": "e19b8583e3fa7210d667bda795bdb61b037390b09389144b998d62859f5c8de1"
+    },
+    {
+      "path": "game/src/stations/planner/physics/lambert.ts",
+      "bytes": 4960,
+      "sha256": "81f3858752467fd6487aa4b0165927aaa8aca4c556c76a9b8aa2aba01d170b6d"
+    },
+    {
+      "path": "game/src/stations/planner/physics/options.ts",
+      "bytes": 10953,
+      "sha256": "d8feced964645efc0c64f0cf4cdef031b2ed8183a25a83afb9912b977f499876"
+    },
+    {
+      "path": "game/src/stations/planner/physics/playthrough.ts",
+      "bytes": 7474,
+      "sha256": "170be9b76dc30a20fa514b690434655a652fdc51f8e0114233339f55525e737a"
+    },
+    {
+      "path": "game/src/stations/planner/physics/stack.ts",
+      "bytes": 5048,
+      "sha256": "5f3627ebb84a863d166e489afd1f885f57eb01d4803572d0a7ac1644568bf196"
+    },
+    {
+      "path": "game/src/stations/planner/physics/transfers.ts",
+      "bytes": 15693,
+      "sha256": "996707562c7ad8dcae06b870fbba15dbc3eba25fb503ffc6dc5651c42250b234"
+    },
+    {
+      "path": "game/src/stations/planner/physics/vec.ts",
+      "bytes": 1036,
+      "sha256": "1b1a1c80e3fae71a46ec03d13d136b51fc8e5553f568f04c5db8902903c096ca"
+    },
+    {
+      "path": "game/src/stations/planner/result.ts",
+      "bytes": 5391,
+      "sha256": "25e70935f6d3b56b97d5aeb42caa4ae761601f179c688803c55d12707b82382d"
+    },
+    {
+      "path": "game/src/stations/planner/slice.ts",
+      "bytes": 830,
+      "sha256": "5e0c09d83855645624d8f8a5cac3c3ff375cf75e38cfea68f751aa2c8dfa487e"
+    },
+    {
+      "path": "game/src/stations/planner/state/store.ts",
+      "bytes": 6260,
+      "sha256": "55073c7e85351cdf61f691ffc0cd89e6c0c451915ee273533c02eb1fdde3d7d5"
+    },
+    {
+      "path": "game/src/stations/planner/ui/App.tsx",
+      "bytes": 5369,
+      "sha256": "a199e9cd02b1cc2708f6babb267d71326b4a9d49f1b2df9b12d61a54122e6d26"
+    },
+    {
+      "path": "game/src/stations/planner/ui/BottomStrip.tsx",
+      "bytes": 16659,
+      "sha256": "9bbfb476e61bc4ceeb688e111a77b20cf65042f467bbde119cafa17de6e34564"
+    },
+    {
+      "path": "game/src/stations/planner/ui/Briefing.tsx",
+      "bytes": 4784,
+      "sha256": "727208b685d18ea1be87131aa603852a7cbed82820a33051286fc527e8dea473"
+    },
+    {
+      "path": "game/src/stations/planner/ui/Heatmap.tsx",
+      "bytes": 18954,
+      "sha256": "dfc8ae0184bed5cf290a136aa799b102f3cbf6c01791fa03f9bddef0257851f0"
+    },
+    {
+      "path": "game/src/stations/planner/ui/NextStep.tsx",
+      "bytes": 7551,
+      "sha256": "903f35644c27ece89c09ed508a7b57223a639103a0e3fd196aea832810b3add3"
+    },
+    {
+      "path": "game/src/stations/planner/ui/Playthrough.tsx",
+      "bytes": 9375,
+      "sha256": "3050cc5a9d45fa1bd4c115360a40a708ee2db37af30960aed3ebd16561d6a3a2"
+    },
+    {
+      "path": "game/src/stations/planner/ui/Popups.tsx",
+      "bytes": 26852,
+      "sha256": "c9b90c05f8947993a875852be08fe384d3a76ea6e82e52ac57bca6ff2ddfa0d3"
+    },
+    {
+      "path": "game/src/stations/planner/ui/RocketTab.tsx",
+      "bytes": 32741,
+      "sha256": "b4e02b18bd4a674598d7517a6dcec2928c88fb4e67decef3913e9a9b397b86c3"
+    },
+    {
+      "path": "game/src/stations/planner/ui/Slider.tsx",
+      "bytes": 7203,
+      "sha256": "5bd3fe4d920e03bac01d7771f56c500270dd8df52245fb123fb7682cffda9418"
+    },
+    {
+      "path": "game/src/stations/planner/ui/TopBar.tsx",
+      "bytes": 9976,
+      "sha256": "9b3732a2246eddadd433e8e8ca345b65270bd35934fa2990f12d71555142a879"
+    },
+    {
+      "path": "game/src/stations/planner/ui/VersionsTab.tsx",
+      "bytes": 5925,
+      "sha256": "79918b7c88bd60d743faf17a5aa0f782346ac6c4234197b22afaa0a67d5d5a00"
+    },
+    {
+      "path": "game/src/stations/planner/ui/advanced.ts",
+      "bytes": 831,
+      "sha256": "72d076b90a2d29f121cd9d6aeacdcb31a09075a39c1e5520f775331375ae966d"
+    },
+    {
+      "path": "game/src/stations/planner/ui/common.tsx",
+      "bytes": 14891,
+      "sha256": "ff27bc8a41b1ae2d0ee2ebcfceb65530054a2b61f7d6cd81b2389afcbf0d53a7"
+    },
+    {
+      "path": "game/src/stations/planner/ui/panels.css",
+      "bytes": 12533,
+      "sha256": "25c30a7074459a867c8b112d5921d57bb1266b8f381d55c37857bba9264c9b6a"
+    },
+    {
+      "path": "game/src/stations/planner/ui/partInfo.tsx",
+      "bytes": 5577,
+      "sha256": "95163807c0556ddf5d04f6b39c198c3a267d714ab30e7b7f1f7d9df3e8c03b96"
+    },
+    {
+      "path": "game/src/stations/planner/ui/popups.css",
+      "bytes": 3438,
+      "sha256": "7f853331ce0020b345d34bb3075aafd5741be7bfb8f7a6557c6fcc55530e77f3"
+    },
+    {
+      "path": "game/src/stations/planner/ui/styles.css",
+      "bytes": 58398,
+      "sha256": "91d4a5c47c8f1faf228d42ba770b1b8a0e3df2bada5ef66058447ccb7940e7b7"
+    },
+    {
+      "path": "game/src/stations/procurement/Station.tsx",
+      "bytes": 1597,
+      "sha256": "eddf0e9bbfa83be5db1de6f9e3a3ae1b5beaeec4caaa4d6e0e1b2e97dc9d63d3"
+    },
+    {
+      "path": "game/src/stations/procurement/data/calls.ts",
+      "bytes": 5233,
+      "sha256": "3ae121d06beb2f27f778b24f49c581395e6c8f5b16cd05e1108d2cf02bc9eed4"
+    },
+    {
+      "path": "game/src/stations/procurement/data/catalogue.ts",
+      "bytes": 13130,
+      "sha256": "4d45044d74ce7330ffb04658948c1b27f1ea77e2a26d347797018db684742eaf"
+    },
+    {
+      "path": "game/src/stations/procurement/data/pricing.ts",
+      "bytes": 2451,
+      "sha256": "f319e0bfc6149ec75751ec7a9ea69c5ef1aa15e1f46203eec78aa46908128837"
+    },
+    {
+      "path": "game/src/stations/procurement/data/suppliers.ts",
+      "bytes": 4118,
+      "sha256": "02ab24c962946b4df3888a191a551dda94564b8a8392460f2b08664f7d736d3f"
+    },
+    {
+      "path": "game/src/stations/procurement/logic.ts",
+      "bytes": 21668,
+      "sha256": "3ab96bee7762f4cbd8b26eeaa75dc5899a65827d89861a3aa209c15d59c018c0"
+    },
+    {
+      "path": "game/src/stations/procurement/procurement.css",
+      "bytes": 36031,
+      "sha256": "2e4c6a39eebf6fc3178258408ffb004d4e61ecb65f4fc36b903921c6379ebe20"
+    },
+    {
+      "path": "game/src/stations/procurement/rules.ts",
+      "bytes": 31704,
+      "sha256": "eb8cc1be51895248cf16a1fa5efaa8a8bf6826db9b476c7771b6d0101bb7b9da"
+    },
+    {
+      "path": "game/src/stations/procurement/slice.ts",
+      "bytes": 532,
+      "sha256": "4371907380eb2252cbca78f3cfde8e014e7e4eb8f4b47dc490e4b3682be8b5a2"
+    },
+    {
+      "path": "game/src/stations/procurement/timing.ts",
+      "bytes": 2902,
+      "sha256": "a6360c8b7f7bde287065f4356399cb04620fd208997b0efdde8639f8d371cc57"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Art.tsx",
+      "bytes": 1929,
+      "sha256": "3125e8f78aed2d27d25127b3e918d43b5edcf9e8cce81c783650b177cb73e4ed"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Catalogue.tsx",
+      "bytes": 7704,
+      "sha256": "7797bc6f1784d49fc952b0ab271d2362178e700a1f1a360e7b8e8aa26f0e32a7"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/ContractTimeline.tsx",
+      "bytes": 9378,
+      "sha256": "9be65cb502facda9c461b3d61774c22d673289c467d485ed59cec46f03532cbc"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/ContractsView.tsx",
+      "bytes": 9598,
+      "sha256": "8ff447eb909c634bd47396d99e07fb6ad021b8a6f3a188e60b5a4f2fed08726b"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Dialog.tsx",
+      "bytes": 11373,
+      "sha256": "e9a5bcf59589d7a7876c56c058149951ca75db864690d34d523a297e6d7994c8"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Header.tsx",
+      "bytes": 3123,
+      "sha256": "7b9db07952af08ac848ba6a041ebe282500ffa2788580769f26cb95ffa75bb83"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Inspector.tsx",
+      "bytes": 22594,
+      "sha256": "1b46fad5b6ade547c6add62db3c9e95874bb01678b3242218a27945bd84565aa"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/Needs.tsx",
+      "bytes": 8958,
+      "sha256": "39c4ad7849f0a5795417f6a98f25e95fd7755f62e8e16de6a0255fbcde679167"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/NewsStrip.tsx",
+      "bytes": 1861,
+      "sha256": "79f1a13f7c6cdbdb45f15f9a3f64ba60c5fa78aa183fafe4cc6c7922dd3b19b8"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/ResearchSupport.tsx",
+      "bytes": 7285,
+      "sha256": "6e97672a5f480b0dd48cbca995238cb4bdd3e8190ec5e140b1a19b1a85bfba99"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/art/InstrumentsArt.tsx",
+      "bytes": 5278,
+      "sha256": "394d5912dab302299cbd85fa4e7bde29840bfaee3ea38a1941409281c55c3f18"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/art/PropulsionArt.tsx",
+      "bytes": 7676,
+      "sha256": "6d2fe534889313f610e4454c9e6838e2f35065af485d65e4c5179171654acdad"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/art/StructuresArt.tsx",
+      "bytes": 17891,
+      "sha256": "ec68de589bcba22cd2327fbac7f4aaf7afb0b9434dd0a24b10447e954f767ad8"
+    },
+    {
+      "path": "game/src/stations/procurement/ui/uiState.ts",
+      "bytes": 5787,
+      "sha256": "7374682d27d0a8100b42a932bcbb8f8fbe252b2ec155e4e25f0f231c0b23bc8f"
+    },
+    {
+      "path": "game/src/stations/science/README.md",
+      "bytes": 4369,
+      "sha256": "2b6d40bee903e46c780c23ba0a35f005307ac599bb99f494cdf010a290927ce4"
+    },
+    {
+      "path": "game/src/stations/science/Station.tsx",
+      "bytes": 161,
+      "sha256": "059be2f1f236df1c5110c6b092032d1d6ca200cdbec296c3126325fae46b4a5c"
+    },
+    {
+      "path": "game/src/stations/science/data/flavour.ts",
+      "bytes": 361,
+      "sha256": "3e73e66322e0fba91f350667b2cbe23b5beecaa2d7f67bff00ded1b6dd135a19"
+    },
+    {
+      "path": "game/src/stations/science/data/needs.ts",
+      "bytes": 1509,
+      "sha256": "838e7863d8f049b985d9b6e8f6233008645eae9aa9629da3875ff1d269506cd9"
+    },
+    {
+      "path": "game/src/stations/science/data/techs.ts",
+      "bytes": 11808,
+      "sha256": "be0decdc7c3f0ca1d45df5321f42b365d329aaa6772860a9754262c6c85c1207"
+    },
+    {
+      "path": "game/src/stations/science/logic.ts",
+      "bytes": 12132,
+      "sha256": "02df3c850a19e762d6586628822f47db31219458c85952b032b691bbebaac92c"
+    },
+    {
+      "path": "game/src/stations/science/model/needs.ts",
+      "bytes": 1419,
+      "sha256": "aaa49ee92357b2cee02aeae578f5b9e9edc2c507f853c10d682679b82b960e2c"
+    },
+    {
+      "path": "game/src/stations/science/model/research.ts",
+      "bytes": 7181,
+      "sha256": "972fabc02b553e17408b4495dbbcc78ab360195fea11bf0596a76e92d1ebc9eb"
+    },
+    {
+      "path": "game/src/stations/science/model/tests.ts",
+      "bytes": 5963,
+      "sha256": "b9fbfe00689916f4710551cd2b21d7f0aa0cbce6667b6785dc9d4b4246111db9"
+    },
+    {
+      "path": "game/src/stations/science/model/tree.ts",
+      "bytes": 12259,
+      "sha256": "14e609275dc665bcd19a921472364f67cd7cece46ffaf3a6164fef17ca53175c"
+    },
+    {
+      "path": "game/src/stations/science/model/types.ts",
+      "bytes": 1577,
+      "sha256": "2664de1378b5e2faad20ecdca7058f3eefcfb03d0e732559928d861c98828d5e"
+    },
+    {
+      "path": "game/src/stations/science/slice.ts",
+      "bytes": 1344,
+      "sha256": "b7c64474e809c9e61f65fee6079660fe7577c0592d1bf539081b19be6037c730"
+    },
+    {
+      "path": "game/src/stations/science/ui/App.tsx",
+      "bytes": 20777,
+      "sha256": "cf3ef779ced3b479659cde52f2ae288cc50cf216f0872df24ec699fbbd530737"
+    },
+    {
+      "path": "game/src/stations/science/ui/styles.css",
+      "bytes": 4220,
+      "sha256": "e9e8d2b15c4ab5482570f559b61afbc8c6f10147c7d6de924236b16c8cb73bae"
+    },
+    {
+      "path": "game/public/LICENSE.txt",
+      "bytes": 9142,
+      "sha256": "a5e9f9b1575301c7a7a03508fdaa2e05a918cc17fd21c6e898096a96d6a34f61"
+    },
+    {
+      "path": "game/public/THIRD_PARTY_NOTICES.txt",
+      "bytes": 36854,
+      "sha256": "8d4a09fa3891382e6198a4ff904a73cc4d348390c2852862f22025c213ed748a"
+    },
+    {
+      "path": "game/public/audio/CREDITS.txt",
+      "bytes": 2459,
+      "sha256": "6b1f8a8664f743738e47404ea1ee93716c8270bb40d9441bd1686ff76da527e2"
+    },
+    {
+      "path": "game/public/audio/achievement.mp3",
+      "bytes": 216639,
+      "sha256": "9e38c888ce0bf246d5083a3b9614e8b2189a98b43f323e46c6722efecccbaf50"
+    },
+    {
+      "path": "game/public/audio/attention.mp3",
+      "bytes": 2204,
+      "sha256": "915fc46f7befc41c85699d6dc13ef0cda86e26244b2b5919f62764f8ddd61c28"
+    },
+    {
+      "path": "game/public/audio/completion.mp3",
+      "bytes": 4706,
+      "sha256": "443838a0fb03bf513213b6b10d22ac4ff0c54af6e836f954fc3c98bd0ef5f5ad"
+    },
+    {
+      "path": "game/public/audio/confirmation.mp3",
+      "bytes": 1686,
+      "sha256": "b62fe7df0c91c325b444d3fc80b32b18e566359dd1f6c83ace1bb57e4a622861"
+    },
+    {
+      "path": "game/public/audio/launch.mp3",
+      "bytes": 165931,
+      "sha256": "5a997857ab9ce05ce6b6ec8049b6a5ca175c87fccbf6a1915915e1e21b7735af"
+    },
+    {
+      "path": "game/public/audio/licenses/achievement-cynic-source.html.txt",
+      "bytes": 32140,
+      "sha256": "fcb513c226c43deaf4bc640e4682d61bd50a2318ecb51b7d42a0ac9cf073d4d2"
+    },
+    {
+      "path": "game/public/audio/licenses/kenney-interface-CC0.txt",
+      "bytes": 553,
+      "sha256": "cefbf7ebb51b02ecf4748b1112d5c6a2d04aa0ea82e885e74680b62ea6d3a712"
+    },
+    {
+      "path": "game/public/audio/licenses/nasa-source.json",
+      "bytes": 3267,
+      "sha256": "228762d13fad0605a9af2b905dd50d5805f3d87bfa2ee367e1e8a80b8359a730"
+    },
+    {
+      "path": "game/public/audio/licenses/the-magnificent-cosmos.html.txt",
+      "bytes": 29412,
+      "sha256": "d5ec5e0fcd42cea6aaf30a547f11391709bddf9d729286752d012636d84c52bd"
+    },
+    {
+      "path": "game/public/audio/music.mp3",
+      "bytes": 2837405,
+      "sha256": "affcebe2a6d87067ddaf46c267fc7fba9475a63638514134de3a9b07d372f2f8"
+    },
+    {
+      "path": "game/public/audio/selected.json",
+      "bytes": 8873,
+      "sha256": "b17468349206a59bf48f60e6b1a8ac52cb16384bbb9b7071490bf0747d58c9d2"
+    },
+    {
+      "path": "game/public/audio/setback.mp3",
+      "bytes": 4650,
+      "sha256": "cdcf964e72f3291235b06887abf5375e949b6a3920ce630c55f7a83d509f525b"
+    },
+    {
+      "path": "game/public/credits/index.html",
+      "bytes": 3158,
+      "sha256": "eb9125673b10c9c8cf2dc8d26220c6266c7b0132b5434fb03074121ed42be65d"
+    },
+    {
+      "path": "game/public/favicon.svg",
+      "bytes": 473,
+      "sha256": "eb17db26f0a498970c0fc79da947feb596513b18adc53fb5d0d98e8578d34769"
+    },
+    {
+      "path": "game/public/fonts/Exo-2-OFL.txt",
+      "bytes": 4386,
+      "sha256": "7f95a8eeecc6904ffc81cd10cc8ebc7fcee72a67922924bf45f02dff03b88127"
+    },
+    {
+      "path": "game/public/fonts/Inter-OFL.txt",
+      "bytes": 4377,
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "game/public/fonts/fonts.css",
+      "bytes": 831,
+      "sha256": "74031848c019e52d9faccc96d2440a74d51da6e6d1919c68aa8f40a50a6e5b2b"
+    },
+    {
+      "path": "game/public/fonts/google-1.ttf",
+      "bytes": 143916,
+      "sha256": "62a90bba9ce91c973c9cb615606be67ccc9bd96084e00e52f0921ba13cc5b35d"
+    },
+    {
+      "path": "game/public/fonts/google-2.ttf",
+      "bytes": 143896,
+      "sha256": "d29a80ec96f88b2ea92ad574b7ddf53044e77e7ee3498668a930a55add9efcb0"
+    },
+    {
+      "path": "game/public/fonts/google-3.ttf",
+      "bytes": 324820,
+      "sha256": "1b08e7fc267a5c7e1d614100f604b83e7e8a0be241f0f288faa2b3ac93a683ba"
+    },
+    {
+      "path": "game/public/fonts/google-4.ttf",
+      "bytes": 325304,
+      "sha256": "8c883f63b2c4157d997319f2c8bc6995ed4357ef371940d31ca159004a4aae63"
+    },
+    {
+      "path": "game/public/fonts/google-5.ttf",
+      "bytes": 326048,
+      "sha256": "e7a1aaf7eda9f2fad4131725fa556265ec75ca7b2d756260173a040363e8d4f7"
+    },
+    {
+      "path": "game/public/fonts/sources.json",
+      "bytes": 1376,
+      "sha256": "90f541e9eef42906ac857c20b18db8ca853417f11a940f4a9482c215f2594401"
+    },
+    {
+      "path": "game/public/portraits/brandt.webp",
+      "bytes": 21896,
+      "sha256": "34937d9a96afbd120d9de588c1f0a6e3f16c0de46b961ae780882a65dd56a274"
+    },
+    {
+      "path": "game/public/portraits/castellanos.webp",
+      "bytes": 27068,
+      "sha256": "9e05078b519c5ff8d031ebe25184c14b520863d0d7e9b47248779ba87001ccbb"
+    },
+    {
+      "path": "game/public/portraits/duarte.webp",
+      "bytes": 22140,
+      "sha256": "da51b02cf73b648a64fffca2a6bb135c484f7030b028d3c552e913c5252025ae"
+    },
+    {
+      "path": "game/public/portraits/feld.webp",
+      "bytes": 16650,
+      "sha256": "a08c37fa26246ed5921a87427892158fa56e9be47dcf07b99d70021959fa4fb0"
+    },
+    {
+      "path": "game/public/portraits/haddad.webp",
+      "bytes": 21418,
+      "sha256": "df0c3e2096fbe26ceb67069d4c39630f8c9127039a6e6b19b250648248bc77e5"
+    },
+    {
+      "path": "game/public/portraits/harlan.webp",
+      "bytes": 20832,
+      "sha256": "fbfbae28cb8f54abe600c0e0db5f8a660797b72523eb4aa74ddd63ae5ca6a6b7"
+    },
+    {
+      "path": "game/public/portraits/kowalski.webp",
+      "bytes": 21158,
+      "sha256": "c2ea7d3554f946c767e6c418fb8ccfe6f7e4ef302eb5f3f5362f096beff02f1d"
+    },
+    {
+      "path": "game/public/portraits/lindqvist.webp",
+      "bytes": 22814,
+      "sha256": "87e59a9d8accbaca02bc8a48d5c5ef62f5194c4effd7d6c48f78aaeaa9d08a79"
+    },
+    {
+      "path": "game/public/portraits/moreau.webp",
+      "bytes": 19446,
+      "sha256": "6751e8aba76c59317069a958ac600bfedcddc3547db2fe69e368dc44f499532e"
+    },
+    {
+      "path": "game/public/portraits/okafor.webp",
+      "bytes": 18054,
+      "sha256": "f5399fd20e187ce2947cbf8b33ee06f00d7521bdc3cc5e8a3771b0d25c372447"
+    },
+    {
+      "path": "game/public/portraits/osei.webp",
+      "bytes": 16036,
+      "sha256": "d3a481c1ac9920a99043eb7ec0a66145fa4b5f7df769a226ac556e901d4cacd7"
+    },
+    {
+      "path": "game/public/portraits/raman.webp",
+      "bytes": 22724,
+      "sha256": "07760d7a506771e8c5c919ab8d8240494c28feb48fc17bc040799b604d22d868"
+    },
+    {
+      "path": "game/public/portraits/reyes.webp",
+      "bytes": 23708,
+      "sha256": "067f039320e8444c1998137817e8f63fc6188d4934233ca1cd1a71394a874d02"
+    },
+    {
+      "path": "game/public/portraits/salo.webp",
+      "bytes": 24248,
+      "sha256": "22f7eeca400cd79a08a8b91796052a1f00250cc5574666f26c45f896144846ef"
+    },
+    {
+      "path": "game/public/portraits/whitfield.webp",
+      "bytes": 29238,
+      "sha256": "5d6337af34fed79cf0199206d5fa82711cad9fd9cc3cbc3bd8b03c8a1f16eec7"
+    },
+    {
+      "path": "game/public/social-title.webp",
+      "bytes": 104844,
+      "sha256": "1a0ffbd4f04da24e83846c6dd9f915b6ad2bda35248449955b5bf3d65b1406ca"
+    },
+    {
+      "path": "game/public/submission/T-Minus-Submission.mp4",
+      "bytes": 16777426,
+      "sha256": "c297c588f2a5dc876396943788cb272d7f3e5d55932e2395fc03e9e6ae3fcf35"
+    },
+    {
+      "path": "game/public/submission/credits.txt",
+      "bytes": 2533,
+      "sha256": "7ddd9f36fe6bbf05c45ecf6056475ffa8b2a70803f8841a820ecf0f439a7c30c"
+    },
+    {
+      "path": "game/public/submission/index.html",
+      "bytes": 2484,
+      "sha256": "191b5880136d351874f5e785706d65e8d3dc933e256eec2f2eccc621ec52c4b9"
+    },
+    {
+      "path": "game/public/submission/poster.jpg",
+      "bytes": 162234,
+      "sha256": "c4dfd6714f27492e27eb6ec7155591af15c8f2ddc81d9ae5ca46f49766d410a7"
+    },
+    {
+      "path": "game/package.json",
+      "bytes": 427,
+      "sha256": "3cb5538f793e8470089c47cd9de80a6595c1832de2e200775a9ef877e95c01fe"
+    },
+    {
+      "path": "game/package-lock.json",
+      "bytes": 67238,
+      "sha256": "2b9e41e94ca18a813040b8ad93781aa95c78ed4883addaee010e762b3d02f0a7"
+    },
+    {
+      "path": "game/vite.config.ts",
+      "bytes": 1550,
+      "sha256": "0785c7d60083b991d421854a1b9df0fbb7bfad494f5f8fb3eab1ab88979f7d22"
+    },
+    {
+      "path": "game/index.html",
+      "bytes": 1223,
+      "sha256": "6113ebc2d9445bb205c10b8b2c1646594ea6e80a045a8fb7fc8625e89ee4d9d1"
+    }
+  ]
+}

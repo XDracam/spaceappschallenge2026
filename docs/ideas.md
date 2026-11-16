@@ -318,3 +318,16 @@ Keep deferred and rejected ideas. Add a dated explanation instead of deleting th
 - Status: accepted user direction; implemented visual refinement.
 - Direction: review and improve all procurement part drawings in parallel for consistency, believability and obvious geometric/logical flaws.
 - Implementation and observed limits: [geometry record](notes/2026-11-15-procurement-artwork.md). Shared family artwork remains schematic, with distinct relevant part variants.
+
+### I-102 — Post-submission professionalism without gameplay changes
+
+- Captured: 2026-11-16.
+- Source: [user audit request](notes/2026-11-16-post-submission-audit.md).
+- Status: user direction for an audit; individual improvement proposals are unselected.
+- Direction: review the repository and its contents with subagents for professional presentation and deliberate authorship, preserving submitted gameplay and treating video-visible visuals as constrained.
+- Evidence: [master audit and appendices](reviews/2026-11-16-post-submission-audit.md), with source checks, static media observations, actual compiler/build results and explicit runtime limitations. No implementation fixes or tests.
+- Disposition: prioritize accurate public/current documentation, truthful copy and feedback, interaction completeness, release packaging and proportionate reliability; keep numerical/gameplay changes separate. Preserve D-034's accepted station appearance and selected grounded satire.
+
+- Implementation follow-up, 2026-11-16: the user requested coordinated, idiomatic implementation of the audit feedback. Accepted scope and gameplay/video boundaries are recorded in D-036; implementation evidence is in the [verification record](notes/2026-11-16-post-submission-implementation.md). The deferred numerical findings remain unselected.
+
+- Verification follow-up, 2026-11-16: the user requested greater confidence in current mission feasibility. [Four-station mission verification](playtests/2026-11-16-mission-feasibility.md) records all three successful missions, one actual research-failure recovery per mission, fixed-seed calculations including failures, and four-seat retry/mission change. Existing gameplay and media stayed unchanged; human play quality remains unmeasured.

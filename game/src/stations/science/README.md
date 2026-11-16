@@ -11,7 +11,8 @@ new part types). It is a tech tree: techs have prerequisites, and several routes
   in Procurement shows how far Science is.
 - **Science finds the route.** The shortest routes to a need are marked ★. Fog hides techs more than 2 steps beyond the researched ones.
 - **Comms enables or blocks.** `techAccess` effects (comms events/projects) block a tech (running projects pause)
-  or enable a gated one (`Tech.gate`: nuclear, laser link). See `comms/data/projects.ts` and `eventsTriggered.ts`.
+  or enable a gated one (`Tech.gate`: nuclear, laser link). Current approval projects and block events are in
+  `../comms/data/mars/projects.ts` and `../comms/data/mars/eventsTriggered.ts`; Weather and Moon omit unrelated gates.
 - A project spends its cost at once, runs months (times the mission's `researchTimeFactor`: 0.5 for the weather
   satellite), and rolls success with the shared rng. Success raises `research.limits` / `research.unlocked`.
 - **Science tests delivered parts** (playtest 1115d-r01, see `playtest/changes.md`): a free team tests a delivered part
@@ -23,14 +24,17 @@ Files: `data/techs.ts` (authored placeholder content, D-005), `model/tree.ts` (l
 `model/research.ts` (labels, request coverage), `model/tests.ts` (part tests), `logic.ts` (actions + tick), `ui/App.tsx`, `slice.ts`.
 Not modelled: mass/cost reductions (Q-037). Removed from main's version: knowledge graph, bench, recipes, field findings.
 
-Missions: the tree uses the same research keys as both missions (Mars, weather satellite), so it works unchanged.
+Missions: the tree uses the same research keys across Weather satellite, Lunar ice lander and Mars orbiter + lander;
+mission-specific exclusions hide unrelated routes without changing their shared definitions.
 Under D-029, Mars starts with camera performance limit 3 while the design needs 4: Larger sensor arrays is a useful
 opening project ($9M, four months, 90% success). Weather keeps its faster sensor and downlink research needs.
 Prerequisite identities still matter when another route already covers a tech's grants: such a tech remains researchable
 when required by an unresearched dependent. The UI explains that it satisfies prerequisites without raising the limit again.
 Cancelling research or a part test asks for in-game confirmation and displays the current refund (half the remaining share,
 decreasing while the calendar runs). These are implementation changes, not evidence of human enjoyment or balanced idle time.
-Comms approval projects exist in both comms content sets (`mars/`, `weather/`); the block events exist for Mars only.
+Facilities and research teams follow D-032: higher-tier research can require Procurement-supplied facilities;
+an expired lease pauses affected work, while hired teams add start capacity. Rules are in `../../core/facilities.ts`
+and `data/needs.ts`. Current engineering-tree state is shared and saved; UI selection and focus remain local.
 Saves: state version 3 resets the science slice and drops old projects (persist.ts `migrateV2`); version 4 drops `research.requests`; version 5 adds optional fields only.
 
 ## Facilities and teams (D-032)

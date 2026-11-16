@@ -1,0 +1,430 @@
+[
+  {
+    "seed": 20261116,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 18.6,
+    "spentM": 231.4,
+    "fundingM": 250,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Surface operations funding: Week-by-week operations funding leaves the drill team with less support."
+    ]
+  },
+  {
+    "seed": 20261117,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 11.9,
+    "spentM": 243.1,
+    "fundingM": 255,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 0,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Upper stage engine failed during Launch to 200 km"
+    ]
+  },
+  {
+    "seed": 20261118,
+    "phase": "launched",
+    "launch": 340,
+    "goalDay": 344.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 31.2,
+    "spentM": 250.8,
+    "fundingM": 282,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      }
+    ],
+    "successfulTechs": [
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 76.92000000000013
+      },
+      {
+        "tech": "hypergolic-tuning",
+        "start": 50,
+        "end": 87.84200000000007
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Rehearsed landing: The moved launch cut rehearsals short, leaving the landing team less prepared."
+    ]
+  },
+  {
+    "seed": 20261119,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 19.3,
+    "spentM": 247.7,
+    "fundingM": 267,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": []
+  },
+  {
+    "seed": 20261120,
+    "phase": "launched",
+    "launch": 430,
+    "goalDay": 434.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 19.1,
+    "spentM": 235.9,
+    "fundingM": 255,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [
+      {
+        "severity": "info",
+        "code": "delivery",
+        "message": "Surface lab: ordered, not procured yet",
+        "partId": "part-l11"
+      },
+      {
+        "severity": "warning",
+        "code": "budget",
+        "message": "Parts still to buy cost about 65.0 M, more than the 19.1 M left in the budget"
+      }
+    ],
+    "score": {
+      "achieved": 0,
+      "total": 3,
+      "scrubbed": true,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      },
+      {
+        "tech": "lab-automation",
+        "start": 73,
+        "end": 149.11999999999978
+      },
+      {
+        "tech": "lab-automation",
+        "start": 150,
+        "end": 230.32000000000062
+      },
+      {
+        "tech": "lab-automation",
+        "start": 231,
+        "end": 318.12000000000023
+      }
+    ],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 319,
+        "end": 401.1200000000005
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Launch scrubbed: Surface lab not delivered"
+    ]
+  },
+  {
+    "seed": 20261121,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 4.3,
+    "spentM": 255.7,
+    "fundingM": 260,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 1,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Landing legs failed during Land on Moon",
+      "Surface operations funding: Week-by-week operations funding leaves the drill team with less support."
+    ]
+  },
+  {
+    "seed": 20261122,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 19.9,
+    "spentM": 235.1,
+    "fundingM": 255,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": []
+  },
+  {
+    "seed": 20261123,
+    "phase": "launched",
+    "launch": 300,
+    "goalDay": 304.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 11.9,
+    "spentM": 243.1,
+    "fundingM": 255,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [],
+    "successfulTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      },
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 72.97000000000013
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Surface operations funding: Week-by-week operations funding leaves the drill team with less support."
+    ]
+  },
+  {
+    "seed": 20261124,
+    "phase": "launched",
+    "launch": 341,
+    "goalDay": 345.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 4.2,
+    "spentM": 250.8,
+    "fundingM": 255,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      }
+    ],
+    "successfulTechs": [
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 77.22000000000014
+      },
+      {
+        "tech": "hypergolic-tuning",
+        "start": 50,
+        "end": 89.79200000000012
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Rehearsed landing: The moved launch cut rehearsals short, leaving the landing team less prepared."
+    ]
+  },
+  {
+    "seed": 20261125,
+    "phase": "launched",
+    "launch": 341,
+    "goalDay": 345.97782136279625,
+    "deadline": 455,
+    "budgetAvailableM": 21.2,
+    "spentM": 250.8,
+    "fundingM": 272,
+    "allGoalsPhysicallyAchievable": true,
+    "evaluatorIssues": [],
+    "score": {
+      "achieved": 3,
+      "total": 3,
+      "scrubbed": false,
+      "optionalAchieved": 0,
+      "optionalTotal": 0,
+      "bonusEarned": 0,
+      "bonusTotal": 0
+    },
+    "failedTechs": [
+      {
+        "tech": "hypergolic-tuning",
+        "start": 0,
+        "end": 49.092000000000056
+      }
+    ],
+    "successfulTechs": [
+      {
+        "tech": "lab-automation",
+        "start": 0,
+        "end": 77.22000000000014
+      },
+      {
+        "tech": "hypergolic-tuning",
+        "start": 50,
+        "end": 89.79200000000012
+      }
+    ],
+    "answersNotAccepted": [],
+    "failureEvents": [
+      "Rehearsed landing: The moved launch cut rehearsals short, leaving the landing team less prepared."
+    ]
+  }
+]

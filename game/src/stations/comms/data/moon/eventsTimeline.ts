@@ -61,7 +61,7 @@ export const TIMELINE_EVENTS: EventDef[] = [
     options: [
       option('trim', 'Offer a 10 M trim to show discipline.',
         [budget(-10), trust('government', 10)],
-        'The committee praises your restraint. Every station now has 10 M less to be restrained with.'),
+        'The committee praises your restraint. The shared budget now has 10 M less to be restrained with.'),
       option('home-suppliers', 'Pledge contracts to home suppliers (procurement pays more).',
         [trust('government', 10), trust('industry', 5), price(10, 3)],
         'Duarte gets her line about local jobs. Procurement gets a memo explaining why parts cost more.'),

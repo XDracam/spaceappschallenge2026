@@ -1,7 +1,8 @@
-import { useEffect } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
+import { useDialog } from '../../../shared/useDialog';
 import { createStore, useStore } from '../../../core/createStore';
 import { useClock, usePlanner } from '../state/store';
-import { formatDay } from '../model/units';
+import { DAYS_PER_MONTH, formatDay } from '../model/units';
 import { fmtMoneyShort, useLocalUi } from './common';
 
 // One-time mission briefing, centred over the free map area.
@@ -45,13 +46,16 @@ export function Briefing() {
   const launchDay = usePlanner((g) => g.plan.launchDay);
   const insets = useLocalUi((s) => s.insets);
   const budgetM = usePlanner((g) => g.budget.totalM);
+  const root = useRef<HTMLElement>(null);
+  const clockRunning = useClock(c => c.running);
+  const monthsPerMinute = useClock(c => Number((c.daysPerSecond * 60 / DAYS_PER_MONTH).toFixed(1)));
+  useDialog({ open: open && phase === 'planning', root, modal: false, onClose: closeBriefing });
   const minutes = useClock((c) => (c.daysPerSecond > 0 ? Math.max(0, Math.round((launchDay - c.day) / c.daysPerSecond / 60)) : 0));
   if (!open || phase !== 'planning') return null;
   const start = mission.startDateISO;
   return (
-    <div class="briefing-wrap" style={{ top: `${insets.top}px`, right: `${insets.right}px`, bottom: `${insets.bottom}px`, left: `${insets.left}px` }}
-      onKeyDown={(e) => { if (e.key === 'Escape') closeBriefing(); }}>
-      <section class="briefing glass strong" role="dialog" aria-labelledby="briefing-title">
+    <div class="briefing-wrap" style={{ top: `${insets.top}px`, right: `${insets.right}px`, bottom: `${insets.bottom}px`, left: `${insets.left}px` }}>
+      <section ref={root} tabIndex={-1} class="briefing glass strong" role="dialog" aria-labelledby="briefing-title">
         <div class="tb-label">Mission briefing</div>
         <h2 id="briefing-title" class="briefing-title">Mission: {mission.name}</h2>
         <p>{mission.briefing}</p>
@@ -87,8 +91,8 @@ export function Briefing() {
           <li>At the launch date the mission flies once — watch what happens.</li>
         </ol>
         <p class="briefing-clock">
-          The game clock runs in real time: <b>1 real minute = 1 month</b>. Launch is set
-          to <b class="num">{formatDay(launchDay, start)}</b> (≈ {minutes} minute{minutes === 1 ? '' : 's'} from now).
+          {clockRunning ? <>The game clock runs in real time: <b>1 real minute = {monthsPerMinute} month{monthsPerMinute === 1 ? '' : 's'}</b>.</> : <>The agency calendar is paused.</>} Launch is set
+          to <b class="num">{formatDay(launchDay, start)}</b>{clockRunning ? ` (≈ ${minutes} minute${minutes === 1 ? '' : 's'} from now).` : '. The countdown resumes when the host starts the calendar.'}
         </p>
         <div class="briefing-foot">
           <button class="pill primary" autoFocus onClick={closeBriefing}>Start planning</button>

@@ -1,0 +1,733 @@
+[
+  {
+    "seed": 20261116,
+    "funding": 255,
+    "spent": 196.6,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        130.95
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 314
+  },
+  {
+    "seed": 20261117,
+    "funding": 255,
+    "spent": 161.9,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 10,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "failed",
+        64,
+        131.85
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        132,
+        216.35
+      ]
+    ],
+    "testsSucceeded": 10,
+    "testsNotCompleted": [
+      [
+        "part-2",
+        "open"
+      ]
+    ],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": false
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": false
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": false
+      },
+      {
+        "goalId": "goal-rain",
+        "success": false
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 390,
+        "branchId": "branch-root",
+        "kind": "failure",
+        "text": "Launch scrubbed: Sounding radar not delivered"
+      }
+    ],
+    "issues": [
+      {
+        "severity": "info",
+        "code": "delivery",
+        "message": "Sounding radar: ordered, not procured yet",
+        "partId": "part-2"
+      }
+    ],
+    "latestDelivery": 305
+  },
+  {
+    "seed": 20261118,
+    "funding": 255,
+    "spent": 209.1,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "failed",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "failed",
+        0,
+        63.98
+      ],
+      [
+        "large-sensor",
+        "succeeded",
+        64,
+        129.53
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        64,
+        129.53
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        130,
+        196.95
+      ]
+    ],
+    "testsSucceeded": 10,
+    "testsNotCompleted": [
+      [
+        "part-2",
+        "ready"
+      ]
+    ],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 380
+  },
+  {
+    "seed": 20261119,
+    "funding": 255,
+    "spent": 196.6,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        137.25
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": false
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": false
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": false
+      },
+      {
+        "goalId": "goal-rain",
+        "success": false
+      }
+    ],
+    "failureEvents": [
+      {
+        "branchId": "branch-root",
+        "maneuverId": "mnv-weather-2",
+        "day": 390,
+        "kind": "failure",
+        "text": "Apogee engine tank failed during Change orbit to 35786 km"
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 321
+  },
+  {
+    "seed": 20261120,
+    "funding": 255,
+    "spent": 203.6,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "failed",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "large-sensor",
+        "succeeded",
+        64,
+        116.93
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        130.95
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 314
+  },
+  {
+    "seed": 20261121,
+    "funding": 255,
+    "spent": 161.9,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 10,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "failed",
+        64,
+        130.95
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        131,
+        207.1
+      ]
+    ],
+    "testsSucceeded": 10,
+    "testsNotCompleted": [
+      [
+        "part-2",
+        "open"
+      ]
+    ],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": false
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": false
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": false
+      },
+      {
+        "goalId": "goal-rain",
+        "success": false
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 390,
+        "branchId": "branch-root",
+        "kind": "failure",
+        "text": "Launch scrubbed: Sounding radar not delivered"
+      }
+    ],
+    "issues": [
+      {
+        "severity": "info",
+        "code": "delivery",
+        "message": "Sounding radar: ordered, not procured yet",
+        "partId": "part-2"
+      }
+    ],
+    "latestDelivery": 305
+  },
+  {
+    "seed": 20261122,
+    "funding": 255,
+    "spent": 196.6,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        135.6
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 319
+  },
+  {
+    "seed": 20261123,
+    "funding": 225,
+    "spent": 192.5,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        130.95
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 314
+  },
+  {
+    "seed": 20261124,
+    "funding": 255,
+    "spent": 196.2,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "failed",
+        0,
+        68.63
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        68.63
+      ],
+      [
+        "large-sensor",
+        "succeeded",
+        69,
+        125.83
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        69,
+        140.45
+      ]
+    ],
+    "testsSucceeded": 10,
+    "testsNotCompleted": [
+      [
+        "part-2",
+        "ready"
+      ]
+    ],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 324
+  },
+  {
+    "seed": 20261125,
+    "funding": 225,
+    "spent": 203.6,
+    "committed": 0,
+    "withinOriginal210": true,
+    "hardwareOrders": 11,
+    "allGoalFeasible": true,
+    "arrivalDay": 390.2190233257883,
+    "research": [
+      [
+        "large-sensor",
+        "failed",
+        0,
+        63.98
+      ],
+      [
+        "ka-band",
+        "succeeded",
+        0,
+        63.98
+      ],
+      [
+        "large-sensor",
+        "succeeded",
+        64,
+        120.53
+      ],
+      [
+        "radar-electronics",
+        "succeeded",
+        64,
+        137.7
+      ]
+    ],
+    "testsSucceeded": 11,
+    "testsNotCompleted": [],
+    "goals": [
+      {
+        "goalId": "goal-geo",
+        "success": true
+      },
+      {
+        "goalId": "goal-imagery",
+        "success": true
+      },
+      {
+        "goalId": "goal-ozone",
+        "success": true
+      },
+      {
+        "goalId": "goal-rain",
+        "success": true
+      }
+    ],
+    "failureEvents": [
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Operations contract: Quarter-by-quarter operations funding leaves the ground team with less support."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "First image downlink: Limited partner tracking makes the first image downlink less certain. Mallory has already announced his broadcast slot."
+      },
+      {
+        "day": 410,
+        "branchId": "",
+        "kind": "failure",
+        "text": "Arrival at the geostationary slot: The moved launch left less rehearsal time and more uncertainty about the final trim burn."
+      }
+    ],
+    "issues": [],
+    "latestDelivery": 321
+  }
+]

@@ -63,7 +63,7 @@ function MessageRow({ inst, selected, fresh, today }: { inst: EventInstance; sel
     } else sub = `Expired · ${def.ignored.outcome}`;
   }
   return (
-    <button class={`msg${selected ? ' sel' : ''}${isOpen ? '' : ' done'}${fresh ? ' fresh' : ''}`} onClick={() => selectEvent(inst.instanceId)}>
+    <button class={`msg${selected ? ' sel' : ''}${isOpen ? '' : ' done'}${fresh ? ' fresh' : ''}`} aria-pressed={selected} aria-controls="comms-conversation" onClick={() => selectEvent(inst.instanceId)}>
       <Avatar character={ch} size="sm" />
       <div class="msg-body">
         <div class="msg-name">{fresh && <span class="new-dot" aria-label="new" />}{ch?.name ?? 'Unknown sender'}</div>
@@ -106,17 +106,18 @@ export function ArrivalToast() {
   }, [inbox]);
 
   const inst = toastId ? inbox.find((i) => i.instanceId === toastId) : undefined;
-  if (!inst || inst.status !== 'open' || opened.includes(inst.instanceId) || selected === inst.instanceId) return null;
-  const def = eventById(inst.eventId);
+  const visible = !!inst && inst.status === 'open' && !opened.includes(inst.instanceId) && selected !== inst.instanceId;
+  const def = inst ? eventById(inst.eventId) : undefined;
   const ch = eventCharacter(def);
   return (
-    <button key={inst.instanceId} class="arrival glass strong" onClick={() => selectEvent(inst.instanceId)}>
+    <><span class="comms-a11y-only" role="status" aria-atomic="true">{visible && inst ? `New message: ${def?.title ?? 'Message'}. Answer by ${formatDay(inst.deadlineDay, startISO)}.` : ''}</span>
+    {visible && inst && <button key={inst.instanceId} class="arrival glass strong" onClick={() => selectEvent(inst.instanceId)}>
       <Avatar character={ch} size="sm" />
       <span class="arrival-text">
         <span class="label">New message</span>
         <span><b>{ch?.name ?? 'Unknown sender'}</b> · {def?.title}</span>
       </span>
       <span class="muted tiny num">answer by {formatDay(inst.deadlineDay, startISO)}</span>
-    </button>
+    </button>}</>
   );
 }

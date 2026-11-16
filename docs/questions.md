@@ -1,6 +1,23 @@
 # Open questions
 
-All questions below are open as of November 14, 2026, unless marked closed. No numerical values or answers have been selected except where a decision is linked. The order below identifies dependencies, not an approved roadmap.
+Original questions were captured November 14, 2026; retain their IDs and wording. The status guide below distinguishes provisional prototype answers from unresolved long-term design. An implemented balancing value is not proof of balance or a permanent rule.
+
+## Current applicability — November 16, 2026
+
+| Questions | Current prototype disposition |
+| --- | --- |
+| Q-001, Q-012, Q-013, Q-016 | D-015/D-027 resolve integration, room codes and the fewer-player unclaimed-station exception; D-025 resolves original-material licensing. Host handover, real-world network qualification and broader difficulty remain open. |
+| Q-002–Q-010 | Shared results, three missions, authored goals, procurement, scheduling, simplified engineering and seeded resolution exist. See [current prototype](current-prototype.md) and D-029. Audience validation, balance, fairness and deeper design choices remain research questions. Original “blocks implementation” wording below describes the initial drafting stage. |
+| Q-011, Q-018 | D-029 implements fresh-attempt retry and mission selection within the connected session. Campaign/progression remains open. |
+| Q-019, Q-020, Q-027, Q-032–Q-038 | D-020 replaces the research-field graph/combination design with an engineering tech tree. D-032 implements facilities and extra teams. Old graph/recipe questions are superseded for this prototype, not requirements to rebuild them. Personnel alternatives and upgrade/balance research remain open. |
+| Q-021, Q-025, Q-031 | D-021–D-024 implement shared generated work plus explicit player requests, associations and role actions. Their existence does not resolve the separate feasible-solution guarantee in Q-022. |
+| Q-023, Q-024, Q-028 | D-017–D-019 and the current source implement contract inventory, allocations, schedule quotes/amendments and Call windows. Broader assembly/qualification, personnel and balance questions remain open. |
+| Q-015, Q-030, Q-034 | Authored event engine, Comms conversations/projects, state effects and in-flight modifiers are implemented; current data/logic own the provisional values. This does not select every earlier brainstorm event or establish fairness/pacing. |
+| Q-022, Q-026, Q-039, Q-040 | Preserve unresolved guarantees, authored-content boundary and balance questions. No numerical behavior is changed by this status update. |
+
+## Original question register
+
+Entries below retain the original question and any dated follow-ups. Use the guide above and linked decisions before treating an old uncertainty as an implementation dependency.
 
 ## Q-001 — Players and role ownership
 

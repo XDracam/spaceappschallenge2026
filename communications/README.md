@@ -1,6 +1,14 @@
 # Communications module
 
-All work for the communications station lives in this folder: specification, notes, and later implementation. This document specifies the final system; it does not describe staged versions.
+## Current station — November 16, 2026
+
+The implemented station lives in [`game/src/stations/comms/`](../game/src/stations/comms/), with shared events in [`game/src/shared/events/`](../game/src/shared/events/). It answers authored stakeholder messages, runs projects and exposes current numeric effect previews. Required player requests can use shared Tasks under D-021–D-024; spoken conversation remains available. The current source has Weather, Lunar and Mars content sets. Grounded light satire is selected user direction.
+
+See [current prototype](../docs/current-prototype.md) for session flow. The standalone app, initials portraits, “hints, not numbers” and not-integrated status below are historical design/build stages, superseded by the integrated source. They are preserved rather than used as current instructions.
+
+## Original specification and dated implementation history
+
+This folder preserves Communications specifications, source notes and layout studies. The historical specification below records its original target; current code is linked above.
 
 Labels: **user direction** = stated by the user ([notes](notes/2026-11-14-comms-questions.md)). **Proposal** = suggested by the assistant, not yet accepted.
 
@@ -94,7 +102,7 @@ Three slots; the third opens at strong trust with any stakeholder (proposal with
 
 ## Build
 
-**User direction (2026-11-14):** a standalone app in `app/` with the planner's stack (Preact, TypeScript, Vite); a dev drawer stands in for the other stations until they connect (Q-012); shared event-system code lives in the top-level [`shared/`](../shared/) folder. Claude drafts the content (events, characters, projects, trust numbers) as the baseline; tone is light satire, grounded; portraits are stylised initials.
+**User direction (2026-11-14):** a standalone app in `app/` with the planner's stack (Preact, TypeScript, Vite); a dev drawer stands in for the other stations until they connect (Q-012); shared event-system code lives in the top-level `shared/` (standalone path at the time; now [`game/src/shared/events/`](../game/src/shared/events/)) folder. Claude drafts the content (events, characters, projects, trust numbers) as the baseline; tone is light satire, grounded; portraits are stylised initials.
 
 **Integration (D-015):** comms is now one station view of the integrated game in [`game/`](../game/); code in [`game/src/stations/comms/`](../game/src/stations/comms/), shared event engine in [`game/src/shared/events/`](../game/src/shared/events/). Effects act on the shared state instead of the stand-in outbox ([integration design](../docs/design/integration.md)).
 

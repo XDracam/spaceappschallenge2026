@@ -50,7 +50,13 @@ const K = NATIVE.width / VIEW.width;
 const SETTLE_MS = 600;
 const DEFAULT_DAYS_PER_SECOND = 30.44 / 60;           // game/src/core/state.ts
 
-fs.mkdirSync(RUN_DIR, { recursive: true });
+if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(ROUND)) throw new Error('Invalid round ID: use letters, numbers, dot, underscore or hyphen.');
+fs.mkdirSync(path.dirname(RUN_DIR), { recursive: true });
+try { fs.mkdirSync(RUN_DIR); }
+catch (error) {
+  if (error.code === 'EEXIST') throw new Error(`Round ${ROUND} already exists. Choose a fresh --round ID; previous evidence is preserved.`);
+  throw error;
+}
 for (let i = 1; i <= PLAYERS; i++) fs.mkdirSync(path.join(RUN_DIR, 'shots', `p${i}`), { recursive: true });
 fs.mkdirSync(path.join(RUN_DIR, 'state'), { recursive: true });
 
@@ -71,13 +77,21 @@ const rel = (file) => path.relative(RUN_DIR, file).replace(/\\/g, '/');
 
 function build() {
   if (opt.dist) return { skipped: true };
-  const run = (cmd) => spawnSync(cmd, { cwd: GAME_DIR, shell: true, encoding: 'utf8' });
-  const tc = run('npx tsc --noEmit');
-  const typecheck = { ok: tc.status === 0, output: (tc.stdout + tc.stderr).trim().slice(0, 6000) };
-  const b = run(`npx vite build --outDir "${DIST_DIR}" --emptyOutDir --logLevel warn`);
+  const run = (entry, args) => spawnSync(process.execPath, [path.join(GAME_DIR, 'node_modules', entry), ...args], { cwd: GAME_DIR, encoding: 'utf8' });
+  const tc = run('typescript/bin/tsc', ['--noEmit']);
+  const tcOutput = `${tc.stdout ?? ''}${tc.stderr ?? ''}${tc.error ? String(tc.error) : ''}`;
+  const typecheck = { ok: tc.status === 0, output: tcOutput.trim().slice(0, 6000) };
+  fs.writeFileSync(path.join(RUN_DIR, 'typecheck.txt'), tcOutput);
+  if (!typecheck.ok) {
+    console.error('TYPECHECK FAILED; no game will be served.\n' + tcOutput.slice(-3000));
+    process.exit(2);
+  }
+  const b = run('vite/bin/vite.js', ['build', '--outDir', DIST_DIR, '--emptyOutDir', '--logLevel', 'warn']);
+  const buildOutput = `${b.stdout ?? ''}${b.stderr ?? ''}${b.error ? String(b.error) : ''}`;
+  fs.writeFileSync(path.join(RUN_DIR, 'build.txt'), buildOutput);
   if (b.status !== 0) {
-    fs.writeFileSync(path.join(RUN_DIR, 'build-error.txt'), b.stdout + b.stderr);
-    console.error('BUILD FAILED\n' + (b.stdout + b.stderr).slice(-3000));
+    fs.writeFileSync(path.join(RUN_DIR, 'build-error.txt'), buildOutput);
+    console.error('BUILD FAILED\n' + buildOutput.slice(-3000));
     process.exit(2);
   }
   return { typecheck };
@@ -85,7 +99,7 @@ function build() {
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 function serveGame() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const srv = http.createServer((req, res) => {
       const url = decodeURIComponent((req.url ?? '/').split('?')[0]);
       if (url === '/__blank') { res.writeHead(200, { 'content-type': 'text/html' }); res.end('<!doctype html><title>tools</title>'); return; }
@@ -94,26 +108,25 @@ function serveGame() {
       res.writeHead(200, { 'content-type': MIME[path.extname(file)] ?? 'application/octet-stream', 'cache-control': 'no-store' });
       fs.createReadStream(file).pipe(res);
     });
-    srv.listen(GAME_PORT, '127.0.0.1', () => resolve(srv));
+    srv.once('error', reject);
+    srv.listen(GAME_PORT, '127.0.0.1', () => { srv.off('error', reject); resolve(srv); });
   });
 }
 
 // ------------------------------------------------------------------ browser
 
 function findBrowser() {
+  const configured = opt['browser-executable'] ?? process.env.PT_BROWSER_EXECUTABLE;
+  if (configured) {
+    const executablePath = path.resolve(String(configured));
+    if (!fs.existsSync(executablePath) || !fs.statSync(executablePath).isFile()) throw new Error(`Browser executable not found: ${executablePath}`);
+    return { executablePath };
+  }
+  const channel = opt['browser-channel'] ?? process.env.PT_BROWSER_CHANNEL;
+  if (channel) return { channel: String(channel) };
   const expected = chromium.executablePath();
   if (expected && fs.existsSync(expected)) return { executablePath: expected };
-  const root = path.join(process.env.LOCALAPPDATA ?? '', 'ms-playwright');
-  if (fs.existsSync(root)) {
-    const dirs = fs.readdirSync(root).filter((d) => /^chromium-\d+$/.test(d)).sort((a, b) => Number(b.split('-')[1]) - Number(a.split('-')[1]));
-    for (const d of dirs) {
-      for (const sub of ['chrome-win64', 'chrome-win']) {
-        const exe = path.join(root, d, sub, 'chrome.exe');
-        if (fs.existsSync(exe)) return { executablePath: exe };
-      }
-    }
-  }
-  return { channel: 'msedge' };
+  throw new Error(`Playwright Chromium is missing at ${expected}. From playtest/: npm ci && npx playwright-core install chromium. Alternatively set --browser-executable PATH (PT_BROWSER_EXECUTABLE) or --browser-channel chrome/msedge (PT_BROWSER_CHANNEL) to an installed browser. No platform-specific browser is assumed.`);
 }
 
 const INIT_SCRIPT = `
@@ -135,6 +148,7 @@ const chat = [];                 // { n, at, from, text, attach? }
 const attachments = new Map();   // id -> text
 let nextAttach = 1;
 let finished = false;
+let observationStartAt = null;
 
 async function downscale(buf, w, h) {
   const out = await toolsPage.evaluate(async ({ b64, w, h }) => {
@@ -319,6 +333,7 @@ async function runCmd(p, argv) {
   }
   if (cmd === 'finish') {
     p.done = true;
+    p.finishedAt = Math.round(elapsed() / 1000);
     logEvent({ ev: 'finish', player: p.id, reason: a.join(' ') });
     if (players.every((x) => x.done)) setTimeout(() => finalize('all players finished'), 500);
     return 'Session ended for you. Write your final report.';
@@ -484,8 +499,17 @@ async function finalize(reason) {
   if (finished) return;
   finished = true;
   const summary = { round: ROUND, reason, minutesPlanned: MINUTES, durationS: Math.round(elapsed() / 1000), lobby: LOBBY, speedScale: SPEED_SCALE, timeline, players: {}, result: null, final: null };
+  const observationEndAt = Math.round(elapsed() / 1000);
+  summary.activityDefinition = 'Dispatched non-core actions only, including shared coordination. Counts and gaps do not measure reading, conversation, attention, boredom or enjoyment.';
+  summary.observationWindow = { startAtS: observationStartAt, endAtS: observationEndAt, clock: 'seconds since harness startup; ready-to-finish window excludes build and lobby automation' };
   for (const p of players) {
-    summary.players[p.id] = { ...p.stats, finalSeat: lastSummary[p.id]?.station ?? null, finished: p.done };
+    const endAt = p.finishedAt ?? observationEndAt;
+    const startAt = observationStartAt ?? endAt;
+    const initialGapS = p.stats.firstGameActionAt === null ? endAt - startAt : Math.max(0, p.stats.firstGameActionAt - startAt);
+    const terminalGapS = p.stats.lastGameActionAt === null ? null : Math.max(0, endAt - p.stats.lastGameActionAt);
+    const betweenActionsGapS = p.stats.longestGapS;
+    const longestGapS = Math.max(initialGapS, terminalGapS ?? 0, betweenActionsGapS);
+    summary.players[p.id] = { ...p.stats, longestGapS, activity: { startAtS: startAt, endAtS: endAt, initialGapS, betweenActionsGapS, terminalGapS, noActionGapS: p.stats.gameActions ? null : endAt - startAt }, finalSeat: lastSummary[p.id]?.station ?? null, finished: p.done };
     try {
       if (p.dialog) { await p.dialog.dismiss().catch(() => {}); p.dialog = null; }
       const png = await withTimeout(p.page.screenshot({ type: 'png' }), 8000, 'final shot');
@@ -599,8 +623,10 @@ function startApi() {
       send(500, { out: String(e) });
     }
   });
-  srv.listen(PORT, '127.0.0.1');
-  return srv;
+  return new Promise((resolve, reject) => {
+    srv.once('error', reject);
+    srv.listen(PORT, '127.0.0.1', () => { srv.off('error', reject); resolve(srv); });
+  });
 }
 
 // ------------------------------------------------------------------ main
@@ -608,7 +634,7 @@ function startApi() {
 const meta = { round: ROUND, startedAt: new Date().toISOString(), minutes: MINUTES, speedScale: SPEED_SCALE, lobby: LOBBY, players: PLAYERS, port: PORT, native: NATIVE, view: VIEW };
 console.log(`Round ${ROUND}: building game…`);
 meta.build = build();
-await serveGame();
+const gameServer = await serveGame();
 const launch = findBrowser();
 meta.browser = launch;
 browser = await chromium.launch({
@@ -634,12 +660,23 @@ if (LOBBY === 'auto') {
     process.exit(3);
   }
 }
-// The session clock starts once the stations are ready for the players.
+// Readiness requires a successful API bind, not merely a scheduled listen call.
+try {
+  await startApi();
+} catch (error) {
+  const diagnostic = `API startup failed: ${error?.stack ?? error}`;
+  fs.writeFileSync(path.join(RUN_DIR, 'startup-error.txt'), diagnostic);
+  console.error(diagnostic);
+  await browser.close().catch(() => {});
+  gameServer.close();
+  process.exit(3);
+}
+// The session clock starts only after the API can accept player commands.
 deadline = Date.now() + MINUTES * 60_000;
-startApi();
+observationStartAt = Math.round(elapsed() / 1000);
 setInterval(() => poll().catch((e) => logEvent({ ev: 'harness-error', text: `poll: ${e}` })), 10_000);
 poll().catch(() => {});
 logEvent({ ev: 'ready' });
-console.log(`READY round=${ROUND} players=${PLAYERS} lobby=${LOBBY} minutes=${MINUTES} api=http://127.0.0.1:${PORT} run=${RUN_DIR}`);
+console.log(`READY round=${ROUND} players=${PLAYERS} lobby=${LOBBY} minutes=${MINUTES} pid=${process.pid} api=http://127.0.0.1:${PORT} run=${RUN_DIR}`);
 process.on('SIGINT', () => finalize('interrupted'));
 process.on('SIGTERM', () => finalize('interrupted'));

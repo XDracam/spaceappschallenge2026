@@ -1,0 +1,3218 @@
+[
+  {
+    "path": ".claude/launch.json",
+    "status": "tracked",
+    "bytes": 196,
+    "kind": ".json"
+  },
+  {
+    "path": ".github/workflows/pages.yml",
+    "status": "tracked",
+    "bytes": 1232,
+    "kind": ".yml"
+  },
+  {
+    "path": ".gitignore",
+    "status": "tracked",
+    "bytes": 182,
+    "kind": "(none)"
+  },
+  {
+    "path": "AGENTS.md",
+    "status": "tracked",
+    "bytes": 4107,
+    "kind": ".md"
+  },
+  {
+    "path": "LICENSE",
+    "status": "tracked",
+    "bytes": 9142,
+    "kind": "(none)"
+  },
+  {
+    "path": "README.md",
+    "status": "tracked",
+    "bytes": 11323,
+    "kind": ".md"
+  },
+  {
+    "path": "THIRD_PARTY.md",
+    "status": "tracked",
+    "bytes": 17725,
+    "kind": ".md"
+  },
+  {
+    "path": "communications/README.md",
+    "status": "tracked",
+    "bytes": 9618,
+    "kind": ".md"
+  },
+  {
+    "path": "communications/mockups/layouts.html",
+    "status": "tracked",
+    "bytes": 17949,
+    "kind": ".html"
+  },
+  {
+    "path": "communications/notes/2026-11-14-comms-questions.md",
+    "status": "tracked",
+    "bytes": 3935,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/README.md",
+    "status": "tracked",
+    "bytes": 15771,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/brainstorm.md",
+    "status": "tracked",
+    "bytes": 5754,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/challenge.md",
+    "status": "tracked",
+    "bytes": 3791,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/concept.md",
+    "status": "tracked",
+    "bytes": 4420,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/decisions.md",
+    "status": "tracked",
+    "bytes": 41123,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/events.md",
+    "status": "tracked",
+    "bytes": 3033,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/integration.md",
+    "status": "tracked",
+    "bytes": 10852,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/mission-flow.md",
+    "status": "tracked",
+    "bytes": 2713,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/personnel.md",
+    "status": "tracked",
+    "bytes": 2562,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/roles.md",
+    "status": "tracked",
+    "bytes": 6909,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/design/shared-tasks.md",
+    "status": "tracked",
+    "bytes": 6795,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/ideas.md",
+    "status": "tracked",
+    "bytes": 49732,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-accessible-gameplay.md",
+    "status": "tracked",
+    "bytes": 574,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-brainstorm.md",
+    "status": "tracked",
+    "bytes": 1884,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-catalogue-gameplay.md",
+    "status": "tracked",
+    "bytes": 936,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-full-hd-mockup.md",
+    "status": "tracked",
+    "bytes": 400,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-gameplay-ux-audit-request.md",
+    "status": "tracked",
+    "bytes": 987,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-integration-questions.md",
+    "status": "tracked",
+    "bytes": 1539,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-kickoff.md",
+    "status": "tracked",
+    "bytes": 1644,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-personnel-tasks-roles.md",
+    "status": "tracked",
+    "bytes": 4079,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-player-stations.md",
+    "status": "tracked",
+    "bytes": 1303,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-alignment.md",
+    "status": "tracked",
+    "bytes": 857,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-interfaces.md",
+    "status": "tracked",
+    "bytes": 520,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-order-approval.md",
+    "status": "tracked",
+    "bytes": 502,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-order-decisions.md",
+    "status": "tracked",
+    "bytes": 4308,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-order-options.md",
+    "status": "tracked",
+    "bytes": 4509,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-planner-style.md",
+    "status": "tracked",
+    "bytes": 1382,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-prototype.md",
+    "status": "tracked",
+    "bytes": 417,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-research-clarification.md",
+    "status": "tracked",
+    "bytes": 485,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-scenarios.md",
+    "status": "tracked",
+    "bytes": 291,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-stack-and-gameplay.md",
+    "status": "tracked",
+    "bytes": 463,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-terminology.md",
+    "status": "tracked",
+    "bytes": 773,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-ui-flow-request.md",
+    "status": "tracked",
+    "bytes": 345,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-procurement-workflows.md",
+    "status": "tracked",
+    "bytes": 466,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-role-actions.md",
+    "status": "tracked",
+    "bytes": 441,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-science-module.md",
+    "status": "tracked",
+    "bytes": 9955,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-tasks-and-conversation.md",
+    "status": "tracked",
+    "bytes": 637,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-taxonomy.md",
+    "status": "tracked",
+    "bytes": 372,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-ui-agent-skills.md",
+    "status": "tracked",
+    "bytes": 359,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-ui-skills-integration.md",
+    "status": "tracked",
+    "bytes": 577,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-14-visual-aesthetic.md",
+    "status": "tracked",
+    "bytes": 699,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-audio-audition.md",
+    "status": "tracked",
+    "bytes": 6867,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-audio-integration.md",
+    "status": "tracked",
+    "bytes": 7923,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-github-pages-domain.md",
+    "status": "tracked",
+    "bytes": 476,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-overnight-playtest-autonomy.md",
+    "status": "tracked",
+    "bytes": 1030,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-procurement-artwork.md",
+    "status": "tracked",
+    "bytes": 3226,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-publication-cleanup.md",
+    "status": "tracked",
+    "bytes": 5871,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-publication-license.md",
+    "status": "tracked",
+    "bytes": 2574,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-release-fixes-approval.md",
+    "status": "tracked",
+    "bytes": 653,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-task-consolidation.md",
+    "status": "tracked",
+    "bytes": 1277,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-task-coordination.md",
+    "status": "tracked",
+    "bytes": 1501,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-task-unification-approval.md",
+    "status": "tracked",
+    "bytes": 744,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-title-screen.md",
+    "status": "tracked",
+    "bytes": 8939,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-14-agent-playtest-r001.md",
+    "status": "tracked",
+    "bytes": 5148,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-14-procurement-gameplay-iteration.md",
+    "status": "tracked",
+    "bytes": 14757,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-14-procurement-interface-walkthrough.md",
+    "status": "tracked",
+    "bytes": 6193,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-14-procurement-ui-audit.md",
+    "status": "tracked",
+    "bytes": 13255,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-agent-playtest-loop.md",
+    "status": "tracked",
+    "bytes": 14308,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-contract-needs-walkthrough.md",
+    "status": "tracked",
+    "bytes": 3482,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-order-integration-walkthrough.md",
+    "status": "tracked",
+    "bytes": 6117,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-release-fixes-walkthrough.md",
+    "status": "tracked",
+    "bytes": 11734,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-task-consolidation-walkthrough.md",
+    "status": "tracked",
+    "bytes": 4602,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-task-coordination-merge-walkthrough.md",
+    "status": "tracked",
+    "bytes": 5248,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-task-coordination-walkthrough.md",
+    "status": "tracked",
+    "bytes": 6645,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-task-unification-walkthrough.md",
+    "status": "tracked",
+    "bytes": 6021,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/2026-11-15-timeline-walkthrough.md",
+    "status": "tracked",
+    "bytes": 5209,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/playtests/TEMPLATE.md",
+    "status": "tracked",
+    "bytes": 1373,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/prototype.md",
+    "status": "tracked",
+    "bytes": 2689,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/questions.md",
+    "status": "tracked",
+    "bytes": 14482,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-14-cml-paper.md",
+    "status": "tracked",
+    "bytes": 8126,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-14-mission-planner-integration.md",
+    "status": "tracked",
+    "bytes": 9924,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-14-procurement-gameplay-ux.md",
+    "status": "tracked",
+    "bytes": 19108,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-14-second-planner-pull.md",
+    "status": "tracked",
+    "bytes": 7344,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-audio-plan.md",
+    "status": "tracked",
+    "bytes": 5766,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-contract-views.md",
+    "status": "tracked",
+    "bytes": 7406,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-in-game-style-audit.md",
+    "status": "tracked",
+    "bytes": 16843,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-task-coordination.md",
+    "status": "tracked",
+    "bytes": 8353,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-task-unification.md",
+    "status": "tracked",
+    "bytes": 4940,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/reviews/2026-11-15-two-level-release-audit.md",
+    "status": "tracked",
+    "bytes": 15594,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/setup.md",
+    "status": "tracked",
+    "bytes": 1968,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/submission-text.md",
+    "status": "tracked",
+    "bytes": 8801,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/submission-video-script.md",
+    "status": "tracked",
+    "bytes": 7986,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/taxonomy.md",
+    "status": "tracked",
+    "bytes": 9506,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/ui-agent-skills-research.md",
+    "status": "tracked",
+    "bytes": 6840,
+    "kind": ".md"
+  },
+  {
+    "path": "game/.gitignore",
+    "status": "tracked",
+    "bytes": 24,
+    "kind": "(none)"
+  },
+  {
+    "path": "game/index.html",
+    "status": "tracked",
+    "bytes": 574,
+    "kind": ".html"
+  },
+  {
+    "path": "game/package-lock.json",
+    "status": "tracked",
+    "bytes": 67238,
+    "kind": ".json"
+  },
+  {
+    "path": "game/package.json",
+    "status": "tracked",
+    "bytes": 427,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/LICENSE.txt",
+    "status": "tracked",
+    "bytes": 9142,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/THIRD_PARTY_NOTICES.txt",
+    "status": "tracked",
+    "bytes": 36839,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/CREDITS.md",
+    "status": "tracked",
+    "bytes": 15476,
+    "kind": ".md"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-brandon-point-bell.mp3",
+    "status": "tracked",
+    "bytes": 14547,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-cynic-cinematic.mp3",
+    "status": "tracked",
+    "bytes": 216639,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-fite-brass.mp3",
+    "status": "tracked",
+    "bytes": 186771,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-fupi-fretless.mp3",
+    "status": "tracked",
+    "bytes": 33432,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-listener-win.mp3",
+    "status": "tracked",
+    "bytes": 59224,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/achievement-qubodup-ethereal.mp3",
+    "status": "tracked",
+    "bytes": 37803,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/attention-bong-001.mp3",
+    "status": "tracked",
+    "bytes": 1554,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/attention-question-001.mp3",
+    "status": "tracked",
+    "bytes": 3218,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/attention-question-002.mp3",
+    "status": "tracked",
+    "bytes": 2308,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/attention-question-003.mp3",
+    "status": "tracked",
+    "bytes": 2700,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/attention-question-004.mp3",
+    "status": "tracked",
+    "bytes": 2204,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/completion-confirmation-001.mp3",
+    "status": "tracked",
+    "bytes": 2568,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/completion-confirmation-002.mp3",
+    "status": "tracked",
+    "bytes": 4706,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/completion-confirmation-003.mp3",
+    "status": "tracked",
+    "bytes": 3325,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/completion-confirmation-004.mp3",
+    "status": "tracked",
+    "bytes": 3897,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/completion-maximize-001.mp3",
+    "status": "tracked",
+    "bytes": 4372,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/confirmation-pluck-001.mp3",
+    "status": "tracked",
+    "bytes": 2103,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/confirmation-select-001.mp3",
+    "status": "tracked",
+    "bytes": 1686,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/confirmation-select-002.mp3",
+    "status": "tracked",
+    "bytes": 1634,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/confirmation-select-003.mp3",
+    "status": "tracked",
+    "bytes": 4579,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/confirmation-select-004.mp3",
+    "status": "tracked",
+    "bytes": 4475,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-nasa-artemis-pad.mp3",
+    "status": "tracked",
+    "bytes": 165931,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-phasejump1.mp3",
+    "status": "tracked",
+    "bytes": 8076,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-phasejump2.mp3",
+    "status": "tracked",
+    "bytes": 6981,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-phasejump3.mp3",
+    "status": "tracked",
+    "bytes": 7868,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-phasejump4.mp3",
+    "status": "tracked",
+    "bytes": 9226,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/launch-rocket-launch-antti-luode.mp3",
+    "status": "tracked",
+    "bytes": 90094,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-deep-space-array.mp3",
+    "status": "tracked",
+    "bytes": 809339,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-magnificent-cosmos.mp3",
+    "status": "tracked",
+    "bytes": 1426150,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-outer-space.mp3",
+    "status": "tracked",
+    "bytes": 1153758,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-space-ambient.mp3",
+    "status": "tracked",
+    "bytes": 1169322,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-space-graveyard.mp3",
+    "status": "tracked",
+    "bytes": 862685,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/music-spacelifeno14.mp3",
+    "status": "tracked",
+    "bytes": 992529,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/setback-highdown.mp3",
+    "status": "tracked",
+    "bytes": 5884,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/setback-lowdown.mp3",
+    "status": "tracked",
+    "bytes": 4650,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/setback-phaserdown1.mp3",
+    "status": "tracked",
+    "bytes": 10166,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/setback-phaserdown2.mp3",
+    "status": "tracked",
+    "bytes": 6828,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audio/setback-phaserdown3.mp3",
+    "status": "tracked",
+    "bytes": 10244,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio-audit/audit.css",
+    "status": "tracked",
+    "bytes": 10288,
+    "kind": ".css"
+  },
+  {
+    "path": "game/public/audio-audit/audit.js",
+    "status": "tracked",
+    "bytes": 17584,
+    "kind": ".js"
+  },
+  {
+    "path": "game/public/audio-audit/candidates.json",
+    "status": "tracked",
+    "bytes": 44754,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio-audit/earth.webp",
+    "status": "tracked",
+    "bytes": 116856,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/audio-audit/index.html",
+    "status": "tracked",
+    "bytes": 4078,
+    "kind": ".html"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-brandon-source.html.txt",
+    "status": "tracked",
+    "bytes": 32428,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-cynic-source.html.txt",
+    "status": "tracked",
+    "bytes": 32140,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-fite-source.html.txt",
+    "status": "tracked",
+    "bytes": 23638,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-fupi-source.html.txt",
+    "status": "tracked",
+    "bytes": 35350,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-listener-source.html.txt",
+    "status": "tracked",
+    "bytes": 37811,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/achievement-qubodup-source.html.txt",
+    "status": "tracked",
+    "bytes": 34223,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/antti-luode-source.json",
+    "status": "tracked",
+    "bytes": 2372,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/deep-space-array.html.txt",
+    "status": "tracked",
+    "bytes": 39345,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/kenney-digital-CC0.txt",
+    "status": "tracked",
+    "bytes": 6974,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/kenney-digital-source.txt",
+    "status": "tracked",
+    "bytes": 1114,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/kenney-interface-CC0.txt",
+    "status": "tracked",
+    "bytes": 553,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/nasa-source.json",
+    "status": "tracked",
+    "bytes": 3267,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/outer-space-loop.html.txt",
+    "status": "tracked",
+    "bytes": 24928,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/rejected-achievement-powerups.json",
+    "status": "tracked",
+    "bytes": 6066,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/source.html.txt",
+    "status": "tracked",
+    "bytes": 38184,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/space-graveyard-ambient-track.html.txt",
+    "status": "tracked",
+    "bytes": 26347,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/spacelife-14.html.txt",
+    "status": "tracked",
+    "bytes": 44582,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio-audit/licenses/the-magnificent-cosmos.html.txt",
+    "status": "tracked",
+    "bytes": 29412,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio/CREDITS.txt",
+    "status": "tracked",
+    "bytes": 2467,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio/achievement.mp3",
+    "status": "tracked",
+    "bytes": 216639,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/attention.mp3",
+    "status": "tracked",
+    "bytes": 2204,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/completion.mp3",
+    "status": "tracked",
+    "bytes": 4706,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/confirmation.mp3",
+    "status": "tracked",
+    "bytes": 1686,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/launch.mp3",
+    "status": "tracked",
+    "bytes": 165931,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/licenses/achievement-cynic-source.html.txt",
+    "status": "tracked",
+    "bytes": 32140,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio/licenses/kenney-interface-CC0.txt",
+    "status": "tracked",
+    "bytes": 553,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio/licenses/nasa-source.json",
+    "status": "tracked",
+    "bytes": 3267,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio/licenses/the-magnificent-cosmos.html.txt",
+    "status": "tracked",
+    "bytes": 29412,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/audio/music.mp3",
+    "status": "tracked",
+    "bytes": 2837405,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/audio/selected.json",
+    "status": "tracked",
+    "bytes": 8873,
+    "kind": ".json"
+  },
+  {
+    "path": "game/public/audio/setback.mp3",
+    "status": "tracked",
+    "bytes": 4650,
+    "kind": ".mp3"
+  },
+  {
+    "path": "game/public/portraits/brandt.webp",
+    "status": "tracked",
+    "bytes": 21896,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/castellanos.webp",
+    "status": "tracked",
+    "bytes": 27068,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/duarte.webp",
+    "status": "tracked",
+    "bytes": 22140,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/feld.webp",
+    "status": "tracked",
+    "bytes": 16650,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/haddad.webp",
+    "status": "tracked",
+    "bytes": 21418,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/harlan.webp",
+    "status": "tracked",
+    "bytes": 20832,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/kowalski.webp",
+    "status": "tracked",
+    "bytes": 21158,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/lindqvist.webp",
+    "status": "tracked",
+    "bytes": 22814,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/moreau.webp",
+    "status": "tracked",
+    "bytes": 19446,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/okafor.webp",
+    "status": "tracked",
+    "bytes": 18054,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/osei.webp",
+    "status": "tracked",
+    "bytes": 16036,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/raman.webp",
+    "status": "tracked",
+    "bytes": 22724,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/reyes.webp",
+    "status": "tracked",
+    "bytes": 23708,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/salo.webp",
+    "status": "tracked",
+    "bytes": 24248,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/portraits/whitfield.webp",
+    "status": "tracked",
+    "bytes": 29238,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/public/submission/T-Minus-Submission.mp4",
+    "status": "tracked",
+    "bytes": 16777426,
+    "kind": ".mp4"
+  },
+  {
+    "path": "game/public/submission/credits.txt",
+    "status": "tracked",
+    "bytes": 2401,
+    "kind": ".txt"
+  },
+  {
+    "path": "game/public/submission/index.html",
+    "status": "tracked",
+    "bytes": 1811,
+    "kind": ".html"
+  },
+  {
+    "path": "game/public/submission/poster.jpg",
+    "status": "tracked",
+    "bytes": 162234,
+    "kind": ".jpg"
+  },
+  {
+    "path": "game/src/audio/SoundSettings.tsx",
+    "status": "tracked",
+    "bytes": 1551,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/audio/gameAudio.ts",
+    "status": "tracked",
+    "bytes": 10990,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/audio/sound-settings.css",
+    "status": "tracked",
+    "bytes": 2626,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/core/actions.ts",
+    "status": "tracked",
+    "bytes": 5231,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/clock.ts",
+    "status": "tracked",
+    "bytes": 762,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/coordination.ts",
+    "status": "tracked",
+    "bytes": 53715,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/coreActions.ts",
+    "status": "tracked",
+    "bytes": 7244,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/createStore.ts",
+    "status": "tracked",
+    "bytes": 1459,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/facilities.ts",
+    "status": "tracked",
+    "bytes": 5730,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/mission.ts",
+    "status": "tracked",
+    "bytes": 1245,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/model.ts",
+    "status": "tracked",
+    "bytes": 11171,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/persist.ts",
+    "status": "tracked",
+    "bytes": 6391,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/playtestHook.ts",
+    "status": "tracked",
+    "bytes": 1500,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/protocol.ts",
+    "status": "tracked",
+    "bytes": 1319,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/registerStations.ts",
+    "status": "tracked",
+    "bytes": 403,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/score.ts",
+    "status": "tracked",
+    "bytes": 4627,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/state.ts",
+    "status": "tracked",
+    "bytes": 2483,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/core/store.ts",
+    "status": "tracked",
+    "bytes": 8705,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/main.tsx",
+    "status": "tracked",
+    "bytes": 533,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/net/codes.ts",
+    "status": "tracked",
+    "bytes": 3033,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/net/peerjs.ts",
+    "status": "tracked",
+    "bytes": 16511,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/net/webrtc.ts",
+    "status": "tracked",
+    "bytes": 14427,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shared/confirmation.ts",
+    "status": "tracked",
+    "bytes": 794,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shared/events/engine.ts",
+    "status": "tracked",
+    "bytes": 5091,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shared/events/types.ts",
+    "status": "tracked",
+    "bytes": 7149,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shared/taskDraft.ts",
+    "status": "tracked",
+    "bytes": 510,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shared/uuid.ts",
+    "status": "tracked",
+    "bytes": 601,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shell/App.tsx",
+    "status": "tracked",
+    "bytes": 3372,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/ConfirmationPanel.tsx",
+    "status": "tracked",
+    "bytes": 1661,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/FacilityArt.tsx",
+    "status": "tracked",
+    "bytes": 11736,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/Lobby.tsx",
+    "status": "tracked",
+    "bytes": 28390,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/LobbyIcon.tsx",
+    "status": "tracked",
+    "bytes": 1470,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/ResultOverlay.tsx",
+    "status": "tracked",
+    "bytes": 3787,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/ResultRecoveryActions.tsx",
+    "status": "tracked",
+    "bytes": 729,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/StationSwitcher.tsx",
+    "status": "tracked",
+    "bytes": 6495,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/TaskBoard.tsx",
+    "status": "tracked",
+    "bytes": 24092,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/TitleScene.tsx",
+    "status": "tracked",
+    "bytes": 259,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/shell/assets/title-earth.webp",
+    "status": "tracked",
+    "bytes": 104844,
+    "kind": ".webp"
+  },
+  {
+    "path": "game/src/shell/session.ts",
+    "status": "tracked",
+    "bytes": 12745,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shell/shell.css",
+    "status": "tracked",
+    "bytes": 37407,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/shell/station-corners.css",
+    "status": "tracked",
+    "bytes": 1327,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/shell/stations.ts",
+    "status": "tracked",
+    "bytes": 899,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/shell/tasks.css",
+    "status": "tracked",
+    "bytes": 5484,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/comms/Station.tsx",
+    "status": "tracked",
+    "bytes": 206,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/data/characters.ts",
+    "status": "tracked",
+    "bytes": 3630,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/content.ts",
+    "status": "tracked",
+    "bytes": 3622,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/helpers.ts",
+    "status": "tracked",
+    "bytes": 5502,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/eventsPool.ts",
+    "status": "tracked",
+    "bytes": 17748,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/eventsTimeline.ts",
+    "status": "tracked",
+    "bytes": 10253,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/eventsTriggered.ts",
+    "status": "tracked",
+    "bytes": 17928,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/inFlight.ts",
+    "status": "tracked",
+    "bytes": 2526,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/index.ts",
+    "status": "tracked",
+    "bytes": 319,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mars/projects.ts",
+    "status": "tracked",
+    "bytes": 8552,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/mission.ts",
+    "status": "tracked",
+    "bytes": 1082,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/eventsPool.ts",
+    "status": "tracked",
+    "bytes": 14533,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/eventsTimeline.ts",
+    "status": "tracked",
+    "bytes": 8205,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/eventsTriggered.ts",
+    "status": "tracked",
+    "bytes": 14493,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/inFlight.ts",
+    "status": "tracked",
+    "bytes": 2079,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/index.ts",
+    "status": "tracked",
+    "bytes": 314,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/moon/projects.ts",
+    "status": "tracked",
+    "bytes": 4773,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/eventsPool.ts",
+    "status": "tracked",
+    "bytes": 12641,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/eventsTimeline.ts",
+    "status": "tracked",
+    "bytes": 8176,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/eventsTriggered.ts",
+    "status": "tracked",
+    "bytes": 11973,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/inFlight.ts",
+    "status": "tracked",
+    "bytes": 2212,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/index.ts",
+    "status": "tracked",
+    "bytes": 331,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/data/weather/projects.ts",
+    "status": "tracked",
+    "bytes": 5979,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/logic.ts",
+    "status": "tracked",
+    "bytes": 2143,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/model/types.ts",
+    "status": "tracked",
+    "bytes": 1535,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/slice.ts",
+    "status": "tracked",
+    "bytes": 1569,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/state/format.ts",
+    "status": "tracked",
+    "bytes": 3699,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/state/world.ts",
+    "status": "tracked",
+    "bytes": 26323,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/ui/App.tsx",
+    "status": "tracked",
+    "bytes": 1462,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/Conversation.tsx",
+    "status": "tracked",
+    "bytes": 6389,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/DevDrawer.tsx",
+    "status": "tracked",
+    "bytes": 4516,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/Header.tsx",
+    "status": "tracked",
+    "bytes": 4644,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/Inbox.tsx",
+    "status": "tracked",
+    "bytes": 5598,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/NewsFeed.tsx",
+    "status": "tracked",
+    "bytes": 1954,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/Overlays.tsx",
+    "status": "tracked",
+    "bytes": 4142,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/Projects.tsx",
+    "status": "tracked",
+    "bytes": 11844,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/TrustBar.tsx",
+    "status": "tracked",
+    "bytes": 3896,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/common.tsx",
+    "status": "tracked",
+    "bytes": 15493,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/comms/ui/format.ts",
+    "status": "tracked",
+    "bytes": 866,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/ui/store.ts",
+    "status": "tracked",
+    "bytes": 5539,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/comms/ui/styles.css",
+    "status": "tracked",
+    "bytes": 37630,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/planner/Station.tsx",
+    "status": "tracked",
+    "bytes": 348,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/data/bodies.ts",
+    "status": "tracked",
+    "bytes": 6656,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/data/missions/marsOrbiterLander.ts",
+    "status": "tracked",
+    "bytes": 4397,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/data/missions/moonLander.ts",
+    "status": "tracked",
+    "bytes": 6129,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/data/missions/weatherGeo.ts",
+    "status": "tracked",
+    "bytes": 7060,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/data/parts.ts",
+    "status": "tracked",
+    "bytes": 12443,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/data/propulsion.ts",
+    "status": "tracked",
+    "bytes": 2381,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/derive.ts",
+    "status": "tracked",
+    "bytes": 10255,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/fix.ts",
+    "status": "tracked",
+    "bytes": 6767,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/logic.ts",
+    "status": "tracked",
+    "bytes": 17981,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/map/MapCanvas.tsx",
+    "status": "tracked",
+    "bytes": 1632,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/map/projection.ts",
+    "status": "tracked",
+    "bytes": 1549,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/map/renderer.ts",
+    "status": "tracked",
+    "bytes": 65268,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/map/sprites.ts",
+    "status": "tracked",
+    "bytes": 10776,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/map/style.ts",
+    "status": "tracked",
+    "bytes": 2216,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/model/rocketUtils.ts",
+    "status": "tracked",
+    "bytes": 2468,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/model/types.ts",
+    "status": "tracked",
+    "bytes": 16396,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/model/units.ts",
+    "status": "tracked",
+    "bytes": 1813,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/ephemeris.ts",
+    "status": "tracked",
+    "bytes": 2857,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/evaluate.ts",
+    "status": "tracked",
+    "bytes": 34769,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/goals.ts",
+    "status": "tracked",
+    "bytes": 2363,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/index.ts",
+    "status": "tracked",
+    "bytes": 1749,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/kepler.ts",
+    "status": "tracked",
+    "bytes": 2168,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/labels.ts",
+    "status": "tracked",
+    "bytes": 1507,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/lambert.ts",
+    "status": "tracked",
+    "bytes": 4960,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/options.ts",
+    "status": "tracked",
+    "bytes": 10953,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/playthrough.ts",
+    "status": "tracked",
+    "bytes": 7474,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/stack.ts",
+    "status": "tracked",
+    "bytes": 5048,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/transfers.ts",
+    "status": "tracked",
+    "bytes": 15693,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/physics/vec.ts",
+    "status": "tracked",
+    "bytes": 1036,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/result.ts",
+    "status": "tracked",
+    "bytes": 5391,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/slice.ts",
+    "status": "tracked",
+    "bytes": 830,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/state/store.ts",
+    "status": "tracked",
+    "bytes": 6260,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/ui/App.tsx",
+    "status": "tracked",
+    "bytes": 5203,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/BottomStrip.tsx",
+    "status": "tracked",
+    "bytes": 16424,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/Briefing.tsx",
+    "status": "tracked",
+    "bytes": 4267,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/Heatmap.tsx",
+    "status": "tracked",
+    "bytes": 17149,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/NextStep.tsx",
+    "status": "tracked",
+    "bytes": 7551,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/Playthrough.tsx",
+    "status": "tracked",
+    "bytes": 9034,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/Popups.tsx",
+    "status": "tracked",
+    "bytes": 26875,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/RocketTab.tsx",
+    "status": "tracked",
+    "bytes": 32689,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/Slider.tsx",
+    "status": "tracked",
+    "bytes": 6220,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/TopBar.tsx",
+    "status": "tracked",
+    "bytes": 9868,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/VersionsTab.tsx",
+    "status": "tracked",
+    "bytes": 5902,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/advanced.ts",
+    "status": "tracked",
+    "bytes": 831,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/planner/ui/common.tsx",
+    "status": "tracked",
+    "bytes": 14861,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/panels.css",
+    "status": "tracked",
+    "bytes": 12533,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/planner/ui/partInfo.tsx",
+    "status": "tracked",
+    "bytes": 5577,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/planner/ui/popups.css",
+    "status": "tracked",
+    "bytes": 3438,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/planner/ui/styles.css",
+    "status": "tracked",
+    "bytes": 57614,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/procurement/Station.tsx",
+    "status": "tracked",
+    "bytes": 1625,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/data/calls.ts",
+    "status": "tracked",
+    "bytes": 5233,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/data/catalogue.ts",
+    "status": "tracked",
+    "bytes": 13311,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/data/pricing.ts",
+    "status": "tracked",
+    "bytes": 2451,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/data/suppliers.ts",
+    "status": "tracked",
+    "bytes": 4118,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/logic.ts",
+    "status": "tracked",
+    "bytes": 21668,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/procurement.css",
+    "status": "tracked",
+    "bytes": 36031,
+    "kind": ".css"
+  },
+  {
+    "path": "game/src/stations/procurement/rules.ts",
+    "status": "tracked",
+    "bytes": 31544,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/slice.ts",
+    "status": "tracked",
+    "bytes": 532,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/timing.ts",
+    "status": "tracked",
+    "bytes": 2902,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Art.tsx",
+    "status": "tracked",
+    "bytes": 1929,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Catalogue.tsx",
+    "status": "tracked",
+    "bytes": 7704,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/ContractTimeline.tsx",
+    "status": "tracked",
+    "bytes": 9378,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/ContractsView.tsx",
+    "status": "tracked",
+    "bytes": 9598,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Dialog.tsx",
+    "status": "tracked",
+    "bytes": 11459,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Header.tsx",
+    "status": "tracked",
+    "bytes": 3123,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Inspector.tsx",
+    "status": "tracked",
+    "bytes": 22418,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/Needs.tsx",
+    "status": "tracked",
+    "bytes": 8834,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/NewsStrip.tsx",
+    "status": "tracked",
+    "bytes": 1846,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/ResearchSupport.tsx",
+    "status": "tracked",
+    "bytes": 7285,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/art/InstrumentsArt.tsx",
+    "status": "tracked",
+    "bytes": 5278,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/art/PropulsionArt.tsx",
+    "status": "tracked",
+    "bytes": 7676,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/art/StructuresArt.tsx",
+    "status": "tracked",
+    "bytes": 17891,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/procurement/ui/uiState.ts",
+    "status": "tracked",
+    "bytes": 5787,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/README.md",
+    "status": "tracked",
+    "bytes": 3940,
+    "kind": ".md"
+  },
+  {
+    "path": "game/src/stations/science/Station.tsx",
+    "status": "tracked",
+    "bytes": 187,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/science/data/flavour.ts",
+    "status": "tracked",
+    "bytes": 337,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/data/needs.ts",
+    "status": "tracked",
+    "bytes": 1509,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/data/techs.ts",
+    "status": "tracked",
+    "bytes": 11727,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/logic.ts",
+    "status": "tracked",
+    "bytes": 12132,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/model/needs.ts",
+    "status": "tracked",
+    "bytes": 1419,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/model/research.ts",
+    "status": "tracked",
+    "bytes": 7181,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/model/tests.ts",
+    "status": "tracked",
+    "bytes": 5963,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/model/tree.ts",
+    "status": "tracked",
+    "bytes": 12259,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/model/types.ts",
+    "status": "tracked",
+    "bytes": 1577,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/slice.ts",
+    "status": "tracked",
+    "bytes": 1344,
+    "kind": ".ts"
+  },
+  {
+    "path": "game/src/stations/science/ui/App.tsx",
+    "status": "tracked",
+    "bytes": 20001,
+    "kind": ".tsx"
+  },
+  {
+    "path": "game/src/stations/science/ui/styles.css",
+    "status": "tracked",
+    "bytes": 3766,
+    "kind": ".css"
+  },
+  {
+    "path": "game/tsconfig.json",
+    "status": "tracked",
+    "bytes": 463,
+    "kind": ".json"
+  },
+  {
+    "path": "game/vite.config.ts",
+    "status": "tracked",
+    "bytes": 363,
+    "kind": ".ts"
+  },
+  {
+    "path": "mission-planner/README.md",
+    "status": "tracked",
+    "bytes": 7952,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-build-decisions.md",
+    "status": "tracked",
+    "bytes": 1564,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-maneuvers-and-configurator.md",
+    "status": "tracked",
+    "bytes": 2891,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-solar-system-and-maneuvers.md",
+    "status": "tracked",
+    "bytes": 2606,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-ui-and-testing.md",
+    "status": "tracked",
+    "bytes": 1637,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-ui-feedback.md",
+    "status": "tracked",
+    "bytes": 2031,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-ux-review.md",
+    "status": "tracked",
+    "bytes": 4060,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-14-weather-mission.md",
+    "status": "tracked",
+    "bytes": 2566,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/notes/2026-11-15-third-mission-proposal.md",
+    "status": "tracked",
+    "bytes": 39291,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/procurement-interface.md",
+    "status": "tracked",
+    "bytes": 4636,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/rocket-configurator.md",
+    "status": "tracked",
+    "bytes": 9723,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/solar-system-and-maneuvers.md",
+    "status": "tracked",
+    "bytes": 10628,
+    "kind": ".md"
+  },
+  {
+    "path": "mission-planner/ui.md",
+    "status": "tracked",
+    "bytes": 8021,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/.gitignore",
+    "status": "tracked",
+    "bytes": 18,
+    "kind": "(none)"
+  },
+  {
+    "path": "playtest/NEXT.md",
+    "status": "tracked",
+    "bytes": 3444,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/README.md",
+    "status": "tracked",
+    "bytes": 6636,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/fixer.md",
+    "status": "tracked",
+    "bytes": 2655,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/judge.md",
+    "status": "tracked",
+    "bytes": 4036,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/package.md",
+    "status": "tracked",
+    "bytes": 4891,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/player.md",
+    "status": "tracked",
+    "bytes": 4214,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/rework.md",
+    "status": "tracked",
+    "bytes": 5570,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/briefs/triage.md",
+    "status": "tracked",
+    "bytes": 6997,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/changes.md",
+    "status": "tracked",
+    "bytes": 14465,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/harness/pt.mjs",
+    "status": "tracked",
+    "bytes": 689,
+    "kind": ".mjs"
+  },
+  {
+    "path": "playtest/harness/ptadmin.mjs",
+    "status": "tracked",
+    "bytes": 463,
+    "kind": ".mjs"
+  },
+  {
+    "path": "playtest/harness/server.mjs",
+    "status": "tracked",
+    "bytes": 32742,
+    "kind": ".mjs"
+  },
+  {
+    "path": "playtest/harness/start.mjs",
+    "status": "tracked",
+    "bytes": 2276,
+    "kind": ".mjs"
+  },
+  {
+    "path": "playtest/ledger.json",
+    "status": "tracked",
+    "bytes": 11085,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/loop/overnight.workflow.js",
+    "status": "tracked",
+    "bytes": 29854,
+    "kind": ".js"
+  },
+  {
+    "path": "playtest/morning.md",
+    "status": "tracked",
+    "bytes": 15399,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/package-lock.json",
+    "status": "tracked",
+    "bytes": 704,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/package.json",
+    "status": "tracked",
+    "bytes": 333,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/contract.json",
+    "status": "tracked",
+    "bytes": 4643,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/contract.md",
+    "status": "tracked",
+    "bytes": 10428,
+    "kind": ".md"
+  },
+  {
+    "path": "playtest/packages/d1.json",
+    "status": "tracked",
+    "bytes": 10893,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/d2.json",
+    "status": "tracked",
+    "bytes": 15298,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/judge-a.json",
+    "status": "tracked",
+    "bytes": 13472,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/judge-d1.json",
+    "status": "tracked",
+    "bytes": 15796,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/judge-d2.json",
+    "status": "tracked",
+    "bytes": 13270,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/judge-m.json",
+    "status": "tracked",
+    "bytes": 10334,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/packages/m.json",
+    "status": "tracked",
+    "bytes": 13548,
+    "kind": ".json"
+  },
+  {
+    "path": "playtest/rejected.md",
+    "status": "tracked",
+    "bytes": 588,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/README.md",
+    "status": "tracked",
+    "bytes": 14564,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/concepts/amendment-preview.jpg",
+    "status": "tracked",
+    "bytes": 130775,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/concepts/implemented-orders.jpg",
+    "status": "tracked",
+    "bytes": 103977,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/concepts/orders.html",
+    "status": "tracked",
+    "bytes": 29900,
+    "kind": ".html"
+  },
+  {
+    "path": "procurement/game-references.md",
+    "status": "tracked",
+    "bytes": 13502,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/gameplay.md",
+    "status": "tracked",
+    "bytes": 7643,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/interfaces.md",
+    "status": "tracked",
+    "bytes": 10058,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/mockups/README.md",
+    "status": "tracked",
+    "bytes": 6574,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/mockups/acquisition-plan.jpg",
+    "status": "tracked",
+    "bytes": 177078,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-audited.jpg",
+    "status": "tracked",
+    "bytes": 237034,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-clean.jpg",
+    "status": "tracked",
+    "bytes": 197328,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-dollars.jpg",
+    "status": "tracked",
+    "bytes": 194152,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-focused.jpg",
+    "status": "tracked",
+    "bytes": 229229,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-full-hd.html",
+    "status": "tracked",
+    "bytes": 28380,
+    "kind": ".html"
+  },
+  {
+    "path": "procurement/mockups/catalogue-full-hd.jpg",
+    "status": "tracked",
+    "bytes": 218978,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-full-hd.js",
+    "status": "tracked",
+    "bytes": 72701,
+    "kind": ".js"
+  },
+  {
+    "path": "procurement/mockups/catalogue-icons.jpg",
+    "status": "tracked",
+    "bytes": 187503,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-improved.jpg",
+    "status": "tracked",
+    "bytes": 218598,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-planner-style.jpg",
+    "status": "tracked",
+    "bytes": 229829,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/catalogue-station.jpg",
+    "status": "tracked",
+    "bytes": 236319,
+    "kind": ".jpg"
+  },
+  {
+    "path": "procurement/mockups/icons/LICENSE",
+    "status": "tracked",
+    "bytes": 880,
+    "kind": "(none)"
+  },
+  {
+    "path": "procurement/mockups/icons/README.md",
+    "status": "tracked",
+    "bytes": 298,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/mockups/icons/lucide.js",
+    "status": "tracked",
+    "bytes": 2759,
+    "kind": ".js"
+  },
+  {
+    "path": "procurement/mockups/planner-theme.css",
+    "status": "tracked",
+    "bytes": 17293,
+    "kind": ".css"
+  },
+  {
+    "path": "procurement/order-concept.md",
+    "status": "tracked",
+    "bytes": 21263,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/prototype-review.md",
+    "status": "tracked",
+    "bytes": 6022,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/research-design-alternatives.md",
+    "status": "tracked",
+    "bytes": 28613,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/role-actions.md",
+    "status": "tracked",
+    "bytes": 6066,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/scenarios.md",
+    "status": "tracked",
+    "bytes": 5081,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/state-walkthroughs.md",
+    "status": "tracked",
+    "bytes": 11806,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/tasks-and-conversation.md",
+    "status": "tracked",
+    "bytes": 5265,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/timeline-design.md",
+    "status": "tracked",
+    "bytes": 18889,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/ui-flow-research.md",
+    "status": "tracked",
+    "bytes": 18633,
+    "kind": ".md"
+  },
+  {
+    "path": "procurement/workflows.md",
+    "status": "tracked",
+    "bytes": 7834,
+    "kind": ".md"
+  },
+  {
+    "path": "science/README.md",
+    "status": "tracked",
+    "bytes": 6564,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-15-https-handover.md",
+    "status": "pre-existing untracked",
+    "bytes": 3006,
+    "kind": ".md"
+  },
+  {
+    "path": "docs/notes/2026-11-16-pages-https-research.md",
+    "status": "pre-existing untracked",
+    "bytes": 4927,
+    "kind": ".md"
+  },
+  {
+    "path": "video/submission/Mission-Control-Submission.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 4216161,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/README.md",
+    "status": "pre-existing untracked",
+    "bytes": 1300,
+    "kind": ".md"
+  },
+  {
+    "path": "video/submission/VIDEO-DESCRIPTION.txt",
+    "status": "pre-existing untracked",
+    "bytes": 1825,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/camera-after.png",
+    "status": "pre-existing untracked",
+    "bytes": 931988,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/camera-before.png",
+    "status": "pre-existing untracked",
+    "bytes": 925562,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/captions.ass",
+    "status": "pre-existing untracked",
+    "bytes": 2777,
+    "kind": ".ass"
+  },
+  {
+    "path": "video/submission/assets/capture.json",
+    "status": "pre-existing untracked",
+    "bytes": 660,
+    "kind": ".json"
+  },
+  {
+    "path": "video/submission/assets/comms.png",
+    "status": "pre-existing untracked",
+    "bytes": 307293,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/ending.png",
+    "status": "pre-existing untracked",
+    "bytes": 968796,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/evaluation.png",
+    "status": "pre-existing untracked",
+    "bytes": 968546,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/opening.png",
+    "status": "pre-existing untracked",
+    "bytes": 873532,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/procurement.png",
+    "status": "pre-existing untracked",
+    "bytes": 691091,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/review.jpg",
+    "status": "pre-existing untracked",
+    "bytes": 98066,
+    "kind": ".jpg"
+  },
+  {
+    "path": "video/submission/assets/science.png",
+    "status": "pre-existing untracked",
+    "bytes": 263535,
+    "kind": ".png"
+  },
+  {
+    "path": "video/submission/assets/voice-0.txt",
+    "status": "pre-existing untracked",
+    "bytes": 50,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/voice-0.wav",
+    "status": "pre-existing untracked",
+    "bytes": 230246,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/submission/assets/voice-1.txt",
+    "status": "pre-existing untracked",
+    "bytes": 66,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/voice-1.wav",
+    "status": "pre-existing untracked",
+    "bytes": 346670,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/submission/assets/voice-2.txt",
+    "status": "pre-existing untracked",
+    "bytes": 123,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/voice-2.wav",
+    "status": "pre-existing untracked",
+    "bytes": 596528,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/submission/assets/voice-3.txt",
+    "status": "pre-existing untracked",
+    "bytes": 63,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/voice-3.wav",
+    "status": "pre-existing untracked",
+    "bytes": 298160,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/submission/assets/voice-4.txt",
+    "status": "pre-existing untracked",
+    "bytes": 57,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/assets/voice-4.wav",
+    "status": "pre-existing untracked",
+    "bytes": 248768,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/submission/capture.mjs",
+    "status": "pre-existing untracked",
+    "bytes": 4124,
+    "kind": ".mjs"
+  },
+  {
+    "path": "video/submission/raw/assembled.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 10704397,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/concat.txt",
+    "status": "pre-existing untracked",
+    "bytes": 592,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/submission/raw/cut-0.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1777934,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-1.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 895381,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-2.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1688965,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-3.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1423049,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-4.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1742936,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-5.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 894707,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-6.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1559398,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/cut-7.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 727644,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/submission/raw/page@f0464bce618dfa25003ea9d123b8f933.webm",
+    "status": "pre-existing untracked",
+    "bytes": 3550167,
+    "kind": ".webm"
+  },
+  {
+    "path": "video/submission/raw/page@f2dd84aea72988e9a516de44f68bb134.webm",
+    "status": "pre-existing untracked",
+    "bytes": 3432941,
+    "kind": ".webm"
+  },
+  {
+    "path": "video/submission/render.py",
+    "status": "pre-existing untracked",
+    "bytes": 4952,
+    "kind": ".py"
+  },
+  {
+    "path": "video/t-minus/README.md",
+    "status": "pre-existing untracked",
+    "bytes": 1352,
+    "kind": ".md"
+  },
+  {
+    "path": "video/t-minus/T-Minus-Submission.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 16777426,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/VIDEO-DESCRIPTION.txt",
+    "status": "pre-existing untracked",
+    "bytes": 2401,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/capture.json",
+    "status": "pre-existing untracked",
+    "bytes": 725,
+    "kind": ".json"
+  },
+  {
+    "path": "video/t-minus/assets/comms.png",
+    "status": "pre-existing untracked",
+    "bytes": 311987,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/contract.png",
+    "status": "pre-existing untracked",
+    "bytes": 692535,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/flight.png",
+    "status": "pre-existing untracked",
+    "bytes": 929869,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/problem.png",
+    "status": "pre-existing untracked",
+    "bytes": 973818,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/procurement.png",
+    "status": "pre-existing untracked",
+    "bytes": 689737,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/ready.png",
+    "status": "pre-existing untracked",
+    "bytes": 971277,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/result.png",
+    "status": "pre-existing untracked",
+    "bytes": 339853,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/review.jpg",
+    "status": "pre-existing untracked",
+    "bytes": 169116,
+    "kind": ".jpg"
+  },
+  {
+    "path": "video/t-minus/assets/role-0.wav",
+    "status": "pre-existing untracked",
+    "bytes": 111176,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/role-1.wav",
+    "status": "pre-existing untracked",
+    "bytes": 104120,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/role-2.wav",
+    "status": "pre-existing untracked",
+    "bytes": 96182,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/role-3.wav",
+    "status": "pre-existing untracked",
+    "bytes": 63548,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/science-before.png",
+    "status": "pre-existing untracked",
+    "bytes": 263535,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/science.png",
+    "status": "pre-existing untracked",
+    "bytes": 265554,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/title.png",
+    "status": "pre-existing untracked",
+    "bytes": 1219368,
+    "kind": ".png"
+  },
+  {
+    "path": "video/t-minus/assets/trailer.ass",
+    "status": "pre-existing untracked",
+    "bytes": 3808,
+    "kind": ".ass"
+  },
+  {
+    "path": "video/t-minus/assets/voice-0.txt",
+    "status": "pre-existing untracked",
+    "bytes": 47,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-0.wav",
+    "status": "pre-existing untracked",
+    "bytes": 214370,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-1.txt",
+    "status": "pre-existing untracked",
+    "bytes": 16,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-1.wav",
+    "status": "pre-existing untracked",
+    "bytes": 91772,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-2.txt",
+    "status": "pre-existing untracked",
+    "bytes": 35,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-2.wav",
+    "status": "pre-existing untracked",
+    "bytes": 197612,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-3.txt",
+    "status": "pre-existing untracked",
+    "bytes": 81,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-3.wav",
+    "status": "pre-existing untracked",
+    "bytes": 404358,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-4.txt",
+    "status": "pre-existing untracked",
+    "bytes": 31,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-4.wav",
+    "status": "pre-existing untracked",
+    "bytes": 120878,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-5.txt",
+    "status": "pre-existing untracked",
+    "bytes": 31,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-5.wav",
+    "status": "pre-existing untracked",
+    "bytes": 116468,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/assets/voice-6.txt",
+    "status": "pre-existing untracked",
+    "bytes": 40,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/assets/voice-6.wav",
+    "status": "pre-existing untracked",
+    "bytes": 204668,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/capture.mjs",
+    "status": "pre-existing untracked",
+    "bytes": 5306,
+    "kind": ".mjs"
+  },
+  {
+    "path": "video/t-minus/raw/assembled.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 12865555,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/concat.txt",
+    "status": "pre-existing untracked",
+    "bytes": 804,
+    "kind": ".txt"
+  },
+  {
+    "path": "video/t-minus/raw/mix.wav",
+    "status": "pre-existing untracked",
+    "bytes": 5664078,
+    "kind": ".wav"
+  },
+  {
+    "path": "video/t-minus/raw/page@6e720c1673500df2e6dfb1f5f0cdb025.webm",
+    "status": "pre-existing untracked",
+    "bytes": 4520365,
+    "kind": ".webm"
+  },
+  {
+    "path": "video/t-minus/raw/scene-0.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1748201,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-1.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 760632,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-10.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 525040,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-2.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 508646,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-3.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1411211,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-4.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1213281,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-5.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1204348,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-6.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 2504866,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-7.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 822339,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-8.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 1462185,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/raw/scene-9.mp4",
+    "status": "pre-existing untracked",
+    "bytes": 712875,
+    "kind": ".mp4"
+  },
+  {
+    "path": "video/t-minus/render.py",
+    "status": "pre-existing untracked",
+    "bytes": 7403,
+    "kind": ".py"
+  }
+]

@@ -85,7 +85,9 @@ export function applyAction(state: GameState, action: Action): GameState {
     return state;
   }
   const draft = structuredClone(state);
-  fn(draft, makeCtx(draft, action.by), ...action.args);
+  // JSON turns optional array slots from undefined into null. Restore the
+  // omitted-argument semantics used by the typed local dispatchers.
+  fn(draft, makeCtx(draft, action.by), ...action.args.map(arg => arg === null ? undefined : arg));
   return share(state, draft, 3) as GameState;
 }
 

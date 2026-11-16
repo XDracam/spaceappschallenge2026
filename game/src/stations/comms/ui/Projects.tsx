@@ -1,4 +1,5 @@
-import { useEffect } from 'preact/hooks';
+import { useRef } from 'preact/hooks';
+import { useDialog } from '../../../shared/useDialog';
 import type { ActiveProject, Effect, ProjectDef, ProjectKind } from '../model/types';
 import type { Condition } from '../../../shared/events/types';
 import { useGame } from '../../../core/store';
@@ -118,8 +119,8 @@ function FlightOutlook() {
   const mean = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
   const points = Math.round((SCORE_WEIGHTS.trust * mean) / 100);
   const netText = Math.abs(net) < 1e-9 ? 'Net now 0 %: the flight neither gains nor loses.'
-    : net > 0 ? `Net now ${signedPct(net)}: each failed goal gets a ${Math.round(net * 100)} % chance to be saved in flight.`
-      : `Net now ${signedPct(net)}: each achieved goal has a ${Math.round(-net * 100)} % risk of being lost in flight.`;
+    : net > 0 ? `Net now ${signedPct(net)}: if the flight survives, physically achievable goals lost to part reliability each get a ${Math.round(net * 100)} % recovery chance.`
+      : `Net now ${signedPct(net)}: if the flight survives, each achieved goal has a ${Math.round(-net * 100)} % risk of being lost in flight.`;
   return (
     <div class="outlook">
       <div class="panel-head outlook-head">
@@ -171,17 +172,13 @@ export function ProjectPicker() {
   const free = Math.max(0, slots - projects.length);
   const close = () => uiStore.update((u) => { u.projectPickerOpen = false; });
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
+  const root = useRef<HTMLDivElement>(null);
+  useDialog({ open, root, onClose: close });
   if (!open) return null;
 
   return (
     <div class="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-      <div class="modal glass strong picker" role="dialog" aria-label="Start a project">
+      <div ref={root} tabIndex={-1} class="modal glass strong picker" role="dialog" aria-modal="true" aria-label="Start a project">
         <div class="modal-head">
           <div>
             <div class="modal-title display">Start a project</div>

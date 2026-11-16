@@ -1,0 +1,37 @@
+{
+  "video": "/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/page@f2dd84aea72988e9a516de44f68bb134.webm",
+  "marks": [
+    {
+      "name": "opening",
+      "at": 1794781558047
+    },
+    {
+      "name": "camera-before",
+      "at": 1794781563576
+    },
+    {
+      "name": "camera-after",
+      "at": 1794781566707
+    },
+    {
+      "name": "science",
+      "at": 1794781571777
+    },
+    {
+      "name": "procurement",
+      "at": 1794781575644
+    },
+    {
+      "name": "comms",
+      "at": 1794781580238
+    },
+    {
+      "name": "evaluation",
+      "at": 1794781584018
+    },
+    {
+      "name": "ending",
+      "at": 1794781590388
+    }
+  ]
+}

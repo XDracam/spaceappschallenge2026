@@ -1,3 +1,4 @@
+import { formatCalendarDate } from '../../../shared/format';
 // Right column: the active decision — a selected Resource with its Offers and the
 // fit check against a need, or the focused need with ranked suggestions.
 import type { Contract, Criterion, DeliveryOptionId, Offer, OrderDraft, Task } from '../../../core/model';
@@ -6,7 +7,7 @@ import { RESOURCES, RESOURCE_BY_ID, offersForResource } from '../data/catalogue'
 import { SUPPLIER_BY_ID } from '../data/suppliers';
 import { procurementActions } from '../logic';
 import {
-  DAYS_PER_MONTH, assessOffer, beyondKeys, bestDelivery, budgetAvailableM, callEstimate, criterionCoverage, deliveryOptions, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
+  DAYS_PER_MONTH, assessOffer, beyondKeys, bestDelivery, budgetAvailableM, callEstimate, criterionCoverage, deliveryOptions, dayToDate, describeBeyond, fitFailures, fmtDate, fmtM, fmtPct, fmtStatValue,
   isDraftTask, leadTimeDays, offersForCriterion, openTasks, partLabel, quoteAmendment, quoteOrder, quoteReplacement, rankAssessments, refundM, sameKind, statInfo, suggestion, orderedOption, stillToBuy, taskCode,
   type OfferAssessment, type PView,
 } from '../rules';
@@ -50,9 +51,9 @@ export function OfferRow({ a, selected, suggested, onClick, showName }: {
         {afterResearch
           ? <span>{Math.round(leadTimeDays(v, a.offer) / DAYS_PER_MONTH * 10) / 10} mo delivery after research</span>
           : a.rescue
-          ? <span class="warn">Priority {fmtDate(a.rescue.expectedAt).slice(0, -5)} · standard late</span>
+          ? <span class="warn">Priority {formatCalendarDate(dayToDate(a.rescue.expectedAt), { year: false })} · standard late</span>
           : opt.delivery !== 'standard'
-          ? <span class="warn">Priority {fmtDate(opt.expectedAt).slice(0, -5)} · late</span>
+          ? <span class="warn">Priority {formatCalendarDate(dayToDate(opt.expectedAt), { year: false })} · late</span>
           : <span class={a.late ? 'warn' : ''}>Arrives {fmtDate(a.expectedAt)}{a.late ? ' · late' : ''}</span>}
         <span>{fmtPct(a.offer.reliability)} reliable</span>
         {!a.unavailable && !a.lateAtBest && testable(v, arrival) ? <span class="good" title="Arrives early enough for Science to test it before launch. A test halves its risk of failure.">time to test</span> : null}
@@ -204,7 +205,7 @@ function ResourceInspector() {
               return (
                 <button type="button" key={o.id} class={`pr-schedule${delivery === o.id ? ' selected' : ''}`} aria-pressed={delivery === o.id} onClick={() => setUi({ delivery: o.id })}>
                   <strong>{o.id === 'priority' ? 'Priority' : 'Standard'}</strong><strong class="num">{fmtM(q.totalM)}</strong>
-                  <span class="pr-schedule-line">{fmtDate(q.expectedAt).slice(0, -5)} · <span class={q.late ? 'warn' : 'good'}>{q.late ? `${Math.round(q.expectedAt - task.neededAt)} d late` : testable(v, q.expectedAt) ? 'time to test' : 'on time'}</span></span>
+                  <span class="pr-schedule-line">{formatCalendarDate(dayToDate(q.expectedAt), { year: false })} · <span class={q.late ? 'warn' : 'good'}>{q.late ? `${Math.round(q.expectedAt - task.neededAt)} d late` : testable(v, q.expectedAt) ? 'time to test' : 'on time'}</span></span>
                 </button>
               );
             })}
@@ -267,7 +268,7 @@ function SpeedUp({ k, task }: { k: Contract; task: Task }) {
   return (
     <>
       <button type="button" class="pr-btn primary wide" onClick={() => setUi({ dialog: { type: 'amend', contractId: k.id, delivery: 'priority', token: q.token } })}>
-        Speed up · arrives {fmtDate(q.expectedAt).slice(0, -5)} · fee {fmtM(q.feeM)}
+        Speed up · arrives {formatCalendarDate(dayToDate(q.expectedAt), { year: false })} · fee {fmtM(q.feeM)}
       </button>
       {!onTime ? <p class="pr-note warn center">Still {Math.round(q.expectedAt - task.neededAt)} d late with priority.</p> : null}
     </>

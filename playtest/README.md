@@ -1,5 +1,7 @@
 # Agent playtest harness
 
+> **Scope update — November 16, 2026.** This directory contains an agent observation harness and a historical autonomous development loop. The loop's permission to change rules/content and optionally publish applied to the specifically authorized night of November 15; it is not standing authority for post-submission work. Do not use that loop as a presentation-only check or run it without fresh task authorization. The gameplay-preserving finishing pass does not run the loop. See [current prototype](../docs/current-prototype.md) and [evidence availability](../docs/evidence-availability.md).
+
 Four AI players, each with no knowledge of the game, play one multiplayer session on four isolated browser stations. What they struggle with is logged for triage and fixing.
 
 An agent playtest finds friction: bugs, dead ends, unclear labels, missing feedback, a role with nothing to do. It is not evidence of enjoyment or of how people coordinate (see `AGENTS.md` and D-014).
@@ -69,7 +71,7 @@ Each round serves its own build (`runs/<round>/dist`), so source edits during pl
 - Players talk through text that arrives when they next act, not through live voice.
 - A player agent could read files it should not. The brief forbids it; the harness does not prevent it.
 
-## The overnight loop
+## Historical overnight development loop — November 15 authorization
 
 `loop/overnight.workflow.js` runs until morning in a dedicated git worktree on its own branch. Per round:
 
@@ -81,7 +83,7 @@ Each round serves its own build (`runs/<round>/dist`), so source edits during pl
 
 Before anything is committed, a fresh agent that was not told the author's reasons compares the game before (the players' screenshots) and after (a running session) and accepts only what is clearly better for a first-time player; the rest is discarded and logged in `rejected.md`. Each commit then passes typecheck and build, or the tree is put back. If the game no longer starts in a round, the changes since it last started are reverted. Every round first merges `origin/main`, so it always plays the team's current game. With `pushToMain: true` (user direction, 2026-11-15) each accepted commit is rebased onto `origin/main`, typechecked again and pushed there — this deploys the site. Conflicts or a failed typecheck after the rebase keep the commit local. Never force-pushed.
 
-Start it from a dedicated worktree on a branch that tracks main:
+Historical invocation, retained to explain the recorded run; do not copy this as a current post-submission instruction:
 
 ```
 Workflow scriptPath: playtest/loop/overnight.workflow.js

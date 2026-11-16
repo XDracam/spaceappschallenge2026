@@ -16,11 +16,11 @@
 //                        the ↑/↓ hints from the option's trust effects (|net| >= 10 → ±2).
 //
 // Missions: 'mars-orbiter-lander' (data/mars/, long, budget 900 M), 'weather-geo'
-// (data/weather/, short: launch ≈ day 150, budget ≈ 210 M, smaller amounts) and
+// (data/weather/, short: launch day 180, budget 210 M, smaller amounts) and
 // 'moon-lander' (data/moon/, medium: launch ≈ day 300, budget 260 M, small amounts).
 // Flags raised by this content: 'press.rtgStory' (plutonium story ran unanswered),
-// 'comms.groundStation' (partner ground-station deal done). Texts: messages ≤ 3
-// sentences, options ≤ 12 words (teammate impact named in brackets), outcomes 1–2 sentences.
+// 'comms.groundStation' (partner ground-station deal done). Keep messages and outcomes
+// short; name cross-station consequences without promising effects the data does not apply.
 import type { Character, EventDef, InFlightEventDef, ProjectDef } from '../model/types';
 import { MARS_CAST, MOON_CAST, WEATHER_CAST } from './characters';
 import * as mars from './mars/index';

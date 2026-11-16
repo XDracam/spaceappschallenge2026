@@ -1,7 +1,7 @@
 // Lunar ice lander — random pool: the engine draws about one per game month
 // (POOL_INTERVAL_DAYS), by `weight`, scaled by trust via tags (stakeholder id +
 // 'bad'/'opportunity'). `eligible` gates an event to a trust range. Each fires at most once.
-// Amounts sit between the weather satellite (budget 350 M) and Mars (900 M): the
+// Amounts sit between the weather satellite (budget 210 M) and Mars (900 M): the
 // lander's budget is 260 M with less slack than either.
 import type { EventDef } from '../../model/types';
 import {
@@ -39,11 +39,11 @@ export const POOL_EVENTS: EventDef[] = [
     eligible: trustBelow('government', 60),
     characterId: 'duarte',
     title: 'Treasury wants money back',
-    message: 'Treasury wants to claw back unspent money from every science program. Yours looks very unspent. I can soften it, but not for free.',
+    message: 'Treasury wants to claw back unspent money from every science programme. Yours looks very unspent. I can soften it, but not for free.',
     options: [
       option('accept', 'Accept a 10 M cut quietly.',
         [budget(-10), trust('government', 5)],
-        'Duarte calls you "a team player". Every station has 10 M less.'),
+        'Duarte calls you "a team player". The shared budget has 10 M less.'),
       option('fight', 'Rally Moon fans against the cut.',
         [budget(-5), trust('public', 5), trust('government', -10)],
         "The cut shrinks to 5 M. So does Duarte's patience."),
@@ -183,9 +183,9 @@ export const POOL_EVENTS: EventDef[] = [
     source: 'pool', weight: 2, deadlineDays: 14,
     characterId: 'okafor',
     title: 'Leaked cost memo',
-    message: "I have an internal memo saying your lander is twenty percent over budget. I'd like your side before it runs tomorrow.",
+    message: "A leaked memo warns your lander could overrun its budget. I'd like your response before publication.",
     options: [
-      option('confirm', 'Confirm it and explain the reasons.',
+      option('confirm', 'Explain the cost risks and current estimates.',
         [trust('public', 5), trust('government', -5)],
         'The story is balanced and dull, the best kind. Duarte wishes she had heard it first.'),
       option('dashboard', 'Publish a live public budget dashboard.',
@@ -283,7 +283,7 @@ export const POOL_EVENTS: EventDef[] = [
     options: [
       option('book', "Book the chamber for Science's lab (tests run faster).",
         [trust('partners', 5), pace(20, 2)],
-        "The lander parts get a cold, airless spa week. Science's research and part tests run faster for two months.", 5),
+        "Northgate reserves the chamber. Research and part tests run 20% faster for two months; Science still needs to start each part test.", 5),
       option('decline', "Thanks, but we'll test in-house.",
         [trust('partners', -5)],
         'Salo rents the slot to a cubesat team within the hour.'),

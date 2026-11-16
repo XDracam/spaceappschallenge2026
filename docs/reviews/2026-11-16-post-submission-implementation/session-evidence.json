@@ -1,0 +1,86 @@
+{
+  "radio": [
+    {
+      "name": "Weather satelliteStart hereReach geostationary orbit.",
+      "checked": "false",
+      "tabIndex": -1,
+      "focused": false
+    },
+    {
+      "name": "Lunar ice landerNext stepLand on the Moon. Drill for ice.",
+      "checked": "true",
+      "tabIndex": 0,
+      "focused": true
+    },
+    {
+      "name": "Mars orbiter + landerHarderOrbit Mars. Land a probe.",
+      "checked": "false",
+      "tabIndex": -1,
+      "focused": false
+    }
+  ],
+  "invite": {
+    "status": "waiting",
+    "characters": 822
+  },
+  "copyFailure": "Copy code\nCopy failed. Select the code and copy it manually.",
+  "connected": {
+    "sync": {
+      "role": "client",
+      "peerId": "p-5h3l3m2k",
+      "station": "science",
+      "connected": true,
+      "error": null
+    },
+    "phase": "planning"
+  },
+  "scienceSelected": "true",
+  "replicated": {
+    "needs": 9,
+    "research": 1,
+    "requests": 1,
+    "versions": 1
+  },
+  "authorityRejection": {
+    "hostRunning": false,
+    "guestError": "That action belongs to the host or another station."
+  },
+  "orderInitialFocus": "Back",
+  "orderWrap": {
+    "text": "Confirm order · 38.2 M",
+    "inside": true
+  },
+  "save": {
+    "saved": true,
+    "loaded": true,
+    "equal": true,
+    "contracts": 1,
+    "research": 1,
+    "requests": 1,
+    "versions": 1
+  },
+  "continue": 1,
+  "corruptSave": {
+    "newGameVisible": true,
+    "raw": "{\"version\":8,\"meta\":{}}"
+  },
+  "resetInitialFocus": "Cancel",
+  "resetWrap": {
+    "text": "Reset saved game",
+    "inside": true
+  },
+  "resetRestoresTrigger": "Reset saved game…",
+  "public": {
+    "/submission/": {
+      "innerWidth": 800,
+      "scrollWidth": 800,
+      "heading": "T-Minus"
+    },
+    "/credits/": {
+      "innerWidth": 800,
+      "scrollWidth": 800,
+      "heading": "T-Minus"
+    }
+  },
+  "errors": []
+}

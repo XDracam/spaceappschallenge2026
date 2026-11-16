@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks';
+import { useId, useRef, useState } from 'preact/hooks';
 import type { StatDef } from '../data/parts';
 import { clamp, fmtNum } from './common';
 import { statLabel } from './partInfo';
@@ -87,33 +87,44 @@ function fmtDisplay(def: StatDef, v: number): string {
 }
 
 /** Editable number in display units; commits on Enter or blur. */
-function NumberField({ value, factor, disabled, onCommit, label, format, onNudge }: {
+function NumberField({ value, factor, disabled, onCommit, label, format, onNudge, min, max, unit }: {
   value: number; factor: number; disabled?: boolean; onCommit: (v: number) => void; label: string; format: (v: number) => string;
-  onNudge?: (dir: 1 | -1) => void;
+  onNudge?: (dir: 1 | -1) => void; min: number; max: number; unit: string;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const errorId = useId();
   const cancelled = useRef(false);
   const shown = draft ?? format(value * factor).replace(/,/g, '');
   const commit = (text: string) => {
     const n = Number(text.replace(/,/g, '').trim());
-    if (!Number.isFinite(n) || text.trim() === '' || text.trim() === format(value * factor).replace(/,/g, '')) return;
-    onCommit(n / factor);
+    if (!Number.isFinite(n) || text.trim() === '') {
+      setError(`Enter a number for ${label} from ${format(min * factor)} to ${format(max * factor)}${unit ? ` ${unit}` : ''}. Do not include units.`);
+      return false;
+    }
+    if (text.trim() !== format(value * factor).replace(/,/g, '')) onCommit(n / factor);
+    setError('');
+    setNotice(n < min * factor || n > max * factor ? `Adjusted to the allowed range: ${format(min * factor)} to ${format(max * factor)}${unit ? ` ${unit}` : ''}.` : '');
+    return true;
   };
   return (
-    <input class="ss-input num" type="text" inputMode="decimal" value={shown} disabled={disabled} aria-label={label}
+    <span class="number-field"><input class="ss-input num" type="text" inputMode="decimal" value={shown} disabled={disabled} aria-label={label} aria-invalid={!!error} aria-describedby={error || notice ? errorId : undefined}
       onFocus={(e) => { setDraft(shown); (e.currentTarget as HTMLInputElement).select(); }}
-      onInput={(e) => setDraft((e.currentTarget as HTMLInputElement).value)}
-      onBlur={(e) => { if (!cancelled.current) commit((e.currentTarget as HTMLInputElement).value); cancelled.current = false; setDraft(null); }}
+      onInput={(e) => { setDraft((e.currentTarget as HTMLInputElement).value); setError(''); setNotice(''); }}
+      onBlur={(e) => { if (cancelled.current || commit((e.currentTarget as HTMLInputElement).value)) { setDraft(null); setError(''); if (cancelled.current) setNotice(''); } cancelled.current = false; }}
       onKeyDown={(e) => {
         if (onNudge && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
           e.preventDefault();
           setDraft(null);
+          setError('');
+          setNotice('');
           onNudge(e.key === 'ArrowUp' ? 1 : -1);
           return;
         }
         if (e.key === 'Enter') (e.currentTarget as HTMLInputElement).blur();
         if (e.key === 'Escape') { cancelled.current = true; (e.currentTarget as HTMLInputElement).blur(); }
-      }} />
+      }} />{(error || notice) && <span id={errorId} class="number-field-error" role={error ? 'alert' : 'status'}>{error || notice}</span>}</span>
   );
 }
 
@@ -145,6 +156,7 @@ export function StatValue({ def, value, locked, beyond, onChange }: {
   return (
     <span class={`sv${beyond ? ' sv-beyond' : ''}`}>
       <NumberField value={value} factor={f} disabled={locked} onCommit={set} label={statLabel(def)}
+        min={def.min} max={def.max} unit={unit}
         format={(v) => fmtDisplay(def, v)} onNudge={(dir) => set(nudge(def, value, dir))} />
       {unit && <span class="sv-unit">{unit}</span>}
     </span>

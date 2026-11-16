@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { MapRenderer, type MapInsets } from './renderer';
+import { usePlanner } from '../state/store';
 import { COLORS } from './style';
 
 export type { MapInsets };
@@ -19,6 +20,7 @@ interface Props {
  * on change; writes view centre, selection, hover and popups to uiStore.
  */
 export function MapCanvas({ insets }: Props) {
+  const summary = usePlanner(game => `${game.mission.name}. ${game.plan.branches.length} route branch${game.plan.branches.length === 1 ? '' : 'es'}, ${game.plan.branches.reduce((n, branch) => n + branch.maneuvers.length, 0)} planned maneuvers. Use Next step and Edit route & mission tips for keyboard route controls; Rocket edits spacecraft and parts.`);
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<MapRenderer | null>(null);
@@ -43,7 +45,7 @@ export function MapCanvas({ insets }: Props) {
 
   return (
     <div ref={wrapRef} style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: COLORS.bg }}>
-      <canvas ref={canvasRef} style={{ display: 'block', touchAction: 'none', userSelect: 'none' }} />
+      <canvas ref={canvasRef} role="img" aria-label={`Mission map. ${summary}`} style={{ display: 'block', touchAction: 'none', userSelect: 'none' }}>{summary}</canvas>
     </div>
   );
 }

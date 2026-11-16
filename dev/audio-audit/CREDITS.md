@@ -1,6 +1,6 @@
 # Mission Control audio audition — credits
 
-Source licenses inspected and files downloaded 2026-11-15. These third-party audio assets retain their own terms, separate from the game’s Apache 2.0 license. All 38 previews remain available for comparison. The user-selected runtime set is recorded in [selected game credits](../audio/CREDITS.txt).
+Source licenses inspected and files downloaded 2026-11-15. These third-party audio assets retain their own terms, separate from the game’s Apache 2.0 license. All 38 previews remain available for comparison. The user-selected runtime set is recorded in [selected game credits](../../game/public/audio/CREDITS.txt).
 
 CC0 1.0 allows commercial use, modification and redistribution without attribution. CC BY 3.0 allows those uses with creator attribution, source/license links, and identification of modifications. NASA’s own pad channel is marked public domain on its source record; no endorsement is implied.
 
@@ -246,3 +246,7 @@ The initial five Kenney power-up variants were rejected as too similar and a poo
 - Creator: Jon K. Fite (jkfite01). License: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 - Source: https://opengameart.org/content/fanfare-for-the-king
 - Edits: Full sound, musical ending retained. MP3 preview; level adjusted -0.9 dB. No pitch or speed changes.
+
+## Development archive
+
+This workbench is excluded from the public game build. Its displayed Earth image reuses the labelled title artwork (ChatGPT Images, November 2026). The original unlabelled source is retained under `source/` solely as historical development evidence; it is not a release asset.

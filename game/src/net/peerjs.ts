@@ -9,6 +9,8 @@
 // The manual codes stay available as a fallback when the PeerJS server is unreachable.
 import { Peer, type DataConnection, type PeerError } from 'peerjs';
 import type { ClientToHost, ClientTransport, HostToClient, HostTransport } from '../core/protocol';
+import { COMPATIBILITY_ID } from '../core/build';
+import { FrameReceiver, frames } from './framing';
 
 /** Namespaces our room ids on the shared public PeerJS server. */
 const ID_PREFIX = 'nasa-mission-control-26-';
@@ -19,8 +21,6 @@ const CONNECT_TIMEOUT_MS = 30000;
 const SERVER_TIMEOUT_MS = 12000;
 const RECLAIM_TRIES = 4;
 const RECLAIM_DELAY_MS = 2500;
-const CHUNK_THRESHOLD = 20000;
-const CHUNK_SIZE = 16000;
 
 // ------------------------------------------------------------------ helpers
 
@@ -79,7 +79,7 @@ class Link {
   readonly opened = listeners<[]>();
   readonly message = listeners<[unknown]>();
   readonly closed = listeners<[reason: 'bye' | 'lost']>();
-  private chunks = new Map<string, string[]>();
+  private receiver = new FrameReceiver(value => this.message.emit(value), () => this.finish('bye'));
   private chunkCounter = 0;
   private timer: ReturnType<typeof setTimeout>;
 
@@ -107,47 +107,15 @@ class Link {
   sendWire(wire: string): void {
     if (!this.isOpen) return;
     try {
-      if (wire.length <= CHUNK_THRESHOLD) {
-        this.conn.send(wire);
-        return;
-      }
-      const id = String(++this.chunkCounter);
-      const n = Math.ceil(wire.length / CHUNK_SIZE);
-      for (let i = 0; i < n; i++) {
-        this.conn.send(JSON.stringify({ '~': 'c', id, i, n, d: wire.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE) }));
-      }
+      for (const frame of frames(wire, String(++this.chunkCounter))) this.conn.send(frame);
     } catch (e) {
       console.warn('[room] send failed', e);
+      this.finish('lost');
     }
   }
 
   private receive(data: unknown): void {
-    if (typeof data !== 'string') return;
-    let obj: Record<string, unknown>;
-    try {
-      obj = JSON.parse(data);
-    } catch {
-      return;
-    }
-    if (obj && obj['~'] === 'c') {
-      const { id, i, n, d } = obj as { id: string; i: number; n: number; d: string };
-      let parts = this.chunks.get(id);
-      if (!parts) this.chunks.set(id, (parts = new Array<string>(n)));
-      parts[i] = d;
-      for (let k = 0; k < n; k++) if (parts[k] === undefined) return;
-      this.chunks.delete(id);
-      try {
-        this.message.emit(JSON.parse(parts.join('')));
-      } catch (e) {
-        console.warn('[room] bad chunked message', e);
-      }
-      return;
-    }
-    if (obj && obj['~'] === 'bye') {
-      this.finish('bye');
-      return;
-    }
-    this.message.emit(obj);
+    if (!this.receiver.receive(data)) this.finish('lost');
   }
 
   /** Close on purpose; tells the other side first. */
@@ -162,6 +130,7 @@ class Link {
   private finish(reason: 'bye' | 'lost', local = false): void {
     if (this.isClosed) return;
     this.isClosed = true;
+    this.receiver.clear();
     clearTimeout(this.timer);
     const wasOpen = this.isOpen;
     this.isOpen = false;
@@ -229,6 +198,10 @@ export class RoomHost implements HostTransport {
       // Lost the signalling server; open player connections keep running.
       if (this.peer !== peer || this.closedForGood) return;
       this.setStatus('reconnecting');
+      clearTimeout(this.serverTimer);
+      this.serverTimer = setTimeout(() => {
+        if (this.peer === peer && this.status === 'reconnecting') this.fail('The room-code service is unavailable. Existing players stay connected; try again or use manual invites.');
+      }, SERVER_TIMEOUT_MS);
       setTimeout(() => {
         if (this.peer === peer && !peer.destroyed && peer.disconnected) {
           try { peer.reconnect(); } catch { /* ignore */ }
@@ -250,7 +223,9 @@ export class RoomHost implements HostTransport {
         return;
       }
       if (SERVER_ERRORS.has(type) && this.status !== 'open') {
-        if (this.status === 'opening') this.fail('Could not reach the room-code service.');
+        this.fail(this.status === 'reconnecting'
+          ? 'Could not reconnect to the room-code service. Existing players stay connected; try again or use manual invites.'
+          : 'Could not reach the room-code service.');
         return;
       }
       console.warn('[room] host peer error', type, e);
@@ -258,12 +233,29 @@ export class RoomHost implements HostTransport {
   }
 
   private fail(message: string): void {
+    clearTimeout(this.serverTimer);
     this.error = message;
     this.setStatus('error');
   }
 
   /** Try opening the room again (after an error). */
   retry(): void {
+    const peer = this.peer;
+    // Reconnecting the broker must not destroy healthy game data channels.
+    if (peer && !peer.destroyed && peer.disconnected) {
+      this.error = '';
+      this.setStatus('reconnecting');
+      clearTimeout(this.serverTimer);
+      this.serverTimer = setTimeout(() => {
+        if (this.peer === peer && this.status === 'reconnecting') this.fail('The room-code service is unavailable. Existing players stay connected; use manual invites or try again.');
+      }, SERVER_TIMEOUT_MS);
+      try { peer.reconnect(); } catch { this.fail('Could not reconnect to the room-code service. Use manual invites or try again.'); }
+      return;
+    }
+    if ([...this.links.values()].some(link => link.isOpen)) {
+      this.fail('Existing players stay connected. Use manual invites while the room-code service recovers.');
+      return;
+    }
     this.peer?.destroy();
     this.peer = null;
     this.reclaimTries = 0;
@@ -393,7 +385,7 @@ export class RoomClient implements ClientTransport {
   private attach(link: Link): void {
     this.link = link;
     link.message.add((m) => {
-      if (this.msg.size === 0) this.early.push(m as HostToClient);
+      if (this.msg.size === 0) { if (this.early.length < 8) this.early.push(m as HostToClient); else this.close(); }
       else this.msg.emit(m as HostToClient);
     });
     link.opened.add(() => {
@@ -426,7 +418,7 @@ export class RoomClient implements ClientTransport {
   }
 
   send(msg: ClientToHost): void {
-    this.link?.send(msg);
+    this.link?.send(msg.t === 'hello' ? { ...msg, compatibility: COMPATIBILITY_ID } : msg);
   }
   onMessage(cb: (msg: HostToClient) => void): () => void {
     const off = this.msg.add(cb);

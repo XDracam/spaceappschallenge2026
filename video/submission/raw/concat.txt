@@ -1,0 +1,8 @@
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-0.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-1.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-2.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-3.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-4.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-5.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-6.mp4'
+file '/home/dracam/Documents/ChatGPT/NASA/video/submission/raw/cut-7.mp4'

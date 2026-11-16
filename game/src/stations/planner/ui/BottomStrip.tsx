@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { useDialog } from '../../../shared/useDialog';
 import { createStore, useStore } from '../../../core/createStore';
 import type { Goal, Issue, ManeuverType, Severity } from '../model/types';
 import { uiStore, useClock, useEvaluation, usePlanner, useUi } from '../state/store';
@@ -56,7 +57,7 @@ function DvCard() {
             {branches.map((b, i) => {
               const name = branchDisplayName(game, b);
               return (
-                <button class={`mini-pill${b.id === branch?.id ? ' active' : ''}`} key={b.id} title={name}
+                <button class={`mini-pill${b.id === branch?.id ? ' active' : ''}`} key={b.id} title={name} aria-pressed={b.id === branch?.id}
                   onClick={() => uiStore.update((u) => { u.selectedBranchId = b.id; })}>
                   <span class="dot" style={{ background: branchColor(i) }} />{name}
                 </button>
@@ -81,7 +82,7 @@ function DvCard() {
             const stages = m.burns.filter((b) => b.dvMs > 0.5).map((b) => `${stageName(b.stageId)} ${formatDv(b.dvMs)}`);
             return (
               <button key={m.maneuverId}
-                class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${tiny ? ' zero' : ''}`}
+                aria-pressed={m.maneuverId === selManeuver} class={`seg${m.ok ? '' : ' bad'}${m.maneuverId === selManeuver ? ' selected' : ''}${tiny ? ' zero' : ''}`}
                 style={{ width: tiny ? undefined : `${w}%`, '--seg': branchColor(idx) }}
                 title={`${m.label}: ${formatDv(m.dvRequiredMs)}${m.ok ? '' : ' — fails here'}${stages.length ? `\nPaid by ${stages.join(', ')}` : ''}`}
                 onClick={() => openManeuverEdit(m.maneuverId, m.branchId)}>
@@ -116,12 +117,8 @@ export function GoalDialogHost() {
   const { open, focus } = useStore(goalStore, (s) => s);
   const goals = usePlanner((g) => g.mission.goals);
   const close = () => goalStore.set({ open: false, focus: null });
-  useEffect(() => {
-    if (!open) return;
-    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
-    window.addEventListener('keydown', k);
-    return () => window.removeEventListener('keydown', k);
-  }, [open]);
+  const root = useRef<HTMLElement>(null);
+  useDialog({ open, root, onClose: close });
   useEffect(() => {
     if (open && focus) document.getElementById(`goal-detail-${focus}`)?.scrollIntoView({ block: 'center' });
   }, [open, focus]);
@@ -131,7 +128,7 @@ export function GoalDialogHost() {
   return (
     <div class="briefing-wrap goal-dialog-wrap" style={{ inset: 0 }}
       onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-      <section class="briefing glass strong goal-dialog" role="dialog" aria-labelledby="goal-dialog-title">
+      <section ref={root} tabIndex={-1} class="briefing glass strong goal-dialog" role="dialog" aria-modal="true" aria-labelledby="goal-dialog-title">
         <div class="goal-dialog-top">
           <h2 id="goal-dialog-title" class="briefing-title">Goals</h2>
           <button class="pill primary" autoFocus onClick={close}>Close</button>
@@ -277,11 +274,11 @@ function ReadinessRow() {
   if (r.ordered > 0) parts.push(`${plural(r.ordered, 'part')} ordered, not delivered yet`);
   if (r.late > 0) parts.push(`${plural(r.late, 'delivery', 'deliveries')} after launch date`);
   return (
-    <li class={`issue readiness ${sev} clickable`} title={`${parts.join(' · ')}\nClick to open the Rocket panel (part status and arrival dates)`}
+    <li class={`issue readiness ${sev} clickable`}><button type="button" class="issue-action" title={`${parts.join(' · ')}\nClick to open the Rocket panel (part status and arrival dates)`}
       onClick={() => openTab('rocket')}>
       <SeverityIcon severity={sev} />
       <span class="issue-text">{parts.join(' · ')}</span>
-    </li>
+    </button></li>
   );
 }
 
@@ -301,12 +298,14 @@ function IssuesCard() {
     if (i.partId) highlightPart(i.partId);
     else if (i.maneuverId) openManeuverEdit(i.maneuverId, i.branchId);
   };
-  const row = (i: Issue, k: number) => (
-    <li key={k} class={`issue ${i.severity}${i.maneuverId || i.partId ? ' clickable' : ''}`} title={i.message} onClick={() => click(i)}>
-      <SeverityIcon severity={i.severity} />
-      <span class="issue-text">{i.message}</span>
-    </li>
-  );
+  const row = (i: Issue, k: number) => {
+    const content = <><SeverityIcon severity={i.severity} /><span class="issue-text">{i.message}</span></>;
+    return <li key={k} class={`issue ${i.severity}${i.maneuverId || i.partId ? ' clickable' : ''}`}>
+      {i.maneuverId || i.partId
+        ? <button type="button" class="issue-action" title={i.message} onClick={() => click(i)}>{content}</button>
+        : content}
+    </li>;
+  };
   const many = list.length > 3;
   const shown = all ? list : list.slice(0, 3);
 
